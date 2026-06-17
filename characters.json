@@ -3,6 +3,7 @@
     "id": 1,
     "name": "Sherlock Holmes",
     "elo": 1480,
+    "image": "images/sherlock.webp",
     "matchups": {
       "Medusa": { "winrate": 48, "eloVs": 1420 },
       "Sinbad": { "winrate": 52, "eloVs": 1500 },
@@ -23,6 +24,7 @@
     "id": 2,
     "name": "Medusa",
     "elo": 1520,
+    "image": "images/medusa.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 52, "eloVs": 1500 },
       "Sinbad": { "winrate": 57, "eloVs": 1550 },
@@ -43,6 +45,7 @@
     "id": 3,
     "name": "Sinbad",
     "elo": 1450,
+    "image": "images/sindbad.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 48, "eloVs": 1480 },
       "Medusa": { "winrate": 43, "eloVs": 1420 },
@@ -63,6 +66,7 @@
     "id": 4,
     "name": "Alice",
     "elo": 1420,
+    "image": "images/alice.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 45, "eloVs": 1470 },
       "Medusa": { "winrate": 40, "eloVs": 1380 },
@@ -83,6 +87,7 @@
     "id": 5,
     "name": "King Arthur",
     "elo": 1500,
+    "image": "images/arthur.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 50, "eloVs": 1490 },
       "Medusa": { "winrate": 51, "eloVs": 1490 },
@@ -103,6 +108,7 @@
     "id": 6,
     "name": "Robin Hood",
     "elo": 1460,
+    "image": "images/robin_hood.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 47, "eloVs": 1440 },
       "Medusa": { "winrate": 49, "eloVs": 1450 },
@@ -123,6 +129,7 @@
     "id": 7,
     "name": "Dracula",
     "elo": 1530,
+    "image": "images/dracula.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 49, "eloVs": 1500 },
       "Medusa": { "winrate": 45, "eloVs": 1490 },
@@ -143,6 +150,7 @@
     "id": 8,
     "name": "Bruce Lee",
     "elo": 1550,
+    "image": "images/bruce_lee.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 46, "eloVs": 1510 },
       "Medusa": { "winrate": 42, "eloVs": 1490 },
@@ -163,6 +171,7 @@
     "id": 9,
     "name": "Deadpool",
     "elo": 1490,
+    "image": "images/deadpool.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 51, "eloVs": 1480 },
       "Medusa": { "winrate": 50, "eloVs": 1510 },
@@ -183,6 +192,7 @@
     "id": 10,
     "name": "Yennenga",
     "elo": 1440,
+    "image": "images/yennenga.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 48, "eloVs": 1460 },
       "Medusa": { "winrate": 46, "eloVs": 1490 },
@@ -203,6 +213,7 @@
     "id": 11,
     "name": "Achilles",
     "elo": 1510,
+    "image": "images/achilles.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 52, "eloVs": 1520 },
       "Medusa": { "winrate": 53, "eloVs": 1530 },
@@ -223,6 +234,7 @@
     "id": 12,
     "name": "Bloody Mary",
     "elo": 1470,
+    "image": "images/bloody_mary.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 49, "eloVs": 1470 },
       "Medusa": { "winrate": 47, "eloVs": 1460 },
@@ -243,6 +255,7 @@
     "id": 13,
     "name": "Bigfoot",
     "elo": 1430,
+    "image": "images/bigfoot.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 50, "eloVs": 1460 },
       "Medusa": { "winrate": 49, "eloVs": 1450 },
@@ -263,6 +276,7 @@
     "id": 14,
     "name": "Invisible Man",
     "elo": 1485,
+    "image": "images/invisible_man.webp",
     "matchups": {
       "Sherlock Holmes": { "winrate": 53, "eloVs": 1490 },
       "Medusa": { "winrate": 50, "eloVs": 1480 },

@@ -1,65 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Draft UI</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Draft UI</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    body {
-      background: #f6f7fb;
-    }
+<style>
+body {
+  background: #f6f7fb;
+}
 
-    .character {
-      cursor: pointer;
-      transition: .15s;
-      border-radius: 12px;
-      background: white;
-      border: 1px solid #e5e7eb;
-    }
+.character {
+  cursor: pointer;
+  transition: .15s;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  position: relative;
+}
 
-    .character:hover {
-      transform: scale(1.03);
-      border-color: #0d6efd;
-    }
+.character:hover {
+  transform: scale(1.03);
+  border-color: #e5e7eb;
+}
 
-    .slot-box {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+.character img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
 
-    .slot {
-      height: 42px;
-      border-radius: 10px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 500;
-    }
+.char-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: .15s;
+  pointer-events: none;
+}
 
-    .turn-banner {
-      color: white;
-      font-weight: 700;
-      text-align: center;
-      padding: 10px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-    }
+.character:hover .char-name {
+  opacity: 1;
+}
 
-    .player-input {
-      width: 100%;
-      border: none;
-      font-weight: 700;
-      text-align: center;
-      padding: 6px;
-      border-radius: 10px;
-      color: white;
-      outline: none;
-    }
-  </style>
+.percent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  font-weight: 800;
+  font-size: 14px;
+  color: white;
+}
+
+/* SLOT */
+.slot-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slot {
+  height: 42px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: .15s;
+}
+
+/* active slot */
+.slot.active {
+  border: 2px solid #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13,110,253,0.25);
+}
+
+.slot.active-ban {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220,53,69,0.25);
+}
+
+.slot.active-pick {
+  border-color: #198754;
+  box-shadow: 0 0 0 3px rgba(25,135,84,0.25);
+}
+
+/* TURN */
+.turn-banner {
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* PLAYER INPUT */
+.player-input {
+  width: 100%;
+  border: none;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px;
+  border-radius: 10px;
+  color: white;
+  outline: none;
+}
+</style>
 </head>
 
 <body>
@@ -69,6 +128,12 @@
 
     <div class="turn-banner" :style="{ background: turnColor }">
       {{ turnText }}
+    </div>
+
+    <div class="d-flex justify-content-end mb-2">
+      <button class="btn btn-warning btn-sm" @click="undo" :disabled="history.length === 0">
+        Undo
+      </button>
     </div>
 
     <div class="row mb-3">
@@ -86,69 +151,102 @@
 
     <div class="row">
 
+      <!-- LEFT -->
       <div class="col-md-3">
-
-        <input v-model="p1.name"
-               class="player-input mb-2"
-               :style="{ background: p1.color }" />
+        <input
+          v-model="p1.name"
+          class="player-input mb-2"
+          :style="{ background: p1.color }"
+        />
 
         <h6>Bans</h6>
         <div class="slot-box">
-          <div v-for="i in 3" class="slot">
+
+          <div v-for="i in 3"
+               class="slot"
+               :class="{
+                 active: isActiveSlot('p1','ban', i-1),
+                 'active-ban': isActiveSlot('p1','ban', i-1)
+               }">
             {{ p1.bans[i-1]?.name || '—' }}
           </div>
+
         </div>
 
         <h6 class="mt-3">Picks</h6>
         <div class="slot-box">
-          <div v-for="i in 4" class="slot">
+
+          <div v-for="i in 4"
+               class="slot"
+               :class="{
+                 active: isActiveSlot('p1','pick', i-1),
+                 'active-pick': isActiveSlot('p1','pick', i-1)
+               }">
             {{ p1.picks[i-1]?.name || '—' }}
           </div>
-        </div>
 
+        </div>
       </div>
 
+      <!-- CENTER -->
       <div class="col-md-6">
         <div class="row g-2">
 
-          <div v-for="char in filtered" :key="char.id" class="col-4">
-            <div class="card character text-center p-2" @click="pick(char)">
-              <div class="fw-bold">{{ char.name }}</div>
+          <div v-for="char in filtered" :key="char.id" class="col-3">
+            <div class="character" @click="pick(char)">
 
-              <span class="badge mt-2"
-                    :style="{ background: getColor(getPickPercent(char)), color: 'white' }">
+              <img :src="char.image" />
+
+              <div class="char-name">
+                {{ char.name }}
+              </div>
+
+              <div class="percent"
+                   :style="{ background: getColor(getPickPercent(char)) }">
                 {{ getPickPercent(char) }}%
-              </span>
+              </div>
 
-              <small class="d-block mt-1 text-muted">
-                elo {{ char.elo }}
-              </small>
             </div>
           </div>
 
         </div>
       </div>
 
+      <!-- RIGHT -->
       <div class="col-md-3">
-
-        <input v-model="p2.name"
-               class="player-input mb-2"
-               :style="{ background: p2.color }" />
+        <input
+          v-model="p2.name"
+          class="player-input mb-2"
+          :style="{ background: p2.color }"
+        />
 
         <h6>Bans</h6>
         <div class="slot-box">
-          <div v-for="i in 3" class="slot">
+
+          <div v-for="i in 3"
+               class="slot"
+               :class="{
+                 active: isActiveSlot('p2','ban', i-1),
+                 'active-ban': isActiveSlot('p2','ban', i-1)
+               }">
             {{ p2.bans[i-1]?.name || '—' }}
           </div>
+
         </div>
 
         <h6 class="mt-3">Picks</h6>
         <div class="slot-box">
-          <div v-for="i in 4" class="slot">
+
+          <div v-for="i in 4"
+               class="slot"
+               :class="{
+                 active: isActiveSlot('p2','pick', i-1),
+                 'active-pick': isActiveSlot('p2','pick', i-1)
+               }">
             {{ p2.picks[i-1]?.name || '—' }}
           </div>
-        </div>
 
+        </div>
       </div>
 
     </div>
@@ -162,34 +260,23 @@ const { createApp, ref, computed } = Vue
 
 createApp({
   setup() {
-
     const search = ref("")
     const sortMode = ref("elo")
 
-    const p1 = ref({
-      name: "Player 1",
-      color: "#0d6efd",
-      bans: [],
-      picks: []
-    })
-
-    const p2 = ref({
-      name: "Player 2",
-      color: "#dc3545",
-      bans: [],
-      picks: []
-    })
+    const p1 = ref({ name:"Player 1", color:"#0d6efd", bans:[], picks:[] })
+    const p2 = ref({ name:"Player 2", color:"#dc3545", bans:[], picks:[] })
 
     const characters = ref([])
 
     const MAX_ELO = 1600
     const MIN_ELO = 1300
 
+    const history = ref([])
+
     async function loadChars() {
       const res = await fetch("./characters.json")
       characters.value = await res.json()
     }
-
     loadChars()
 
     const takenIds = computed(() => {
@@ -231,56 +318,78 @@ createApp({
       return "#dc3545"
     }
 
-    // draft order
-    const draft_order = [
-      { type: "ban", player: "p1" },
-      { type: "ban", player: "p2" },
-      { type: "ban", player: "p1" },
-      { type: "ban", player: "p2" },
-      { type: "ban", player: "p1" },
-      { type: "ban", player: "p2" },
-
-      { type: "pick", player: "p1" },
-      { type: "pick", player: "p2" },
-      { type: "pick", player: "p2" },
-      { type: "pick", player: "p1" },
-      { type: "pick", player: "p1" },
-      { type: "pick", player: "p2" },
-      { type: "pick", player: "p2" },
-      { type: "pick", player: "p1" }
+    const sequence = [
+      { type:"ban", player:"p1" },
+      { type:"ban", player:"p2" },
+      { type:"ban", player:"p1" },
+      { type:"ban", player:"p2" },
+      { type:"ban", player:"p1" },
+      { type:"ban", player:"p2" },
+      { type:"pick", player:"p1" },
+      { type:"pick", player:"p2" },
+      { type:"pick", player:"p2" },
+      { type:"pick", player:"p1" },
+      { type:"pick", player:"p1" },
+      { type:"pick", player:"p2" },
+      { type:"pick", player:"p2" },
+      { type:"pick", player:"p1" }
     ]
 
     const step = ref(0)
-
-    const current = computed(() => draft_order[step.value] || null)
+    const current = computed(() => sequence[step.value] || null)
 
     const turnText = computed(() => {
-      if (!current.value) return "Draft finished"
-      const name = current.value.player === "p1" ? p1.value.name : p2.value.name
-      return `${name} ${current.value.type}`
+      if(!current.value) return "Done"
+      const n = current.value.player === "p1" ? p1.value.name : p2.value.name
+      return `${n} ${current.value.type}`
     })
 
     const turnColor = computed(() => {
-      if (!current.value) return "#6c757d"
+      if(!current.value) return "#6c757d"
       return current.value.player === "p1" ? p1.value.color : p2.value.color
     })
 
     function pick(char) {
-      if (!current.value) return
+      if(!current.value) return
 
       const target = current.value.player === "p1" ? p1.value : p2.value
 
-      if (current.value.type === "ban") {
-        if (target.bans.length < 3) {
-          target.bans.push(char)
-        }
-      } else {
-        if (target.picks.length < 4) {
-          target.picks.push(char)
+      if(current.value.type === "ban") target.bans.push(char)
+      else target.picks.push(char)
+
+      history.value.push({ char, step: step.value })
+      step.value++
+    }
+
+    function isActiveSlot(player, type, index) {
+      if(!current.value) return false
+
+      return current.value.player === player &&
+            current.value.type === type &&
+            index === (player === "p1"
+              ? (type === "ban" ? p1.value.bans.length : p1.value.picks.length)
+              : (type === "ban" ? p2.value.bans.length : p2.value.picks.length))
+    }
+
+    function undo() {
+      const last = history.value.pop()
+      if(!last) return
+
+      step.value--
+
+      const all = [
+        p1.value.bans,
+        p1.value.picks,
+        p2.value.bans,
+        p2.value.picks
+      ]
+
+      for (let arr of all) {
+        if (arr.length && arr[arr.length - 1].id === last.char.id) {
+          arr.pop()
+          break
         }
       }
-
-      step.value++
     }
 
     return {
@@ -288,12 +397,15 @@ createApp({
       sortMode,
       filtered,
       pick,
+      undo,
+      history,
       p1,
       p2,
       getPickPercent,
       getColor,
       turnText,
-      turnColor
+      turnColor,
+      isActiveSlot
     }
   }
 }).mount("#app")
