@@ -10,113 +10,167 @@ body {
   background: #f6f7fb;
 }
 
-.character {
-  cursor: pointer;
-  transition: .15s;
-  border-radius: 14px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-  position: relative;
-}
-
-.character:hover {
-  transform: scale(1.03);
-  border-color: #e5e7eb;
-}
-
-.character img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  display: block;
-}
-
-.char-name {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.55);
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: .15s;
-  pointer-events: none;
-}
-
-.character:hover .char-name {
-  opacity: 1;
-}
-
-.percent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 0;
-  font-weight: 800;
-  font-size: 14px;
-  color: white;
-}
-
-/* SLOT */
-.slot-box {
+/* TOP */
+.top-wrap {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.slot {
-  height: 42px;
-  border-radius: 10px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  transition: .15s;
-}
-
-/* active slot */
-.slot.active {
-  border: 2px solid #0d6efd;
-  box-shadow: 0 0 0 3px rgba(13,110,253,0.25);
-}
-
-.slot.active-ban {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220,53,69,0.25);
-}
-
-.slot.active-pick {
-  border-color: #198754;
-  box-shadow: 0 0 0 3px rgba(25,135,84,0.25);
-}
-
-/* TURN */
 .turn-banner {
   color: white;
   font-weight: 700;
   text-align: center;
   padding: 10px;
   border-radius: 12px;
-  margin-bottom: 10px;
 }
 
-/* PLAYER INPUT */
-.player-input {
+/* controls UNDER turn */
+.controls-row {
+  display: flex;
+  gap: 8px;
   width: 100%;
-  border: none;
-  font-weight: 700;
-  text-align: center;
-  padding: 6px;
-  border-radius: 10px;
+}
+
+.controls-row input,
+.controls-row select {
+  flex: 1;
+}
+
+/* CHARACTER CARD FULL IMAGE */
+.character {
+  cursor: pointer;
+  transition: .15s;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  height: 170px;
+}
+
+.character:hover {
+  transform: scale(1.03);
+}
+
+.character img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* overlay */
+.char-name {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
   color: white;
-  outline: none;
+  font-size: 12px;
+  padding: 8px;
+  opacity: 0;
+  transition: .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.character:hover .char-name {
+  opacity: 1;
+}
+
+/* percent bottom */
+.percent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-weight: 800;
+  padding: 6px;
+  color: white;
+}
+
+/* BAN */
+.slot-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ban-slot {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* faded bg */
+.ban-slot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ban-color);
+  opacity: 0.12;
+}
+
+/* diagonal strike */
+.ban-slot::after {
+  content: "";
+  position: absolute;
+  left: -30%;
+  top: 50%;
+  width: 160%;
+  height: 2px;
+  background: rgba(0,0,0,0.35);
+  transform: rotate(-35deg);
+}
+
+.ban-text {
+  position: relative;
+  opacity: 0.6;
+}
+
+/* PICK CARD FULL IMAGE */
+.pick-card {
+  cursor: pointer;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  height: 220px; /* increased */
+  border: 1px solid #e5e7eb;
+  transition: .15s;
+}
+
+.pick-card:hover {
+  transform: scale(1.03);
+}
+
+.pick-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* hover overlay */
+.pick-name {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 12px;
+  padding: 8px;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: .15s;
+}
+
+.pick-card:hover .pick-name {
+  opacity: 1;
 }
 </style>
 </head>
@@ -126,26 +180,30 @@ body {
 <div id="app">
   <div class="container py-3">
 
-    <div class="turn-banner" :style="{ background: turnColor }">
-      {{ turnText }}
-    </div>
+    <!-- TURN -->
+    <div class="top-wrap">
 
-    <div class="d-flex justify-content-end mb-2">
-      <button class="btn btn-warning btn-sm" @click="undo" :disabled="history.length === 0">
-        Undo
-      </button>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <input v-model="search" class="form-control" placeholder="Search..." />
+      <div class="turn-banner" :style="{ background: turnColor }">
+        {{ turnText }}
       </div>
 
-      <div class="col-md-6">
-        <select v-model="sortMode" class="form-select">
-          <option value="name">Sort: name</option>
-          <option value="elo">Sort: elo</option>
+      <!-- CONTROLS UNDER TURN -->
+      <div class="controls-row">
+        <input v-model="search" class="form-control form-control-sm" placeholder="Search..." />
+
+        <select v-model="firstPicker" class="form-select form-select-sm">
+          <option value="player">User first</option>
+          <option value="opponent">Opponent first</option>
         </select>
+
+        <select v-model="sortMode" class="form-select form-select-sm">
+          <option value="elo">Draft strength (%)</option>
+          <option value="name">Name</option>
+        </select>
+
+        <button class="btn btn-warning btn-sm" @click="undo" :disabled="history.length === 0">
+          Undo
+        </button>
       </div>
     </div>
 
@@ -153,38 +211,29 @@ body {
 
       <!-- LEFT -->
       <div class="col-md-3">
-        <input
-          v-model="p1.name"
-          class="player-input mb-2"
-          :style="{ background: p1.color }"
-        />
+        <input v-model="player.name" class="form-control mb-2"
+          :style="{ background: player.color, color:'white', fontWeight:'700', textAlign:'center' }"/>
 
         <h6>Bans</h6>
         <div class="slot-box">
-
-          <div v-for="i in 3"
-               class="slot"
-               :class="{
-                 active: isActiveSlot('p1','ban', i-1),
-                 'active-ban': isActiveSlot('p1','ban', i-1)
-               }">
-            {{ p1.bans[i-1]?.name || '—' }}
+          <div v-for="i in 3" class="ban-slot" :style="{ '--ban-color': player.color }">
+            <span class="ban-text">{{ player.bans[i-1]?.name || '—' }}</span>
           </div>
-
         </div>
 
         <h6 class="mt-3">Picks</h6>
         <div class="slot-box">
-
-          <div v-for="i in 4"
-               class="slot"
-               :class="{
-                 active: isActiveSlot('p1','pick', i-1),
-                 'active-pick': isActiveSlot('p1','pick', i-1)
-               }">
-            {{ p1.picks[i-1]?.name || '—' }}
+          <div v-for="char in player.picks" class="pick-card">
+            <img :src="char.image" />
+            <div class="pick-name">
+              <div style="font-weight:700">{{ char.name }}</div>
+              <div v-for="enemy in opponent.picks">
+                <div v-if="char.matchups?.[enemy.name]">
+                  {{ getMatchupText(char, enemy) }}
+                </div>
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
 
@@ -194,15 +243,19 @@ body {
 
           <div v-for="char in filtered" :key="char.id" class="col-3">
             <div class="character" @click="pick(char)">
-
               <img :src="char.image" />
 
               <div class="char-name">
-                {{ char.name }}
+                <div style="font-weight:700">{{ char.name }}</div>
+
+                <div v-for="enemy in opponent.picks">
+                  <div v-if="char.matchups?.[enemy.name]">
+                    {{ getMatchupText(char, enemy) }}
+                  </div>
+                </div>
               </div>
 
-              <div class="percent"
-                   :style="{ background: getColor(getPickPercent(char)) }">
+              <div class="percent" :style="{ background: getColor(getPickPercent(char)) }">
                 {{ getPickPercent(char) }}%
               </div>
 
@@ -214,38 +267,29 @@ body {
 
       <!-- RIGHT -->
       <div class="col-md-3">
-        <input
-          v-model="p2.name"
-          class="player-input mb-2"
-          :style="{ background: p2.color }"
-        />
+        <input v-model="opponent.name" class="form-control mb-2"
+          :style="{ background: opponent.color, color:'white', fontWeight:'700', textAlign:'center' }"/>
 
         <h6>Bans</h6>
         <div class="slot-box">
-
-          <div v-for="i in 3"
-               class="slot"
-               :class="{
-                 active: isActiveSlot('p2','ban', i-1),
-                 'active-ban': isActiveSlot('p2','ban', i-1)
-               }">
-            {{ p2.bans[i-1]?.name || '—' }}
+          <div v-for="i in 3" class="ban-slot" :style="{ '--ban-color': opponent.color }">
+            <span class="ban-text">{{ opponent.bans[i-1]?.name || '—' }}</span>
           </div>
-
         </div>
 
         <h6 class="mt-3">Picks</h6>
         <div class="slot-box">
-
-          <div v-for="i in 4"
-               class="slot"
-               :class="{
-                 active: isActiveSlot('p2','pick', i-1),
-                 'active-pick': isActiveSlot('p2','pick', i-1)
-               }">
-            {{ p2.picks[i-1]?.name || '—' }}
+          <div v-for="char in opponent.picks" class="pick-card">
+            <img :src="char.image" />
+            <div class="pick-name">
+              <div style="font-weight:700">{{ char.name }}</div>
+              <div v-for="enemy in player.picks">
+                <div v-if="char.matchups?.[enemy.name]">
+                  {{ getMatchupText(char, enemy) }}
+                </div>
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
 
@@ -260,20 +304,21 @@ const { createApp, ref, computed } = Vue
 
 createApp({
   setup() {
+
     const search = ref("")
     const sortMode = ref("elo")
+    const firstPicker = ref("player")
 
-    const p1 = ref({ name:"Player 1", color:"#0d6efd", bans:[], picks:[] })
-    const p2 = ref({ name:"Player 2", color:"#dc3545", bans:[], picks:[] })
+    const player = ref({ name:"User", color:"#0d6efd", bans:[], picks:[] })
+    const opponent = ref({ name:"Opponent", color:"#dc3545", bans:[], picks:[] })
 
     const characters = ref([])
+    const history = ref([])
 
     const MAX_ELO = 1600
     const MIN_ELO = 1300
 
-    const history = ref([])
-
-    async function loadChars() {
+    const loadChars = async () => {
       const res = await fetch("./characters.json")
       characters.value = await res.json()
     }
@@ -281,10 +326,10 @@ createApp({
 
     const takenIds = computed(() => {
       return new Set([
-        ...p1.value.bans,
-        ...p1.value.picks,
-        ...p2.value.bans,
-        ...p2.value.picks
+        ...player.value.bans,
+        ...player.value.picks,
+        ...opponent.value.bans,
+        ...opponent.value.picks
       ].map(c => c.id))
     })
 
@@ -297,18 +342,30 @@ createApp({
         )
       }
 
-      if (sortMode.value === "name") {
-        arr.sort((a,b)=>a.name.localeCompare(b.name))
-      } else {
-        arr.sort((a,b)=>b.elo - a.elo)
-      }
+      if (sortMode.value === "name") return arr.sort((a,b)=>a.name.localeCompare(b.name))
 
-      return arr
+      return arr.sort((a,b)=>getPickPercent(b) - getPickPercent(a))
     })
 
     function getPickPercent(char) {
       const clamped = Math.max(MIN_ELO, Math.min(MAX_ELO, char.elo))
-      return Math.round(((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100)
+      const base = ((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100
+
+      const enemies = opponent.value.picks
+      if (!enemies.length) return Math.round(base)
+
+      let total = 0
+      let count = 0
+
+      for (const e of enemies) {
+        const mu = char.matchups?.[e.name]
+        if (!mu) continue
+        total += (mu.winrate - 50)
+        count++
+      }
+
+      const avg = count ? total / count : 0
+      return Math.max(0, Math.min(100, Math.round(base + avg * 1.5)))
     }
 
     function getColor(p) {
@@ -318,94 +375,105 @@ createApp({
       return "#dc3545"
     }
 
-    const sequence = [
-      { type:"ban", player:"p1" },
-      { type:"ban", player:"p2" },
-      { type:"ban", player:"p1" },
-      { type:"ban", player:"p2" },
-      { type:"ban", player:"p1" },
-      { type:"ban", player:"p2" },
-      { type:"pick", player:"p1" },
-      { type:"pick", player:"p2" },
-      { type:"pick", player:"p2" },
-      { type:"pick", player:"p1" },
-      { type:"pick", player:"p1" },
-      { type:"pick", player:"p2" },
-      { type:"pick", player:"p2" },
-      { type:"pick", player:"p1" }
+    function getMatchupText(char, enemy) {
+      const mu = char.matchups?.[enemy.name]
+      if (!mu) return ""
+
+      const diff = mu.winrate - 50
+
+      if (diff > 0) return `vs ${enemy.name}: ${mu.winrate}% (+${diff})`
+      if (diff < 0) return `vs ${enemy.name}: ${mu.winrate}% (${diff})`
+      return `vs ${enemy.name}: ${mu.winrate}%`
+    }
+
+    const sequenceBase = [
+      { type:"ban", player:"player" },
+      { type:"ban", player:"opponent" },
+      { type:"ban", player:"player" },
+      { type:"ban", player:"opponent" },
+      { type:"ban", player:"player" },
+      { type:"ban", player:"opponent" },
+      { type:"pick", player:"player" },
+      { type:"pick", player:"opponent" },
+      { type:"pick", player:"opponent" },
+      { type:"pick", player:"player" },
+      { type:"pick", player:"player" },
+      { type:"pick", player:"opponent" },
+      { type:"pick", player:"opponent" },
+      { type:"pick", player:"player" }
     ]
 
+    const sequence = computed(() => {
+      if (firstPicker.value === "player") return sequenceBase
+      return sequenceBase.map(s => ({
+        ...s,
+        player: s.player === "player" ? "opponent" : "player"
+      }))
+    })
+
     const step = ref(0)
-    const current = computed(() => sequence[step.value] || null)
+    const current = computed(() => sequence.value[step.value] || null)
 
     const turnText = computed(() => {
-      if(!current.value) return "Done"
-      const n = current.value.player === "p1" ? p1.value.name : p2.value.name
-      return `${n} ${current.value.type}`
+      if (!current.value) return "Done"
+      return `${current.value.player} ${current.value.type}`
     })
 
     const turnColor = computed(() => {
-      if(!current.value) return "#6c757d"
-      return current.value.player === "p1" ? p1.value.color : p2.value.color
+      if (!current.value) return "#6c757d"
+      return current.value.player === "player"
+        ? player.value.color
+        : opponent.value.color
     })
 
     function pick(char) {
-      if(!current.value) return
+      if (!current.value) return
 
-      const target = current.value.player === "p1" ? p1.value : p2.value
+      const target = current.value.player === "player"
+        ? player.value
+        : opponent.value
 
-      if(current.value.type === "ban") target.bans.push(char)
+      if (current.value.type === "ban") target.bans.push(char)
       else target.picks.push(char)
 
-      history.value.push({ char, step: step.value })
+      history.value.push({
+        char,
+        player: current.value.player,
+        type: current.value.type
+      })
+
       step.value++
-    }
-
-    function isActiveSlot(player, type, index) {
-      if(!current.value) return false
-
-      return current.value.player === player &&
-            current.value.type === type &&
-            index === (player === "p1"
-              ? (type === "ban" ? p1.value.bans.length : p1.value.picks.length)
-              : (type === "ban" ? p2.value.bans.length : p2.value.picks.length))
     }
 
     function undo() {
       const last = history.value.pop()
-      if(!last) return
+      if (!last) return
 
       step.value--
 
-      const all = [
-        p1.value.bans,
-        p1.value.picks,
-        p2.value.bans,
-        p2.value.picks
-      ]
+      const target = last.player === "player"
+        ? player.value
+        : opponent.value
 
-      for (let arr of all) {
-        if (arr.length && arr[arr.length - 1].id === last.char.id) {
-          arr.pop()
-          break
-        }
-      }
+      const arr = last.type === "ban" ? target.bans : target.picks
+      arr.pop()
     }
 
     return {
       search,
       sortMode,
+      firstPicker,
+      player,
+      opponent,
       filtered,
       pick,
       undo,
-      history,
-      p1,
-      p2,
       getPickPercent,
       getColor,
+      getMatchupText,
       turnText,
       turnColor,
-      isActiveSlot
+      history
     }
   }
 }).mount("#app")
