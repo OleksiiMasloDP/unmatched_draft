@@ -1,0 +1,56 @@
+export const translations = {
+  en: {
+    searchPlaceholder: "Search by name...",
+    userFirst: "You first player",
+    opponentFirst: "Opponent first",
+    sortDraft: "Sort by: Pick Rating (%)",
+    sortName: "Sort by: Name",
+    btnUndo: "Undo",
+    btnRestart: "Restart",
+    bannedSlots: "Banned Slots",
+    activeLineup: "Choosen heroes",
+    emptyCell: "Empty Cell",
+    engineTitle: "Predictive Analytics Engine",
+    engineDesc:
+      "Team victory weight calculated over active head-to-head simulations",
+    infoBanner:
+      "Info: Click picked champions on sides to simulate fast bans (Limit: 2 per side)",
+    recBanBadge: "RECOMMENDED BAN",
+    modalTitle: "Terminal Reset Order",
+    modalDesc:
+      "Executing this script will completely wipe all currently active draft matrices, choice sequences, and temporary bans. Proceed with data termination?",
+    modalCancel: "Cancel",
+    modalConfirm: "Confirm Reset",
+    matrixReady: "Simulation Matrix Ready",
+    selecting: "is selecting",
+    teamYou: "You",
+    teamOpponent: "Opponent",
+  },
+  ua: {
+    searchPlaceholder: "Пошук по імені...",
+    userFirst: "Ви перші гравець",
+    opponentFirst: "Опонент перший",
+    sortDraft: "Сортування за: Рейтингом піку (%)",
+    sortName: "Сортування за: Ім'ям",
+    btnUndo: "Скасувати дію",
+    btnRestart: "Рестарт",
+    bannedSlots: "Слоти банів",
+    activeLineup: "Обрані персонажі",
+    emptyCell: "Порожня комірка",
+    engineTitle: "Прогноз",
+    engineDesc:
+      "Вага перемоги команди розрахована на основі симуляцій прямих зіткнень",
+    infoBanner:
+      "Інфо: Клацайте по обраних героях з боків для швидкого бана (Ліміт: 2 з кожного боку)",
+    recBanBadge: "РЕКОМЕНДОВАНИЙ БАН",
+    modalTitle: "Команда повного скидання",
+    modalDesc:
+      "Виконання цього сценарію повністю очистить усі активні матриці драфту, послідовності вибору та тимчасові бани. Продовжити термінацію даних?",
+    modalCancel: "Скасувати",
+    modalConfirm: "Підтвердити",
+    matrixReady: "Матриця симуляції готова",
+    selecting: "обирає",
+    teamYou: "Ви",
+    teamOpponent: "Опонент",
+  },
+};
