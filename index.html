@@ -2,150 +2,274 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Draft UI</title>
+<title>Unmatched Draftsim</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 body {
-  background: #f6f7fb;
+  margin: 0;
+  background: #0b0f19;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(79, 124, 255, 0.15), transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(255, 79, 109, 0.08), transparent 30%);
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  min-height: 100vh;
 }
 
-/* TOP */
+/* TOP NAVIGATION / PANEL */
 .top-wrap {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 24px;
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
+/* TURN BANNER */
 .turn-banner {
   color: white;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 14px;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
 }
 
-/* controls UNDER turn */
+/* CUSTOM CONTROLS */
 .controls-row {
   display: flex;
-  gap: 8px;
-  width: 100%;
+  gap: 10px;
 }
 
-.controls-row input,
-.controls-row select {
-  flex: 1;
+.controls-row .form-control,
+.controls-row .form-select {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f1f5f9 !important;
+  border-radius: 12px !important;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-/* CHARACTER CARD FULL IMAGE */
+.controls-row .form-control::placeholder {
+  color: #94a3b8;
+}
+
+.controls-row .form-control:focus,
+.controls-row .form-select:focus {
+  border-color: #4f7cff !important;
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.3) !important;
+}
+
+/* ACTION BUTTONS */
+.action-btn {
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 8px 20px !important;
+  min-width: 120px;
+  border: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.action-btn.btn-primary {
+  background: linear-gradient(135deg, #4f7cff, #3b60d1) !important;
+  box-shadow: 0 4px 15px rgba(79, 124, 255, 0.3) !important;
+}
+.action-btn.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 124, 255, 0.45) !important;
+}
+
+.action-btn.btn-danger {
+  background: linear-gradient(135deg, #ff4f6d, #d93854) !important;
+  box-shadow: 0 4px 15px rgba(255, 79, 109, 0.3) !important;
+}
+.action-btn.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 79, 109, 0.45) !important;
+}
+
+/* HEADINGS (FIXED READABILITY) */
+h6 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #cbd5e1; /* Сделано намного ярче */
+  font-size: 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid rgba(255,255,255,0.2);
+  padding-left: 8px;
+}
+
+/* SIDE TEAM INPUTS (FIXED GRADIENT BUG) */
+.team-input {
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  font-weight: 800;
+  text-align: center;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  background-size: cover !important; /* Гарантирует растяжение градиента */
+  background-position: center !important;
+}
+
+/* GRID CHARACTER CARDS */
 .character {
   cursor: pointer;
-  transition: .15s;
-  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
-  height: 170px;
+  height: 160px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #121824;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
 .character:hover {
-  transform: scale(1.03);
+  transform: translateY(-6px) scale(1.03);
+  border-color: rgba(255,255,255,0.25);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
 }
 
 .character img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.character:hover img {
+  transform: scale(1.08);
 }
 
-/* overlay */
+/* INFO OVERLAY */
 .char-name {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: linear-gradient(to top, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, transparent);
   color: white;
-  font-size: 12px;
-  padding: 8px;
-  opacity: 0;
-  transition: .15s;
+  font-size: 13px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   gap: 4px;
 }
 
-.character:hover .char-name {
-  opacity: 1;
+.char-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
 }
 
-/* percent bottom */
+/* MATCHUP MINI MATRIX */
+.mu-list {
+  font-size: 11px;
+  color: #cbd5e1; /* Сделано ярче для читаемости */
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+/* SMART PERCENT FLOATER */
 .percent {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
   font-weight: 800;
-  padding: 6px;
-  color: white;
+  font-size: 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 2;
 }
 
-/* BAN */
+.percent.green { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+.percent.yellow { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.4); }
+.percent.orange { background: rgba(251, 146, 60, 0.2); color: #f97316; border: 1px solid rgba(251, 146, 60, 0.4); }
+.percent.red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+/* BAN SLOTS HEROES (FIXED VISIBILITY) */
 .slot-box {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ban-slot {
   height: 42px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.6);
+  /* Жирная рамка цвета фракции с прозрачностью */
+  border: 2px dashed rgba(var(--ban-color-rgb), 0.4); 
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
+  font-weight: 700;
+  font-size: 13px;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
 }
 
-/* faded bg */
-.ban-slot::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--ban-color);
-  opacity: 0.12;
+/* Когда слот заполнен персонажем */
+.ban-slot.filled {
+  border: 1px solid rgba(var(--ban-color-rgb), 0.6);
+  background: rgba(var(--ban-color-rgb), 0.15);
+  color: #f8fafc;
+  text-shadow: 0 0 8px rgba(var(--ban-color-rgb), 0.6);
 }
 
-/* diagonal strike */
-.ban-slot::after {
-  content: "";
-  position: absolute;
-  left: -30%;
-  top: 50%;
-  width: 160%;
-  height: 2px;
-  background: rgba(0,0,0,0.35);
-  transform: rotate(-35deg);
+.ban-slot .ban-icon {
+  margin-right: 6px;
+  color: #ef4444;
+  font-weight: 900;
 }
 
-.ban-text {
-  position: relative;
-  opacity: 0.6;
-}
-
-/* PICK CARD FULL IMAGE */
+/* SIDEBAR PICK CARDS */
 .pick-card {
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
-  height: 220px; /* increased */
-  border: 1px solid #e5e7eb;
-  transition: .15s;
+  height: 140px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #121824;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .pick-card:hover {
-  transform: scale(1.03);
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.2);
 }
 
 .pick-card img {
@@ -154,23 +278,121 @@ body {
   object-fit: cover;
 }
 
-/* hover overlay */
 .pick-name {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: linear-gradient(to top, rgba(11, 15, 25, 0.95) 20%, rgba(11, 15, 25, 0.3), transparent);
   color: white;
-  font-size: 12px;
-  padding: 8px;
-  opacity: 0;
+  font-size: 13px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: .15s;
+  justify-content: flex-end;
+  gap: 4px;
 }
 
-.pick-card:hover .pick-name {
-  opacity: 1;
+/* INTERACTIVE POST-DRAFT BANS (FIXED VISIBILITY) */
+.pick-card.clickable-post-draft:hover {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.pick-card.post-banned {
+  filter: grayscale(0.3) contrast(0.9); /* Не блюрим сильно, сохраняем видимость */
+}
+
+/* Жирный яркий красный крест поверх всей карты */
+.pick-card.post-banned::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -25%;
+  width: 150%;
+  height: 4px;
+  background: #ef4444;
+  transform: rotate(-25deg);
+  z-index: 11;
+  box-shadow: 0 0 12px #ef4444;
+}
+
+.pick-card.post-banned::before {
+  content: "BANNED";
+  position: absolute;
+  inset: 0;
+  color: #ffffff;
+  background: rgba(239, 68, 68, 0.75); /* Полупрозрачная яркая красная подложка */
+  font-weight: 900;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 2px;
+  z-index: 10;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* END SCREEN HUB */
+.result-card {
+  background: rgba(18, 24, 36, 0.75);
+  border-radius: 24px;
+  padding: 35px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.vs-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 30px 0;
+}
+
+.win-chance {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.custom-progress {
+  height: 12px;
+  border-radius: 999px;
+  background-color: #1e293b;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* PRO TIP WINDOW (FIXED TEXT CONTRAST) */
+.rec-box {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  text-align: left;
+}
+
+.rec-text {
+  color: #e2e8f0 !important; /* Яркий читаемый серебристо-белый цвет */
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* DYNAMIC MODAL BOX */
+.modal-content {
+  background-color: #0f172a !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #f8fafc;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+}
+.modal-header, .modal-footer {
+  border-color: rgba(255,255,255,0.08) !important;
+}
+.btn-close {
+  filter: invert(1) grayscale(1);
 }
 </style>
 </head>
@@ -178,20 +400,18 @@ body {
 <body>
 
 <div id="app">
-  <div class="container py-3">
+  <div class="container py-4">
 
-    <!-- TURN -->
+    <!-- CONTROL HUB -->
     <div class="top-wrap">
-
-      <div class="turn-banner" :style="{ background: turnColor }">
+      <div class="turn-banner" :style="{ background: turnColor, boxShadow: '0 0 20px ' + turnColor + '44' }">
         {{ turnText }}
       </div>
 
-      <!-- CONTROLS UNDER TURN -->
       <div class="controls-row">
-        <input v-model="search" class="form-control form-control-sm" placeholder="Search..." />
+        <input v-model="search" class="form-control form-control-sm" placeholder="Search champion..." />
 
-        <select v-model="firstPicker" class="form-select form-select-sm">
+        <select :value="firstPicker" @change="onFirstPickerChange($event.target.value)" class="form-select form-select-sm">
           <option value="player">User first</option>
           <option value="opponent">Opponent first</option>
         </select>
@@ -201,91 +421,151 @@ body {
           <option value="name">Name</option>
         </select>
 
-        <button class="btn btn-warning btn-sm" @click="undo" :disabled="history.length === 0">
+        <button v-if="current" class="btn btn-primary btn-sm action-btn" @click="undo" :disabled="history.length === 0">
           Undo
+        </button>
+        <button v-else class="btn btn-danger btn-sm action-btn" @click="triggerRestart">
+          Restart
         </button>
       </div>
     </div>
 
-    <div class="row">
+    <!-- MAIN GRID SECTION -->
+    <div class="row g-4">
 
-      <!-- LEFT -->
+      <!-- LEFT SIDE: USER TEAM -->
       <div class="col-md-3">
-        <input v-model="player.name" class="form-control mb-2"
-          :style="{ background: player.color, color:'white', fontWeight:'700', textAlign:'center' }"/>
+        <!-- Исправлен баг градиента добавлением background-size/position в CSS -->
+        <input v-model="player.name" class="form-control team-input mb-3"
+          :style="{ background: 'linear-gradient(135deg, ' + player.color + 'dd, #121824)', color:'white' }"/>
 
-        <h6>Bans</h6>
-        <div class="slot-box">
-          <div v-for="i in 3" class="ban-slot" :style="{ '--ban-color': player.color }">
-            <span class="ban-text">{{ player.bans[i-1]?.name || '—' }}</span>
+        <h6>Banned Slots</h6>
+        <div class="slot-box mb-4">
+          <div v-for="i in 3" 
+               class="ban-slot" 
+               :class="{ 'filled': player.bans[i-1] }"
+               :style="{ '--ban-color-rgb': '79, 124, 255' }">
+            <span class="ban-icon" v-if="!player.bans[i-1]">[✕]</span>
+            {{ player.bans[i-1]?.name || 'Empty Cell' }}
           </div>
         </div>
 
-        <h6 class="mt-3">Picks</h6>
+        <h6>Active Lineup</h6>
         <div class="slot-box">
-          <div v-for="char in player.picks" class="pick-card">
+          <div v-for="char in player.picks" 
+               class="pick-card"
+               :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }"
+               @click="togglePostBan('player', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
-              <div style="font-weight:700">{{ char.name }}</div>
-              <div v-for="enemy in opponent.picks">
-                <div v-if="char.matchups?.[enemy.name]">
-                  {{ getMatchupText(char, enemy) }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CENTER -->
-      <div class="col-md-6">
-        <div class="row g-2">
-
-          <div v-for="char in filtered" :key="char.id" class="col-3">
-            <div class="character" @click="pick(char)">
-              <img :src="char.image" />
-
-              <div class="char-name">
-                <div style="font-weight:700">{{ char.name }}</div>
-
+              <div style="font-weight:800; font-size: 14px;">{{ char.name }}</div>
+              <div class="mu-list">
                 <div v-for="enemy in opponent.picks">
                   <div v-if="char.matchups?.[enemy.name]">
                     {{ getMatchupText(char, enemy) }}
                   </div>
                 </div>
               </div>
-
-              <div class="percent" :style="{ background: getColor(getPickPercent(char)) }">
-                {{ getPickPercent(char) }}%
-              </div>
-
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- RIGHT -->
-      <div class="col-md-3">
-        <input v-model="opponent.name" class="form-control mb-2"
-          :style="{ background: opponent.color, color:'white', fontWeight:'700', textAlign:'center' }"/>
+      <!-- MIDDLE POOL AREA -->
+      <div class="col-md-6">
+        
+        <!-- SELECTION PHASE -->
+        <div v-if="current" class="row g-3">
+          <div v-for="char in filtered" class="col-4">
+            <div class="character" @click="pick(char)">
+              <img :src="char.image" />
 
-        <h6>Bans</h6>
-        <div class="slot-box">
-          <div v-for="i in 3" class="ban-slot" :style="{ '--ban-color': opponent.color }">
-            <span class="ban-text">{{ opponent.bans[i-1]?.name || '—' }}</span>
+              <div class="percent" :class="getPercentClass(getPickPercent(char))">
+                {{ getPickPercent(char) }}%
+              </div>
+
+              <div class="char-name">
+                <div class="char-title">{{ char.name }}</div>
+                <div class="mu-list">
+                  <div v-for="enemy in opponent.picks">
+                    <div v-if="char.matchups?.[enemy.name]">
+                      {{ getMatchupText(char, enemy) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <h6 class="mt-3">Picks</h6>
+        <!-- POST DRAFT CORE MATRIX ANALYSIS -->
+        <div v-else class="result-card">
+          <h4 class="fw-bold mb-1" style="color: #f1f5f9; letter-spacing: 0.5px;">Predictive Analytics Engine</h4>
+          <span class="badge bg-dark mb-4 p-2" style="font-size: 11px; border: 1px solid rgba(255,255,255,0.05)">
+            💡 Info: Click picked champions on sides to simulate fast bans (Limit: 2 per side)
+          </span>
+
+          <div class="vs-line">
+            <div>
+              <div class="fw-bold mb-1" :style="{ color: player.color, fontSize: '15px' }">{{ player.name }}</div>
+              <div class="win-chance" :style="{ color: player.color }">{{ finalWinrate.player }}%</div>
+            </div>
+            <div class="fw-bold text-muted" style="font-size: 20px; letter-spacing: 2px;">VS</div>
+            <div>
+              <div class="fw-bold mb-1" :style="{ color: opponent.color, fontSize: '15px' }">{{ opponent.name }}</div>
+              <div class="win-chance" :style="{ color: opponent.color }">{{ finalWinrate.opponent }}%</div>
+            </div>
+          </div>
+
+          <div class="progress custom-progress mb-4">
+            <div class="progress-bar" role="progressbar" :style="{ width: finalWinrate.player + '%', backgroundColor: player.color }"></div>
+            <div class="progress-bar" role="progressbar" :style="{ width: finalWinrate.opponent + '%', backgroundColor: opponent.color }"></div>
+          </div>
+
+          <!-- PRO TIP WINDOW (FIXED CONTRAST TEXT) -->
+          <div v-if="banRecommendation" class="rec-box">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3)">RECOMMENDED BAN</span>
+            </div>
+            <p class="mb-0 rec-text">
+              Isolating <strong class="text-white" style="font-weight:700;">{{ banRecommendation.name }}</strong> from opponent squad yields an efficiency boost of 
+              <span class="fw-bold text-success" style="font-weight:800; text-shadow: 0 0 10px rgba(34,197,94,0.3);">+{{ banRecommendation.benefit }}%</span> to your current strategy (New Winrate: <strong class="text-success" style="font-weight:800;">{{ banRecommendation.newWinrate }}%</strong>).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: OPPONENT TEAM -->
+      <div class="col-md-3">
+        <!-- Исправлен баг градиента добавлением background-size/position в CSS -->
+        <input v-model="opponent.name" class="form-control team-input mb-3"
+          :style="{ background: 'linear-gradient(135deg, ' + opponent.color + 'dd, #121824)', color:'white' }"/>
+
+        <h6>Banned Slots</h6>
+        <div class="slot-box mb-4">
+          <div v-for="i in 3" 
+               class="ban-slot" 
+               :class="{ 'filled': opponent.bans[i-1] }"
+               :style="{ '--ban-color-rgb': '255, 79, 109' }">
+            <span class="ban-icon" v-if="!opponent.bans[i-1]">[✕]</span>
+            {{ opponent.bans[i-1]?.name || 'Empty Cell' }}
+          </div>
+        </div>
+
+        <h6>Active Lineup</h6>
         <div class="slot-box">
-          <div v-for="char in opponent.picks" class="pick-card">
+          <div v-for="char in opponent.picks" 
+               class="pick-card"
+               :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(char.id) }"
+               @click="togglePostBan('opponent', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
-              <div style="font-weight:700">{{ char.name }}</div>
-              <div v-for="enemy in player.picks">
-                <div v-if="char.matchups?.[enemy.name]">
-                  {{ getMatchupText(char, enemy) }}
+              <div style="font-weight:800; font-size: 14px;">{{ char.name }}</div>
+              <div class="mu-list">
+                <div v-for="enemy in player.picks">
+                  <div v-if="char.matchups?.[enemy.name]">
+                    {{ getMatchupText(char, enemy) }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -295,28 +575,67 @@ body {
 
     </div>
   </div>
+
+  <!-- CONFIRM ACTION MODAL BOX -->
+  <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-white">⚠️ Terminal Reset Order</h5>
+          <button type="button" class="btn-close" @click="cancelReset" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0" style="font-size: 14.5px; line-height: 1.5;">
+            Executing this script will **completely wipe** all currently active draft matrices, choice sequences, and temporary bans. Proceed with data termination?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark fw-semibold" style="border-radius: 10px; background: #1e293b; border: none; color: #94a3b8;" @click="cancelReset">
+            Abort
+          </button>
+          <button type="button" class="btn btn-danger fw-bold" style="border-radius: 10px; padding-left: 20px; padding-right: 20px; background: #ef4444; border: none;" @click="confirmReset">
+            Confirm Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 <script>
-const { createApp, ref, computed } = Vue
+const { createApp, ref, computed, onMounted } = Vue
 
 createApp({
   setup() {
-
     const search = ref("")
     const sortMode = ref("elo")
     const firstPicker = ref("player")
 
-    const player = ref({ name:"User", color:"#0d6efd", bans:[], picks:[] })
-    const opponent = ref({ name:"Opponent", color:"#dc3545", bans:[], picks:[] })
+    const player = ref({ name:"User", color:"#4f7cff", bans:[], picks:[] })
+    const opponent = ref({ name:"Opponent", color:"#ff4f6d", bans:[], picks:[] })
 
     const characters = ref([])
     const history = ref([])
 
     const MAX_ELO = 1600
     const MIN_ELO = 1300
+
+    const postBans = ref({
+      player: new Set(),
+      opponent: new Set()
+    })
+
+    let bsModalInstance = null
+    const pendingPickerValue = ref("")
+    const isRestartAction = ref(false)
+
+    onMounted(() => {
+      bsModalInstance = new bootstrap.Modal(document.getElementById('resetConfirmModal'))
+    })
 
     const loadChars = async () => {
       const res = await fetch("./characters.json")
@@ -368,11 +687,11 @@ createApp({
       return Math.max(0, Math.min(100, Math.round(base + avg * 1.5)))
     }
 
-    function getColor(p) {
-      if (p >= 75) return "#198754"
-      if (p >= 50) return "#ffc107"
-      if (p >= 30) return "#fd7e14"
-      return "#dc3545"
+    function getPercentClass(p) {
+      if (p >= 75) return "green"
+      if (p >= 50) return "yellow"
+      if (p >= 30) return "orange"
+      return "red"
     }
 
     function getMatchupText(char, enemy) {
@@ -380,34 +699,33 @@ createApp({
       if (!mu) return ""
 
       const diff = mu.winrate - 50
-
       if (diff > 0) return `vs ${enemy.name}: ${mu.winrate}% (+${diff})`
       if (diff < 0) return `vs ${enemy.name}: ${mu.winrate}% (${diff})`
       return `vs ${enemy.name}: ${mu.winrate}%`
     }
 
-    const sequenceBase = [
-      { type:"ban", player:"player" },
-      { type:"ban", player:"opponent" },
-      { type:"ban", player:"player" },
-      { type:"ban", player:"opponent" },
-      { type:"ban", player:"player" },
-      { type:"ban", player:"opponent" },
-      { type:"pick", player:"player" },
-      { type:"pick", player:"opponent" },
-      { type:"pick", player:"opponent" },
-      { type:"pick", player:"player" },
-      { type:"pick", player:"player" },
-      { type:"pick", player:"opponent" },
-      { type:"pick", player:"opponent" },
-      { type:"pick", player:"player" }
+    const sequencePattern = [
+      { type: "ban", p1: true },
+      { type: "ban", p1: false },
+      { type: "ban", p1: true },
+      { type: "ban", p1: false },
+      { type: "ban", p1: true },
+      { type: "ban", p1: false },
+      { type: "pick", p1: true },
+      { type: "pick", p1: false },
+      { type: "pick", p1: false },
+      { type: "pick", p1: true },
+      { type: "pick", p1: true },
+      { type: "pick", p1: false },
+      { type: "pick", p1: false },
+      { type: "pick", p1: true }
     ]
 
     const sequence = computed(() => {
-      if (firstPicker.value === "player") return sequenceBase
-      return sequenceBase.map(s => ({
-        ...s,
-        player: s.player === "player" ? "opponent" : "player"
+      const isPlayerFirst = firstPicker.value === "player"
+      return sequencePattern.map(step => ({
+        type: step.type,
+        player: isPlayerFirst ? (step.p1 ? "player" : "opponent") : (step.p1 ? "opponent" : "player")
       }))
     })
 
@@ -415,65 +733,128 @@ createApp({
     const current = computed(() => sequence.value[step.value] || null)
 
     const turnText = computed(() => {
-      if (!current.value) return "Done"
-      return `${current.value.player} ${current.value.type}`
+      if (!current.value) return "Simulation Matrix Ready"
+      return `${current.value.player} is selecting ${current.value.type}...`
     })
 
     const turnColor = computed(() => {
-      if (!current.value) return "#6c757d"
-      return current.value.player === "player"
-        ? player.value.color
-        : opponent.value.color
+      if (!current.value) return "#10b981"
+      return current.value.player === "player" ? player.value.color : opponent.value.color
     })
+
+    function resetAll() {
+      player.value.bans = []
+      player.value.picks = []
+      opponent.value.bans = []
+      opponent.value.picks = []
+      history.value = []
+      step.value = 0
+      postBans.value.player.clear()
+      postBans.value.opponent.clear()
+    }
+
+    function onFirstPickerChange(newValue) {
+      if (step.value === 0) {
+        firstPicker.value = newValue
+        return
+      }
+      isRestartAction.value = false
+      pendingPickerValue.value = newValue
+      if (bsModalInstance) bsModalInstance.show()
+    }
+
+    function triggerRestart() {
+      isRestartAction.value = true
+      if (bsModalInstance) bsModalInstance.show()
+    }
+
+    function confirmReset() {
+      resetAll()
+      if (!isRestartAction.value) firstPicker.value = pendingPickerValue.value
+      if (bsModalInstance) bsModalInstance.hide()
+    }
+
+    function cancelReset() {
+      if (!isRestartAction.value) {
+        const temp = firstPicker.value
+        firstPicker.value = ""
+        firstPicker.value = temp
+      }
+      if (bsModalInstance) bsModalInstance.hide()
+    }
 
     function pick(char) {
       if (!current.value) return
 
-      const target = current.value.player === "player"
-        ? player.value
-        : opponent.value
-
+      const target = current.value.player === "player" ? player.value : opponent.value
       if (current.value.type === "ban") target.bans.push(char)
       else target.picks.push(char)
 
-      history.value.push({
-        char,
-        player: current.value.player,
-        type: current.value.type
-      })
-
+      history.value.push({ char, player: current.value.player, type: current.value.type })
       step.value++
     }
 
     function undo() {
       const last = history.value.pop()
       if (!last) return
-
       step.value--
-
-      const target = last.player === "player"
-        ? player.value
-        : opponent.value
-
+      const target = last.player === "player" ? player.value : opponent.value
       const arr = last.type === "ban" ? target.bans : target.picks
       arr.pop()
     }
 
+    function togglePostBan(side, id) {
+      if (current.value) return
+      const set = postBans.value[side]
+      if (set.has(id)) set.delete(id)
+      else if (set.size < 2) set.add(id)
+    }
+
+    function calculateTeamWinrate(playerPicks, opponentPicks) {
+      if (!playerPicks.length || !opponentPicks.length) return 50
+      let totalWinrate = 0, count = 0
+      for (const p of playerPicks) {
+        for (const o of opponentPicks) {
+          if (p.matchups?.[o.name]) {
+            totalWinrate += p.matchups[o.name].winrate
+            count++
+          }
+        }
+      }
+      return count ? Math.round(totalWinrate / count) : 50
+    }
+
+    const activePlayerPicks = computed(() => player.value.picks.filter(c => !postBans.value.player.has(c.id)))
+    const activeOpponentPicks = computed(() => opponent.value.picks.filter(c => !postBans.value.opponent.has(c.id)))
+
+    const finalWinrate = computed(() => {
+      const pWin = calculateTeamWinrate(activePlayerPicks.value, activeOpponentPicks.value)
+      return { player: pWin, opponent: 100 - pWin }
+    })
+
+    const banRecommendation = computed(() => {
+      if (!activePlayerPicks.value.length || !activeOpponentPicks.value.length) return null
+      const currentWinrate = finalWinrate.value.player
+      let bestBan = null, maxBenefit = 0, bestNewWinrate = currentWinrate
+
+      for (const targetChar of activeOpponentPicks.value) {
+        const simulatedOpponentPicks = activeOpponentPicks.value.filter(c => c.id !== targetChar.id)
+        const simulatedWinrate = calculateTeamWinrate(activePlayerPicks.value, simulatedOpponentPicks)
+        const benefit = simulatedWinrate - currentWinrate
+        if (benefit > maxBenefit) {
+          maxBenefit = benefit
+          bestBan = targetChar
+          bestNewWinrate = simulatedWinrate
+        }
+      }
+      return (!bestBan || maxBenefit <= 0) ? null : { name: bestBan.name, benefit: maxBenefit, newWinrate: bestNewWinrate }
+    })
+
     return {
-      search,
-      sortMode,
-      firstPicker,
-      player,
-      opponent,
-      filtered,
-      pick,
-      undo,
-      getPickPercent,
-      getColor,
-      getMatchupText,
-      turnText,
-      turnColor,
-      history
+      search, sortMode, firstPicker, player, opponent, filtered, pick, undo,
+      getPickPercent, getMatchupText, getPercentClass, turnText, turnColor,
+      history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
+      onFirstPickerChange, triggerRestart, confirmReset, cancelReset
     }
   }
 }).mount("#app")
