@@ -25,6 +25,10 @@ export const translations = {
     selecting: "is selecting",
     teamYou: "You",
     teamOpponent: "Opponent",
+    recEnemyBanDesc:
+      "Recommended first enemy ban: {names}. Banning them increases your winrate to {newWinrate}% (+{benefit}%).",
+    recSelfBanDesc:
+      "Recommended first self-ban: {names}. Removing this weak link bumps your winrate to {newWinrate}% (+{benefit}%).",
   },
   ua: {
     searchPlaceholder: "Пошук по імені...",
@@ -52,5 +56,9 @@ export const translations = {
     selecting: "обирає",
     teamYou: "Ви",
     teamOpponent: "Опонент",
+    recEnemyBanDesc:
+      "Рекомендований перший бан ворога: {names}. Цей бан збільшить ваш вінрейт до {newWinrate}% (+{benefit}%).",
+    recSelfBanDesc:
+      "Рекомендований перший бан СВОГО героя: {names}. Усунення слабкого звена підніме ваш вінрейт до {newWinrate}% (+{benefit}%).",
   },
 };

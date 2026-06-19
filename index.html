@@ -7,501 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-body {
-  margin: 0;
-  background: #0b0f19;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(79, 124, 255, 0.15), transparent 40%),
-    radial-gradient(circle at 0% 100%, rgba(255, 79, 109, 0.08), transparent 30%);
-  color: #f8fafc;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  min-height: 100vh;
-}
-
-/* TOP NAVIGATION / PANEL */
-.top-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-  position: sticky;
-  top: 10px;
-  z-index: 100;
-  padding: 16px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* TURN BANNER */
-.turn-banner {
-  color: white;
-  font-weight: 800;
-  text-align: center;
-  padding: 14px;
-  border-radius: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-size: 14px;
-  box-shadow: inset 0 0 20px rgba(255,255,255,0.15);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
-}
-
-/* CUSTOM CONTROLS */
-.controls-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* SEARCH FIELD */
-.search-field {
-  max-width: 180px;
-}
-
-.controls-row .form-control {
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #f1f5f9 !important;
-  border-radius: 12px !important;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.controls-row .form-control::placeholder {
-  color: #94a3b8;
-}
-
-.controls-row .form-control:focus {
-  border-color: #4f7cff !important;
-  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.3) !important;
-}
-
-/* UNIFIED SELECTS */
-.custom-select-wrapper {
-  position: relative;
-  min-width: 180px;
-}
-
-.custom-select-wrapper select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 100%;
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #f1f5f9 !important;
-  border-radius: 12px !important;
-  padding: 10px 38px 10px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.custom-select-wrapper select:focus {
-  outline: none;
-  border-color: #4f7cff !important;
-  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.3) !important;
-}
-
-.custom-select-wrapper::after {
-  content: "";
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid #94a3b8;
-  pointer-events: none;
-  transition: transform 0.2s ease;
-}
-
-/* ACTION BUTTONS */
-.action-btn {
-  border-radius: 12px !important;
-  font-weight: 700 !important;
-  padding: 10px 20px !important;
-  min-width: 110px;
-  border: none !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-}
-
-.action-btn.btn-primary {
-  background: linear-gradient(135deg, #4f7cff, #3b60d1) !important;
-  box-shadow: 0 4px 15px rgba(79, 124, 255, 0.3) !important;
-}
-.action-btn.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 124, 255, 0.45) !important;
-}
-
-.action-btn.btn-danger {
-  background: linear-gradient(135deg, #ff4f6d, #d93854) !important;
-  box-shadow: 0 4px 15px rgba(255, 79, 109, 0.3) !important;
-}
-.action-btn.btn-danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 79, 109, 0.45) !important;
-}
-
-/* HEADINGS */
-h6 {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: #cbd5e1;
-  font-size: 12px;
-  margin-bottom: 12px;
-  border-left: 3px solid rgba(255,255,255,0.2);
-  padding-left: 8px;
-}
-
-/* STATIC SIDE TEAM HEADERS */
-.team-title-banner {
-  font-weight: 800;
-  text-align: center;
-  border-radius: 14px;
-  padding: 12px;
-  font-size: 18px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  margin-bottom: 16px;
-  border: 1px solid rgba(255,255,255,0.05);
-  background-clip: padding-box !important;
-}
-
-/* GRID CHARACTER CARDS */
-.character {
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-  height: 160px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #121824;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-.character:hover {
-  transform: translateY(-6px) scale(1.03);
-  border-color: rgba(255,255,255,0.25);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-}
-
-.character img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-.character:hover img {
-  transform: scale(1.08);
-}
-
-/* INFO OVERLAY */
-.char-name {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, transparent);
-  color: white;
-  font-size: 13px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 4px;
-}
-
-.char-title {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.3px;
-}
-
-/* MATCHUP MINI MATRIX */
-.mu-list {
-  font-size: 11px;
-  color: #cbd5e1;
-  line-height: 1.3;
-  font-weight: 600;
-}
-
-/* FIXED CONTRAST PERCENT FLOATER */
-.percent {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 5px 12px;
-  font-weight: 900;
-  font-size: 12px;
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.85) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  z-index: 5;
-  letter-spacing: 0.5px;
-}
-
-.percent.green  { color: #4ade80 !important; border: 1.5px solid #22c55e !important; }
-.percent.yellow { color: #facc15 !important; border: 1.5px solid #eab308 !important; }
-.percent.orange { color: #fb923c !important; border: 1.5px solid #f97316 !important; }
-.percent.red    { color: #f87171 !important; border: 1.5px solid #ef4444 !important; }
-
-/* BAN SLOTS HEROES */
-.slot-box {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ban-slot {
-  height: 42px;
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-  background: rgba(15, 23, 42, 0.6);
-  border: 2px dashed rgba(var(--ban-color-rgb), 0.4); 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 13px;
-  color: #64748b;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-}
-
-.ban-slot.filled {
-  border: 1px solid rgba(var(--ban-color-rgb), 0.6);
-  background: rgba(var(--ban-color-rgb), 0.15);
-  color: #f8fafc;
-  text-shadow: 0 0 8px rgba(var(--ban-color-rgb), 0.6);
-}
-
-.ban-slot .ban-icon {
-  margin-right: 6px;
-  color: #ef4444;
-  font-weight: 900;
-}
-
-/* SIDEBAR PICK CARDS */
-.pick-card {
-  cursor: pointer;
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-  height: 140px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #121824;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.pick-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255,255,255,0.2);
-}
-
-.pick-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.pick-name {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(11, 15, 25, 0.95) 20%, rgba(11, 15, 25, 0.3), transparent);
-  color: white;
-  font-size: 13px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 4px;
-}
-
-/* INTERACTIVE POST-DRAFT BANS */
-.pick-card.clickable-post-draft:hover {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-  border-color: rgba(239, 68, 68, 0.6);
-}
-
-.pick-card.post-banned {
-  filter: grayscale(0.3) contrast(0.9);
-}
-
-.pick-card.post-banned::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -25%;
-  width: 150%;
-  height: 4px;
-  background: #ef4444;
-  transform: rotate(-25deg);
-  z-index: 11;
-  box-shadow: 0 0 12px #ef4444;
-}
-
-.pick-card.post-banned::before {
-  content: "BANNED";
-  position: absolute;
-  inset: 0;
-  color: #ffffff;
-  background: rgba(239, 68, 68, 0.75);
-  font-weight: 900;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: 2px;
-  z-index: 10;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-
-/* END SCREEN HUB */
-.result-card {
-  background: rgba(18, 24, 36, 0.75);
-  border-radius: 24px;
-  padding: 35px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: center;
-  backdrop-filter: blur(10px);
-}
-
-.vs-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  margin: 30px 0;
-}
-
-.win-chance {
-  font-size: 56px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.4);
-}
-
-.custom-progress {
-  height: 12px;
-  border-radius: 999px;
-  background-color: #1e293b;
-  overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-}
-
-/* PRO TIP WINDOW & RECOMMENDATION */
-.rec-box {
-  background: rgba(15, 23, 42, 0.8);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  text-align: left;
-}
-
-.rec-flex-container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-@media (max-width: 576px) {
-  .rec-flex-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-  }
-}
-
-.rec-text {
-  color: #f1f5f9 !important;
-  font-size: 14.5px;
-  line-height: 1.5;
-}
-
-/* HIGHLY VIBRANT RECOM COLORING */
-.rec-highlight {
-  color: #4ade80 !important;
-  font-weight: 800 !important;
-  text-shadow: 0 0 10px rgba(74, 222, 128, 0.25);
-}
-
-/* GLOWING HERO TARGET IN BAN RECOMMENDATION */
-.rec-images-container {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.rec-hero-card {
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
-  flex-shrink: 0;
-}
-.rec-hero-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ADAPTIVE INFO ADVISORY BANNER */
-.info-advisory-banner {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #38bdf8 !important;
-  background-color: rgba(14, 165, 233, 0.15);
-  border: 1px solid rgba(14, 165, 233, 0.3);
-  padding: 10px 14px;
-  border-radius: 10px;
-  white-space: normal;
-  word-break: break-word;
-  text-align: center;
-}
-
-/* DYNAMIC MODAL BOX */
-.modal-content {
-  background-color: #0f172a !important;
-  border-radius: 24px !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  color: #f8fafc;
-  box-shadow: 0 30px 70px rgba(0,0,0,0.8);
-}
-.modal-header, .modal-footer {
-  border-color: rgba(255,255,255,0.08) !important;
-}
-.modal-body p {
-  color: #f1f5f9 !important;
-}
-.btn-close {
-  filter: invert(1) grayscale(1);
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -509,17 +15,17 @@ h6 {
 <div id="app">
   <div class="container py-4">
 
-    <!-- CONTROL HUB -->
+    <!-- ПАНЕЛЬ КЕРУВАННЯ -->
     <div class="top-wrap">
       <div class="turn-banner" :style="{ background: turnColor, boxShadow: '0 0 20px ' + turnColor + '44' }">
         {{ currentTurnText }}
       </div>
 
       <div class="controls-row">
-        <!-- COMPACT SEARCH -->
+        <!-- КОМПАКТНИЙ ПОШУК -->
         <input v-model="search" class="form-control form-control-sm search-field" :placeholder="t('searchPlaceholder')" />
 
-        <!-- CUSTOM SELECT 1 -->
+        <!-- КАСТОМНИЙ СЕЛЕКТ 1 -->
         <div class="custom-select-wrapper">
           <select :value="firstPicker" @change="onFirstPickerChange($event.target.value)">
             <option value="player">{{ t('userFirst') }}</option>
@@ -527,7 +33,7 @@ h6 {
           </select>
         </div>
 
-        <!-- CUSTOM SELECT 2 -->
+        <!-- КАСТОМНИЙ СЕЛЕКТ 2 -->
         <div class="custom-select-wrapper">
           <select v-model="sortMode">
             <option value="elo">{{ t('sortDraft') }}</option>
@@ -535,7 +41,7 @@ h6 {
           </select>
         </div>
 
-        <!-- UNIFIED LANG SELECTOR -->
+        <!-- СЕЛЕКТ МОВИ -->
         <div class="custom-select-wrapper ms-auto" style="min-width: 90px; max-width: 90px;">
           <select v-model="lang">
             <option value="en">EN</option>
@@ -543,20 +49,20 @@ h6 {
           </select>
         </div>
 
-        <!-- ACTIONS -->
-        <button v-if="current" class="btn btn-primary btn-sm action-btn" @click="undo" :disabled="history.length === 0">
+        <!-- СЛУЖБОВІ КНОПКИ З НОВОЮ ЛОГІКОЮ ВІДОБРАЖЕННЯ -->
+        <button v-if="current && history.length > 0" class="btn btn-primary btn-sm action-btn" @click="undo">
           {{ t('btnUndo') }}
         </button>
-        <button v-else class="btn btn-danger btn-sm action-btn" @click="triggerRestart">
+        <button class="btn btn-danger btn-sm action-btn" @click="triggerRestart">
           {{ t('btnRestart') }}
         </button>
       </div>
     </div>
 
-    <!-- MAIN GRID SECTION -->
+    <!-- ГОЛОВНА СІТКА ДРАФТУ -->
     <div class="row g-4">
 
-      <!-- LEFT SIDE: USER TEAM -->
+      <!-- ЛІВА СТОРОНА: КОМАНДА ГРАВЦЯ -->
       <div class="col-md-3">
         <div class="team-title-banner" :style="{ backgroundColor: player.color, color:'white' }">
           {{ t('teamYou') }}
@@ -594,10 +100,10 @@ h6 {
         </div>
       </div>
 
-      <!-- MIDDLE POOL AREA -->
+      <!-- ЦЕНТРАЛЬНА ЗОНА ПУЛУ / МАТРИЦІ -->
       <div class="col-md-6">
         
-        <!-- SELECTION PHASE -->
+        <!-- СТАДІЯ ВИБОРУ (ДРАФТ) -->
         <div v-if="current" class="row g-3">
           <div v-for="char in filtered" class="col-4">
             <div class="character" @click="pick(char)">
@@ -621,7 +127,7 @@ h6 {
           </div>
         </div>
 
-        <!-- POST DRAFT CORE MATRIX ANALYSIS -->
+        <!-- АНАЛІТИКА ПІСЛЯ ДРАФТУ -->
         <div v-else class="result-card">
           <h4 class="fw-bold mb-1" style="color: #f1f5f9; letter-spacing: 0.5px;">{{ t('engineTitle') }}</h4>
           <p class="mb-2" style="color: #cbd5e1;">{{ t('engineDesc') }}</p>
@@ -647,11 +153,11 @@ h6 {
             <div class="progress-bar" role="progressbar" :style="{ width: finalWinrate.opponent + '%', backgroundColor: opponent.color }"></div>
           </div>
 
-          <!-- PRO TIP WINDOW (INTERACTIVE ACCORDING TO USER FLOW) -->
+          <!-- ПАНЕЛЬ ІНТЕРАКТИВНИХ ПОРАД ПО БАНАХ -->
           <div v-if="banRecommendation" class="rec-box">
             <div class="d-flex align-items-center gap-2 mb-3">
               <span class="badge" :style="getBadgeStyle()">
-                {{ banRecommendation.stage === 'opponent' ? t('recBanBadge') : t('recSelfBanBadge') || 'STRATEGIC SELF-BAN' }}
+                {{ t(banRecommendation.stage === 'opponent' ? 'recBanBadge' : 'recSelfBanBadge').toUpperCase() }}
               </span>
             </div>
             <div class="rec-flex-container">
@@ -660,13 +166,13 @@ h6 {
                   <img :src="img" />
                 </div>
               </div>
-              <p class="mb-0 rec-text" v-html="getRecommendationHTML()"></p>
+              <p class="mb-0 rec-text" v-html="banRecommendation.formattedText"></p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT SIDE: OPPONENT TEAM -->
+      <!-- ПРАВА СТОРОНА: КОМАНДА СУПЕРНИКА -->
       <div class="col-md-3">
         <div class="team-title-banner" :style="{ backgroundColor: opponent.color, color:'white' }">
           {{ t('teamOpponent') }}
@@ -707,7 +213,7 @@ h6 {
     </div>
   </div>
 
-  <!-- CONFIRM ACTION MODAL BOX -->
+  <!-- МОДАЛЬНЕ ВІКНО ПІДТВЕРДЖЕННЯ СКИДАННЯ -->
   <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -741,10 +247,7 @@ h6 {
 import { translations } from './i18n.js';
 import { formats } from './draftFormats.js';
 
-if (translations.en) translations.en.recSelfBanBadge = "STRATEGIC SELF-BAN";
-if (translations.ua) translations.ua.recSelfBanBadge = "СТРАТЕГІЧНИЙ САМО-БАН";
-
-const { createApp, ref, computed, onMounted } = Vue
+const { createApp, ref, computed, onMounted, watch } = Vue
 
 createApp({
   setup() {
@@ -759,6 +262,7 @@ createApp({
 
     const characters = ref([])
     const history = ref([])
+    const step = ref(0)
 
     const MAX_ELO = 1600
     const MIN_ELO = 1300
@@ -768,6 +272,8 @@ createApp({
       opponent: new Set()
     })
 
+    const STORAGE_KEY = 'unmatched_draft_state'
+
     function t(key) {
       return translations[lang.value]?.[key] || key
     }
@@ -776,15 +282,59 @@ createApp({
     const pendingPickerValue = ref("")
     const isRestartAction = ref(false)
 
-    onMounted(() => {
+    // ЗАПИС СТАНУ В LOCALSTORAGE
+    function saveToStorage() {
+      const state = {
+        lang: lang.value,
+        sortMode: sortMode.value,
+        firstPicker: firstPicker.value,
+        step: step.value,
+        playerPicks: player.value.picks,
+        playerBans: player.value.bans,
+        opponentPicks: opponent.value.picks,
+        opponentBans: opponent.value.bans,
+        history: history.value,
+        postBansPlayer: Array.from(postBans.value.player),
+        postBansOpponent: Array.from(postBans.value.opponent)
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    }
+
+    // ВІДНОВЛЕННЯ СТАНУ З LOCALSTORAGE ПІСЛЯ ПЕРЕЗАВАНТАЖЕННЯ
+    function loadFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (!saved) return
+
+      try {
+        const state = JSON.parse(saved)
+        lang.value = state.lang || "en"
+        sortMode.value = state.sortMode || "elo"
+        firstPicker.value = state.firstPicker || "player"
+        step.value = state.step || 0
+        
+        player.value.picks = state.playerPicks || []
+        player.value.bans = state.playerBans || []
+        opponent.value.picks = state.opponentPicks || []
+        opponent.value.bans = state.opponentBans || []
+        history.value = state.history || []
+
+        postBans.value.player = new Set(state.postBansPlayer || [])
+        postBans.value.opponent = new Set(state.postBansOpponent || [])
+      } catch (e) {
+        console.error("Помилка зчитування збереженого стану:", e)
+      }
+    }
+
+    onMounted(async () => {
       bsModalInstance = new bootstrap.Modal(document.getElementById('resetConfirmModal'))
+      await loadChars()
+      loadFromStorage()
     })
 
     const loadChars = async () => {
       const res = await fetch("./characters.json")
       characters.value = await res.json()
     }
-    loadChars()
 
     const takenIds = computed(() => {
       return new Set([
@@ -856,7 +406,6 @@ createApp({
       }))
     })
 
-    const step = ref(0)
     const current = computed(() => sequence.value[step.value] || null)
 
     const currentTurnText = computed(() => {
@@ -879,11 +428,13 @@ createApp({
       step.value = 0
       postBans.value.player.clear()
       postBans.value.opponent.clear()
+      localStorage.removeItem(STORAGE_KEY)
     }
 
     function onFirstPickerChange(newValue) {
       if (step.value === 0) {
         firstPicker.value = newValue
+        saveToStorage()
         return
       }
       isRestartAction.value = false
@@ -898,7 +449,10 @@ createApp({
 
     function confirmReset() {
       resetAll()
-      if (!isRestartAction.value) firstPicker.value = pendingPickerValue.value
+      if (!isRestartAction.value) {
+        firstPicker.value = pendingPickerValue.value
+      }
+      saveToStorage()
       if (bsModalInstance) bsModalInstance.hide()
     }
 
@@ -920,6 +474,7 @@ createApp({
 
       history.value.push({ char, player: current.value.player, type: current.value.type })
       step.value++
+      saveToStorage()
     }
 
     function undo() {
@@ -932,6 +487,7 @@ createApp({
 
       postBans.value.player.clear()
       postBans.value.opponent.clear()
+      saveToStorage()
     }
 
     function togglePostBan(side, id) {
@@ -942,6 +498,7 @@ createApp({
       } else {
         if (set.size < 2) set.add(id)
       }
+      saveToStorage()
     }
 
     function calculateTeamWinrate(playerPicks, opponentPicks) {
@@ -966,18 +523,16 @@ createApp({
       return { player: pWin, opponent: 100 - pWin }
     })
 
-   // ДВУХСТАДИЙНЫЙ СОВЕТНИК С УЧЕТОМ СВОБОДНЫХ БАНОВ
+    // МОДУЛЬ ДВУХСТАДІЙНОГО РЕКОМЕНДАТОРУ БАНІВ З БЕЗПЕЧНИМ ФОРМАТУВАННЯМ
     const banRecommendation = computed(() => {
       if (current.value) return null
       if (!player.value.picks.length || !opponent.value.picks.length) return null
 
       const oppBansCount = postBans.value.opponent.size
       const playerBansCount = postBans.value.player.size
-
-      // Базовый винрейт до пост-банов
       const baseWinrate = calculateTeamWinrate(player.value.picks, opponent.value.picks)
 
-      // ФАЗА 1: Подсказка для ПЕРВОГО бана оппонента (когда у него забанено 0 героев)
+      // ФАЗА 1: Рекомендація бану персонажа суперника
       if (oppBansCount === 0) {
         let maxBenefit = -999
         let candidates = []
@@ -998,35 +553,35 @@ createApp({
         }
 
         if (candidates.length > 0) {
+          const namesStr = candidates.map(c => c.name).join(', ')
+          const benefitVal = Math.max(0, Math.round(maxBenefit))
+          let template = t('recEnemyBanDesc')
+          
+          let formattedText = template
+            .replace('{names}', `<strong class="text-white">${namesStr}</strong>`)
+            .replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`)
+            .replace('{benefit}', `<span class="rec-highlight">${benefitVal}</span>`)
+
           return {
             stage: 'opponent',
-            names: candidates.map(c => c.name),
             images: candidates.map(c => c.image),
-            benefit: maxBenefit > 0 ? maxBenefit : 0,
-            newWinrate: bestWinrate
+            formattedText
           }
         }
       }
 
-      // ФАЗА 2: ПОСЛЕ ТОГО как мы забанили ровно 1 персонажа у себя (playerBansCount === 1)
-      // Система подсказывает, кого из оставшихся наших героев лучше всего убрать ВТОРЫМ
+      // ФАЗА 2: Стратегічний само-бан свого слабкого героя
       if (playerBansCount === 1) {
-        // Текущий винрейт с учетом уже сделанных банов (включая 1 наш бан)
         const currentActiveWinrate = calculateTeamWinrate(activePlayerPicks.value, activeOpponentPicks.value)
-        
         let maxBenefit = -999
         let candidates = []
         let bestWinrate = currentActiveWinrate
 
-        // Перебираем только тех наших героев, которые ЕЩЁ НЕ ЗАБАНЕНЫ
         const remainingPlayerPicks = player.value.picks.filter(c => !postBans.value.player.has(c.id))
 
         for (const myChar of remainingPlayerPicks) {
-          // Симулируем уход еще одного (второго) нашего героя
           const simulatedPlayerPicks = remainingPlayerPicks.filter(c => c.id !== myChar.id)
           const simulatedWinrate = calculateTeamWinrate(simulatedPlayerPicks, activeOpponentPicks.value)
-          
-          // Проверяем, насколько вырастет винрейт оставшихся героев, если убрать этого персонажа
           const benefit = simulatedWinrate - currentActiveWinrate
 
           if (benefit > maxBenefit) {
@@ -1039,37 +594,24 @@ createApp({
         }
 
         if (candidates.length > 0) {
+          const namesStr = candidates.map(c => c.name).join(', ')
+          const benefitVal = Math.max(0, Math.round(maxBenefit))
+          let template = t('recSelfBanDesc')
+          
+          let formattedText = template
+            .replace('{names}', `<strong class="text-white">${namesStr}</strong>`)
+            .replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`)
+            .replace('{benefit}', `<span class="rec-highlight">${benefitVal}</span>`)
+
           return {
             stage: 'player',
-            names: candidates.map(c => c.name),
             images: candidates.map(c => c.image),
-            benefit: maxBenefit > 0 ? maxBenefit : 0,
-            newWinrate: bestWinrate
+            formattedText
           }
         }
       }
-
-      // В любой другой момент времени (когда баним 2-го врага или 2-го себя) плашка отдыхает
       return null
     })
-    
-    function getRecommendationHTML() {
-      if (!banRecommendation.value) return ""
-      const rec = banRecommendation.value
-      const namesStr = rec.names.join(', ')
-      
-      if (rec.stage === 'opponent') {
-        if (lang.value === "ua") {
-          return `Рекомендований перший бан ворога: <strong class="text-white">${namesStr}</strong>.<br>Цей бан збільшить ваш вінрейт до <span class="rec-highlight">${rec.newWinrate}%</span> (<span class="rec-highlight">+${rec.benefit}%</span>).`
-        }
-        return `Recommended first enemy ban: <strong class="text-white">${namesStr}</strong>.<br>Banning them increases your winrate to <span class="rec-highlight">${rec.newWinrate}%</span> (<span class="rec-highlight">+${rec.benefit}%</span>).`
-      } else {
-        if (lang.value === "ua") {
-          return `Рекомендований перший бан СВОГО героя: <strong class="text-white">${namesStr}</strong>.<br>Усунення слабкого звена підніме ваш вінрейт до <span class="rec-highlight">${rec.newWinrate}%</span> (<span class="rec-highlight">+${rec.benefit}%</span>).`
-        }
-        return `Recommended first self-ban: <strong class="text-white">${namesStr}</strong>.<br>Removing this weak link bumps your winrate to <span class="rec-highlight">${rec.newWinrate}%</span> (<span class="rec-highlight">+${rec.benefit}%</span>).`
-      }
-    }
 
     function getBadgeStyle() {
       if (!banRecommendation.value) return {}
@@ -1078,11 +620,16 @@ createApp({
         : { background: 'rgba(79, 124, 255, 0.2)', color: '#60a5fa', border: '1px solid rgba(79,124,255,0.3)' }
     }
 
+    // Слідкуємо за мовою та режимом сортування для миттєвого збереження конфігурації
+    watch([lang, sortMode], () => {
+      saveToStorage()
+    })
+
     return {
       lang, t, search, sortMode, firstPicker, currentFormat, player, opponent, filtered, pick, undo,
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
-      onFirstPickerChange, triggerRestart, confirmReset, cancelReset, getRecommendationHTML, getBadgeStyle
+      onFirstPickerChange, triggerRestart, confirmReset, cancelReset, getBadgeStyle
     }
   }
 }).mount("#app")
