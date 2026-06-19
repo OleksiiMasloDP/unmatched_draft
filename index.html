@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Unmatched Draftsim</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,19 +14,16 @@
 <body>
 
 <div id="app">
-  <div class="container py-4">
+  <div class="container py-3 py-md-4">
 
-    <!-- ПАНЕЛЬ КЕРУВАННЯ -->
-    <div class="top-wrap">
+    <div class="top-wrap" :class="{ 'sticky-active': current }">
       <div class="turn-banner" :style="{ background: turnColor, boxShadow: '0 0 20px ' + turnColor + '44' }">
         {{ currentTurnText }}
       </div>
 
       <div class="controls-row">
-        <!-- КОМПАКТНИЙ ПОШУК -->
         <input v-model="search" class="form-control form-control-sm search-field" :placeholder="t('searchPlaceholder')" />
 
-        <!-- КАСТОМНИЙ СЕЛЕКТ 1 -->
         <div class="custom-select-wrapper">
           <select :value="firstPicker" @change="onFirstPickerChange($event.target.value)">
             <option value="player">{{ t('userFirst') }}</option>
@@ -33,7 +31,6 @@
           </select>
         </div>
 
-        <!-- КАСТОМНИЙ СЕЛЕКТ 2 -->
         <div class="custom-select-wrapper">
           <select v-model="sortMode">
             <option value="elo">{{ t('sortDraft') }}</option>
@@ -41,15 +38,13 @@
           </select>
         </div>
 
-        <!-- СЕЛЕКТ МОВИ -->
-        <div class="custom-select-wrapper ms-auto" style="min-width: 90px; max-width: 90px;">
+        <div class="custom-select-wrapper">
           <select v-model="lang">
             <option value="en">EN</option>
             <option value="ua">UA</option>
           </select>
         </div>
 
-        <!-- СЛУЖБОВІ КНОПКИ З НОВОЮ ЛОГІКОЮ ВІДОБРАЖЕННЯ -->
         <button v-if="current && history.length > 0" class="btn btn-primary btn-sm action-btn" @click="undo">
           {{ t('btnUndo') }}
         </button>
@@ -59,17 +54,56 @@
       </div>
     </div>
 
-    <!-- ГОЛОВНА СІТКА ДРАФТУ -->
-    <div class="row g-4">
+    <div v-if="!current && player.picks.length && opponent.picks.length" class="analytics-outer-wrapper mobile-only-analytics">
+      <div class="result-card">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <h4 class="fw-bold mb-0" style="color: #f1f5f9; letter-spacing: 0.5px; font-size: 16px;">
+            {{ t('engineTitle') }}
+          </h4>
+          <button class="info-trigger-btn" @click="showInfoPopover = !showInfoPopover">
+            [ℹ] Info
+          </button>
+        </div>
+        
+        <p class="engine-sub-desc mb-2" style="color: #cbd5e1; font-size: 12px; opacity: 0.8;">
+          {{ t('engineDesc') }}
+        </p>
 
-      <!-- ЛІВА СТОРОНА: КОМАНДА ГРАВЦЯ -->
-      <div class="col-md-3">
+        <div v-if="showInfoPopover" class="custom-info-popover mb-2">
+          💡 <strong>Info:</strong> Click picked champions on sides to simulate fast bans (Limit: 2 per side)
+        </div>
+
+        <div v-if="banRecommendation" class="rec-box">
+          <div class="rec-flex-container">
+            <div class="rec-images-container">
+              <div v-for="img in banRecommendation.images" class="rec-hero-card" :style="{ borderColor: banRecommendation.stage === 'opponent' ? '#ef4444' : '#4f7cff' }">
+                <img :src="img" />
+              </div>
+            </div>
+            <p class="rec-text" v-html="banRecommendation.formattedText"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dynamic-bars-container">
+        <div class="team-bar" :style="{ width: finalWinrate.player + '%', backgroundColor: player.color }">
+          {{ t('teamYou') }}: {{ finalWinrate.player }}%
+        </div>
+        <div class="team-bar" :style="{ width: finalWinrate.opponent + '%', backgroundColor: opponent.color }">
+          {{ t('teamOpponent') }}: {{ finalWinrate.opponent }}%
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 g-md-4 main-draft-row">
+
+      <div class="col-lg-3 order-player">
         <div class="team-title-banner" :style="{ backgroundColor: player.color, color:'white' }">
           {{ t('teamYou') }}
         </div>
 
         <h6>{{ t('bannedSlots') }}</h6>
-        <div class="slot-box mb-4">
+        <div class="slot-box mb-3 mb-md-4">
           <div v-for="i in 3" 
                class="ban-slot" 
                :class="{ 'filled': player.bans[i-1] }"
@@ -87,7 +121,7 @@
                @click="togglePostBan('player', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
-              <div style="font-weight:800; font-size: 14px;">{{ char.name }}</div>
+              <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
               <div class="mu-list">
                 <div v-for="enemy in opponent.picks">
                   <div v-if="char.matchups?.[enemy.name]">
@@ -100,19 +134,15 @@
         </div>
       </div>
 
-      <!-- ЦЕНТРАЛЬНА ЗОНА ПУЛУ / МАТРИЦІ -->
-      <div class="col-md-6">
+      <div class="col-lg-6 order-pool">
         
-        <!-- СТАДІЯ ВИБОРУ (ДРАФТ) -->
-        <div v-if="current" class="row g-3">
-          <div v-for="char in filtered" class="col-4">
+        <div v-if="current" class="row g-2 g-md-3">
+          <div v-for="char in filtered" class="col-6 col-sm-4">
             <div class="character" @click="pick(char)">
               <img :src="char.image" />
-
               <div class="percent" :class="getPercentClass(getPickPercent(char))">
                 {{ getPickPercent(char) }}%
               </div>
-
               <div class="char-name">
                 <div class="char-title">{{ char.name }}</div>
                 <div class="mu-list">
@@ -127,59 +157,56 @@
           </div>
         </div>
 
-        <!-- АНАЛІТИКА ПІСЛЯ ДРАФТУ -->
-        <div v-else class="result-card">
-          <h4 class="fw-bold mb-1" style="color: #f1f5f9; letter-spacing: 0.5px;">{{ t('engineTitle') }}</h4>
-          <p class="mb-2" style="color: #cbd5e1;">{{ t('engineDesc') }}</p>
-          
-          <div class="info-advisory-banner mb-4">
-            💡 {{ t('infoBanner') }}
-          </div>
-
-          <div class="vs-line">
-            <div>
-              <div class="fw-bold mb-1" :style="{ color: player.color, fontSize: '15px' }">{{ t('teamYou') }}</div>
-              <div class="win-chance" :style="{ color: player.color }">{{ finalWinrate.player }}%</div>
+        <div v-else class="desktop-only-analytics">
+          <div class="result-card">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <h4 class="fw-bold mb-0" style="color: #f1f5f9; letter-spacing: 0.5px; font-size: 18px;">
+                {{ t('engineTitle') }}
+              </h4>
+              <button class="info-trigger-btn" @click="showInfoPopover = !showInfoPopover">
+                [ℹ] Info
+              </button>
             </div>
-            <div class="fw-bold mx-2" style="font-size: 20px; letter-spacing: 2px; color: #f1f5f9;">VS</div>
-            <div>
-              <div class="fw-bold mb-1" :style="{ color: opponent.color, fontSize: '15px' }">{{ t('teamOpponent') }}</div>
-              <div class="win-chance" :style="{ color: opponent.color }">{{ finalWinrate.opponent }}%</div>
-            </div>
-          </div>
+            
+            <p class="engine-sub-desc mb-3" style="color: #cbd5e1; font-size: 13px; opacity: 0.8;">
+              {{ t('engineDesc') }}
+            </p>
 
-          <div class="progress custom-progress mb-4">
-            <div class="progress-bar" role="progressbar" :style="{ width: finalWinrate.player + '%', backgroundColor: player.color }"></div>
-            <div class="progress-bar" role="progressbar" :style="{ width: finalWinrate.opponent + '%', backgroundColor: opponent.color }"></div>
-          </div>
-
-          <!-- ПАНЕЛЬ ІНТЕРАКТИВНИХ ПОРАД ПО БАНАХ -->
-          <div v-if="banRecommendation" class="rec-box">
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <span class="badge" :style="getBadgeStyle()">
-                {{ t(banRecommendation.stage === 'opponent' ? 'recBanBadge' : 'recSelfBanBadge').toUpperCase() }}
-              </span>
+            <div v-if="showInfoPopover" class="custom-info-popover mb-3">
+              💡 <strong>Info:</strong> Click picked champions on sides to simulate fast bans (Limit: 2 per side)
             </div>
-            <div class="rec-flex-container">
-              <div class="rec-images-container">
-                <div v-for="img in banRecommendation.images" class="rec-hero-card" :style="{ borderColor: banRecommendation.stage === 'opponent' ? '#ef4444' : '#4f7cff' }">
-                  <img :src="img" />
+
+            <div v-if="banRecommendation" class="rec-box">
+              <div class="rec-flex-container">
+                <div class="rec-images-container">
+                  <div v-for="img in banRecommendation.images" class="rec-hero-card" :style="{ borderColor: banRecommendation.stage === 'opponent' ? '#ef4444' : '#4f7cff' }">
+                    <img :src="img" />
+                  </div>
                 </div>
+                <p class="rec-text" v-html="banRecommendation.formattedText"></p>
               </div>
-              <p class="mb-0 rec-text" v-html="banRecommendation.formattedText"></p>
+            </div>
+          </div>
+
+          <div class="dynamic-bars-container">
+            <div class="team-bar" :style="{ width: finalWinrate.player + '%', backgroundColor: player.color }">
+              {{ t('teamYou') }}: {{ finalWinrate.player }}%
+            </div>
+            <div class="team-bar" :style="{ width: finalWinrate.opponent + '%', backgroundColor: opponent.color }">
+              {{ t('teamOpponent') }}: {{ finalWinrate.opponent }}%
             </div>
           </div>
         </div>
+
       </div>
 
-      <!-- ПРАВА СТОРОНА: КОМАНДА СУПЕРНИКА -->
-      <div class="col-md-3">
+      <div class="col-lg-3 order-opponent">
         <div class="team-title-banner" :style="{ backgroundColor: opponent.color, color:'white' }">
           {{ t('teamOpponent') }}
         </div>
 
         <h6>{{ t('bannedSlots') }}</h6>
-        <div class="slot-box mb-4">
+        <div class="slot-box mb-3 mb-md-4">
           <div v-for="i in 3" 
                class="ban-slot" 
                :class="{ 'filled': opponent.bans[i-1] }"
@@ -197,7 +224,7 @@
                @click="togglePostBan('opponent', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
-              <div style="font-weight:800; font-size: 14px;">{{ char.name }}</div>
+              <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
               <div class="mu-list">
                 <div v-for="enemy in player.picks">
                   <div v-if="char.matchups?.[enemy.name]">
@@ -213,7 +240,6 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНЕ ВІКНО ПІДТВЕРДЖЕННЯ СКИДАННЯ -->
   <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -222,15 +248,15 @@
           <button type="button" class="btn-close" @click="cancelReset" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-0" style="font-size: 14.5px; line-height: 1.5;">
+          <p class="mb-0" style="font-size: 14px; line-height: 1.5;">
             {{ t('modalDesc') }}
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-dark fw-semibold" style="border-radius: 10px; background: #1e293b; border: none; color: #94a3b8;" @click="cancelReset">
+          <button type="button" class="btn btn-dark fw-semibold" style="border-radius: 10px; background: #1e293b; border: none; color: #94a3b8; font-size: 13.5px;" @click="cancelReset">
             {{ t('modalCancel') }}
           </button>
-          <button type="button" class="btn btn-danger fw-bold" style="border-radius: 10px; padding-left: 20px; padding-right: 20px; background: #ef4444; border: none;" @click="confirmReset">
+          <button type="button" class="btn btn-danger fw-bold" style="border-radius: 10px; padding-left: 18px; padding-right: 18px; background: #ef4444; border: none; font-size: 13.5px;" @click="confirmReset">
             {{ t('modalConfirm') }}
           </button>
         </div>
@@ -256,6 +282,8 @@ createApp({
     const sortMode = ref("elo")
     const firstPicker = ref("player")
     const currentFormat = ref("standard")
+    
+    const showInfoPopover = ref(false)
 
     const player = ref({ color:"#4f7cff", bans:[], picks:[] })
     const opponent = ref({ color:"#ff4f6d", bans:[], picks:[] })
@@ -282,7 +310,6 @@ createApp({
     const pendingPickerValue = ref("")
     const isRestartAction = ref(false)
 
-    // ЗАПИС СТАНУ В LOCALSTORAGE
     function saveToStorage() {
       const state = {
         lang: lang.value,
@@ -300,7 +327,6 @@ createApp({
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     }
 
-    // ВІДНОВЛЕННЯ СТАНУ З LOCALSTORAGE ПІСЛЯ ПЕРЕЗАВАНТАЖЕННЯ
     function loadFromStorage() {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (!saved) return
@@ -321,7 +347,7 @@ createApp({
         postBans.value.player = new Set(state.postBansPlayer || [])
         postBans.value.opponent = new Set(state.postBansOpponent || [])
       } catch (e) {
-        console.error("Помилка зчитування збереженого стану:", e)
+        console.error("Error reading storage config:", e)
       }
     }
 
@@ -347,34 +373,25 @@ createApp({
 
     const filtered = computed(() => {
       let arr = characters.value.filter(c => !takenIds.value.has(c.id))
-
       if (search.value) {
-        arr = arr.filter(c =>
-          c.name.toLowerCase().includes(search.value.toLowerCase())
-        )
+        arr = arr.filter(c => c.name.toLowerCase().includes(search.value.toLowerCase()))
       }
-
       if (sortMode.value === "name") return arr.sort((a,b)=>a.name.localeCompare(b.name))
-
       return arr.sort((a,b)=>getPickPercent(b) - getPickPercent(a))
     })
 
     function getPickPercent(char) {
       const clamped = Math.max(MIN_ELO, Math.min(MAX_ELO, char.elo))
       const base = ((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100
-
       const enemies = opponent.value.picks
       if (!enemies.length) return Math.round(base)
-
       let total = 0, count = 0
-
       for (const e of enemies) {
         const mu = char.matchups?.[e.name]
         if (!mu) continue
         total += (mu.winrate - 50)
         count++
       }
-
       const avg = count ? total / count : 0
       return Math.max(0, Math.min(100, Math.round(base + avg * 1.5)))
     }
@@ -389,7 +406,6 @@ createApp({
     function getMatchupText(char, enemy) {
       const mu = char.matchups?.[enemy.name]
       if (!mu) return ""
-
       const diff = mu.winrate - 50
       if (diff > 0) return `vs ${enemy.name}: ${mu.winrate}% (+${diff})`
       if (diff < 0) return `vs ${enemy.name}: ${mu.winrate}% (${diff})`
@@ -399,7 +415,6 @@ createApp({
     const sequence = computed(() => {
       const isPlayerFirst = firstPicker.value === "player"
       const pattern = formats[currentFormat.value] || []
-      
       return pattern.map(step => ({
         type: step.type,
         player: isPlayerFirst ? (step.p1 ? "player" : "opponent") : (step.p1 ? "opponent" : "player")
@@ -428,6 +443,7 @@ createApp({
       step.value = 0
       postBans.value.player.clear()
       postBans.value.opponent.clear()
+      showInfoPopover.value = false
       localStorage.removeItem(STORAGE_KEY)
     }
 
@@ -467,11 +483,9 @@ createApp({
 
     function pick(char) {
       if (!current.value) return
-
       const target = current.value.player === "player" ? player.value : opponent.value
       if (current.value.type === "ban") target.bans.push(char)
       else target.picks.push(char)
-
       history.value.push({ char, player: current.value.player, type: current.value.type })
       step.value++
       saveToStorage()
@@ -484,7 +498,6 @@ createApp({
       const target = last.player === "player" ? player.value : opponent.value
       const arr = last.type === "ban" ? target.bans : target.picks
       arr.pop()
-
       postBans.value.player.clear()
       postBans.value.opponent.clear()
       saveToStorage()
@@ -523,7 +536,6 @@ createApp({
       return { player: pWin, opponent: 100 - pWin }
     })
 
-    // МОДУЛЬ ДВУХСТАДІЙНОГО РЕКОМЕНДАТОРУ БАНІВ З БЕЗПЕЧНИМ ФОРМАТУВАННЯМ
     const banRecommendation = computed(() => {
       if (current.value) return null
       if (!player.value.picks.length || !opponent.value.picks.length) return null
@@ -532,7 +544,6 @@ createApp({
       const playerBansCount = postBans.value.player.size
       const baseWinrate = calculateTeamWinrate(player.value.picks, opponent.value.picks)
 
-      // ФАЗА 1: Рекомендація бану персонажа суперника
       if (oppBansCount === 0) {
         let maxBenefit = -999
         let candidates = []
@@ -570,7 +581,6 @@ createApp({
         }
       }
 
-      // ФАЗА 2: Стратегічний само-бан свого слабкого героя
       if (playerBansCount === 1) {
         const currentActiveWinrate = calculateTeamWinrate(activePlayerPicks.value, activeOpponentPicks.value)
         let maxBenefit = -999
@@ -613,14 +623,6 @@ createApp({
       return null
     })
 
-    function getBadgeStyle() {
-      if (!banRecommendation.value) return {}
-      return banRecommendation.value.stage === 'opponent' 
-        ? { background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' }
-        : { background: 'rgba(79, 124, 255, 0.2)', color: '#60a5fa', border: '1px solid rgba(79,124,255,0.3)' }
-    }
-
-    // Слідкуємо за мовою та режимом сортування для миттєвого збереження конфігурації
     watch([lang, sortMode], () => {
       saveToStorage()
     })
@@ -629,7 +631,7 @@ createApp({
       lang, t, search, sortMode, firstPicker, currentFormat, player, opponent, filtered, pick, undo,
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
-      onFirstPickerChange, triggerRestart, confirmReset, cancelReset, getBadgeStyle
+      onFirstPickerChange, triggerRestart, confirmReset, cancelReset, showInfoPopover
     }
   }
 }).mount("#app")
