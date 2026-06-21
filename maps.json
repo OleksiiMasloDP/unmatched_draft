@@ -1,0 +1,205 @@
+[
+  {
+    "id": 1,
+    "name": "McMinnville OR",
+    "set": "Adventures: Tales to Amaze",
+    "image": "maps/mcMinnville.webp",
+    "pickPercent": 42
+  },
+  {
+    "id": 2,
+    "name": "Point Pleasant",
+    "set": "Adventures: Tales to Amaze",
+    "image": "maps/point_pleasant.webp",
+    "pickPercent": 42
+  },
+  {
+    "id": 3,
+    "name": "Baskerville Manor",
+    "set": "Cobble & Fog",
+    "image": "maps/baskerville_manor.webp",
+    "pickPercent": 32
+  },
+  {
+    "id": 4,
+    "name": "Fayrlund Forest",
+    "set": "The Witcher - Steel & Silver",
+    "image": "maps/fayrlund_forest.webp",
+    "pickPercent": 30
+  },
+  {
+    "id": 5,
+    "name": "Globe Theatre",
+    "set": "Slings and Arrows",
+    "image": "maps/globe_theatre.webp",
+    "pickPercent": 32
+  },
+  {
+    "id": 6,
+    "name": "Hanging Gardens",
+    "set": "Battle of Legends, Volume Two",
+    "image": "maps/hanging_gardens.webp",
+    "pickPercent": 33
+  },
+  {
+    "id": 7,
+    "name": "Helicarrier",
+    "set": "For King and Country",
+    "image": "maps/helicarrier.webp",
+    "pickPercent": 29
+  },
+  {
+    "id": 8,
+    "name": "Hell's Kitchen",
+    "set": "Hell's Kitchen",
+    "image": "maps/hells_kitchen.webp",
+    "pickPercent": 30
+  },
+  {
+    "id": 9,
+    "name": "Kaer Morhen",
+    "set": "The Witcher - Steel & Silver",
+    "image": "maps/kaer_morhen.webp",
+    "pickPercent": 32
+  },
+  {
+    "id": 10,
+    "name": "Marmoreal",
+    "set": "Battle of Legends, Volume One",
+    "image": "maps/marmoreal.webp",
+    "pickPercent": 31
+  },
+  {
+    "id": 11,
+    "name": "Naglfar",
+    "set": "The Witcher - Realms Fall",
+    "image": "maps/naglfar.webp",
+    "pickPercent": 28
+  },
+  {
+    "id": 12,
+    "name": "Navy Pier",
+    "set": "Teen Spirit",
+    "image": "maps/navy_pier.webp",
+    "pickPercent": 30
+  },
+  {
+    "id": 13,
+    "name": "Sanctum Sanctorum",
+    "set": "Brains and Brawn",
+    "image": "maps/sanctum_sanctorum.webp",
+    "pickPercent": 29
+  },
+  {
+    "id": 14,
+    "name": "Santa's Workshop",
+    "set": "Battle of Legends, Volume Three",
+    "image": "maps/santas_workshop.webp",
+    "pickPercent": 34
+  },
+  {
+    "id": 15,
+    "name": "Sarpedon",
+    "set": "Battle of Legends, Volume One",
+    "image": "maps/sarpedon.webp",
+    "pickPercent": 38
+  },
+  {
+    "id": 16,
+    "name": "Soho",
+    "set": "Cobble & Fog",
+    "image": "maps/soho.webp",
+    "pickPercent": 29
+  },
+  {
+    "id": 17,
+    "name": "Streets of Novigrad",
+    "set": "The Witcher - Realms Fall",
+    "image": "maps/streets_of_novigrad.webp",
+    "pickPercent": 34
+  },
+  {
+    "id": 18,
+    "name": "Sunnydale High",
+    "set": "Buffy the Vampire Slayer",
+    "image": "maps/sunnydale_high.webp",
+    "pickPercent": 31
+  },
+  {
+    "id": 19,
+    "name": "The Bronze",
+    "set": "Buffy the Vampire Slayer",
+    "image": "maps/the_bronze.webp",
+    "pickPercent": 35
+  },
+  {
+    "id": 20,
+    "name": "The Raft",
+    "set": "Redemption Row",
+    "image": "maps/the_raft.webp",
+    "pickPercent": 31
+  },
+  {
+    "id": 21,
+    "name": "Venice",
+    "set": "Battle of Legends, Volume Three",
+    "image": "maps/venice.webp",
+    "pickPercent": 33
+  },
+  {
+    "id": 22,
+    "name": "Azuchi Castle",
+    "set": "Sun's Origin",
+    "image": "maps/azuchi_castle.webp",
+    "pickPercent": 31
+  },
+  {
+    "id": 23,
+    "name": "Heorot",
+    "set": "Little Red Riding Hood vs. Beowulf",
+    "image": "maps/heorot.webp",
+    "pickPercent": 30
+  },
+  {
+    "id": 24,
+    "name": "King Solomon's Mine",
+    "set": "Houdini vs. The Genie",
+    "image": "maps/king_solomons_mine.webp",
+    "pickPercent": 29
+  },
+  {
+    "id": 25,
+    "name": "Raptor Paddock",
+    "set": "Jurassic Park - Ingen vs. Raptors",
+    "image": "maps/raptor_paddock.webp",
+    "pickPercent": 28
+  },
+  {
+    "id": 26,
+    "name": "Sherwood Forest",
+    "set": "Robin Hood vs Bigfoot",
+    "image": "maps/sherwood_forest.webp",
+    "pickPercent": 30
+  },
+  {
+    "id": 27,
+    "name": "T. Rex Paddock",
+    "set": "Jurassic Park - Sattler vs. T-Rex",
+    "image": "maps/trex_paddock.webp",
+    "pickPercent": 26
+  },
+  {
+    "id": 28,
+    "name": "Yukon",
+    "set": "Robin Hood vs Bigfoot",
+    "image": "maps/yukon.webp",
+    "pickPercent": 31
+  },
+  {
+    "id": 29,
+    "name": "Yukon 1900",
+    "set": "N/A",
+    "image": "maps/yukon_1900.webp",
+    "pickPercent": 30
+  }
+]
