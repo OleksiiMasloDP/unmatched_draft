@@ -1,23 +1,23 @@
 [
   {
     "id": 1,
-    "name": "Sherlock Holmes",
-    "elo": 1480,
-    "image": "images/sherlock.webp",
+    "name": "Sinbad",
+    "elo": 1450,
+    "image": "images/sindbad.webp",
     "matchups": {
-      "Medusa": { "winrate": 48, "eloVs": 1420 },
-      "Sinbad": { "winrate": 52, "eloVs": 1500 },
-      "Alice": { "winrate": 55, "eloVs": 1450 },
-      "King Arthur": { "winrate": 50, "eloVs": 1490 },
-      "Robin Hood": { "winrate": 53, "eloVs": 1470 },
-      "Dracula": { "winrate": 51, "eloVs": 1500 },
-      "Bruce Lee": { "winrate": 49, "eloVs": 1510 },
-      "Deadpool": { "winrate": 52, "eloVs": 1480 },
-      "Yennenga": { "winrate": 50, "eloVs": 1460 },
-      "Achilles": { "winrate": 47, "eloVs": 1520 },
-      "Bloody Mary": { "winrate": 54, "eloVs": 1470 },
-      "Bigfoot": { "winrate": 56, "eloVs": 1460 },
-      "Invisible Man": { "winrate": 53, "eloVs": 1490 }
+      "Sherlock Holmes": { "winrate": 48, "eloVs": 1480 },
+      "Medusa": { "winrate": 43, "eloVs": 1420 },
+      "Alice": { "winrate": 52, "eloVs": 1470 },
+      "King Arthur": { "winrate": 56, "eloVs": 1500 },
+      "Robin Hood": { "winrate": 50, "eloVs": 1460 },
+      "Dracula": { "winrate": 54, "eloVs": 1510 },
+      "Bruce Lee": { "winrate": 49, "eloVs": 1530 },
+      "Deadpool": { "winrate": 51, "eloVs": 1480 },
+      "Yennenga": { "winrate": 53, "eloVs": 1460 },
+      "Achilles": { "winrate": 50, "eloVs": 1500 },
+      "Bloody Mary": { "winrate": 55, "eloVs": 1470 },
+      "Bigfoot": { "winrate": 52, "eloVs": 1450 },
+      "Invisible Man": { "winrate": 54, "eloVs": 1480 }
     }
   },
   {
@@ -43,27 +43,6 @@
   },
   {
     "id": 3,
-    "name": "Sinbad",
-    "elo": 1450,
-    "image": "images/sindbad.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 48, "eloVs": 1480 },
-      "Medusa": { "winrate": 43, "eloVs": 1420 },
-      "Alice": { "winrate": 52, "eloVs": 1470 },
-      "King Arthur": { "winrate": 56, "eloVs": 1500 },
-      "Robin Hood": { "winrate": 50, "eloVs": 1460 },
-      "Dracula": { "winrate": 54, "eloVs": 1510 },
-      "Bruce Lee": { "winrate": 49, "eloVs": 1530 },
-      "Deadpool": { "winrate": 51, "eloVs": 1480 },
-      "Yennenga": { "winrate": 53, "eloVs": 1460 },
-      "Achilles": { "winrate": 50, "eloVs": 1500 },
-      "Bloody Mary": { "winrate": 55, "eloVs": 1470 },
-      "Bigfoot": { "winrate": 52, "eloVs": 1450 },
-      "Invisible Man": { "winrate": 54, "eloVs": 1480 }
-    }
-  },
-  {
-    "id": 4,
     "name": "Alice",
     "elo": 1420,
     "image": "images/alice.webp",
@@ -84,7 +63,7 @@
     }
   },
   {
-    "id": 5,
+    "id": 4,
     "name": "King Arthur",
     "elo": 1500,
     "image": "images/arthur.webp",
@@ -105,7 +84,7 @@
     }
   },
   {
-    "id": 6,
+    "id": 5,
     "name": "Robin Hood",
     "elo": 1460,
     "image": "images/robin_hood.webp",
@@ -126,133 +105,7 @@
     }
   },
   {
-    "id": 7,
-    "name": "Dracula",
-    "elo": 1530,
-    "image": "images/dracula.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 49, "eloVs": 1500 },
-      "Medusa": { "winrate": 45, "eloVs": 1490 },
-      "Sinbad": { "winrate": 46, "eloVs": 1480 },
-      "Alice": { "winrate": 50, "eloVs": 1480 },
-      "King Arthur": { "winrate": 48, "eloVs": 1490 },
-      "Robin Hood": { "winrate": 44, "eloVs": 1470 },
-      "Bruce Lee": { "winrate": 43, "eloVs": 1510 },
-      "Deadpool": { "winrate": 53, "eloVs": 1520 },
-      "Yennenga": { "winrate": 51, "eloVs": 1500 },
-      "Achilles": { "winrate": 54, "eloVs": 1530 },
-      "Bloody Mary": { "winrate": 56, "eloVs": 1510 },
-      "Bigfoot": { "winrate": 55, "eloVs": 1500 },
-      "Invisible Man": { "winrate": 57, "eloVs": 1520 }
-    }
-  },
-  {
-    "id": 8,
-    "name": "Bruce Lee",
-    "elo": 1550,
-    "image": "images/bruce_lee.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 46, "eloVs": 1510 },
-      "Medusa": { "winrate": 42, "eloVs": 1490 },
-      "Sinbad": { "winrate": 51, "eloVs": 1530 },
-      "Alice": { "winrate": 47, "eloVs": 1500 },
-      "King Arthur": { "winrate": 46, "eloVs": 1510 },
-      "Robin Hood": { "winrate": 41, "eloVs": 1500 },
-      "Dracula": { "winrate": 43, "eloVs": 1520 },
-      "Deadpool": { "winrate": 50, "eloVs": 1540 },
-      "Yennenga": { "winrate": 52, "eloVs": 1530 },
-      "Achilles": { "winrate": 55, "eloVs": 1560 },
-      "Bloody Mary": { "winrate": 54, "eloVs": 1540 },
-      "Bigfoot": { "winrate": 53, "eloVs": 1520 },
-      "Invisible Man": { "winrate": 51, "eloVs": 1530 }
-    }
-  },
-  {
-    "id": 9,
-    "name": "Deadpool",
-    "elo": 1490,
-    "image": "images/deadpool.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 51, "eloVs": 1480 },
-      "Medusa": { "winrate": 50, "eloVs": 1510 },
-      "Sinbad": { "winrate": 52, "eloVs": 1480 },
-      "Alice": { "winrate": 54, "eloVs": 1450 },
-      "King Arthur": { "winrate": 49, "eloVs": 1470 },
-      "Robin Hood": { "winrate": 50, "eloVs": 1460 },
-      "Dracula": { "winrate": 47, "eloVs": 1480 },
-      "Bruce Lee": { "winrate": 50, "eloVs": 1500 },
-      "Yennenga": { "winrate": 53, "eloVs": 1490 },
-      "Achilles": { "winrate": 55, "eloVs": 1500 },
-      "Bloody Mary": { "winrate": 56, "eloVs": 1480 },
-      "Bigfoot": { "winrate": 54, "eloVs": 1470 },
-      "Invisible Man": { "winrate": 52, "eloVs": 1490 }
-    }
-  },
-  {
-    "id": 10,
-    "name": "Yennenga",
-    "elo": 1440,
-    "image": "images/yennenga.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 48, "eloVs": 1460 },
-      "Medusa": { "winrate": 46, "eloVs": 1490 },
-      "Sinbad": { "winrate": 50, "eloVs": 1460 },
-      "Alice": { "winrate": 51, "eloVs": 1450 },
-      "King Arthur": { "winrate": 52, "eloVs": 1490 },
-      "Robin Hood": { "winrate": 48, "eloVs": 1470 },
-      "Dracula": { "winrate": 47, "eloVs": 1480 },
-      "Bruce Lee": { "winrate": 45, "eloVs": 1500 },
-      "Deadpool": { "winrate": 47, "eloVs": 1460 },
-      "Achilles": { "winrate": 50, "eloVs": 1480 },
-      "Bloody Mary": { "winrate": 49, "eloVs": 1450 },
-      "Bigfoot": { "winrate": 51, "eloVs": 1440 },
-      "Invisible Man": { "winrate": 53, "eloVs": 1460 }
-    }
-  },
-  {
-    "id": 11,
-    "name": "Achilles",
-    "elo": 1510,
-    "image": "images/achilles.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 52, "eloVs": 1520 },
-      "Medusa": { "winrate": 53, "eloVs": 1530 },
-      "Sinbad": { "winrate": 49, "eloVs": 1500 },
-      "Alice": { "winrate": 47, "eloVs": 1480 },
-      "King Arthur": { "winrate": 51, "eloVs": 1490 },
-      "Robin Hood": { "winrate": 54, "eloVs": 1480 },
-      "Dracula": { "winrate": 46, "eloVs": 1490 },
-      "Bruce Lee": { "winrate": 45, "eloVs": 1500 },
-      "Deadpool": { "winrate": 45, "eloVs": 1480 },
-      "Yennenga": { "winrate": 50, "eloVs": 1490 },
-      "Bloody Mary": { "winrate": 52, "eloVs": 1510 },
-      "Bigfoot": { "winrate": 53, "eloVs": 1500 },
-      "Invisible Man": { "winrate": 54, "eloVs": 1520 }
-    }
-  },
-  {
-    "id": 12,
-    "name": "Bloody Mary",
-    "elo": 1470,
-    "image": "images/bloody_mary.webp",
-    "matchups": {
-      "Sherlock Holmes": { "winrate": 49, "eloVs": 1470 },
-      "Medusa": { "winrate": 47, "eloVs": 1460 },
-      "Sinbad": { "winrate": 45, "eloVs": 1450 },
-      "Alice": { "winrate": 52, "eloVs": 1430 },
-      "King Arthur": { "winrate": 50, "eloVs": 1460 },
-      "Robin Hood": { "winrate": 45, "eloVs": 1440 },
-      "Dracula": { "winrate": 44, "eloVs": 1450 },
-      "Bruce Lee": { "winrate": 46, "eloVs": 1460 },
-      "Deadpool": { "winrate": 44, "eloVs": 1460 },
-      "Yennenga": { "winrate": 51, "eloVs": 1450 },
-      "Achilles": { "winrate": 48, "eloVs": 1460 },
-      "Bigfoot": { "winrate": 52, "eloVs": 1470 },
-      "Invisible Man": { "winrate": 50, "eloVs": 1460 }
-    }
-  },
-  {
-    "id": 13,
+    "id": 6,
     "name": "Bigfoot",
     "elo": 1430,
     "image": "images/bigfoot.webp",
@@ -273,7 +126,75 @@
     }
   },
   {
-    "id": 14,
+    "id": 7,
+    "name": "Bruce Lee",
+    "elo": 1550,
+    "image": "images/bruce_lee.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 46, "eloVs": 1510 },
+      "Medusa": { "winrate": 42, "eloVs": 1490 },
+      "Sinbad": { "winrate": 51, "eloVs": 1530 },
+      "Alice": { "winrate": 47, "eloVs": 1500 },
+      "King Arthur": { "winrate": 46, "eloVs": 1510 },
+      "Robin Hood": { "winrate": 41, "eloVs": 1500 },
+      "Dracula": { "winrate": 43, "eloVs": 1520 },
+      "Deadpool": { "winrate": 50, "eloVs": 1540 },
+      "Yennenga": { "winrate": 52, "eloVs": 1530 },
+      "Achilles": { "winrate": 55, "eloVs": 1560 },
+      "Bloody Mary": { "winrate": 54, "eloVs": 1540 },
+      "Bigfoot": { "winrate": 53, "eloVs": 1520 },
+      "Invisible Man": { "winrate": 51, "eloVs": 1530 }
+    }
+  },
+  {
+    "id": 8,
+    "name": "InGen",
+    "elo": 1480,
+    "image": "images/ingen.webp",
+    "matchups": {
+      "Bullseye": { "winrate": 48, "eloVs": 1520 },
+      "Achilles": { "winrate": 42, "eloVs": 1550 },
+      "Ms. Marvel": { "winrate": 49, "eloVs": 1490 },
+      "Invisible Man": { "winrate": 52, "eloVs": 1485 }
+    }
+  },
+  {
+    "id": 9,
+    "name": "Raptors",
+    "elo": 1450,
+    "image": "images/raptors.webp",
+    "matchups": {}
+  },
+  {
+    "id": 10,
+    "name": "Sherlock Holmes",
+    "elo": 1480,
+    "image": "images/sherlock.webp",
+    "matchups": {
+      "Medusa": { "winrate": 48, "eloVs": 1420 },
+      "Sinbad": { "winrate": 52, "eloVs": 1500 },
+      "Alice": { "winrate": 55, "eloVs": 1450 },
+      "King Arthur": { "winrate": 50, "eloVs": 1490 },
+      "Robin Hood": { "winrate": 53, "eloVs": 1470 },
+      "Dracula": { "winrate": 51, "eloVs": 1500 },
+      "Bruce Lee": { "winrate": 49, "eloVs": 1510 },
+      "Deadpool": { "winrate": 52, "eloVs": 1480 },
+      "Yennenga": { "winrate": 50, "eloVs": 1460 },
+      "Achilles": { "winrate": 47, "eloVs": 1520 },
+      "Bloody Mary": { "winrate": 54, "eloVs": 1470 },
+      "Bigfoot": { "winrate": 56, "eloVs": 1460 },
+      "Invisible Man": { "winrate": 53, "eloVs": 1490 }
+    }
+  },
+  {
+    "id": 11,
+    "name": "Dr. Jekyll & Mr. Hyde",
+    "elo": 1450,
+    "image": "images/jekyll_hyde.webp",
+    "matchups": {}
+  },
+  {
+    "id": 12,
     "name": "Invisible Man",
     "elo": 1485,
     "image": "images/invisible_man.webp",
@@ -292,5 +213,523 @@
       "Bloody Mary": { "winrate": 50, "eloVs": 1460 },
       "Bigfoot": { "winrate": 47, "eloVs": 1450 }
     }
+  },
+  {
+    "id": 13,
+    "name": "Dracula",
+    "elo": 1530,
+    "image": "images/dracula.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 49, "eloVs": 1500 },
+      "Medusa": { "winrate": 45, "eloVs": 1490 },
+      "Sinbad": { "winrate": 46, "eloVs": 1480 },
+      "Alice": { "winrate": 50, "eloVs": 1480 },
+      "King Arthur": { "winrate": 48, "eloVs": 1490 },
+      "Robin Hood": { "winrate": 44, "eloVs": 1470 },
+      "Bruce Lee": { "winrate": 43, "eloVs": 1510 },
+      "Deadpool": { "winrate": 53, "eloVs": 1520 },
+      "Yennenga": { "winrate": 51, "eloVs": 1500 },
+      "Achilles": { "winrate": 54, "eloVs": 1530 },
+      "Bloody Mary": { "winrate": 56, "eloVs": 1510 },
+      "Bigfoot": { "winrate": 55, "eloVs": 1500 },
+      "Invisible Man": { "winrate": 57, "eloVs": 1520 }
+    }
+  },
+  {
+    "id": 14,
+    "name": "Buffy",
+    "elo": 1450,
+    "image": "images/buffy.webp",
+    "matchups": {}
+  },
+  {
+    "id": 15,
+    "name": "Angel",
+    "elo": 1450,
+    "image": "images/angel.webp",
+    "matchups": {}
+  },
+  {
+    "id": 16,
+    "name": "Spike",
+    "elo": 1450,
+    "image": "images/spike.webp",
+    "matchups": {}
+  },
+  {
+    "id": 17,
+    "name": "Willow",
+    "elo": 1450,
+    "image": "images/willow.webp",
+    "matchups": {}
+  },
+  {
+    "id": 18,
+    "name": "Little Red Riding Hood",
+    "elo": 1450,
+    "image": "images/little_red.webp",
+    "matchups": {}
+  },
+  {
+    "id": 19,
+    "name": "Beowulf",
+    "elo": 1450,
+    "image": "images/beowulf.webp",
+    "matchups": {}
+  },
+  {
+    "id": 20,
+    "name": "Deadpool",
+    "elo": 1490,
+    "image": "images/deadpool.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 51, "eloVs": 1480 },
+      "Medusa": { "winrate": 50, "eloVs": 1510 },
+      "Sinbad": { "winrate": 52, "eloVs": 1480 },
+      "Alice": { "winrate": 54, "eloVs": 1450 },
+      "King Arthur": { "winrate": 49, "eloVs": 1470 },
+      "Robin Hood": { "winrate": 50, "eloVs": 1460 },
+      "Dracula": { "winrate": 47, "eloVs": 1480 },
+      "Bruce Lee": { "winrate": 50, "eloVs": 1500 },
+      "Yennenga": { "winrate": 53, "eloVs": 1490 },
+      "Achilles": { "winrate": 55, "eloVs": 1500 },
+      "Bloody Mary": { "winrate": 56, "eloVs": 1480 },
+      "Bigfoot": { "winrate": 54, "eloVs": 1470 },
+      "Invisible Man": { "winrate": 52, "eloVs": 1490 }
+    }
+  },
+  {
+    "id": 21,
+    "name": "Sun Wukong",
+    "elo": 1450,
+    "image": "images/sun_wukong.webp",
+    "matchups": {}
+  },
+  {
+    "id": 22,
+    "name": "Yennenga",
+    "elo": 1440,
+    "image": "images/yennenga.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 48, "eloVs": 1460 },
+      "Medusa": { "winrate": 46, "eloVs": 1490 },
+      "Sinbad": { "winrate": 50, "eloVs": 1460 },
+      "Alice": { "winrate": 51, "eloVs": 1450 },
+      "King Arthur": { "winrate": 52, "eloVs": 1490 },
+      "Robin Hood": { "winrate": 48, "eloVs": 1470 },
+      "Dracula": { "winrate": 47, "eloVs": 1480 },
+      "Bruce Lee": { "winrate": 45, "eloVs": 1500 },
+      "Deadpool": { "winrate": 47, "eloVs": 1460 },
+      "Achilles": { "winrate": 50, "eloVs": 1480 },
+      "Bloody Mary": { "winrate": 49, "eloVs": 1450 },
+      "Bigfoot": { "winrate": 51, "eloVs": 1440 },
+      "Invisible Man": { "winrate": 53, "eloVs": 1460 }
+    }
+  },
+  {
+    "id": 23,
+    "name": "Achilles",
+    "elo": 1510,
+    "image": "images/achilles.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 52, "eloVs": 1520 },
+      "Medusa": { "winrate": 53, "eloVs": 1530 },
+      "Sinbad": { "winrate": 49, "eloVs": 1500 },
+      "Alice": { "winrate": 47, "eloVs": 1480 },
+      "King Arthur": { "winrate": 51, "eloVs": 1490 },
+      "Robin Hood": { "winrate": 54, "eloVs": 1480 },
+      "Dracula": { "winrate": 46, "eloVs": 1490 },
+      "Bruce Lee": { "winrate": 45, "eloVs": 1500 },
+      "Deadpool": { "winrate": 45, "eloVs": 1480 },
+      "Yennenga": { "winrate": 50, "eloVs": 1490 },
+      "Bloody Mary": { "winrate": 52, "eloVs": 1510 },
+      "Bigfoot": { "winrate": 53, "eloVs": 1500 },
+      "Invisible Man": { "winrate": 54, "eloVs": 1520 },
+      "Bullseye": { "winrate": 52, "eloVs": 1520 },
+      "Ms. Marvel": { "winrate": 56, "eloVs": 1490 },
+      "InGen": { "winrate": 58, "eloVs": 1480 }
+    }
+  },
+  {
+    "id": 24,
+    "name": "Bloody Mary",
+    "elo": 1470,
+    "image": "images/bloody_mary.webp",
+    "matchups": {
+      "Sherlock Holmes": { "winrate": 49, "eloVs": 1470 },
+      "Medusa": { "winrate": 47, "eloVs": 1460 },
+      "Sinbad": { "winrate": 45, "eloVs": 1450 },
+      "Alice": { "winrate": 52, "eloVs": 1430 },
+      "King Arthur": { "winrate": 50, "eloVs": 1460 },
+      "Robin Hood": { "winrate": 45, "eloVs": 1440 },
+      "Dracula": { "winrate": 44, "eloVs": 1450 },
+      "Bruce Lee": { "winrate": 46, "eloVs": 1460 },
+      "Deadpool": { "winrate": 44, "eloVs": 1460 },
+      "Yennenga": { "winrate": 51, "eloVs": 1450 },
+      "Achilles": { "winrate": 48, "eloVs": 1460 },
+      "Bigfoot": { "winrate": 52, "eloVs": 1470 },
+      "Invisible Man": { "winrate": 50, "eloVs": 1460 }
+    }
+  },
+  {
+    "id": 25,
+    "name": "Daredevil",
+    "elo": 1450,
+    "image": "images/daredevil.webp",
+    "matchups": {}
+  },
+  {
+    "id": 26,
+    "name": "Elektra",
+    "elo": 1450,
+    "image": "images/elektra.webp",
+    "matchups": {}
+  },
+  {
+    "id": 27,
+    "name": "Bullseye",
+    "elo": 1520,
+    "image": "images/bullseye.webp",
+    "matchups": {
+      "Achilles": { "winrate": 48, "eloVs": 1540 },
+      "Ms. Marvel": { "winrate": 54, "eloVs": 1490 },
+      "InGen": { "winrate": 52, "eloVs": 1480 },
+      "Invisible Man": { "winrate": 55, "eloVs": 1485 },
+      "Medusa": { "winrate": 47, "eloVs": 1550 }
+    }
+  },
+  {
+    "id": 28,
+    "name": "Luke Cage",
+    "elo": 1450,
+    "image": "images/luke_cage.webp",
+    "matchups": {}
+  },
+  {
+    "id": 29,
+    "name": "Ghost Rider",
+    "elo": 1450,
+    "image": "images/ghost_rider.webp",
+    "matchups": {}
+  },
+  {
+    "id": 30,
+    "name": "Moon Knight",
+    "elo": 1450,
+    "image": "images/moon_knight.webp",
+    "matchups": {}
+  },
+  {
+    "id": 31,
+    "name": "Dr. Ellie Sattler",
+    "elo": 1450,
+    "image": "images/dr_sattler.webp",
+    "matchups": {}
+  },
+  {
+    "id": 32,
+    "name": "T-Rex",
+    "elo": 1450,
+    "image": "images/trex.webp",
+    "matchups": {}
+  },
+  {
+    "id": 33,
+    "name": "Harry Houdini",
+    "elo": 1450,
+    "image": "images/houdini.webp",
+    "matchups": {}
+  },
+  {
+    "id": 34,
+    "name": "The Genie",
+    "elo": 1450,
+    "image": "images/genie.webp",
+    "matchups": {}
+  },
+  {
+    "id": 35,
+    "name": "Ms. Marvel",
+    "elo": 1490,
+    "image": "images/ms_marvel.webp",
+    "matchups": {
+      "Bullseye": { "winrate": 46, "eloVs": 1520 },
+      "Achilles": { "winrate": 44, "eloVs": 1550 },
+      "InGen": { "winrate": 51, "eloVs": 1480 },
+      "Invisible Man": { "winrate": 49, "eloVs": 1485 }
+    }
+  },
+  {
+    "id": 36,
+    "name": "Squirrel Girl",
+    "elo": 1450,
+    "image": "images/squirrel_girl.webp",
+    "matchups": {}
+  },
+  {
+    "id": 37,
+    "name": "Cloak & Dagger",
+    "elo": 1450,
+    "image": "images/cloak_dagger.webp",
+    "matchups": {}
+  },
+  {
+    "id": 38,
+    "name": "Black Widow",
+    "elo": 1450,
+    "image": "images/black_widow.webp",
+    "matchups": {}
+  },
+  {
+    "id": 39,
+    "name": "Black Panther",
+    "elo": 1450,
+    "image": "images/black_panther.webp",
+    "matchups": {}
+  },
+  {
+    "id": 40,
+    "name": "Winter Soldier",
+    "elo": 1450,
+    "image": "images/winter_soldier.webp",
+    "matchups": {}
+  },
+  {
+    "id": 41,
+    "name": "Nikola Tesla",
+    "elo": 1450,
+    "image": "images/nikola_tesla.webp",
+    "matchups": {}
+  },
+  {
+    "id": 42,
+    "name": "Annie Christmas",
+    "elo": 1450,
+    "image": "images/annie_christmas.webp",
+    "matchups": {}
+  },
+  {
+    "id": 43,
+    "name": "Golden Bat",
+    "elo": 1450,
+    "image": "images/golden_bat.webp",
+    "matchups": {}
+  },
+  {
+    "id": 44,
+    "name": "Jill Trent",
+    "elo": 1450,
+    "image": "images/jill_trent.webp",
+    "matchups": {}
+  },
+  {
+    "id": 45,
+    "name": "Spider-Man",
+    "elo": 1450,
+    "image": "images/spiderman.webp",
+    "matchups": {}
+  },
+  {
+    "id": 46,
+    "name": "Doctor Strange",
+    "elo": 1450,
+    "image": "images/doctor_strange.webp",
+    "matchups": {}
+  },
+  {
+    "id": 47,
+    "name": "She-Hulk",
+    "elo": 1450,
+    "image": "images/she_hulk.webp",
+    "matchups": {}
+  },
+  {
+    "id": 48,
+    "name": "Oda Nobunaga",
+    "elo": 1450,
+    "image": "images/oda.webp",
+    "matchups": {}
+  },
+  {
+    "id": 49,
+    "name": "Tomoe Gozen",
+    "elo": 1450,
+    "image": "images/tomoe.webp",
+    "matchups": {}
+  },
+  {
+    "id": 50,
+    "name": "William Shakespeare",
+    "elo": 1450,
+    "image": "images/shakespeare.webp",
+    "matchups": {}
+  },
+  {
+    "id": 51,
+    "name": "Hamlet",
+    "elo": 1450,
+    "image": "images/hamlet.webp",
+    "matchups": {}
+  },
+  {
+    "id": 52,
+    "name": "The Wayward Sisters",
+    "elo": 1450,
+    "image": "images/wayward_sisters.webp",
+    "matchups": {}
+  },
+  {
+    "id": 53,
+    "name": "Titania",
+    "elo": 1450,
+    "image": "images/titania.webp",
+    "matchups": {}
+  },
+  {
+    "id": 54,
+    "name": "Muhammad Ali",
+    "elo": 1450,
+    "image": "images/ali.webp",
+    "matchups": {}
+  },
+  {
+    "id": 55,
+    "name": "Geralt of Rivia",
+    "elo": 1450,
+    "image": "images/geralt.webp",
+    "matchups": {}
+  },
+  {
+    "id": 56,
+    "name": "Ciri",
+    "elo": 1450,
+    "image": "images/ciri.webp",
+    "matchups": {}
+  },
+  {
+    "id": 57,
+    "name": "Leshen",
+    "elo": 1450,
+    "image": "images/leshen.webp",
+    "matchups": {}
+  },
+  {
+    "id": 58,
+    "name": "Yennefer",
+    "elo": 1450,
+    "image": "images/yennefer_triss.webp",
+    "matchups": {}
+  },
+  {
+    "id": 59,
+    "name": "Eredin",
+    "elo": 1450,
+    "image": "images/eredin.webp",
+    "matchups": {}
+  },
+  {
+    "id": 60,
+    "name": "Philippa",
+    "elo": 1800,
+    "image": "images/philippa.webp",
+    "matchups": {}
+  },
+  {
+    "id": 61,
+    "name": "Leonardo",
+    "elo": 1450,
+    "image": "images/leonardo.webp",
+    "matchups": {}
+  },
+  {
+    "id": 62,
+    "name": "Donatello",
+    "elo": 1450,
+    "image": "images/donatello.webp",
+    "matchups": {}
+  },
+  {
+    "id": 63,
+    "name": "Raphael",
+    "elo": 1450,
+    "image": "images/raphael.webp",
+    "matchups": {}
+  },
+  {
+    "id": 64,
+    "name": "Michelangelo",
+    "elo": 1450,
+    "image": "images/michelangelo.webp",
+    "matchups": {}
+  },
+  {
+    "id": 65,
+    "name": "Shredder",
+    "elo": 1450,
+    "image": "images/shredder.webp",
+    "matchups": {}
+  },
+  {
+    "id": 66,
+    "name": "Krang",
+    "elo": 1450,
+    "image": "images/krang.webp",
+    "matchups": {}
+  },
+  {
+    "id": 67,
+    "name": "George Washington",
+    "elo": 1450,
+    "image": "images/george_washington.webp",
+    "matchups": {}
+  },
+  {
+    "id": 68,
+    "name": "Wyatt Earp",
+    "elo": 1450,
+    "image": "images/wyatt_earp.webp",
+    "matchups": {}
+  },  
+  {
+    "id": 69,
+    "name": "Rosie the Riveter",
+    "elo": 1450,
+    "image": "images/rosie.webp",
+    "matchups": {}
+  },
+  {
+    "id": 70,
+    "name": "John Henry",
+    "elo": 1450,
+    "image": "images/john_henry.webp",
+    "matchups": {}
+  },
+  {
+    "id": 71,
+    "name": "Pandora",
+    "elo": 1450,
+    "image": "images/pandora.webp",
+    "matchups": {}
+  },
+  {
+    "id": 72,
+    "name": "Chupacabra",
+    "elo": 1450,
+    "image": "images/chupacabra.webp",
+    "matchups": {}
+  },
+  {
+    "id": 73,
+    "name": "Blackbeard",
+    "elo": 1450,
+    "image": "images/blackbeard.webp",
+    "matchups": {}
+  },
+  {
+    "id": 74,
+    "name": "Loki",
+    "elo": 1450,
+    "image": "images/loki.webp",
+    "matchups": {}
   }
 ]

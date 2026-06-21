@@ -25,6 +25,14 @@
         <input v-model="search" class="form-control form-control-sm search-field" :placeholder="t('searchPlaceholder')" />
 
         <div class="custom-select-wrapper">
+          <select :value="currentFormat" @change="onFormatChange($event.target.value)">
+            <option v-for="(fData, fKey) in availableFormats" :key="fKey" :value="fKey">
+              {{ fData.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="custom-select-wrapper">
           <select :value="firstPicker" @change="onFirstPickerChange($event.target.value)">
             <option value="player">{{ t('userFirst') }}</option>
             <option value="opponent">{{ t('opponentFirst') }}</option>
@@ -104,10 +112,7 @@
 
         <h6>{{ t('bannedSlots') }}</h6>
         <div class="slot-box mb-3 mb-md-4">
-          <div v-for="i in 3" 
-               class="ban-slot" 
-               :class="{ 'filled': player.bans[i-1] }"
-               :style="{ '--ban-color-rgb': '79, 124, 255' }">
+          <div v-for="i in 3" class="ban-slot" :class="{ 'filled': player.bans[i-1] }" :style="{ '--ban-color-rgb': '79, 124, 255' }">
             <span class="ban-icon" v-if="!player.bans[i-1]">[✕]</span>
             {{ player.bans[i-1]?.name || t('emptyCell') }}
           </div>
@@ -115,10 +120,7 @@
 
         <h6>{{ t('activeLineup') }}</h6>
         <div class="slot-box">
-          <div v-for="char in player.picks" 
-               class="pick-card"
-               :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }"
-               @click="togglePostBan('player', char.id)">
+          <div v-for="char in player.picks" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" @click="togglePostBan('player', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
               <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
@@ -135,7 +137,6 @@
       </div>
 
       <div class="col-lg-6 order-pool">
-        
         <div v-if="current" class="row g-2 g-md-3">
           <div v-for="char in filtered" class="col-6 col-sm-4">
             <div class="character" @click="pick(char)">
@@ -197,7 +198,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <div class="col-lg-3 order-opponent">
@@ -207,10 +207,7 @@
 
         <h6>{{ t('bannedSlots') }}</h6>
         <div class="slot-box mb-3 mb-md-4">
-          <div v-for="i in 3" 
-               class="ban-slot" 
-               :class="{ 'filled': opponent.bans[i-1] }"
-               :style="{ '--ban-color-rgb': '255, 79, 109' }">
+          <div v-for="i in 3" class="ban-slot" :class="{ 'filled': opponent.bans[i-1] }" :style="{ '--ban-color-rgb': '255, 79, 109' }">
             <span class="ban-icon" v-if="!opponent.bans[i-1]">[✕]</span>
             {{ opponent.bans[i-1]?.name || t('emptyCell') }}
           </div>
@@ -218,10 +215,7 @@
 
         <h6>{{ t('activeLineup') }}</h6>
         <div class="slot-box">
-          <div v-for="char in opponent.picks" 
-               class="pick-card"
-               :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(char.id) }"
-               @click="togglePostBan('opponent', char.id)">
+          <div v-for="char in opponent.picks" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(char.id) }" @click="togglePostBan('opponent', char.id)">
             <img :src="char.image" />
             <div class="pick-name">
               <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
@@ -248,9 +242,7 @@
           <button type="button" class="btn-close" @click="cancelReset" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-0" style="font-size: 14px; line-height: 1.5;">
-            {{ t('modalDesc') }}
-          </p>
+          <p class="mb-0" style="font-size: 14px; line-height: 1.5;">{{ t('modalDesc') }}</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-dark fw-semibold" style="border-radius: 10px; background: #1e293b; border: none; color: #94a3b8; font-size: 13.5px;" @click="cancelReset">
@@ -281,7 +273,9 @@ createApp({
     const search = ref("")
     const sortMode = ref("elo")
     const firstPicker = ref("player")
-    const currentFormat = ref("standard")
+    
+    const currentFormat = ref("test_format")
+    const availableFormats = ref(formats)
     
     const showInfoPopover = ref(false)
 
@@ -295,34 +289,45 @@ createApp({
     const MAX_ELO = 1600
     const MIN_ELO = 1300
 
-    const postBans = ref({
-      player: new Set(),
-      opponent: new Set()
-    })
+    const postBans = ref({ player: new Set(), opponent: new Set() })
+    const STORAGE_KEY = 'unmatched_draft_state_v4'
 
-    const STORAGE_KEY = 'unmatched_draft_state'
-
-    function t(key) {
-      return translations[lang.value]?.[key] || key
-    }
+    function t(key) { return translations[lang.value]?.[key] || key }
 
     let bsModalInstance = null
     const pendingPickerValue = ref("")
-    const isRestartAction = ref(false)
+    const pendingFormatValue = ref("")
+    const modalActionType = ref("restart")
+
+    // ФУНКЦИЯ ПРОВЕРКИ ID С ПОДДЕРЖКОЙ ДИАПАЗОНОВ
+    function isIdAllowed(id, allowedConfig) {
+      if (allowedConfig === "all") return true;
+      if (!Array.isArray(allowedConfig)) return false;
+
+      // Добавленная строчка: если в массиве есть строка "all", разрешаем любой id
+      if (allowedConfig.includes("all")) return true;
+
+      for (const item of allowedConfig) {
+        if (typeof item === 'number' && item === id) {
+          return true;
+        }
+        if (typeof item === 'string' && item.includes('-')) {
+          const parts = item.split('-');
+          const start = parseInt(parts[0], 10);
+          const end = parseInt(parts[1], 10);
+          if (!isNaN(start) && !isNaN(end) && id >= start && id <= end) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
 
     function saveToStorage() {
       const state = {
-        lang: lang.value,
-        sortMode: sortMode.value,
-        firstPicker: firstPicker.value,
-        step: step.value,
-        playerPicks: player.value.picks,
-        playerBans: player.value.bans,
-        opponentPicks: opponent.value.picks,
-        opponentBans: opponent.value.bans,
-        history: history.value,
-        postBansPlayer: Array.from(postBans.value.player),
-        postBansOpponent: Array.from(postBans.value.opponent)
+        lang: lang.value, sortMode: sortMode.value, firstPicker: firstPicker.value, currentFormat: currentFormat.value, step: step.value,
+        playerPicks: player.value.picks, playerBans: player.value.bans, opponentPicks: opponent.value.picks, opponentBans: opponent.value.bans,
+        history: history.value, postBansPlayer: Array.from(postBans.value.player), postBansOpponent: Array.from(postBans.value.opponent)
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     }
@@ -330,25 +335,21 @@ createApp({
     function loadFromStorage() {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (!saved) return
-
       try {
         const state = JSON.parse(saved)
         lang.value = state.lang || "en"
         sortMode.value = state.sortMode || "elo"
         firstPicker.value = state.firstPicker || "player"
+        currentFormat.value = state.currentFormat || "test_format"
         step.value = state.step || 0
-        
         player.value.picks = state.playerPicks || []
         player.value.bans = state.playerBans || []
         opponent.value.picks = state.opponentPicks || []
         opponent.value.bans = state.opponentBans || []
         history.value = state.history || []
-
         postBans.value.player = new Set(state.postBansPlayer || [])
         postBans.value.opponent = new Set(state.postBansOpponent || [])
-      } catch (e) {
-        console.error("Error reading storage config:", e)
-      }
+      } catch (e) { console.error(e) }
     }
 
     onMounted(async () => {
@@ -363,16 +364,18 @@ createApp({
     }
 
     const takenIds = computed(() => {
-      return new Set([
-        ...player.value.bans,
-        ...player.value.picks,
-        ...opponent.value.bans,
-        ...opponent.value.picks
-      ].map(c => c.id))
+      return new Set([...player.value.bans, ...player.value.picks, ...opponent.value.bans, ...opponent.value.picks].map(c => c.id))
     })
 
+    // ФИЛЬТРАЦИЯ ПУЛА НА ОСНОВЕ ФУНКЦИИ ДИАПАЗОНОВ ID
     const filtered = computed(() => {
-      let arr = characters.value.filter(c => !takenIds.value.has(c.id))
+      const activeFormatConfig = availableFormats.value[currentFormat.value]
+      if (!activeFormatConfig) return []
+
+      let arr = characters.value.filter(c => {
+        return isIdAllowed(c.id, activeFormatConfig.allowedIds) && !takenIds.value.has(c.id)
+      })
+
       if (search.value) {
         arr = arr.filter(c => c.name.toLowerCase().includes(search.value.toLowerCase()))
       }
@@ -397,10 +400,7 @@ createApp({
     }
 
     function getPercentClass(p) {
-      if (p >= 75) return "green"
-      if (p >= 50) return "yellow"
-      if (p >= 30) return "orange"
-      return "red"
+      if (p >= 75) return "green"; if (p >= 50) return "yellow"; if (p >= 30) return "orange"; return "red"
     }
 
     function getMatchupText(char, enemy) {
@@ -414,7 +414,8 @@ createApp({
 
     const sequence = computed(() => {
       const isPlayerFirst = firstPicker.value === "player"
-      const pattern = formats[currentFormat.value] || []
+      const formatObj = availableFormats.value[currentFormat.value]
+      const pattern = formatObj ? formatObj.sequence : []
       return pattern.map(step => ({
         type: step.type,
         player: isPlayerFirst ? (step.p1 ? "player" : "opponent") : (step.p1 ? "opponent" : "player")
@@ -435,49 +436,34 @@ createApp({
     })
 
     function resetAll() {
-      player.value.bans = []
-      player.value.picks = []
-      opponent.value.bans = []
-      opponent.value.picks = []
-      history.value = []
-      step.value = 0
-      postBans.value.player.clear()
-      postBans.value.opponent.clear()
-      showInfoPopover.value = false
-      localStorage.removeItem(STORAGE_KEY)
+      player.value.bans = []; player.value.picks = []; opponent.value.bans = []; opponent.value.picks = []
+      history.value = []; step.value = 0; postBans.value.player.clear(); postBans.value.opponent.clear()
+      showInfoPopover.value = false; localStorage.removeItem(STORAGE_KEY)
     }
 
     function onFirstPickerChange(newValue) {
-      if (step.value === 0) {
-        firstPicker.value = newValue
-        saveToStorage()
-        return
-      }
-      isRestartAction.value = false
-      pendingPickerValue.value = newValue
-      if (bsModalInstance) bsModalInstance.show()
+      if (step.value === 0) { firstPicker.value = newValue; saveToStorage(); return }
+      modalActionType.value = "picker"; pendingPickerValue.value = newValue; if (bsModalInstance) bsModalInstance.show()
     }
 
-    function triggerRestart() {
-      isRestartAction.value = true
-      if (bsModalInstance) bsModalInstance.show()
+    function onFormatChange(newValue) {
+      if (step.value === 0) { currentFormat.value = newValue; saveToStorage(); return }
+      modalActionType.value = "format"; pendingFormatValue.value = newValue; if (bsModalInstance) bsModalInstance.show()
     }
+
+    function triggerRestart() { modalActionType.value = "restart"; if (bsModalInstance) bsModalInstance.show() }
 
     function confirmReset() {
       resetAll()
-      if (!isRestartAction.value) {
-        firstPicker.value = pendingPickerValue.value
-      }
+      if (modalActionType.value === "picker") firstPicker.value = pendingPickerValue.value
+      else if (modalActionType.value === "format") currentFormat.value = pendingFormatValue.value
       saveToStorage()
       if (bsModalInstance) bsModalInstance.hide()
     }
 
     function cancelReset() {
-      if (!isRestartAction.value) {
-        const temp = firstPicker.value
-        firstPicker.value = ""
-        firstPicker.value = temp
-      }
+      if (modalActionType.value === "picker") { const temp = firstPicker.value; firstPicker.value = ""; firstPicker.value = temp }
+      else if (modalActionType.value === "format") { const temp = currentFormat.value; currentFormat.value = ""; currentFormat.value = temp }
       if (bsModalInstance) bsModalInstance.hide()
     }
 
@@ -498,19 +484,15 @@ createApp({
       const target = last.player === "player" ? player.value : opponent.value
       const arr = last.type === "ban" ? target.bans : target.picks
       arr.pop()
-      postBans.value.player.clear()
-      postBans.value.opponent.clear()
+      postBans.value.player.clear(); postBans.value.opponent.clear()
       saveToStorage()
     }
 
     function togglePostBan(side, id) {
       if (current.value) return
       const set = postBans.value[side]
-      if (set.has(id)) {
-        set.delete(id)
-      } else {
-        if (set.size < 2) set.add(id)
-      }
+      if (set.has(id)) set.delete(id)
+      else if (set.size < 2) set.add(id)
       saveToStorage()
     }
 
@@ -519,10 +501,7 @@ createApp({
       let totalWinrate = 0, count = 0
       for (const p of playerPicks) {
         for (const o of opponentPicks) {
-          if (p.matchups?.[o.name]) {
-            totalWinrate += p.matchups[o.name].winrate
-            count++
-          }
+          if (p.matchups?.[o.name]) { totalWinrate += p.matchups[o.name].winrate; count++ }
         }
       }
       return count ? Math.round(totalWinrate / count) : 50
@@ -537,101 +516,52 @@ createApp({
     })
 
     const banRecommendation = computed(() => {
-      if (current.value) return null
-      if (!player.value.picks.length || !opponent.value.picks.length) return null
-
+      if (current.value || !player.value.picks.length || !opponent.value.picks.length) return null
       const oppBansCount = postBans.value.opponent.size
       const playerBansCount = postBans.value.player.size
       const baseWinrate = calculateTeamWinrate(player.value.picks, opponent.value.picks)
 
       if (oppBansCount === 0) {
-        let maxBenefit = -999
-        let candidates = []
-        let bestWinrate = baseWinrate
-
+        let maxBenefit = -999, candidates = [], bestWinrate = baseWinrate
         for (const targetChar of opponent.value.picks) {
-          const simulatedOpponentPicks = opponent.value.picks.filter(c => c.id !== targetChar.id)
-          const simulatedWinrate = calculateTeamWinrate(player.value.picks, simulatedOpponentPicks)
-          const benefit = simulatedWinrate - baseWinrate
-
-          if (benefit > maxBenefit) {
-            maxBenefit = benefit
-            candidates = [targetChar]
-            bestWinrate = simulatedWinrate
-          } else if (Math.abs(benefit - maxBenefit) < 0.01) {
-            candidates.push(targetChar)
-          }
+          const simOpp = opponent.value.picks.filter(c => c.id !== targetChar.id)
+          const simWin = calculateTeamWinrate(player.value.picks, simOpp)
+          const benefit = simWin - baseWinrate
+          if (benefit > maxBenefit) { maxBenefit = benefit; candidates = [targetChar]; bestWinrate = simWin }
+          else if (Math.abs(benefit - maxBenefit) < 0.01) { candidates.push(targetChar) }
         }
-
         if (candidates.length > 0) {
-          const namesStr = candidates.map(c => c.name).join(', ')
-          const benefitVal = Math.max(0, Math.round(maxBenefit))
-          let template = t('recEnemyBanDesc')
-          
-          let formattedText = template
-            .replace('{names}', `<strong class="text-white">${namesStr}</strong>`)
-            .replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`)
-            .replace('{benefit}', `<span class="rec-highlight">${benefitVal}</span>`)
-
-          return {
-            stage: 'opponent',
-            images: candidates.map(c => c.image),
-            formattedText
-          }
+          let formattedText = t('recEnemyBanDesc').replace('{names}', `<strong class="text-white">${candidates.map(c=>c.name).join(', ')}</strong>`).replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`).replace('{benefit}', `<span class="rec-highlight">${Math.max(0, Math.round(maxBenefit))}</span>`)
+          return { stage: 'opponent', images: candidates.map(c => c.image), formattedText }
         }
       }
 
       if (playerBansCount === 1) {
         const currentActiveWinrate = calculateTeamWinrate(activePlayerPicks.value, activeOpponentPicks.value)
-        let maxBenefit = -999
-        let candidates = []
-        let bestWinrate = currentActiveWinrate
-
-        const remainingPlayerPicks = player.value.picks.filter(c => !postBans.value.player.has(c.id))
-
-        for (const myChar of remainingPlayerPicks) {
-          const simulatedPlayerPicks = remainingPlayerPicks.filter(c => c.id !== myChar.id)
-          const simulatedWinrate = calculateTeamWinrate(simulatedPlayerPicks, activeOpponentPicks.value)
-          const benefit = simulatedWinrate - currentActiveWinrate
-
-          if (benefit > maxBenefit) {
-            maxBenefit = benefit
-            candidates = [myChar]
-            bestWinrate = simulatedWinrate
-          } else if (Math.abs(benefit - maxBenefit) < 0.01) {
-            candidates.push(myChar)
-          }
+        let maxBenefit = -999, candidates = [], bestWinrate = currentActiveWinrate
+        const remPlayer = player.value.picks.filter(c => !postBans.value.player.has(c.id))
+        for (const myChar of remPlayer) {
+          const simPl = remPlayer.filter(c => c.id !== myChar.id)
+          const simWin = calculateTeamWinrate(simPl, activeOpponentPicks.value)
+          const benefit = simWin - currentActiveWinrate
+          if (benefit > maxBenefit) { maxBenefit = benefit; candidates = [myChar]; bestWinrate = simWin }
+          else if (Math.abs(benefit - maxBenefit) < 0.01) { candidates.push(myChar) }
         }
-
         if (candidates.length > 0) {
-          const namesStr = candidates.map(c => c.name).join(', ')
-          const benefitVal = Math.max(0, Math.round(maxBenefit))
-          let template = t('recSelfBanDesc')
-          
-          let formattedText = template
-            .replace('{names}', `<strong class="text-white">${namesStr}</strong>`)
-            .replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`)
-            .replace('{benefit}', `<span class="rec-highlight">${benefitVal}</span>`)
-
-          return {
-            stage: 'player',
-            images: candidates.map(c => c.image),
-            formattedText
-          }
+          let formattedText = t('recSelfBanDesc').replace('{names}', `<strong class="text-white">${candidates.map(c=>c.name).join(', ')}</strong>`).replace('{newWinrate}', `<span class="rec-highlight">${bestWinrate}</span>`).replace('{benefit}', `<span class="rec-highlight">${Math.max(0, Math.round(maxBenefit))}</span>`)
+          return { stage: 'player', images: candidates.map(c => c.image), formattedText }
         }
       }
       return null
     })
 
-    watch([lang, sortMode], () => {
-      saveToStorage()
-    })
+    watch([lang, sortMode], () => { saveToStorage() })
 
     return {
-      lang, t, search, sortMode, firstPicker, currentFormat, player, opponent, filtered, pick, undo,
+      lang, t, search, sortMode, firstPicker, currentFormat, availableFormats, player, opponent, filtered, pick, undo,
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
-      onFirstPickerChange, triggerRestart, confirmReset, cancelReset, showInfoPopover
+      onFirstPickerChange, onFormatChange, triggerRestart, confirmReset, cancelReset, showInfoPopover
     }
   }
 }).mount("#app")
