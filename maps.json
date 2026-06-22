@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "McMinnville OR",
+    "name": "McMinnville",
     "set": "Adventures: Tales to Amaze",
     "image": "maps/mcMinnville.webp",
     "pickPercent": 42,
@@ -23,9 +23,9 @@
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
     "pickPercent": 32,
-    "favoredBy": ["Dracula", "Bloody Mary"],
-    "disfavoredBy": ["Robin Hood", "Sinbad"]
-  },
+    "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary"],
+    "disfavoredBy": [ "Sinbad"]
+  }, 
   {
     "id": 4,
     "name": "Fayrlund Forest",

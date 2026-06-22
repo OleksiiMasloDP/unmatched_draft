@@ -30,6 +30,10 @@ export const translations = {
       "Recommended first enemy ban: {names}. Banning them increases your winrate to {newWinrate}% (+{benefit}%).",
     recSelfBanDesc:
       "Recommended first self-ban: {names}. Removing this weak link bumps your winrate to {newWinrate}% (+{benefit}%).",
+    mapSuitableFor: "Suitable for:",
+    mapUnsuitableFor: "Not suitable for:",
+    toMapsLabel: "Proceed to Maps",
+    mapSelectLabel: "Select a Map",
   },
   ua: {
     searchPlaceholder: "Пошук по імені...",
@@ -62,5 +66,9 @@ export const translations = {
       "Рекомендований перший бан ворога: {names}. Цей бан збільшить ваш вінрейт до {newWinrate}% (+{benefit}%).",
     recSelfBanDesc:
       "Рекомендований перший бан СВОГО героя: {names}. Усунення слабкого звена підніме ваш вінрейт до {newWinrate}% (+{benefit}%).",
+    mapSuitableFor: "Підходить для:",
+    mapUnsuitableFor: "Не підходить для:",
+    toMapsLabel: "Перейти до карт",
+    mapSelectLabel: "Select a Map",
   },
 };
