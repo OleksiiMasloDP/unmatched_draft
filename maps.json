@@ -4,202 +4,260 @@
     "name": "McMinnville OR",
     "set": "Adventures: Tales to Amaze",
     "image": "maps/mcMinnville.webp",
-    "pickPercent": 42
+    "pickPercent": 42,
+    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot"],
+    "disfavoredBy": ["Medusa", "Dracula"]
   },
   {
     "id": 2,
     "name": "Point Pleasant",
     "set": "Adventures: Tales to Amaze",
     "image": "maps/point_pleasant.webp",
-    "pickPercent": 42
+    "pickPercent": 42,
+    "favoredBy": ["Sherlock Holmes", "Deadpool"],
+    "disfavoredBy": ["Alice", "King Arthur"]
   },
   {
     "id": 3,
     "name": "Baskerville Manor",
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
-    "pickPercent": 32
+    "pickPercent": 32,
+    "favoredBy": ["Dracula", "Bloody Mary"],
+    "disfavoredBy": ["Robin Hood", "Sinbad"]
   },
   {
     "id": 4,
     "name": "Fayrlund Forest",
     "set": "The Witcher - Steel & Silver",
     "image": "maps/fayrlund_forest.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Yennenga", "Achilles"],
+    "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"]
   },
   {
     "id": 5,
     "name": "Globe Theatre",
     "set": "Slings and Arrows",
     "image": "maps/globe_theatre.webp",
-    "pickPercent": 32
+    "pickPercent": 32,
+    "favoredBy": ["King Arthur", "Alice"],
+    "disfavoredBy": ["Medusa", "Deadpool"]
   },
   {
     "id": 6,
     "name": "Hanging Gardens",
     "set": "Battle of Legends, Volume Two",
     "image": "maps/hanging_gardens.webp",
-    "pickPercent": 33
+    "pickPercent": 33,
+    "favoredBy": ["Achilles", "Medusa"],
+    "disfavoredBy": ["Bigfoot", "Sinbad"]
   },
   {
     "id": 7,
     "name": "Helicarrier",
     "set": "For King and Country",
     "image": "maps/helicarrier.webp",
-    "pickPercent": 29
+    "pickPercent": 29,
+    "favoredBy": ["Deadpool", "Bruce Lee"],
+    "disfavoredBy": ["Yennenga", "Alice"]
   },
   {
     "id": 8,
     "name": "Hell's Kitchen",
     "set": "Hell's Kitchen",
     "image": "maps/hells_kitchen.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Dracula", "Invisible Man"],
+    "disfavoredBy": ["King Arthur", "Robin Hood"]
   },
   {
     "id": 9,
     "name": "Kaer Morhen",
     "set": "The Witcher - Steel & Silver",
     "image": "maps/kaer_morhen.webp",
-    "pickPercent": 32
+    "pickPercent": 32,
+    "favoredBy": ["Yennenga", "Bloody Mary"],
+    "disfavoredBy": ["Sherlock Holmes", "Deadpool"]
   },
   {
     "id": 10,
     "name": "Marmoreal",
     "set": "Battle of Legends, Volume One",
     "image": "maps/marmoreal.webp",
-    "pickPercent": 31
+    "pickPercent": 31,
+    "favoredBy": ["Alice", "Sherlock Holmes"],
+    "disfavoredBy": ["Achilles", "Bigfoot"]
   },
   {
     "id": 11,
     "name": "Naglfar",
     "set": "The Witcher - Realms Fall",
     "image": "maps/naglfar.webp",
-    "pickPercent": 28
+    "pickPercent": 28,
+    "favoredBy": ["Bigfoot", "Robin Hood"],
+    "disfavoredBy": ["Medusa", "Bruce Lee"]
   },
   {
     "id": 12,
     "name": "Navy Pier",
     "set": "Teen Spirit",
     "image": "maps/navy_pier.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Bruce Lee", "Deadpool"],
+    "disfavoredBy": ["Dracula", "Invisible Man"]
   },
   {
     "id": 13,
     "name": "Sanctum Sanctorum",
     "set": "Brains and Brawn",
     "image": "maps/sanctum_sanctorum.webp",
-    "pickPercent": 29
+    "pickPercent": 29,
+    "favoredBy": ["Invisible Man", "Sherlock Holmes"],
+    "disfavoredBy": ["Sinbad", "Yennenga"]
   },
   {
     "id": 14,
     "name": "Santa's Workshop",
     "set": "Battle of Legends, Volume Three",
-    "image": "maps/santas_workshop.webp",
-    "pickPercent": 34
+    "image": "maps/santas_workshop.avif",
+    "pickPercent": 34,
+    "favoredBy": ["King Arthur", "Bloody Mary"],
+    "disfavoredBy": ["Alice", "Robin Hood"]
   },
   {
     "id": 15,
     "name": "Sarpedon",
     "set": "Battle of Legends, Volume One",
     "image": "maps/sarpedon.webp",
-    "pickPercent": 38
+    "pickPercent": 38,
+    "favoredBy": ["Sinbad", "Achilles"],
+    "disfavoredBy": ["Deadpool", "Dracula"]
   },
   {
     "id": 16,
     "name": "Soho",
     "set": "Cobble & Fog",
     "image": "maps/soho.webp",
-    "pickPercent": 29
+    "pickPercent": 29,
+    "favoredBy": ["Dracula", "Invisible Man"],
+    "disfavoredBy": ["Bigfoot", "Yennenga"]
   },
   {
     "id": 17,
     "name": "Streets of Novigrad",
     "set": "The Witcher - Realms Fall",
     "image": "maps/streets_of_novigrad.webp",
-    "pickPercent": 34
+    "pickPercent": 34,
+    "favoredBy": ["Yennenga", "Robin Hood"],
+    "disfavoredBy": ["Medusa", "King Arthur"]
   },
   {
     "id": 18,
     "name": "Sunnydale High",
     "set": "Buffy the Vampire Slayer",
     "image": "maps/sunnydale_high.webp",
-    "pickPercent": 31
+    "pickPercent": 31,
+    "favoredBy": ["Alice", "Bloody Mary"],
+    "disfavoredBy": ["Sinbad", "Bruce Lee"]
   },
   {
     "id": 19,
     "name": "The Bronze",
     "set": "Buffy the Vampire Slayer",
-    "image": "maps/the_bronze.webp",
-    "pickPercent": 35
+    "image": "maps/bronze.webp",
+    "pickPercent": 35,
+    "favoredBy": ["Bruce Lee", "Medusa"],
+    "disfavoredBy": ["Sherlock Holmes", "Achilles"]
   },
   {
     "id": 20,
     "name": "The Raft",
     "set": "Redemption Row",
     "image": "maps/the_raft.webp",
-    "pickPercent": 31
+    "pickPercent": 31,
+    "favoredBy": ["Deadpool", "Achilles"],
+    "disfavoredBy": ["Dracula", "Bigfoot"]
   },
   {
     "id": 21,
     "name": "Venice",
     "set": "Battle of Legends, Volume Three",
-    "image": "maps/venice.webp",
-    "pickPercent": 33
+    "image": "maps/venice.avif",
+    "pickPercent": 33,
+    "favoredBy": ["Medusa", "King Arthur"],
+    "disfavoredBy": ["Robin Hood", "Invisible Man"]
   },
   {
     "id": 22,
     "name": "Azuchi Castle",
     "set": "Sun's Origin",
     "image": "maps/azuchi_castle.webp",
-    "pickPercent": 31
+    "pickPercent": 31,
+    "favoredBy": ["Achilles", "Sinbad"],
+    "disfavoredBy": ["Alice", "Bloody Mary"]
   },
   {
     "id": 23,
     "name": "Heorot",
     "set": "Little Red Riding Hood vs. Beowulf",
     "image": "maps/heorot.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Bigfoot", "Yennenga"],
+    "disfavoredBy": ["Dracula", "Deadpool"]
   },
   {
     "id": 24,
     "name": "King Solomon's Mine",
     "set": "Houdini vs. The Genie",
     "image": "maps/king_solomons_mine.webp",
-    "pickPercent": 29
+    "pickPercent": 29,
+    "favoredBy": ["Sherlock Holmes", "Robin Hood"],
+    "disfavoredBy": ["Bruce Lee", "Achilles"]
   },
   {
     "id": 25,
     "name": "Raptor Paddock",
     "set": "Jurassic Park - Ingen vs. Raptors",
     "image": "maps/raptor_paddock.webp",
-    "pickPercent": 28
+    "pickPercent": 28,
+    "favoredBy": ["Medusa", "Deadpool"],
+    "disfavoredBy": ["King Arthur", "Sinbad"]
   },
   {
     "id": 26,
     "name": "Sherwood Forest",
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/sherwood_forest.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Robin Hood", "Bigfoot"],
+    "disfavoredBy": ["Invisible Man", "Medusa"]
   },
   {
     "id": 27,
     "name": "T. Rex Paddock",
     "set": "Jurassic Park - Sattler vs. T-Rex",
     "image": "maps/trex_paddock.webp",
-    "pickPercent": 26
+    "pickPercent": 26,
+    "favoredBy": ["Bruce Lee", "Achilles"],
+    "disfavoredBy": ["Sherlock Holmes", "Alice"]
   },
   {
     "id": 28,
     "name": "Yukon",
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/yukon.webp",
-    "pickPercent": 31
+    "pickPercent": 31,
+    "favoredBy": ["Bigfoot", "Sinbad"],
+    "disfavoredBy": ["Bloody Mary", "Deadpool"]
   },
   {
     "id": 29,
     "name": "Yukon 1900",
     "set": "N/A",
     "image": "maps/yukon_1900.webp",
-    "pickPercent": 30
+    "pickPercent": 30,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur"]
   }
 ]

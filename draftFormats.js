@@ -18,12 +18,14 @@ const standardSequence = [
 export const formats = {
   test_format: {
     name: "Test Format",
-    allowedIds: ["all"],
+    allowedHeroIds: ["all"],
+    allowedMapIds: ["all"],
     sequence: standardSequence,
   },
   summer_of_legends_2026: {
     name: "Summer of Legends 2026",
-    allowedIds: [8, 23, 27, 35],
+    allowedHeroIds: [8, 23, 27, 35],
+    allowedMapIds: [1, 3, 6, 7, 10, 16, 21],
     sequence: standardSequence,
   },
 };

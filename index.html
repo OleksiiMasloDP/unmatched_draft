@@ -62,7 +62,8 @@
       </div>
     </div>
 
-    <div v-if="!current && player.picks.length && opponent.picks.length" class="analytics-outer-wrapper mobile-only-analytics">
+    <!-- MOBILE ANALYTICS (shown before maps phase) -->
+    <div v-if="!current && player.picks.length && opponent.picks.length && currentStep === 'characters'" class="analytics-outer-wrapper mobile-only-analytics">
       <div class="result-card">
         <div class="d-flex align-items-center justify-content-between mb-1">
           <h4 class="fw-bold mb-0" style="color: #f1f5f9; letter-spacing: 0.5px; font-size: 16px;">
@@ -101,17 +102,25 @@
           {{ t('teamOpponent') }}: {{ finalWinrate.opponent }}%
         </div>
       </div>
+
+      <!-- MOBILE: Proceed to Maps button -->
+      <div v-if="canProceedToMaps" class="proceed-maps-btn-wrap mobile-proceed-wrap">
+        <button class="btn-proceed-maps" @click="proceedToMaps">
+          {{ lang === 'ua' ? 'Перейти до карт →' : 'Proceed to Maps →' }}
+        </button>
+      </div>
     </div>
 
     <div class="row g-3 g-md-4 main-draft-row">
 
+      <!-- LEFT: PLAYER SIDE -->
       <div class="col-lg-3 order-player">
         <div class="team-title-banner" :style="{ backgroundColor: player.color, color:'white' }">
           {{ t('teamYou') }}
         </div>
 
-        <h6>{{ t('bannedSlots') }}</h6>
-        <div class="slot-box mb-3 mb-md-4">
+        <h6 v-if="currentStep === 'characters'">{{ t('bannedSlots') }}</h6>
+        <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
           <div v-for="i in 3" class="ban-slot" :class="{ 'filled': player.bans[i-1] }" :style="{ '--ban-color-rgb': '79, 124, 255' }">
             <span class="ban-icon" v-if="!player.bans[i-1]">[✕]</span>
             {{ player.bans[i-1]?.name || t('emptyCell') }}
@@ -120,14 +129,16 @@
 
         <h6>{{ t('activeLineup') }}</h6>
         <div class="slot-box">
-          <div v-for="char in player.picks" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" @click="togglePostBan('player', char.id)">
-            <img :src="char.image" />
-            <div class="pick-name">
-              <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
-              <div class="mu-list">
-                <div v-for="enemy in opponent.picks">
-                  <div v-if="char.matchups?.[enemy.name]">
-                    {{ getMatchupText(char, enemy) }}
+          <div v-for="char in player.picks" :key="char.id">
+            <div v-if="currentStep === 'characters' || !postBans.player.has(char.id)" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" @click="togglePostBan('player', char.id)">
+              <img :src="char.image" />
+              <div class="pick-name">
+                <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
+                <div class="mu-list">
+                  <div v-for="enemy in opponent.picks" :key="enemy.id">
+                    <div v-if="char.matchups?.[enemy.name]">
+                      {{ getMatchupText(char, enemy) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -136,7 +147,10 @@
         </div>
       </div>
 
+      <!-- CENTER: POOL / ANALYTICS / MAPS -->
       <div class="col-lg-6 order-pool">
+
+        <!-- CHARACTER POOL (during draft) -->
         <div v-if="current" class="row g-2 g-md-3">
           <div v-for="char in filtered" class="col-6 col-sm-4">
             <div class="character" @click="pick(char)">
@@ -158,7 +172,8 @@
           </div>
         </div>
 
-        <div v-else class="desktop-only-analytics">
+        <!-- ANALYTICS ENGINE (post-draft, characters phase) -->
+        <div v-else-if="currentStep === 'characters'" class="desktop-only-analytics">
           <div class="result-card">
             <div class="d-flex align-items-center justify-content-between mb-1">
               <h4 class="fw-bold mb-0" style="color: #f1f5f9; letter-spacing: 0.5px; font-size: 18px;">
@@ -197,16 +212,61 @@
               {{ t('teamOpponent') }}: {{ finalWinrate.opponent }}%
             </div>
           </div>
+
+          <!-- DESKTOP: Proceed to Maps button -->
+          <div v-if="canProceedToMaps" class="proceed-maps-btn-wrap">
+            <button class="btn-proceed-maps" @click="proceedToMaps">
+              {{ lang === 'ua' ? 'Перейти до карт →' : 'Proceed to Maps →' }}
+            </button>
+          </div>
         </div>
+
+        <!-- MAPS PHASE -->
+        <div v-else-if="currentStep === 'maps'" class="maps-phase">
+          <h6 style="margin-bottom: 16px;">{{ lang === 'ua' ? 'Виберіть карту' : 'Select a Map' }}</h6>
+          <div class="maps-grid">
+            <div
+              v-for="map in maps"
+              :key="map.id"
+              class="map-card"
+              :class="{ 'map-banned': bannedMaps.has(map.id) }"
+              @click="toggleMapBan(map.id)"
+            >
+              <img class="map-img" :src="map.image" :alt="map.name" loading="lazy" />
+              <div class="map-percent-badge" :class="getMapPercentClass(map.pickPercent)">
+                {{ map.pickPercent }}%
+              </div>
+              <div class="map-card-name">
+                <div class="map-card-title">{{ map.name }}</div>
+                <div class="map-card-set">{{ map.set }}</div>
+                <div class="map-affinity-list">
+                  <div 
+                    v-for="hint in getMapAffinityHints(map)" 
+                    :key="hint.label"
+                    class="rec-hero-card" 
+                    :style="{ borderColor: hint.side === 'opponent' ? '#ef4444' : '#4f7cff' }"
+                  >
+                    <img :src="hint.image" class="map-affinity-avatar" />
+                    <span class="map-affinity-label" :class="hint.side === 'player' ? 'affinity-player' : 'affinity-opponent'">
+                      {{ hint.label }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
+      <!-- RIGHT: OPPONENT SIDE -->
       <div class="col-lg-3 order-opponent">
         <div class="team-title-banner" :style="{ backgroundColor: opponent.color, color:'white' }">
           {{ t('teamOpponent') }}
         </div>
 
-        <h6>{{ t('bannedSlots') }}</h6>
-        <div class="slot-box mb-3 mb-md-4">
+        <h6 v-if="currentStep === 'characters'">{{ t('bannedSlots') }}</h6>
+        <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
           <div v-for="i in 3" class="ban-slot" :class="{ 'filled': opponent.bans[i-1] }" :style="{ '--ban-color-rgb': '255, 79, 109' }">
             <span class="ban-icon" v-if="!opponent.bans[i-1]">[✕]</span>
             {{ opponent.bans[i-1]?.name || t('emptyCell') }}
@@ -215,14 +275,16 @@
 
         <h6>{{ t('activeLineup') }}</h6>
         <div class="slot-box">
-          <div v-for="char in opponent.picks" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(char.id) }" @click="togglePostBan('opponent', char.id)">
-            <img :src="char.image" />
-            <div class="pick-name">
-              <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
-              <div class="mu-list">
-                <div v-for="enemy in player.picks">
-                  <div v-if="char.matchups?.[enemy.name]">
-                    {{ getMatchupText(char, enemy) }}
+          <div v-for="char in opponent.picks" :key="char.id">
+            <div v-if="currentStep === 'characters' || !postBans.opponent.has(char.id)" class="pick-card" :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(char.id) }" @click="togglePostBan('opponent', char.id)">
+              <img :src="char.image" />
+              <div class="pick-name">
+                <div style="font-weight:800; font-size: 13px;">{{ char.name }}</div>
+                <div class="mu-list">
+                  <div v-for="enemy in player.picks" :key="enemy.id">
+                    <div v-if="char.matchups?.[enemy.name]">
+                      {{ getMatchupText(char, enemy) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -234,6 +296,7 @@
     </div>
   </div>
 
+  <!-- MODAL -->
   <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -292,6 +355,102 @@ createApp({
     const postBans = ref({ player: new Set(), opponent: new Set() })
     const STORAGE_KEY = 'unmatched_draft_state_v4'
 
+    const currentStep = ref('characters')
+    const maps = ref([])
+    const bannedMaps = ref(new Set())
+
+    // Computed: active picks (post-ban filtered)
+    const activePlayerPicks = computed(() => player.value.picks.filter(c => !postBans.value.player.has(c.id)))
+    const activeOpponentPicks = computed(() => opponent.value.picks.filter(c => !postBans.value.opponent.has(c.id)))
+
+    // Can show "proceed to maps" only when 2 post-bans per side
+    const canProceedToMaps = computed(() => {
+      return !current.value
+        && player.value.picks.length > 0
+        && opponent.value.picks.length > 0
+        && postBans.value.player.size === 2
+        && postBans.value.opponent.size === 2
+    })
+
+    function proceedToMaps() {
+      search.value = ''
+      currentStep.value = 'maps'
+    }
+
+    function toggleMapBan(mapId) {
+      const s = bannedMaps.value
+      if (s.has(mapId)) {
+        s.delete(mapId)
+      } else {
+        s.add(mapId)
+      }
+      // Trigger reactivity
+      bannedMaps.value = new Set(s)
+    }
+
+    function getMapPercentClass(p) {
+      if (p >= 40) return "map-pct-green"
+      if (p >= 33) return "map-pct-yellow"
+      if (p >= 29) return "map-pct-orange"
+      return "map-pct-red"
+    }
+
+    function getMapAffinityHints(map) {
+      const favoredBy = map.favoredBy || []
+      const disfavoredBy = map.disfavoredBy || []
+      const hints = []
+
+      // 1. Сильные персонажи игрока (Синяя рамка, Favored)
+      for (const char of activePlayerPicks.value) {
+        if (favoredBy.includes(char.name)) {
+          hints.push({ 
+            image: char.image, 
+            label: `Favored: ${char.name}`, 
+            side: 'player' 
+          })
+        }
+      }
+
+      // 2. Сильные персонажи противника (Красная рамка, Favored)
+      for (const char of activeOpponentPicks.value) {
+        if (favoredBy.includes(char.name)) {
+          hints.push({ 
+            image: char.image, 
+            label: `Favored: ${char.name}`, 
+            side: 'opponent' 
+          })
+        }
+      }
+
+      // 3. Слабые персонажи игрока (Синяя рамка, так как персонаж ВАШ, но статус Disfavored)
+      for (const char of activePlayerPicks.value) {
+        if (disfavoredBy.includes(char.name)) {
+          hints.push({ 
+            image: char.image, 
+            label: `Disfavored: ${char.name}`, 
+            side: 'player' 
+          })
+        }
+      }
+
+      // 4. Слабые персонажи противника (Красная рамка, так как персонаж противника, статус Disfavored)
+      for (const char of activeOpponentPicks.value) {
+        if (disfavoredBy.includes(char.name)) {
+          hints.push({ 
+            image: char.image, 
+            label: `Disfavored: ${char.name}`, 
+            side: 'opponent' 
+          })
+        }
+      }
+      
+      return hints.slice(0, 3)
+    }
+
+    fetch('maps.json')
+      .then(res => res.json())
+      .then(data => maps.value = data)
+
     function t(key) { return translations[lang.value]?.[key] || key }
 
     let bsModalInstance = null
@@ -299,28 +458,20 @@ createApp({
     const pendingFormatValue = ref("")
     const modalActionType = ref("restart")
 
-    // ФУНКЦИЯ ПРОВЕРКИ ID С ПОДДЕРЖКОЙ ДИАПАЗОНОВ
     function isIdAllowed(id, allowedConfig) {
-      if (allowedConfig === "all") return true;
-      if (!Array.isArray(allowedConfig)) return false;
-
-      // Добавленная строчка: если в массиве есть строка "all", разрешаем любой id
-      if (allowedConfig.includes("all")) return true;
-
+      if (allowedConfig === "all") return true
+      if (!Array.isArray(allowedConfig)) return false
+      if (allowedConfig.includes("all")) return true
       for (const item of allowedConfig) {
-        if (typeof item === 'number' && item === id) {
-          return true;
-        }
+        if (typeof item === 'number' && item === id) return true
         if (typeof item === 'string' && item.includes('-')) {
-          const parts = item.split('-');
-          const start = parseInt(parts[0], 10);
-          const end = parseInt(parts[1], 10);
-          if (!isNaN(start) && !isNaN(end) && id >= start && id <= end) {
-            return true;
-          }
+          const parts = item.split('-')
+          const start = parseInt(parts[0], 10)
+          const end = parseInt(parts[1], 10)
+          if (!isNaN(start) && !isNaN(end) && id >= start && id <= end) return true
         }
       }
-      return false;
+      return false
     }
 
     function saveToStorage() {
@@ -367,15 +518,12 @@ createApp({
       return new Set([...player.value.bans, ...player.value.picks, ...opponent.value.bans, ...opponent.value.picks].map(c => c.id))
     })
 
-    // ФИЛЬТРАЦИЯ ПУЛА НА ОСНОВЕ ФУНКЦИИ ДИАПАЗОНОВ ID
     const filtered = computed(() => {
       const activeFormatConfig = availableFormats.value[currentFormat.value]
       if (!activeFormatConfig) return []
-
       let arr = characters.value.filter(c => {
-        return isIdAllowed(c.id, activeFormatConfig.allowedIds) && !takenIds.value.has(c.id)
+        return isIdAllowed(c.id, activeFormatConfig.allowedHeroIds) && !takenIds.value.has(c.id)
       })
-
       if (search.value) {
         arr = arr.filter(c => c.name.toLowerCase().includes(search.value.toLowerCase()))
       }
@@ -400,7 +548,10 @@ createApp({
     }
 
     function getPercentClass(p) {
-      if (p >= 75) return "green"; if (p >= 50) return "yellow"; if (p >= 30) return "orange"; return "red"
+      if (p >= 75) return "green"
+      if (p >= 50) return "yellow"
+      if (p >= 30) return "orange"
+      return "red"
     }
 
     function getMatchupText(char, enemy) {
@@ -425,12 +576,14 @@ createApp({
     const current = computed(() => sequence.value[step.value] || null)
 
     const currentTurnText = computed(() => {
+      if (currentStep.value === 'maps') return lang.value === 'ua' ? 'Фаза вибору карти' : 'Map Selection Phase'
       if (!current.value) return t('matrixReady')
       const targetName = current.value.player === "player" ? t('teamYou') : t('teamOpponent')
       return `${targetName} ${t('selecting')} ${current.value.type}...`
     })
 
     const turnColor = computed(() => {
+      if (currentStep.value === 'maps') return "#10b981"
       if (!current.value) return "#10b981"
       return current.value.player === "player" ? player.value.color : opponent.value.color
     })
@@ -438,7 +591,8 @@ createApp({
     function resetAll() {
       player.value.bans = []; player.value.picks = []; opponent.value.bans = []; opponent.value.picks = []
       history.value = []; step.value = 0; postBans.value.player.clear(); postBans.value.opponent.clear()
-      showInfoPopover.value = false; localStorage.removeItem(STORAGE_KEY)
+      showInfoPopover.value = false; bannedMaps.value = new Set(); currentStep.value = 'characters'
+      localStorage.removeItem(STORAGE_KEY)
     }
 
     function onFirstPickerChange(newValue) {
@@ -507,9 +661,6 @@ createApp({
       return count ? Math.round(totalWinrate / count) : 50
     }
 
-    const activePlayerPicks = computed(() => player.value.picks.filter(c => !postBans.value.player.has(c.id)))
-    const activeOpponentPicks = computed(() => opponent.value.picks.filter(c => !postBans.value.opponent.has(c.id)))
-
     const finalWinrate = computed(() => {
       const pWin = calculateTeamWinrate(activePlayerPicks.value, activeOpponentPicks.value)
       return { player: pWin, opponent: 100 - pWin }
@@ -561,7 +712,9 @@ createApp({
       lang, t, search, sortMode, firstPicker, currentFormat, availableFormats, player, opponent, filtered, pick, undo,
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
-      onFirstPickerChange, onFormatChange, triggerRestart, confirmReset, cancelReset, showInfoPopover
+      onFirstPickerChange, onFormatChange, triggerRestart, confirmReset, cancelReset, showInfoPopover,
+      currentStep, maps, bannedMaps, canProceedToMaps, proceedToMaps, toggleMapBan,
+      getMapPercentClass, getMapAffinityHints, activePlayerPicks, activeOpponentPicks
     }
   }
 }).mount("#app")
