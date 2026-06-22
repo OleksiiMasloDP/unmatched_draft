@@ -229,8 +229,6 @@
               v-for="map in maps"
               :key="map.id"
               class="map-card"
-              :class="{ 'map-banned': bannedMaps.has(map.id) }"
-              @click="toggleMapBan(map.id)"
             >
               <img class="map-img" :src="map.image" :alt="map.name" loading="lazy" />
               <div class="map-percent-badge" :class="getMapPercentClass(map.pickPercent)">
@@ -357,7 +355,6 @@ createApp({
 
     const currentStep = ref('characters')
     const maps = ref([])
-    const bannedMaps = ref(new Set())
 
     // Computed: active picks (post-ban filtered)
     const activePlayerPicks = computed(() => player.value.picks.filter(c => !postBans.value.player.has(c.id)))
@@ -373,19 +370,9 @@ createApp({
     })
 
     function proceedToMaps() {
-      search.value = ''
-      currentStep.value = 'maps'
-    }
-
-    function toggleMapBan(mapId) {
-      const s = bannedMaps.value
-      if (s.has(mapId)) {
-        s.delete(mapId)
-      } else {
-        s.add(mapId)
-      }
-      // Trigger reactivity
-      bannedMaps.value = new Set(s)
+      search.value = '';
+      currentStep.value = 'maps';
+      saveToStorage();
     }
 
     function getMapPercentClass(p) {
@@ -476,9 +463,19 @@ createApp({
 
     function saveToStorage() {
       const state = {
-        lang: lang.value, sortMode: sortMode.value, firstPicker: firstPicker.value, currentFormat: currentFormat.value, step: step.value,
-        playerPicks: player.value.picks, playerBans: player.value.bans, opponentPicks: opponent.value.picks, opponentBans: opponent.value.bans,
-        history: history.value, postBansPlayer: Array.from(postBans.value.player), postBansOpponent: Array.from(postBans.value.opponent)
+        lang: lang.value, 
+        sortMode: sortMode.value, 
+        firstPicker: firstPicker.value, 
+        currentFormat: currentFormat.value, 
+        step: step.value,
+        playerPicks: player.value.picks, 
+        playerBans: player.value.bans, 
+        opponentPicks: opponent.value.picks, 
+        opponentBans: opponent.value.bans,
+        history: history.value, 
+        postBansPlayer: Array.from(postBans.value.player), 
+        postBansOpponent: Array.from(postBans.value.opponent),
+        currentStep: currentStep.value
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     }
@@ -500,6 +497,7 @@ createApp({
         history.value = state.history || []
         postBans.value.player = new Set(state.postBansPlayer || [])
         postBans.value.opponent = new Set(state.postBansOpponent || [])
+        currentStep.value = state.currentStep || 'characters'
       } catch (e) { console.error(e) }
     }
 
@@ -591,7 +589,7 @@ createApp({
     function resetAll() {
       player.value.bans = []; player.value.picks = []; opponent.value.bans = []; opponent.value.picks = []
       history.value = []; step.value = 0; postBans.value.player.clear(); postBans.value.opponent.clear()
-      showInfoPopover.value = false; bannedMaps.value = new Set(); currentStep.value = 'characters'
+      showInfoPopover.value = false; currentStep.value = 'characters'
       localStorage.removeItem(STORAGE_KEY)
     }
 
@@ -713,7 +711,7 @@ createApp({
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
       onFirstPickerChange, onFormatChange, triggerRestart, confirmReset, cancelReset, showInfoPopover,
-      currentStep, maps, bannedMaps, canProceedToMaps, proceedToMaps, toggleMapBan,
+      currentStep, maps, canProceedToMaps, proceedToMaps,
       getMapPercentClass, getMapAffinityHints, activePlayerPicks, activeOpponentPicks
     }
   }

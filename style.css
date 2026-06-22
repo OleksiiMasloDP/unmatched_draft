@@ -614,40 +614,6 @@ h6 {
   color: #ff4f6d;
 }
 
-/* ЗАБАНЕННАЯ КАРТА */
-.map-card.map-banned::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -25%;
-  width: 150%;
-  height: 3px;
-  background: #991b1b;
-  transform: rotate(-25deg);
-  z-index: 11;
-}
-
-.map-card.map-banned::before {
-  content: "BANNED";
-  position: absolute;
-  inset: 0;
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(139, 0, 24, 0.75);
-  font-weight: 900;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  backdrop-filter: blur(1px);
-}
-
-.map-card.map-banned:hover {
-  transform: none;
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-}
-
 /* ========================================================
    УПРАВЛЕНИЕ АДАПТИВНОСТЬЮ И СТИКАМИ АНАЛИТИКИ
    ======================================================== */
