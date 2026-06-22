@@ -1,3 +1,52 @@
+.team-title-banner {
+  color: white; /* Убрано из инлайна */
+}
+
+/* Шрифты и заголовки */
+.char-title-bold {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.engine-title-text {
+  color: #f1f5f9;
+  letter-spacing: 0.5px;
+}
+
+.engine-title-desktop { font-size: 18px; }
+.engine-title-mobile { font-size: 16px; }
+
+.engine-sub-desc {
+  color: #cbd5e1;
+  opacity: 0.8;
+}
+
+.engine-sub-desktop { font-size: 13px; }
+.engine-sub-mobile { font-size: 12px; }
+
+/* Кастомные кнопки окон Bootstrap */
+.btn-modal-cancel {
+  border-radius: 10px;
+  background: #1e293b;
+  border: none;
+  color: #94a3b8;
+  font-size: 13.5px;
+}
+
+.btn-modal-confirm {
+  border-radius: 10px;
+  padding-left: 18px;
+  padding-right: 18px;
+  background: #ef4444;
+  border: none;
+  font-size: 13.5px;
+}
+
+.modal-body-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 body {
   margin: 0;
   background: #0b0f19;
