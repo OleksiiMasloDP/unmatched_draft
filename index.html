@@ -70,7 +70,7 @@
             {{ t('engineTitle') }}
           </h4>
           <button class="info-trigger-btn" @click="showInfoPopover = !showInfoPopover">
-            [ℹ] Info
+            [ℹ] {{ t('infoLabel') }}
           </button>
         </div>
         
@@ -79,7 +79,7 @@
         </p>
 
         <div v-if="showInfoPopover" class="custom-info-popover mb-2">
-          💡 <strong>Info:</strong> Click picked champions on sides to simulate fast bans (Limit: 2 per side)
+          💡 {{ t('infoBanner') }}
         </div>
 
         <div v-if="banRecommendation" class="rec-box">
@@ -180,7 +180,7 @@
                 {{ t('engineTitle') }}
               </h4>
               <button class="info-trigger-btn" @click="showInfoPopover = !showInfoPopover">
-                [ℹ] Info
+                [ℹ] {{ t('infoLabel') }}
               </button>
             </div>
             
@@ -189,7 +189,7 @@
             </p>
 
             <div v-if="showInfoPopover" class="custom-info-popover mb-3">
-              💡 <strong>Info:</strong> Click picked champions on sides to simulate fast bans (Limit: 2 per side)
+              💡 {{ t('infoBanner') }}
             </div>
 
             <div v-if="banRecommendation" class="rec-box">
@@ -226,7 +226,7 @@
           <h6 style="margin-bottom: 16px;">{{ lang === 'ua' ? 'Виберіть карту' : 'Select a Map' }}</h6>
           <div class="maps-grid">
             <div
-              v-for="map in maps"
+              v-for="map in filteredMaps"
               :key="map.id"
               class="map-card"
             >
@@ -234,6 +234,7 @@
               <div class="map-percent-badge" :class="getMapPercentClass(map.pickPercent)">
                 {{ map.pickPercent }}%
               </div>
+              
               <div class="map-card-name">
                 <div class="map-card-title">{{ map.name }}</div>
                 <div class="map-card-set">{{ map.set }}</div>
@@ -529,6 +530,25 @@ createApp({
       return arr.sort((a,b)=>getPickPercent(b) - getPickPercent(a))
     })
 
+    const filteredMaps = computed(() => {
+      let list = [...(maps.value || [])];
+
+      const query = search.value.toLowerCase().trim();
+      if (query) {
+        list = list.filter(map => map.name.toLowerCase().includes(query));
+      }
+
+      list.sort((a, b) => {
+        if (sortMode.value === 'name') {
+          return a.name.localeCompare(b.name);
+        } else {
+          return (b.pickPercent || 0) - (a.pickPercent || 0);
+        }
+      });
+
+      return list;
+    });
+
     function getPickPercent(char) {
       const clamped = Math.max(MIN_ELO, Math.min(MAX_ELO, char.elo))
       const base = ((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100
@@ -711,7 +731,7 @@ createApp({
       getPickPercent, getMatchupText, getPercentClass, currentTurnText, turnColor,
       history, current, finalWinrate, banRecommendation, postBans, togglePostBan,
       onFirstPickerChange, onFormatChange, triggerRestart, confirmReset, cancelReset, showInfoPopover,
-      currentStep, maps, canProceedToMaps, proceedToMaps,
+      currentStep, maps, canProceedToMaps, proceedToMaps, filteredMaps,
       getMapPercentClass, getMapAffinityHints, activePlayerPicks, activeOpponentPicks
     }
   }

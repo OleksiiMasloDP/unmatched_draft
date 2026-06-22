@@ -13,6 +13,7 @@ export const translations = {
     engineTitle: "Predictive Analytics Engine",
     engineDesc:
       "Team victory weight calculated over active head-to-head simulations",
+    infoLabel: "Info",
     infoBanner:
       "Info: Click picked champions on sides to simulate fast bans (Limit: 2 per side)",
     recBanBadge: "RECOMMENDED BAN",
@@ -44,6 +45,7 @@ export const translations = {
     engineTitle: "Прогноз",
     engineDesc:
       "Вага перемоги команди розрахована на основі симуляцій прямих зіткнень",
+    infoLabel: "Інформація",
     infoBanner:
       "Інфо: Клацайте по обраних героях з боків для швидкого бана (Ліміт: 2 з кожного боку)",
     recBanBadge: "РЕКОМЕНДОВАНИЙ БАН",
