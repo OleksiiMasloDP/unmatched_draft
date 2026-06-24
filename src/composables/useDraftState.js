@@ -329,12 +329,12 @@ export function useDraftState() {
   }
 
   const loadChars = async () => {
-    const res = await fetch("./characters.json");
+    const res = await fetch("characters.json");
     characters.value = await res.json();
   };
 
   const loadMaps = async () => {
-    const res = await fetch("./maps.json");
+    const res = await fetch("maps.json");
     maps.value = await res.json();
   };
 
