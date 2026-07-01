@@ -24,8 +24,8 @@ export const formats = {
   },
   summer_of_legends_2026: {
     name: "Summer of Legends 2026",
-    allowedHeroIds: [8, 23, 27, 35],
-    allowedMapIds: [1, 3, 6, 7, 10, 16, 21],
+    allowedHeroIds: [8, 18, 23, 27, 34, 35, 41, 49, 61, 62, 68, 70],
+    allowedMapIds: [14, 25],
     sequence: standardSequence,
   },
 };
