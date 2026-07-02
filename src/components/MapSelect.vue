@@ -21,35 +21,30 @@
           
           <div class="map-analysis-wrapper">
             
-            <div v-if="getMapGroups(map).goodFor.length > 0" class="analysis-group">
-              <div class="analysis-group-title">{{ t('mapSuitableFor') }}</div>
-              <div class="analysis-images-flex">
-                <div 
-                  v-for="(char, idx) in getMapGroups(map).goodFor" 
-                  :key="idx"
-                  class="rec-hero-card"
-                  :style="{ borderColor: char.side === 'opponent' ? '#ef4444' : '#4f7cff' }"
-                >
-                  <img :src="char.image" class="hero-img-contain" />
+            <template v-for="block in [
+              { title: t('mapSuitableFor'), heroes: getMapGroups(map).goodFor },
+              { title: t('mapNeutralFor'),  heroes: getMapGroups(map).neutralFor },
+              { title: t('mapUnsuitableFor'), heroes: getMapGroups(map).badFor }
+            ]" :key="block.title">
+              
+              <div v-if="block.heroes.length > 0" class="analysis-group">
+                <div class="analysis-group-title">{{ block.title }}</div>
+                <div class="analysis-images-flex">
+                  <div 
+                    v-for="(char, idx) in block.heroes" 
+                    :key="idx"
+                    class="rec-hero-card"
+                    :style="{ borderColor: char.side === 'opponent' ? '#ef4444' : '#4f7cff' }"
+                  >
+                    <img :src="char.image" class="hero-img-contain" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div v-if="getMapGroups(map).badFor.length > 0" class="analysis-group">
-              <div class="analysis-group-title">{{ t('mapUnsuitableFor') }}</div>
-              <div class="analysis-images-flex">
-                <div 
-                  v-for="(char, idx) in getMapGroups(map).badFor" 
-                  :key="idx"
-                  class="rec-hero-card"
-                  :style="{ borderColor: char.side === 'opponent' ? '#ef4444' : '#4f7cff' }"
-                >
-                  <img :src="char.image" class="hero-img-contain" />
-                </div>
-              </div>
-            </div>
+            </template>
 
           </div>
+          
         </div>
       </div>
     </div>
@@ -78,6 +73,7 @@ function getMapPercentClass(rating) {
   display: flex;
   gap: 24px;
   text-align: left;
+  flex-direction: column;
 }
 .analysis-group-title {
   font-size: 11px;

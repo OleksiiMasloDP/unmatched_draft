@@ -1,10 +1,11 @@
-const standardSequence = [
+const threeBans_fivePicks = [
   { type: "ban", p1: true },
   { type: "ban", p1: false },
   { type: "ban", p1: true },
   { type: "ban", p1: false },
   { type: "ban", p1: true },
   { type: "ban", p1: false },
+
   { type: "pick", p1: true },
   { type: "pick", p1: false },
   { type: "pick", p1: false },
@@ -13,6 +14,8 @@ const standardSequence = [
   { type: "pick", p1: false },
   { type: "pick", p1: false },
   { type: "pick", p1: true },
+  { type: "pick", p1: true },
+  { type: "pick", p1: false },
 ];
 
 export const formats = {
@@ -20,7 +23,7 @@ export const formats = {
     name: "Test Format",
     allowedHeroIds: ["all"],
     allowedMapIds: ["all"],
-    sequence: standardSequence,
+    sequence: threeBans_fivePicks,
   },
   summer_of_legends_2026: {
     name: "Summer of Legends 2026",
@@ -29,6 +32,6 @@ export const formats = {
       52, 53, 54, 55, 59, 60, 61, 62, 64, 67, 68, 69, 70, 71, 72,
     ],
     allowedMapIds: [3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 18, 25, 26, 30, 31],
-    sequence: standardSequence,
+    sequence: threeBans_fivePicks,
   },
 };

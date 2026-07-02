@@ -66,7 +66,7 @@
         <div class="slot-box">
           <div v-for="char in player.picks" :key="char.id">
             <div v-if="currentStep === 'characters' || !postBans.player.has(char.id)" 
-                 class="pick-card" 
+                 class="pick-card player-card" 
                  :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" 
                  @click="togglePostBan('player', char.id)">
               <img :src="char.image" />
@@ -107,7 +107,7 @@
         <div class="slot-box">
           <div v-for="enemyChar in opponent.picks" :key="enemyChar.id">
             <div v-if="currentStep === 'characters' || !postBans.opponent.has(enemyChar.id)" 
-                 class="pick-card" 
+                 class="pick-card opponent-card" 
                  :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(enemyChar.id) }" 
                  @click="togglePostBan('opponent', enemyChar.id)">
               <img :src="enemyChar.image" />

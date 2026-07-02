@@ -464,22 +464,32 @@ export function useDraftState() {
   function getMapGroups(map) {
     const favoredBy = map.favoredBy || [];
     const disfavoredBy = map.disfavoredBy || [];
+    const neutralTo = map.neutralTo || [];
     const goodFor = [];
     const badFor = [];
+    const neutralFor = [];
 
     for (const char of activePlayerPicks.value) {
       if (favoredBy.includes(char.name))
         goodFor.push({ image: char.image, name: char.name, side: "player" });
-      if (disfavoredBy.includes(char.name))
+      else if (disfavoredBy.includes(char.name))
         badFor.push({ image: char.image, name: char.name, side: "player" });
+      else
+        neutralFor.push({ image: char.image, name: char.name, side: "player" });
     }
     for (const char of activeOpponentPicks.value) {
       if (favoredBy.includes(char.name))
         goodFor.push({ image: char.image, name: char.name, side: "opponent" });
-      if (disfavoredBy.includes(char.name))
+      else if (disfavoredBy.includes(char.name))
         badFor.push({ image: char.image, name: char.name, side: "opponent" });
+      else
+        neutralFor.push({
+          image: char.image,
+          name: char.name,
+          side: "opponent",
+        });
     }
-    return { goodFor, badFor };
+    return { goodFor, badFor, neutralFor };
   }
 
   return {

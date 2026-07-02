@@ -32,6 +32,7 @@ export const translations = {
       "Recommended first self-ban: {names}. Removing this weak link bumps your winrate to {newWinrate}% (+{benefit}%).",
     mapSuitableFor: "Suitable for:",
     mapUnsuitableFor: "Not suitable for:",
+    mapNeutralFor: "Neutral for:",
     toMapsLabel: "Proceed to Maps",
     mapSelectLabel: "Select a Map",
     matchups: {
@@ -75,6 +76,7 @@ export const translations = {
       "Рекомендований перший бан СВОГО героя: {names}. Усунення слабкого звена підніме ваш вінрейт до {newWinrate}% (+{benefit}%).",
     mapSuitableFor: "Підходить для:",
     mapUnsuitableFor: "Не підходить для:",
+    mapNeutralFor: "Нейтральна для:",
     toMapsLabel: "Перейти до карт",
     mapSelectLabel: "Select a Map",
     matchups: {
