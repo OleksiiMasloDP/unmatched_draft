@@ -325,7 +325,10 @@ watch([lang, sortMode, currentStep, selectedMapId], () => {
 
 export function useDraftState() {
   function t(key) {
-    return translations[lang.value]?.[key] || key;
+    return (
+      key.split(".").reduce((obj, i) => obj?.[i], translations[lang.value]) ||
+      key
+    );
   }
 
   const loadChars = async () => {
@@ -453,10 +456,9 @@ export function useDraftState() {
   function getMatchupText(char, enemy) {
     const mu = char.matchups?.[enemy.name];
     if (!mu) return "";
-    const diff = mu.winrate - 50;
-    if (diff > 0) return `vs ${enemy.name}: ${mu.winrate}% (+${diff})`;
-    if (diff < 0) return `vs ${enemy.name}: ${mu.winrate}% (${diff})`;
-    return `vs ${enemy.name}: ${mu.winrate}%`;
+
+    const typeText = t(`matchups.${mu.type}`) || mu.type;
+    return `vs ${enemy.name}: ${mu.winrate}% (${typeText})`;
   }
 
   function getMapGroups(map) {

@@ -6,7 +6,8 @@
     "image": "maps/mcMinnville.webp",
     "pickPercent": 42,
     "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot"],
-    "disfavoredBy": ["Medusa", "Dracula"]
+    "disfavoredBy": ["Medusa", "Dracula"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 2,
@@ -15,7 +16,8 @@
     "image": "maps/point_pleasant.webp",
     "pickPercent": 42,
     "favoredBy": ["Sherlock Holmes", "Deadpool"],
-    "disfavoredBy": ["Alice", "King Arthur"]
+    "disfavoredBy": ["Alice", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 3,
@@ -24,7 +26,8 @@
     "image": "maps/baskerville_manor.webp",
     "pickPercent": 32,
     "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary"],
-    "disfavoredBy": [ "Sinbad"]
+    "disfavoredBy": [ "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula"]
   }, 
   {
     "id": 4,
@@ -33,7 +36,8 @@
     "image": "maps/fayrlund_forest.webp",
     "pickPercent": 30,
     "favoredBy": ["Yennenga", "Achilles"],
-    "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"]
+    "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 5,
@@ -42,7 +46,8 @@
     "image": "maps/globe_theatre.webp",
     "pickPercent": 32,
     "favoredBy": ["King Arthur", "Alice"],
-    "disfavoredBy": ["Medusa", "Deadpool"]
+    "disfavoredBy": ["Medusa", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 6,
@@ -51,7 +56,8 @@
     "image": "maps/hanging_gardens.webp",
     "pickPercent": 33,
     "favoredBy": ["Achilles", "Medusa"],
-    "disfavoredBy": ["Bigfoot", "Sinbad"]
+    "disfavoredBy": ["Bigfoot", "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 7,
@@ -60,7 +66,8 @@
     "image": "maps/helicarrier.webp",
     "pickPercent": 29,
     "favoredBy": ["Deadpool", "Bruce Lee"],
-    "disfavoredBy": ["Yennenga", "Alice"]
+    "disfavoredBy": ["Yennenga", "Alice"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 8,
@@ -69,7 +76,8 @@
     "image": "maps/hells_kitchen.webp",
     "pickPercent": 30,
     "favoredBy": ["Dracula", "Invisible Man"],
-    "disfavoredBy": ["King Arthur", "Robin Hood"]
+    "disfavoredBy": ["King Arthur", "Robin Hood"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 9,
@@ -78,7 +86,8 @@
     "image": "maps/kaer_morhen.webp",
     "pickPercent": 32,
     "favoredBy": ["Yennenga", "Bloody Mary"],
-    "disfavoredBy": ["Sherlock Holmes", "Deadpool"]
+    "disfavoredBy": ["Sherlock Holmes", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 10,
@@ -87,7 +96,8 @@
     "image": "maps/marmoreal.webp",
     "pickPercent": 31,
     "favoredBy": ["Alice", "Sherlock Holmes"],
-    "disfavoredBy": ["Achilles", "Bigfoot"]
+    "disfavoredBy": ["Achilles", "Bigfoot"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 11,
@@ -96,7 +106,8 @@
     "image": "maps/naglfar.webp",
     "pickPercent": 28,
     "favoredBy": ["Bigfoot", "Robin Hood"],
-    "disfavoredBy": ["Medusa", "Bruce Lee"]
+    "disfavoredBy": ["Medusa", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 12,
@@ -105,7 +116,8 @@
     "image": "maps/navy_pier.webp",
     "pickPercent": 30,
     "favoredBy": ["Bruce Lee", "Deadpool"],
-    "disfavoredBy": ["Dracula", "Invisible Man"]
+    "disfavoredBy": ["Dracula", "Invisible Man"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 13,
@@ -114,7 +126,8 @@
     "image": "maps/sanctum_sanctorum.webp",
     "pickPercent": 29,
     "favoredBy": ["Invisible Man", "Sherlock Holmes"],
-    "disfavoredBy": ["Sinbad", "Yennenga"]
+    "disfavoredBy": ["Sinbad", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 14,
@@ -123,7 +136,8 @@
     "image": "maps/santas_workshop.avif",
     "pickPercent": 34,
     "favoredBy": ["King Arthur", "Bloody Mary"],
-    "disfavoredBy": ["Alice", "Robin Hood"]
+    "disfavoredBy": ["Alice", "Robin Hood"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 15,
@@ -132,7 +146,8 @@
     "image": "maps/sarpedon.webp",
     "pickPercent": 38,
     "favoredBy": ["Sinbad", "Achilles"],
-    "disfavoredBy": ["Deadpool", "Dracula"]
+    "disfavoredBy": ["Deadpool", "Dracula"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 16,
@@ -141,7 +156,8 @@
     "image": "maps/soho.webp",
     "pickPercent": 29,
     "favoredBy": ["Dracula", "Invisible Man"],
-    "disfavoredBy": ["Bigfoot", "Yennenga"]
+    "disfavoredBy": ["Bigfoot", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 17,
@@ -150,7 +166,8 @@
     "image": "maps/streets_of_novigrad.webp",
     "pickPercent": 34,
     "favoredBy": ["Yennenga", "Robin Hood"],
-    "disfavoredBy": ["Medusa", "King Arthur"]
+    "disfavoredBy": ["Medusa", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 18,
@@ -159,7 +176,8 @@
     "image": "maps/sunnydale_high.webp",
     "pickPercent": 31,
     "favoredBy": ["Alice", "Bloody Mary"],
-    "disfavoredBy": ["Sinbad", "Bruce Lee"]
+    "disfavoredBy": ["Sinbad", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 19,
@@ -168,7 +186,8 @@
     "image": "maps/bronze.webp",
     "pickPercent": 35,
     "favoredBy": ["Bruce Lee", "Medusa"],
-    "disfavoredBy": ["Sherlock Holmes", "Achilles"]
+    "disfavoredBy": ["Sherlock Holmes", "Achilles"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 20,
@@ -177,7 +196,8 @@
     "image": "maps/the_raft.webp",
     "pickPercent": 31,
     "favoredBy": ["Deadpool", "Achilles"],
-    "disfavoredBy": ["Dracula", "Bigfoot"]
+    "disfavoredBy": ["Dracula", "Bigfoot"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 21,
@@ -186,7 +206,8 @@
     "image": "maps/venice.avif",
     "pickPercent": 33,
     "favoredBy": ["Medusa", "King Arthur"],
-    "disfavoredBy": ["Robin Hood", "Invisible Man"]
+    "disfavoredBy": ["Robin Hood", "Invisible Man"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 22,
@@ -195,7 +216,8 @@
     "image": "maps/azuchi_castle.webp",
     "pickPercent": 31,
     "favoredBy": ["Achilles", "Sinbad"],
-    "disfavoredBy": ["Alice", "Bloody Mary"]
+    "disfavoredBy": ["Alice", "Bloody Mary"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 23,
@@ -204,7 +226,8 @@
     "image": "maps/heorot.webp",
     "pickPercent": 30,
     "favoredBy": ["Bigfoot", "Yennenga"],
-    "disfavoredBy": ["Dracula", "Deadpool"]
+    "disfavoredBy": ["Dracula", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 24,
@@ -213,7 +236,8 @@
     "image": "maps/king_solomons_mine.webp",
     "pickPercent": 29,
     "favoredBy": ["Sherlock Holmes", "Robin Hood"],
-    "disfavoredBy": ["Bruce Lee", "Achilles"]
+    "disfavoredBy": ["Bruce Lee", "Achilles"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 25,
@@ -222,7 +246,8 @@
     "image": "maps/raptor_paddock.webp",
     "pickPercent": 28,
     "favoredBy": ["Medusa", "Deadpool"],
-    "disfavoredBy": ["King Arthur", "Sinbad"]
+    "disfavoredBy": ["King Arthur", "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 26,
@@ -231,7 +256,8 @@
     "image": "maps/sherwood_forest.webp",
     "pickPercent": 30,
     "favoredBy": ["Robin Hood", "Bigfoot"],
-    "disfavoredBy": ["Invisible Man", "Medusa"]
+    "disfavoredBy": ["Invisible Man", "Medusa"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 27,
@@ -240,7 +266,8 @@
     "image": "maps/trex_paddock.webp",
     "pickPercent": 26,
     "favoredBy": ["Bruce Lee", "Achilles"],
-    "disfavoredBy": ["Sherlock Holmes", "Alice"]
+    "disfavoredBy": ["Sherlock Holmes", "Alice"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 28,
@@ -249,7 +276,8 @@
     "image": "maps/yukon.webp",
     "pickPercent": 31,
     "favoredBy": ["Bigfoot", "Sinbad"],
-    "disfavoredBy": ["Bloody Mary", "Deadpool"]
+    "disfavoredBy": ["Bloody Mary", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula"]
   },
   {
     "id": 29,
@@ -258,6 +286,27 @@
     "image": "maps/yukon_1900.webp",
     "pickPercent": 30,
     "favoredBy": ["Yennenga", "Invisible Man"],
-    "disfavoredBy": ["Robin Hood", "King Arthur"]
+    "disfavoredBy": ["Robin Hood", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 30,
+    "name": "Alamo",
+    "set": "Stars & Stripes",
+    "image": "maps/alamo.webp",
+    "pickPercent": 45,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 31,
+    "name": "Technodrome",
+    "set": "Teenage Mutant Ninja Turtles",
+    "image": "maps/technodrome.jpg",
+    "pickPercent": 20,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula"]
   }
 ]

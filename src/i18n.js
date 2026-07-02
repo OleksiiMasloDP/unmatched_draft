@@ -34,6 +34,13 @@ export const translations = {
     mapUnsuitableFor: "Not suitable for:",
     toMapsLabel: "Proceed to Maps",
     mapSelectLabel: "Select a Map",
+    matchups: {
+      COUNTER: "Counter",
+      FAVORED: "Favored",
+      NEUTRAL: "Neutral",
+      DISFAVORED: "Disfavored",
+      WEAK: "Countered",
+    },
   },
   ua: {
     searchPlaceholder: "Пошук по імені...",
@@ -70,5 +77,12 @@ export const translations = {
     mapUnsuitableFor: "Не підходить для:",
     toMapsLabel: "Перейти до карт",
     mapSelectLabel: "Select a Map",
+    matchups: {
+      COUNTER: "Контрпік",
+      FAVORED: "Перевага",
+      NEUTRAL: "Нейтральний",
+      DISFAVORED: "Невигідно",
+      WEAK: "Найгірший матч",
+    },
   },
 };
