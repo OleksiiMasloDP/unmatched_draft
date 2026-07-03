@@ -5,9 +5,9 @@
     "set": "Adventures: Tales to Amaze",
     "image": "maps/mcMinnville.webp",
     "pickPercent": 42,
-    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot"],
+    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot", "Golden Bat"],
     "disfavoredBy": ["Medusa", "Dracula"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 2,
@@ -15,9 +15,9 @@
     "set": "Adventures: Tales to Amaze",
     "image": "maps/point_pleasant.webp",
     "pickPercent": 42,
-    "favoredBy": ["Sherlock Holmes", "Deadpool"],
+    "favoredBy": ["Sherlock Holmes", "Deadpool", "Golden Bat"],
     "disfavoredBy": ["Alice", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 3,
@@ -25,9 +25,9 @@
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
     "pickPercent": 32,
-    "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary"],
+    "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary", "Golden Bat"],
     "disfavoredBy": [ "Sinbad"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   }, 
   {
     "id": 4,
@@ -35,9 +35,9 @@
     "set": "The Witcher - Steel & Silver",
     "image": "maps/fayrlund_forest.webp",
     "pickPercent": 30,
-    "favoredBy": ["Yennenga", "Achilles"],
+    "favoredBy": ["Yennenga", "Achilles", "Donatello"],
     "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
   },
   {
     "id": 5,
@@ -47,7 +47,7 @@
     "pickPercent": 32,
     "favoredBy": ["King Arthur", "Alice"],
     "disfavoredBy": ["Medusa", "Deadpool"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
   },
   {
     "id": 6,
@@ -55,9 +55,9 @@
     "set": "Battle of Legends, Volume Two",
     "image": "maps/hanging_gardens.webp",
     "pickPercent": 33,
-    "favoredBy": ["Achilles", "Medusa"],
+    "favoredBy": ["Achilles", "Medusa", "Golden Bat"],
     "disfavoredBy": ["Bigfoot", "Sinbad"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 7,
@@ -65,9 +65,9 @@
     "set": "For King and Country",
     "image": "maps/helicarrier.webp",
     "pickPercent": 29,
-    "favoredBy": ["Deadpool", "Bruce Lee"],
+    "favoredBy": ["Deadpool", "Bruce Lee", "Donatello"],
     "disfavoredBy": ["Yennenga", "Alice"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
   },
   {
     "id": 8,
@@ -75,9 +75,9 @@
     "set": "Hell's Kitchen",
     "image": "maps/hells_kitchen.webp",
     "pickPercent": 30,
-    "favoredBy": ["Dracula", "Invisible Man"],
+    "favoredBy": ["Dracula", "Invisible Man", "Donatello"],
     "disfavoredBy": ["King Arthur", "Robin Hood"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
   },
   {
     "id": 9,
@@ -86,8 +86,8 @@
     "image": "maps/kaer_morhen.webp",
     "pickPercent": 32,
     "favoredBy": ["Yennenga", "Bloody Mary"],
-    "disfavoredBy": ["Sherlock Holmes", "Deadpool"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Sherlock Holmes", "Deadpool", "Donatello"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
   },
   {
     "id": 10,
@@ -95,8 +95,8 @@
     "set": "Battle of Legends, Volume One",
     "image": "maps/marmoreal.webp",
     "pickPercent": 31,
-    "favoredBy": ["Alice", "Sherlock Holmes"],
-    "disfavoredBy": ["Achilles", "Bigfoot"],
+    "favoredBy": ["Alice", "Sherlock Holmes", "Golden Bat"],
+    "disfavoredBy": ["Achilles", "Bigfoot", "Donatello"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -105,9 +105,9 @@
     "set": "The Witcher - Realms Fall",
     "image": "maps/naglfar.webp",
     "pickPercent": 28,
-    "favoredBy": ["Bigfoot", "Robin Hood"],
+    "favoredBy": ["Bigfoot", "Robin Hood", "Donatello"],
     "disfavoredBy": ["Medusa", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
   },
   {
     "id": 12,
@@ -116,7 +116,7 @@
     "image": "maps/navy_pier.webp",
     "pickPercent": 30,
     "favoredBy": ["Bruce Lee", "Deadpool"],
-    "disfavoredBy": ["Dracula", "Invisible Man"],
+    "disfavoredBy": ["Dracula", "Invisible Man", "Donatello", "Golden Bat"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -126,8 +126,8 @@
     "image": "maps/sanctum_sanctorum.webp",
     "pickPercent": 29,
     "favoredBy": ["Invisible Man", "Sherlock Holmes"],
-    "disfavoredBy": ["Sinbad", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Sinbad", "Yennenga", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 14,
@@ -135,8 +135,8 @@
     "set": "Battle of Legends, Volume Three",
     "image": "maps/santas_workshop.avif",
     "pickPercent": 34,
-    "favoredBy": ["King Arthur", "Bloody Mary"],
-    "disfavoredBy": ["Alice", "Robin Hood"],
+    "favoredBy": ["King Arthur", "Bloody Mary", "Donatello"],
+    "disfavoredBy": ["Alice", "Robin Hood", "Golden Bat"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -145,8 +145,8 @@
     "set": "Battle of Legends, Volume One",
     "image": "maps/sarpedon.webp",
     "pickPercent": 38,
-    "favoredBy": ["Sinbad", "Achilles"],
-    "disfavoredBy": ["Deadpool", "Dracula"],
+    "favoredBy": ["Sinbad", "Achilles", "Golden Bat"],
+    "disfavoredBy": ["Deadpool", "Dracula", "Donatello"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -155,9 +155,9 @@
     "set": "Cobble & Fog",
     "image": "maps/soho.webp",
     "pickPercent": 29,
-    "favoredBy": ["Dracula", "Invisible Man"],
+    "favoredBy": ["Dracula", "Invisible Man", "Golden Bat"],
     "disfavoredBy": ["Bigfoot", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 17,
@@ -167,7 +167,7 @@
     "pickPercent": 34,
     "favoredBy": ["Yennenga", "Robin Hood"],
     "disfavoredBy": ["Medusa", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
   },
   {
     "id": 18,
@@ -177,7 +177,7 @@
     "pickPercent": 31,
     "favoredBy": ["Alice", "Bloody Mary"],
     "disfavoredBy": ["Sinbad", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"]
   },
   {
     "id": 19,
@@ -185,9 +185,9 @@
     "set": "Buffy the Vampire Slayer",
     "image": "maps/bronze.webp",
     "pickPercent": 35,
-    "favoredBy": ["Bruce Lee", "Medusa"],
+    "favoredBy": ["Bruce Lee", "Medusa", "Golden Bat"],
     "disfavoredBy": ["Sherlock Holmes", "Achilles"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 20,
@@ -197,7 +197,7 @@
     "pickPercent": 31,
     "favoredBy": ["Deadpool", "Achilles"],
     "disfavoredBy": ["Dracula", "Bigfoot"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
   },
   {
     "id": 21,
@@ -206,8 +206,8 @@
     "image": "maps/venice.avif",
     "pickPercent": 33,
     "favoredBy": ["Medusa", "King Arthur"],
-    "disfavoredBy": ["Robin Hood", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Robin Hood", "Invisible Man", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 22,
@@ -216,8 +216,8 @@
     "image": "maps/azuchi_castle.webp",
     "pickPercent": 31,
     "favoredBy": ["Achilles", "Sinbad"],
-    "disfavoredBy": ["Alice", "Bloody Mary"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Alice", "Bloody Mary", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 23,
@@ -226,8 +226,8 @@
     "image": "maps/heorot.webp",
     "pickPercent": 30,
     "favoredBy": ["Bigfoot", "Yennenga"],
-    "disfavoredBy": ["Dracula", "Deadpool"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Dracula", "Deadpool", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 24,
@@ -236,8 +236,8 @@
     "image": "maps/king_solomons_mine.webp",
     "pickPercent": 29,
     "favoredBy": ["Sherlock Holmes", "Robin Hood"],
-    "disfavoredBy": ["Bruce Lee", "Achilles"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Bruce Lee", "Achilles", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 25,
@@ -245,8 +245,8 @@
     "set": "Jurassic Park - Ingen vs. Raptors",
     "image": "maps/raptor_paddock.webp",
     "pickPercent": 28,
-    "favoredBy": ["Medusa", "Deadpool"],
-    "disfavoredBy": ["King Arthur", "Sinbad"],
+    "favoredBy": ["Medusa", "Deadpool", "Donatello"],
+    "disfavoredBy": ["King Arthur", "Sinbad", "Golden Bat"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -255,8 +255,8 @@
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/sherwood_forest.webp",
     "pickPercent": 30,
-    "favoredBy": ["Robin Hood", "Bigfoot"],
-    "disfavoredBy": ["Invisible Man", "Medusa"],
+    "favoredBy": ["Robin Hood", "Bigfoot", "Golden Bat"],
+    "disfavoredBy": ["Invisible Man", "Medusa", "Donatello"],
     "neutralTo": ["Sinbad", "Dracula"]
   },
   {
@@ -266,8 +266,8 @@
     "image": "maps/trex_paddock.webp",
     "pickPercent": 26,
     "favoredBy": ["Bruce Lee", "Achilles"],
-    "disfavoredBy": ["Sherlock Holmes", "Alice"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Sherlock Holmes", "Alice", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 28,
@@ -275,9 +275,9 @@
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/yukon.webp",
     "pickPercent": 31,
-    "favoredBy": ["Bigfoot", "Sinbad"],
+    "favoredBy": ["Bigfoot", "Sinbad", "Golden Bat"],
     "disfavoredBy": ["Bloody Mary", "Deadpool"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 29,
@@ -287,7 +287,7 @@
     "pickPercent": 30,
     "favoredBy": ["Yennenga", "Invisible Man"],
     "disfavoredBy": ["Robin Hood", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
   },
   {
     "id": 30,
@@ -296,17 +296,57 @@
     "image": "maps/alamo.webp",
     "pickPercent": 45,
     "favoredBy": ["Yennenga", "Invisible Man"],
-    "disfavoredBy": ["Robin Hood", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   },
   {
     "id": 31,
-    "name": "Technodrome",
+    "name": "New York City",
     "set": "Teenage Mutant Ninja Turtles",
-    "image": "maps/technodrome.jpg",
+    "image": "maps/new_york.jpg",
     "pickPercent": 20,
     "favoredBy": ["Yennenga", "Invisible Man"],
     "disfavoredBy": ["Robin Hood", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula"]
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"]
+  },
+   {
+    "id": 32,
+    "name": "White House",
+    "set": "Stars & Stripes",
+    "image": "maps/white_house.webp",
+    "pickPercent": 20,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 33,
+    "name": "Thrilla In Manilla",
+    "set": "Muhammad Ali vs Bruce Lee",
+    "image": "maps/manilla.jpg",
+    "pickPercent": 40,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 34,
+    "name": "Tsing Shan Monastery",
+    "set": "Muhammad Ali vs Bruce Lee",
+    "image": "maps/tsing_shan_monastery.webp",
+    "pickPercent": 40,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 34,
+    "name": "Technodrome",
+    "set": "Teenage Mutant Ninja Turtles",
+    "image": "maps/technodrome.jpg",
+    "pickPercent": 25,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
   }
 ]
