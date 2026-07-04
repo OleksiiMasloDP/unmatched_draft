@@ -3,7 +3,7 @@
   <div class="maps-page">
     <div class="search-container">
       <input 
-        v-model="searchQuery" 
+        v-model="search" 
         type="text"
         :placeholder="t('searchPlaceholder')"
         class="form-control form-control-sm search-field"
@@ -15,44 +15,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
 import { useDraftState } from '../composables/useDraftState';
 import MapSelect from './MapSelect.vue';
-const { t } = useDraftState();
 
-const searchQuery = ref('');
-
-const allMaps = ref([]);
-const activePlayerPicks = ref([]); 
-const activeOpponentPicks = ref([]);
-
-const filteredMaps = computed(() => {
-  if (!searchQuery.value.trim()) return allMaps.value;
-  const query = searchQuery.value.toLowerCase();
-  return allMaps.value.filter(map => map.name.toLowerCase().includes(query));
-});
-
-function getMapGroups(map) {
-  const favoredBy = map.favoredBy || [];
-  const disfavoredBy = map.disfavoredBy || [];
-  const neutralTo = map.neutralTo || [];
-  const goodFor = [];
-  const badFor = [];
-  const neutralFor = [];
-
-  const checkSide = (picks, sideName) => {
-    for (const char of picks) {
-      if (favoredBy.includes(char.name)) goodFor.push({ image: char.image, name: char.name, side: sideName });
-      if (disfavoredBy.includes(char.name)) badFor.push({ image: char.image, name: char.name, side: sideName });
-      if (neutralTo.includes(char.name)) neutralFor.push({ image: char.image, name: char.name, side: sideName });
-    }
-  };
-
-  checkSide(activePlayerPicks.value, 'player');
-  checkSide(activeOpponentPicks.value, 'opponent');
-
-  return { goodFor, badFor, neutralFor };
-}
+const { search, t } = useDraftState();
 </script>
 
 <style scoped>
