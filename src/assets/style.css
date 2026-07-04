@@ -1,5 +1,17 @@
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1e293b 0%, #111827 100%);
+  background-attachment: fixed;
+}
+
 .team-title-banner {
   color: white;
+}
+
+.content {
+  margin-top: 60px;
 }
 
 .char-title-bold {
@@ -67,7 +79,6 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .top-wrap.sticky-active {
@@ -564,7 +575,7 @@ h6 {
 .map-card-name {
   position: relative;
   width: 100%;
-  background: rgba(30, 41, 59, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
   font-size: 12px;

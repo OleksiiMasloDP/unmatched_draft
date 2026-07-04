@@ -157,6 +157,8 @@
       <HeroMapGuide/>
     </div>
   </main>
+
+  <ScrollToTop />
 </template>
 
 <script setup>
@@ -166,6 +168,7 @@
   import MapSelect from './components/MapSelect.vue';
   import Header from './components/Header.vue';
   import HeroMapGuide from './components/HeroMapGuide.vue';
+  import ScrollToTop from './components/ScrollToTop.vue';
 
   const {
     search, currentFormat, availableFormats, firstPicker, sortMode, lang,

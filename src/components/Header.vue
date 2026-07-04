@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header">
+  <header class="app-header" :class="{ 'is-hidden': isHeaderHidden }">
     <div class="header-container">
       <div class="header-left">
         <button class="burger-btn" @click="isMenuOpen = !isMenuOpen" :class="{ 'is-active': isMenuOpen }">
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   lang: {
@@ -75,20 +75,54 @@ const navigate = (screenName) => {
   isMenuOpen.value = false;
   emit('navigate', screenName);
 };
+
+const isHeaderHidden = ref(false);
+
+function handleScroll() {
+  const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  // Якщо ми на самому верху сторінки — хедер ЗАВЖДИ показується.
+  // Якщо скролимо вниз (більше ніж на 50px від верху) — ховаємо його.
+  if (currentScrollTop > 50) {
+    isHeaderHidden.value = true;
+  } else {
+    isHeaderHidden.value = false;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
-.app-header {
+.app-header{
+  position: fixed; /* Хедер зафіксований, але ми керуємо його зміщенням */
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Плавна анімація зникнення */
+
   width: 100%;
   padding: 12px 16px;
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
   z-index: 1100;
   user-select: none;
+
+}
+
+/* Клас, який ховає хедер, виштовхуючи його вгору за межі екрана */
+.app-header.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none; /* Щоб випадково не клікнути на прихований елемент */
 }
 
 .header-container {
