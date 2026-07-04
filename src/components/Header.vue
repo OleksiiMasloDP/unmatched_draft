@@ -31,7 +31,7 @@
     <transition name="slide">
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
-          <li class="menu-section-title">Навігація</li>
+          <li class="menu-section-title">{{ t('navigation') }}</li>
           <li>
             <button class="menu-item" @click="navigate('maps')">
               <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -39,7 +39,7 @@
                 <line x1="9" y1="3" x2="9" y2="18"/>
                 <line x1="15" y1="6" x2="15" y2="21"/>
               </svg>
-              <span>{{ t('menuMapsAnalysis') }}</span>
+              <span>{{ t('heroMapGuide') }}</span>
             </button>
           </li>
         </ul>
@@ -150,7 +150,7 @@ const navigate = (screenName) => {
   top: calc(100% + 8px);
   left: 16px;
   width: 260px;
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(30, 41, 59);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 16px;

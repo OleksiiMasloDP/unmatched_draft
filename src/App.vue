@@ -154,7 +154,7 @@
     </div>
     
     <div v-if="currentScreen === 'maps'">
-      <MapsAnalysis/>
+      <HeroMapGuide/>
     </div>
   </main>
 </template>
@@ -165,7 +165,7 @@
   import CharacterDraft from './components/CharacterDraft.vue';
   import MapSelect from './components/MapSelect.vue';
   import Header from './components/Header.vue';
-  import MapsAnalysis from './components/MapsAnalysis.vue'; // Импортируем новый компонент
+  import HeroMapGuide from './components/HeroMapGuide.vue';
 
   const {
     search, currentFormat, availableFormats, firstPicker, sortMode, lang,

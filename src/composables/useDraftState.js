@@ -26,6 +26,14 @@ const MAX_ELO = 1600;
 const MIN_ELO = 1300;
 const STORAGE_KEY = "unmatched_draft_state_v4";
 
+// Масив для збереження ID обраних користувачем персонажів на сторінці карт
+const selectedPreviewHeroIds = ref([]);
+
+// Функція для очищення або скидання вибору (опціонально)
+function clearPreviewHeroes() {
+  selectedPreviewHeroIds.value = [];
+}
+
 const activePlayerPicks = computed(() =>
   player.value.picks.filter((c) => !postBans.value.player.has(c.id)),
 );
@@ -480,6 +488,12 @@ export function useDraftState() {
 
     // Внутрішній помічник, щоб не дублювати логіку перевірок у циклах
     const processCharacter = (char, sideName) => {
+      // ЯКЩО це прев'ю і користувач обрав якихось героїв,
+      // пропускаємо всіх, хто не входить у список обраних
+      if (isPreview && selectedPreviewHeroIds.value.length > 0) {
+        if (!selectedPreviewHeroIds.value.includes(char.id)) return;
+      }
+
       if (favoredBy.includes(char.name)) {
         goodFor.push({ image: char.image, name: char.name, side: sideName });
       } else if (disfavoredBy.includes(char.name)) {
@@ -558,5 +572,7 @@ export function useDraftState() {
     getMatchupText,
     getMapGroups,
     proceedToMaps,
+    getAllCharacters,
+    selectedPreviewHeroIds,
   };
 }

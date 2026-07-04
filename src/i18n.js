@@ -1,6 +1,8 @@
 export const translations = {
   en: {
+    navigation: "Navigation",
     searchPlaceholder: "Search by name...",
+    searchMapPlaceholder: "Search by map name",
     userFirst: "You first player",
     opponentFirst: "Opponent first",
     sortDraft: "Sort by: Pick Rating (%)",
@@ -43,9 +45,14 @@ export const translations = {
       WEAK: "Countered",
     },
     selectMap: "Select a Map",
+    filterByHeroes: "Filter by heroes",
+    clearFilter: "Clear Filter",
+    heroMapGuide: "Hero map guide",
   },
   ua: {
+    navigation: "Навігація",
     searchPlaceholder: "Пошук по імені...",
+    searchMapPlaceholder: "Пошук по імені мапи",
     userFirst: "Ви перші гравець",
     opponentFirst: "Опонент перший",
     sortDraft: "Сортування за: Рейтингом піку (%)",
@@ -88,5 +95,8 @@ export const translations = {
       WEAK: "Найгірший матч",
     },
     selectMap: "Виберіть карту",
+    filterByHeroes: "Фільтр за персонажами",
+    clearFilter: "Скинути",
+    heroMapGuide: "Гайд по мапам",
   },
 };
