@@ -1,8 +1,7 @@
 .team-title-banner {
-  color: white; /* Убрано из инлайна */
+  color: white;
 }
 
-/* Шрифты и заголовки */
 .char-title-bold {
   font-weight: 800;
   font-size: 13px;
@@ -24,7 +23,6 @@
 .engine-sub-desktop { font-size: 13px; }
 .engine-sub-mobile { font-size: 12px; }
 
-/* Кастомные кнопки окон Bootstrap */
 .btn-modal-cancel {
   border-radius: 10px;
   background: #1e293b;
@@ -58,7 +56,6 @@ body {
   min-height: 100vh;
 }
 
-/* ВЕРХНЯЯ НАВИГАЦИЯ / ПАНЕЛЬ КОНТРОЛЯ */
 .top-wrap {
   display: flex;
   flex-direction: column;
@@ -79,7 +76,6 @@ body {
   z-index: 100;
 }
 
-/* БАННЕР ТЕКУЩЕГО ХОДА */
 .turn-banner {
   color: white;
   font-weight: 800;
@@ -95,7 +91,6 @@ body {
   word-break: break-word;
 }
 
-/* ЭЛЕМЕНТЫ УПРАВЛЕНИЯ */
 .controls-row {
   display: flex;
   align-items: center;
@@ -108,7 +103,7 @@ body {
   max-width: 100%;
 }
 
-.controls-row .form-control {
+.form-control {
   background-color: rgba(30, 41, 59, 0.8) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #f1f5f9 !important;
@@ -119,11 +114,11 @@ body {
   transition: all 0.2s ease;
 }
 
-.controls-row .form-control::placeholder {
+.form-control::placeholder {
   color: #94a3b8;
 }
 
-.controls-row .form-control:focus {
+.form-control:focus {
   border-color: #4f7cff !important;
   box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.3) !important;
 }
@@ -189,7 +184,6 @@ body {
   box-shadow: 0 4px 15px rgba(255, 79, 109, 0.3) !important;
 }
 
-/* ЗАГОЛОВКИ */
 h6 {
   font-weight: 800;
   text-transform: uppercase;
@@ -214,7 +208,6 @@ h6 {
   border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* СЕТКА ГЕРОЕВ */
 .character {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -289,7 +282,6 @@ h6 {
 .percent.orange { color: #fb923c !important; border: 1px solid #f97316 !important; }
 .percent.red    { color: #f87171 !important; border: 1px solid #ef4444 !important; }
 
-/* СЛОТЫ БАНОВ */
 .slot-box {
   display: flex;
   flex-direction: column;
@@ -320,7 +312,6 @@ h6 {
   color: #f8fafc;
 }
 
-/* КАРТОЧКИ ВЫБОРА */
 .pick-card {
   cursor: pointer;
   border-radius: 16px;
@@ -367,7 +358,6 @@ h6 {
     border-color: rgba(59, 130, 246, 0.9);
 }
 
-/* ПРИГЛУШЕННЫЙ БОРДОВЫЙ ДЛЯ МЯГКОГО ПОСТ-БАНА */
 .pick-card.post-banned::after {
   content: "";
   position: absolute;
@@ -395,9 +385,6 @@ h6 {
   backdrop-filter: blur(1px);
 }
 
-/* ========================================================
-   ОБЩАЯ СТИЛИЗАЦИЯ ДВИЖКА АНАЛИТИКИ
-   ======================================================== */
 .result-card {
   position: relative;
   background: #121824;
@@ -507,7 +494,6 @@ h6 {
   text-align: left;
 }
 
-/* МОДАЛЬНОЕ ОКНО */
 .modal-content {
   background-color: #0f172a !important;
   border-radius: 24px !important;
@@ -515,9 +501,6 @@ h6 {
   color: #f8fafc;
 }
 
-/* ========================================================
-   КНОПКА "ПЕРЕЙТИ К КАРТАМ"
-   ======================================================== */
 .proceed-maps-btn-wrap {
   margin-top: 0;
   padding: 16px 0 4px;
@@ -549,9 +532,6 @@ h6 {
   transform: translateY(0);
 }
 
-/* ========================================================
-   СЕТКА КАРТ (MAPS PHASE)
-   ======================================================== */
 .maps-phase {
   width: 100%;
 }
@@ -562,7 +542,6 @@ h6 {
   gap: 16px;
 }
 
-/* Карточка карты — стиль как у персонажей */
 .map-card {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -614,7 +593,6 @@ h6 {
   text-overflow: ellipsis;
 }
 
-/* Процентный бейдж на карточке карты */
 .map-percent-badge {
   position: absolute;
   top: 8px;
@@ -632,7 +610,6 @@ h6 {
 .map-pct-orange { color: #fb923c !important; border: 1px solid #f97316 !important; }
 .map-pct-red    { color: #f87171 !important; border: 1px solid #ef4444 !important; }
 
-/* Аффинити-строки на карточке карты */
 .map-affinity-list {
   margin-top: 4px;
   display: flex;
@@ -664,15 +641,10 @@ h6 {
   color: #ff4f6d;
 }
 
-/* ========================================================
-   УПРАВЛЕНИЕ АДАПТИВНОСТЬЮ И СТИКАМИ АНАЛИТИКИ
-   ======================================================== */
-
 .mobile-only-analytics {
   display: none !important;
 }
 
-/* ДЕСКТОПНЫЙ СТИК */
 .desktop-only-analytics {
   display: block;
   position: sticky !important;
@@ -699,7 +671,6 @@ h6 {
     flex: 0 0 100% !important;
   }
 
-  /* АДАПТИВНЫЙ ПОРЯДОК: ПУЛ ВЫБОРА НА САМЫЙ ВЕРХ */
   .order-pool { 
     order: 1; 
     margin-bottom: 30px; 
@@ -712,7 +683,6 @@ h6 {
     order: 3; 
   }
 
-  /* Скрываем заголовки банов и слоты банов на смартфонах */
   .order-player h6:first-of-type,
   .order-opponent h6:first-of-type,
   .order-player .slot-box:first-of-type,
@@ -720,7 +690,6 @@ h6 {
     display: none !important;
   }
 
-  /* МОБИЛЬНЫЙ СТИК */
   .analytics-outer-wrapper.mobile-only-analytics {
     position: sticky !important;
     top: 0 !important;
@@ -772,16 +741,14 @@ h6 {
     font-size: 11.5px !important;
   }
 
-  /* МОБИЛЬНАЯ КНОПКА "К КАРТАМ" — стикается снизу */
   .mobile-proceed-wrap {
     padding: 10px 0 6px !important;
   }
 
-  .controls-row .search-field { flex: 0 0 100% !important; order: 1; }
-  .controls-row .custom-select-wrapper { flex: 1 1 calc(33.333% - 8px) !important; order: 2; }
-  .controls-row .action-btn { flex: 1 1 calc(50% - 6px) !important; order: 3; }
+  .search-field { flex: 0 0 100% !important; order: 1; }
+  .custom-select-wrapper { flex: 1 1 calc(33.333% - 8px) !important; order: 2; }
+  .action-btn { flex: 1 1 calc(50% - 6px) !important; order: 3; }
 
-  /* Сетка карточек игроков на мобильных устройствах */
   .order-player .slot-box:last-of-type,
   .order-opponent .slot-box:last-of-type {
     display: flex !important;
@@ -795,7 +762,6 @@ h6 {
     flex: 0 0 calc(50% - 6px) !important;
   }
   
-  /* Увеличенная высота изображений для мобильной сетки */
   .pick-card img {
     height: 180px !important;
   }

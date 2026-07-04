@@ -42,6 +42,7 @@ export const translations = {
       DISFAVORED: "Disfavored",
       WEAK: "Countered",
     },
+    selectMap: "Select a Map",
   },
   ua: {
     searchPlaceholder: "Пошук по імені...",
@@ -86,5 +87,6 @@ export const translations = {
       DISFAVORED: "Невигідно",
       WEAK: "Найгірший матч",
     },
+    selectMap: "Виберіть карту",
   },
 };

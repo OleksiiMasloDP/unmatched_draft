@@ -1,6 +1,7 @@
 <template>
   <div class="maps-phase">
-    <h6 class="map-select-header">{{ lang === 'ua' ? 'Виберіть карту' : 'Select a Map' }}</h6>
+    <h6 v-if="draftMode" class="map-select-header">{{ t('selectMap') }}</h6>
+
     <div class="maps-grid">
       <div
         v-for="map in filteredMaps"
@@ -11,7 +12,7 @@
       >
         <img class="map-img" :src="map.image" :alt="map.name" loading="lazy" />
         
-        <div class="map-percent-badge" :class="getMapPercentClass(map.dynamicRating)">
+        <div v-if="draftMode" class="map-percent-badge" :class="getMapPercentClass(map.dynamicRating)">
           {{ map.dynamicRating }}%
         </div>
         
@@ -26,7 +27,7 @@
               { title: t('mapNeutralFor'),  heroes: getMapGroups(map).neutralFor },
               { title: t('mapUnsuitableFor'), heroes: getMapGroups(map).badFor }
             ]" :key="block.title">
-              
+
               <div v-if="block.heroes.length > 0" class="analysis-group">
                 <div class="analysis-group-title">{{ block.title }}</div>
                 <div class="analysis-images-flex">
@@ -55,6 +56,13 @@
 import { useDraftState } from '../composables/useDraftState';
 
 const { lang, selectedMapId, filteredMaps, t, selectMap, getMapGroups } = useDraftState();
+
+const props = defineProps({
+  draftMode: {
+    type: Boolean,
+    default: false
+  }
+});
 
 function getMapPercentClass(rating) {
   if (rating >= 65) return "map-pct-green";
