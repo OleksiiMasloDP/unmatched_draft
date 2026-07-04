@@ -1,0 +1,352 @@
+[
+  {
+    "id": 1,
+    "name": "McMinnville",
+    "set": "Adventures: Tales to Amaze",
+    "image": "maps/mcMinnville.webp",
+    "pickPercent": 42,
+    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot", "Golden Bat"],
+    "disfavoredBy": ["Medusa", "Dracula"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 2,
+    "name": "Point Pleasant",
+    "set": "Adventures: Tales to Amaze",
+    "image": "maps/point_pleasant.webp",
+    "pickPercent": 42,
+    "favoredBy": ["Sherlock Holmes", "Deadpool", "Golden Bat"],
+    "disfavoredBy": ["Alice", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 3,
+    "name": "Baskerville Manor",
+    "set": "Cobble & Fog",
+    "image": "maps/baskerville_manor.webp",
+    "pickPercent": 32,
+    "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary", "Golden Bat"],
+    "disfavoredBy": [ "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  }, 
+  {
+    "id": 4,
+    "name": "Fayrlund Forest",
+    "set": "The Witcher - Steel & Silver",
+    "image": "maps/fayrlund_forest.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Yennenga", "Achilles", "Donatello"],
+    "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
+  },
+  {
+    "id": 5,
+    "name": "Globe Theatre",
+    "set": "Slings and Arrows",
+    "image": "maps/globe_theatre.webp",
+    "pickPercent": 32,
+    "favoredBy": ["King Arthur", "Alice"],
+    "disfavoredBy": ["Medusa", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
+  },
+  {
+    "id": 6,
+    "name": "Hanging Gardens",
+    "set": "Battle of Legends, Volume Two",
+    "image": "maps/hanging_gardens.webp",
+    "pickPercent": 33,
+    "favoredBy": ["Achilles", "Medusa", "Golden Bat"],
+    "disfavoredBy": ["Bigfoot", "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 7,
+    "name": "Helicarrier",
+    "set": "For King and Country",
+    "image": "maps/helicarrier.webp",
+    "pickPercent": 29,
+    "favoredBy": ["Deadpool", "Bruce Lee", "Donatello"],
+    "disfavoredBy": ["Yennenga", "Alice"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
+  },
+  {
+    "id": 8,
+    "name": "Hell's Kitchen",
+    "set": "Hell's Kitchen",
+    "image": "maps/hells_kitchen.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Dracula", "Invisible Man", "Donatello"],
+    "disfavoredBy": ["King Arthur", "Robin Hood"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
+  },
+  {
+    "id": 9,
+    "name": "Kaer Morhen",
+    "set": "The Witcher - Steel & Silver",
+    "image": "maps/kaer_morhen.webp",
+    "pickPercent": 32,
+    "favoredBy": ["Yennenga", "Bloody Mary"],
+    "disfavoredBy": ["Sherlock Holmes", "Deadpool", "Donatello"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
+  },
+  {
+    "id": 10,
+    "name": "Marmoreal",
+    "set": "Battle of Legends, Volume One",
+    "image": "maps/marmoreal.webp",
+    "pickPercent": 31,
+    "favoredBy": ["Alice", "Sherlock Holmes", "Golden Bat"],
+    "disfavoredBy": ["Achilles", "Bigfoot", "Donatello"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 11,
+    "name": "Naglfar",
+    "set": "The Witcher - Realms Fall",
+    "image": "maps/naglfar.webp",
+    "pickPercent": 28,
+    "favoredBy": ["Bigfoot", "Robin Hood", "Donatello"],
+    "disfavoredBy": ["Medusa", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"]
+  },
+  {
+    "id": 12,
+    "name": "Navy Pier",
+    "set": "Teen Spirit",
+    "image": "maps/navy_pier.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Bruce Lee", "Deadpool"],
+    "disfavoredBy": ["Dracula", "Invisible Man", "Donatello", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 13,
+    "name": "Sanctum Sanctorum",
+    "set": "Brains and Brawn",
+    "image": "maps/sanctum_sanctorum.webp",
+    "pickPercent": 29,
+    "favoredBy": ["Invisible Man", "Sherlock Holmes"],
+    "disfavoredBy": ["Sinbad", "Yennenga", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 14,
+    "name": "Santa's Workshop",
+    "set": "Battle of Legends, Volume Three",
+    "image": "maps/santas_workshop.avif",
+    "pickPercent": 34,
+    "favoredBy": ["King Arthur", "Bloody Mary", "Donatello"],
+    "disfavoredBy": ["Alice", "Robin Hood", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 15,
+    "name": "Sarpedon",
+    "set": "Battle of Legends, Volume One",
+    "image": "maps/sarpedon.webp",
+    "pickPercent": 38,
+    "favoredBy": ["Sinbad", "Achilles", "Golden Bat"],
+    "disfavoredBy": ["Deadpool", "Dracula", "Donatello"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 16,
+    "name": "Soho",
+    "set": "Cobble & Fog",
+    "image": "maps/soho.webp",
+    "pickPercent": 29,
+    "favoredBy": ["Dracula", "Invisible Man", "Golden Bat"],
+    "disfavoredBy": ["Bigfoot", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 17,
+    "name": "Streets of Novigrad",
+    "set": "The Witcher - Realms Fall",
+    "image": "maps/streets_of_novigrad.webp",
+    "pickPercent": 34,
+    "favoredBy": ["Yennenga", "Robin Hood"],
+    "disfavoredBy": ["Medusa", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
+  },
+  {
+    "id": 18,
+    "name": "Sunnydale High",
+    "set": "Buffy the Vampire Slayer",
+    "image": "maps/sunnydale_high.webp",
+    "pickPercent": 31,
+    "favoredBy": ["Alice", "Bloody Mary"],
+    "disfavoredBy": ["Sinbad", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"]
+  },
+  {
+    "id": 19,
+    "name": "The Bronze",
+    "set": "Buffy the Vampire Slayer",
+    "image": "maps/bronze.webp",
+    "pickPercent": 35,
+    "favoredBy": ["Bruce Lee", "Medusa", "Golden Bat"],
+    "disfavoredBy": ["Sherlock Holmes", "Achilles"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 20,
+    "name": "The Raft",
+    "set": "Redemption Row",
+    "image": "maps/the_raft.webp",
+    "pickPercent": 31,
+    "favoredBy": ["Deadpool", "Achilles"],
+    "disfavoredBy": ["Dracula", "Bigfoot"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
+  },
+  {
+    "id": 21,
+    "name": "Venice",
+    "set": "Battle of Legends, Volume Three",
+    "image": "maps/venice.avif",
+    "pickPercent": 33,
+    "favoredBy": ["Medusa", "King Arthur"],
+    "disfavoredBy": ["Robin Hood", "Invisible Man", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 22,
+    "name": "Azuchi Castle",
+    "set": "Sun's Origin",
+    "image": "maps/azuchi_castle.webp",
+    "pickPercent": 31,
+    "favoredBy": ["Achilles", "Sinbad"],
+    "disfavoredBy": ["Alice", "Bloody Mary", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 23,
+    "name": "Heorot",
+    "set": "Little Red Riding Hood vs. Beowulf",
+    "image": "maps/heorot.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Bigfoot", "Yennenga"],
+    "disfavoredBy": ["Dracula", "Deadpool", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 24,
+    "name": "King Solomon's Mine",
+    "set": "Houdini vs. The Genie",
+    "image": "maps/king_solomons_mine.webp",
+    "pickPercent": 29,
+    "favoredBy": ["Sherlock Holmes", "Robin Hood"],
+    "disfavoredBy": ["Bruce Lee", "Achilles", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 25,
+    "name": "Raptor Paddock",
+    "set": "Jurassic Park - Ingen vs. Raptors",
+    "image": "maps/raptor_paddock.webp",
+    "pickPercent": 28,
+    "favoredBy": ["Medusa", "Deadpool", "Donatello"],
+    "disfavoredBy": ["King Arthur", "Sinbad", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 26,
+    "name": "Sherwood Forest",
+    "set": "Robin Hood vs Bigfoot",
+    "image": "maps/sherwood_forest.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Robin Hood", "Bigfoot", "Golden Bat"],
+    "disfavoredBy": ["Invisible Man", "Medusa", "Donatello"],
+    "neutralTo": ["Sinbad", "Dracula"]
+  },
+  {
+    "id": 27,
+    "name": "T. Rex Paddock",
+    "set": "Jurassic Park - Sattler vs. T-Rex",
+    "image": "maps/trex_paddock.webp",
+    "pickPercent": 26,
+    "favoredBy": ["Bruce Lee", "Achilles"],
+    "disfavoredBy": ["Sherlock Holmes", "Alice", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 28,
+    "name": "Yukon",
+    "set": "Robin Hood vs Bigfoot",
+    "image": "maps/yukon.webp",
+    "pickPercent": 31,
+    "favoredBy": ["Bigfoot", "Sinbad", "Golden Bat"],
+    "disfavoredBy": ["Bloody Mary", "Deadpool"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 29,
+    "name": "Yukon 1900",
+    "set": "N/A",
+    "image": "maps/yukon_1900.webp",
+    "pickPercent": 30,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"]
+  },
+  {
+    "id": 30,
+    "name": "Alamo",
+    "set": "Stars & Stripes",
+    "image": "maps/alamo.webp",
+    "pickPercent": 45,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+  {
+    "id": 31,
+    "name": "New York City",
+    "set": "Teenage Mutant Ninja Turtles",
+    "image": "maps/new_york.jpg",
+    "pickPercent": 20,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"]
+  },
+   {
+    "id": 32,
+    "name": "White House",
+    "set": "Stars & Stripes",
+    "image": "maps/white_house.webp",
+    "pickPercent": 20,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 33,
+    "name": "Thrilla In Manilla",
+    "set": "Muhammad Ali vs Bruce Lee",
+    "image": "maps/manilla.jpg",
+    "pickPercent": 40,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 34,
+    "name": "Tsing Shan Monastery",
+    "set": "Muhammad Ali vs Bruce Lee",
+    "image": "maps/tsing_shan_monastery.webp",
+    "pickPercent": 40,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  },
+   {
+    "id": 34,
+    "name": "Technodrome",
+    "set": "Teenage Mutant Ninja Turtles",
+    "image": "maps/technodrome.jpg",
+    "pickPercent": 25,
+    "favoredBy": ["Yennenga", "Invisible Man"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello"]
+  }
+]
