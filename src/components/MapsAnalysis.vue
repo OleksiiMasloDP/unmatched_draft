@@ -22,7 +22,7 @@ const { t } = useDraftState();
 
 const searchQuery = ref('');
 
-const allMaps = ref([]); // Полный пул объектов карт
+const allMaps = ref([]);
 const activePlayerPicks = ref([]); 
 const activeOpponentPicks = ref([]);
 

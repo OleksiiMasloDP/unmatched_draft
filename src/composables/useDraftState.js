@@ -63,6 +63,11 @@ const filtered = computed(() => {
   return arr.sort((a, b) => getPickPercentGlobal(b) - getPickPercentGlobal(a));
 });
 
+// Повертає повний список взагалі всіх персонажів з бази даних
+function getAllCharacters() {
+  return characters.value || [];
+}
+
 const sequence = computed(() => {
   const isPlayerFirst = firstPicker.value === "player";
   const formatObj = availableFormats.value[currentFormat.value];
@@ -461,34 +466,53 @@ export function useDraftState() {
     return `vs ${enemy.name}: ${mu.winrate}% (${typeText})`;
   }
 
-  function getMapGroups(map) {
+  function getMapGroups(map, options = {}) {
+    // Витягуємо прапорець прев'ю (за замовчуванням false для звичайного драфту)
+    const isPreview = options.isPreview || false;
+
     const favoredBy = map.favoredBy || [];
     const disfavoredBy = map.disfavoredBy || [];
     const neutralTo = map.neutralTo || [];
+
     const goodFor = [];
     const badFor = [];
     const neutralFor = [];
 
-    for (const char of activePlayerPicks.value) {
-      if (favoredBy.includes(char.name))
-        goodFor.push({ image: char.image, name: char.name, side: "player" });
-      else if (disfavoredBy.includes(char.name))
-        badFor.push({ image: char.image, name: char.name, side: "player" });
-      else
-        neutralFor.push({ image: char.image, name: char.name, side: "player" });
+    // Внутрішній помічник, щоб не дублювати логіку перевірок у циклах
+    const processCharacter = (char, sideName) => {
+      if (favoredBy.includes(char.name)) {
+        goodFor.push({ image: char.image, name: char.name, side: sideName });
+      } else if (disfavoredBy.includes(char.name)) {
+        badFor.push({ image: char.image, name: char.name, side: sideName });
+      } else {
+        // У режимі прев'ю додаємо лише тих, хто явно прописаний як нейтральний для карти
+        // У режимі драфту додаємо всіх інших персонажів, як і було раніше
+        if (!isPreview || neutralTo.includes(char.name)) {
+          neutralFor.push({
+            image: char.image,
+            name: char.name,
+            side: sideName,
+          });
+        }
+      }
+    };
+
+    if (isPreview) {
+      // РЕЖИМ ПРЕВ'Ю: перебираємо абсолютно всіх персонажів без жодних фільтрів
+      const charsSource = getAllCharacters();
+      for (const char of charsSource) {
+        processCharacter(char, "preview");
+      }
+    } else {
+      // РЕЖИМ ДРАФТУ: перебираємо лише активні піки гравців
+      for (const char of activePlayerPicks.value) {
+        processCharacter(char, "player");
+      }
+      for (const char of activeOpponentPicks.value) {
+        processCharacter(char, "opponent");
+      }
     }
-    for (const char of activeOpponentPicks.value) {
-      if (favoredBy.includes(char.name))
-        goodFor.push({ image: char.image, name: char.name, side: "opponent" });
-      else if (disfavoredBy.includes(char.name))
-        badFor.push({ image: char.image, name: char.name, side: "opponent" });
-      else
-        neutralFor.push({
-          image: char.image,
-          name: char.name,
-          side: "opponent",
-        });
-    }
+
     return { goodFor, badFor, neutralFor };
   }
 

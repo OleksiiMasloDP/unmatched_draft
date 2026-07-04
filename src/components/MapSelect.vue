@@ -23,9 +23,9 @@
           <div class="map-analysis-wrapper">
             
             <template v-for="block in [
-              { title: t('mapSuitableFor'), heroes: getMapGroups(map).goodFor },
-              { title: t('mapNeutralFor'),  heroes: getMapGroups(map).neutralFor },
-              { title: t('mapUnsuitableFor'), heroes: getMapGroups(map).badFor }
+              { title: t('mapSuitableFor'), heroes: getMapGroups(map, { isPreview: !draftMode }).goodFor },
+              { title: t('mapNeutralFor'),  heroes: getMapGroups(map, { isPreview: !draftMode }).neutralFor },
+              { title: t('mapUnsuitableFor'), heroes: getMapGroups(map, { isPreview: !draftMode }).badFor }
             ]" :key="block.title">
 
               <div v-if="block.heroes.length > 0" class="analysis-group">

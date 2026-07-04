@@ -154,7 +154,7 @@
     </div>
     
     <div v-if="currentScreen === 'maps'">
-      <MapsAnalysis :t="t" />
+      <MapsAnalysis/>
     </div>
   </main>
 </template>
