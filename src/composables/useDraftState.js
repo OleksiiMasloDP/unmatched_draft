@@ -287,6 +287,21 @@ const banRecommendation = computed(() => {
 
 const filteredMaps = computed(() => {
   let list = [...(maps.value || [])];
+
+  // 1. ФІЛЬТРАЦІЯ ЗА ФОРМАТОМ ТУРНІРУ
+  // Припускаємо, що currentFormatKey.value зберігає рядок-ключ (наприклад, 'summer_of_legends_2026')
+  const activeFormat = formats[currentFormat.value];
+
+  if (activeFormat && activeFormat.allowedMapIds) {
+    const allowedIds = activeFormat.allowedMapIds;
+
+    // Якщо в масиві немає значення "all", тоді жорстко фільтруємо за ID
+    if (!allowedIds.includes("all")) {
+      list = list.filter((map) => allowedIds.includes(map.id));
+    }
+  }
+
+  // 2. РОЗРАХУНОК ДИНАМІЧНОГО РЕЙТИНГУ
   list = list.map((map) => {
     const favoredBy = map.favoredBy || [];
     const disfavoredBy = map.disfavoredBy || [];
@@ -303,16 +318,19 @@ const filteredMaps = computed(() => {
     return { ...map, dynamicRating: Math.max(0, Math.min(100, score)) };
   });
 
+  // 3. ФІЛЬТРАЦІЯ ЗА ПОШУКОМ
   const query = search.value.toLowerCase().trim();
   if (query)
     list = list.filter((map) => map.name.toLowerCase().includes(query));
 
+  // 4. СОРТУВАННЯ
   list.sort((a, b) => {
     if (sortMode.value === "name") return a.name.localeCompare(b.name);
     if (b.dynamicRating === a.dynamicRating)
       return (b.pickPercent || 0) - (a.pickPercent || 0);
     return b.dynamicRating - a.dynamicRating;
   });
+
   return list;
 });
 
