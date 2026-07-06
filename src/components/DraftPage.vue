@@ -40,41 +40,40 @@
         </div>
 
         <div class="row g-3 g-md-4 main-draft-row">
-
             <div class="col-lg-3 order-player">
-            <div class="team-title-banner" :style="{ backgroundColor: player.color }">
-                {{ t('teamYou') }}
-            </div>
-
-            <h6 v-if="currentStep === 'characters'">{{ t('bannedSlots') }}</h6>
-            <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
-                <div v-for="i in 3" :key="i" class="ban-slot" :class="{ 'filled': player.bans[i-1] }" :style="{ '--ban-color-rgb': '79, 124, 255' }">
-                <span class="ban-icon" v-if="!player.bans[i-1]">[✕]</span>
-                {{ player.bans[i-1]?.name || t('emptyCell') }}
+                <div class="team-title-banner" :style="{ backgroundColor: player.color }">
+                    {{ t('teamYou') }}
                 </div>
-            </div>
 
-            <h6>{{ t('activeLineup') }}</h6>
-            <div class="slot-box">
-                <div v-for="char in player.picks" :key="char.id">
-                <div v-if="currentStep === 'characters' || !postBans.player.has(char.id)" 
-                    class="pick-card player-card" 
-                    :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" 
-                    @click="togglePostBan('player', char.id)">
-                    <img :src="char.image" />
-                    <div class="pick-name">
-                    <div class="char-title-bold">{{ char.name }}</div>
-                    <div class="mu-list">
-                        <template v-for="enemy in opponent.picks" :key="enemy.id">
-                        <div v-if="char.matchups?.[enemy.name] && !postBans.opponent.has(enemy.id)">
-                            {{ getMatchupText(char, enemy) }}
+                <h6 v-if="currentStep === 'characters'">{{ t('bannedSlots') }}</h6>
+                <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
+                    <div v-for="i in 3" :key="i" class="ban-slot" :class="{ 'filled': player.bans[i-1] }" :style="{ '--ban-color-rgb': '79, 124, 255' }">
+                    <span class="ban-icon" v-if="!player.bans[i-1]">[✕]</span>
+                    {{ player.bans[i-1]?.name || t('emptyCell') }}
+                    </div>
+                </div>
+
+                <h6>{{ t('activeLineup') }}</h6>
+                <div class="slot-box">
+                    <template v-for="char in player.picks" :key="char.id">
+                        <div v-if="currentStep === 'characters' || !postBans.player.has(char.id)" 
+                            class="pick-card player-card" 
+                            :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.player.has(char.id) }" 
+                            @click="togglePostBan('player', char.id)">
+                                <img :src="char.image" />
+                                <div class="pick-name">
+                                    <div class="char-title-bold">{{ char.name }}</div>
+                                <div class="mu-list">
+                                    <template v-for="enemy in opponent.picks" :key="enemy.id">
+                                        <div v-if="char.matchups?.[enemy.name] && !postBans.opponent.has(enemy.id)">
+                                            {{ getMatchupText(char, enemy) }}
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
-                        </template>
-                    </div>
-                    </div>
+                    </template>
                 </div>
-                </div>
-            </div>
             </div>
 
             <div class="col-lg-6 order-pool">
@@ -97,54 +96,55 @@
 
             <h6>{{ t('activeLineup') }}</h6>
             <div class="slot-box">
-                <div v-for="enemyChar in opponent.picks" :key="enemyChar.id">
-                <div v-if="currentStep === 'characters' || !postBans.opponent.has(enemyChar.id)" 
-                    class="pick-card opponent-card" 
-                    :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(enemyChar.id) }" 
-                    @click="togglePostBan('opponent', enemyChar.id)">
-                    <img :src="enemyChar.image" />
-                    <div class="pick-name">
-                    <div class="char-title-bold">{{ enemyChar.name }}</div>
-                    <div class="mu-list">
-                        <template v-for="yourChar in player.picks" :key="yourChar.id">
-                        <div v-if="enemyChar.matchups?.[yourChar.name] && !postBans.player.has(yourChar.id)">
-                            {{ getMatchupText(enemyChar, yourChar) }}
+                <template v-for="enemyChar in opponent.picks" :key="enemyChar.id">
+                    <div v-if="currentStep === 'characters' || !postBans.opponent.has(enemyChar.id)" 
+                        class="pick-card opponent-card" 
+                        :class="{ 'clickable-post-draft': !current, 'post-banned': postBans.opponent.has(enemyChar.id) }" 
+                        @click="togglePostBan('opponent', enemyChar.id)">
+                        <img :src="enemyChar.image" />
+                        <div class="pick-name">
+                            <div class="char-title-bold">{{ enemyChar.name }}</div>
+                            <div class="mu-list">
+                                <template v-for="yourChar in player.picks" :key="yourChar.id">
+                                    <div v-if="enemyChar.matchups?.[yourChar.name] && !postBans.player.has(yourChar.id)">
+                                        {{ getMatchupText(enemyChar, yourChar) }}
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                        </template>
                     </div>
-                    </div>
-                </div>
-                </div>
+                </template>
             </div>
-            </div>
-
-        </div>
         </div>
 
-        <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold text-white">⚠️ {{ t('modalTitle') }}</h5>
-                <button type="button" class="btn-close" @click="cancelReset" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-0 modal-body-text">{{ t('modalDesc') }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-dark fw-semibold btn-modal-cancel" @click="cancelReset">
-                {{ t('modalCancel') }}
-                </button>
-                <button type="button" class="btn btn-danger fw-bold btn-modal-confirm" @click="confirmReset">
-                {{ t('modalConfirm') }}
-                </button>
-            </div>
-            </div>
         </div>
     </div>
+
+        <div class="modal fade" id="resetConfirmModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" aria-labelledby="resetModalLabel">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-white">⚠️ {{ t('modalTitle') }}</h5>
+                        <button type="button" class="btn-close" @click="cancelReset" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0 modal-body-text">{{ t('modalDesc') }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark fw-semibold btn-modal-cancel" @click="cancelReset">
+                        {{ t('modalCancel') }}
+                        </button>
+                        <button type="button" class="btn btn-danger fw-bold btn-modal-confirm" @click="confirmReset">
+                        {{ t('modalConfirm') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script setup>
+  import { onMounted, nextTick } from 'vue';
   import { useDraftState } from '../composables/useDraftState.js';
   import CharacterDraft from './CharacterDraft.vue';
   import MapSelect from './MapSelect.vue';
@@ -157,6 +157,15 @@
   } = useDraftState();
 
   let bsModalInstance = null;
+
+    onMounted(async () => {
+        nextTick(() => {
+            const modalEl = document.getElementById('resetConfirmModal');
+            if (modalEl && window.bootstrap) {
+                bsModalInstance = new window.bootstrap.Modal(modalEl);
+            }
+        });
+  });
 
   function triggerRestart() { if (bsModalInstance) bsModalInstance.show(); }
   defineExpose({ triggerRestart });

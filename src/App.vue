@@ -65,9 +65,6 @@
     });
   });
 
-  function triggerRestart() { if (bsModalInstance) bsModalInstance.show(); }
-  defineExpose({ triggerRestart });
-
   function cancelReset() { if (bsModalInstance) bsModalInstance.hide(); }
   function confirmReset() { resetAll(); if (bsModalInstance) bsModalInstance.hide(); }
 </script>
