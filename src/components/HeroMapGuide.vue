@@ -4,14 +4,25 @@
       {{ t('heroMapGuide') }}
     </h1>
 
-    <!-- Панель вибору персонажів для фільтрації -->
     <div class="hero-filter-section">
-      <div class="filter-header">
-        <span class="filter-title">{{ t('filterByHeroes') }}</span>
+      <div class="filter-header" @click="isHeroFilterOpen = !isHeroFilterOpen">
+        <div class="header-title-group">
+          <span class="filter-title">{{ t('filterByHeroes') }}</span>
+          <svg 
+            class="chevron-icon" 
+            :class="{ 'is-open': isHeroFilterOpen }" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
         
         <button 
           v-if="selectedPreviewHeroIds.length > 0" 
-          @click="clearPreviewHeroes" 
+          @click.stop="clearPreviewHeroes" 
           class="clear-filter-btn"
         >
           <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -22,7 +33,7 @@
         </button>
       </div>
       
-      <div class="heroes-badge-grid">
+      <div v-show="isHeroFilterOpen" class="heroes-badge-grid">
         <div 
           v-for="char in getAllCharacters()" 
           :key="char.id" 
@@ -53,12 +64,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useDraftState } from '../composables/useDraftState.js';
 import MapSelect from './MapSelect.vue';
 
 const { t, search, getAllCharacters, selectedPreviewHeroIds } = useDraftState();
 
-// Функція для перемикання таба (додавання/видалення ID з масиву)
+const isHeroFilterOpen = ref(false);
+
 function toggleHeroFilter(heroId) {
   const index = selectedPreviewHeroIds.value.indexOf(heroId);
   if (index === -1) {
@@ -68,7 +81,6 @@ function toggleHeroFilter(heroId) {
   }
 }
 
-// Функція повного очищення вибору
 function clearPreviewHeroes() {
   selectedPreviewHeroIds.value = [];
 }
@@ -97,7 +109,25 @@ function clearPreviewHeroes() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevron-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease;
+}
+
+.chevron-icon.is-open {
+  transform: rotate(-180deg);
 }
 
 .filter-title {
@@ -142,6 +172,7 @@ function clearPreviewHeroes() {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 16px;
 }
 
 .hero-badge-item {
