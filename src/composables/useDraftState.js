@@ -6,7 +6,7 @@ const lang = ref("en");
 const search = ref("");
 const sortMode = ref("elo");
 const firstPicker = ref("player");
-const currentFormat = ref("test_format");
+const currentFormat = ref("summer_of_legends_2026");
 const availableFormats = ref(formats);
 const showInfoPopover = ref(false);
 
@@ -22,8 +22,8 @@ const selectedMapId = ref(null);
 
 const postBans = ref({ player: new Set(), opponent: new Set() });
 
-const MAX_ELO = 1600;
-const MIN_ELO = 1300;
+const MAX_ELO = 2000;
+const MIN_ELO = 1000;
 const STORAGE_KEY = "unmatched_draft_state_v4";
 
 // Масив для збереження ID обраних користувачем персонажів на сторінці карт
@@ -484,11 +484,24 @@ export function useDraftState() {
     return "red";
   }
 
+  function getMatchupTypeByWinrate(winrate) {
+    if (winrate === undefined || winrate === null) return "UNKNOWN";
+
+    if (winrate >= 85) return "HARD_COUNTER";
+    else if (winrate >= 70) return "COUNTER";
+    else if (winrate >= 58) return "FAVORED";
+    else if (winrate >= 46) return "NEUTRAL";
+    else if (winrate <= 15) return "HARD_WEAK";
+    else if (winrate <= 35) return "WEAK";
+    else if (winrate <= 45) return "DISFAVORED";
+  }
+
   function getMatchupText(char, enemy) {
     const mu = char.matchups?.[enemy.name];
     if (!mu) return "";
 
-    const typeText = t(`matchups.${mu.type}`) || mu.type;
+    const matchupType = getMatchupTypeByWinrate(mu.winrate);
+    const typeText = t(`matchups.${matchupType}`);
     return `vs ${enemy.name}: ${mu.winrate}% (${typeText})`;
   }
 

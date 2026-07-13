@@ -5,9 +5,9 @@
     "set": "Adventures: Tales to Amaze",
     "image": "maps/mcMinnville.webp",
     "pickPercent": 42,
-    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Medusa", "Dracula"]
+    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot", "Golden Bat", "Moon Knight"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Medusa", "Dracula", "Bruce Lee"]
   },
   {
     "id": 2,
@@ -15,8 +15,8 @@
     "set": "Adventures: Tales to Amaze",
     "image": "maps/point_pleasant.webp",
     "pickPercent": 42,
-    "favoredBy": ["Sherlock Holmes", "Deadpool", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "favoredBy": ["Sherlock Holmes", "Deadpool", "Golden Bat", "Moon Knight", "Nikola Tesla", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Eredin", "Alice"],
     "disfavoredBy": ["Alice", "King Arthur"]
   },
   {
@@ -26,7 +26,7 @@
     "image": "maps/baskerville_manor.webp",
     "pickPercent": 32,
     "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
     "disfavoredBy": [ "Sinbad"]
   }, 
   {
@@ -36,8 +36,8 @@
     "image": "maps/fayrlund_forest.webp",
     "pickPercent": 30,
     "favoredBy": ["Yennenga", "Achilles", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"],
-    "disfavoredBy": ["Sherlock Holmes", "Bruce Lee"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Sherlock Holmes", "Little Red Riding Hood", "Bruce Lee", "Alice"]
   },
   {
     "id": 5,
@@ -45,9 +45,9 @@
     "set": "Slings and Arrows",
     "image": "maps/globe_theatre.webp",
     "pickPercent": 32,
-    "favoredBy": ["King Arthur", "Alice"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"],
-    "disfavoredBy": ["Medusa", "Deadpool"]
+    "favoredBy": ["King Arthur", "Alice", "Moon Knight", "Bruce Lee", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Golden Bat", "Donatello", "Alice"],
+    "disfavoredBy": ["Medusa", "Deadpool", "Yennenga", "Geralt of Rivia", "Nikola Tesla"]
   },
   {
     "id": 6,
@@ -56,8 +56,8 @@
     "image": "maps/hanging_gardens.webp",
     "pickPercent": 33,
     "favoredBy": ["Achilles", "Medusa", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Bigfoot", "Sinbad"]
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Moon Knight", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Bigfoot", "Sinbad", "Geralt of Rivia", "Nikola Tesla", "Eredin"]
   },
   {
     "id": 7,
@@ -65,9 +65,9 @@
     "set": "For King and Country",
     "image": "maps/helicarrier.webp",
     "pickPercent": 29,
-    "favoredBy": ["Deadpool", "Bruce Lee", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"],
-    "disfavoredBy": ["Yennenga", "Alice"]
+    "favoredBy": ["Deadpool", "Bruce Lee", "Donatello", "Achilles", "Geralt of Rivia"],
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Golden Bat", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Yennenga", "Alice", "Yennenga"]
   },
   {
     "id": 8,
@@ -76,8 +76,8 @@
     "image": "maps/hells_kitchen.webp",
     "pickPercent": 30,
     "favoredBy": ["Dracula", "Invisible Man", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"],
-    "disfavoredBy": ["King Arthur", "Robin Hood"]
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Achilles", "Yennenga", "Geralt of Rivia", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["King Arthur", "Robin Hood", "Little Red Riding Hood", "Moon Knight", "Nikola Tesla"]
   },
   {
     "id": 9,
@@ -85,9 +85,9 @@
     "set": "The Witcher - Steel & Silver",
     "image": "maps/kaer_morhen.webp",
     "pickPercent": 32,
-    "favoredBy": ["Yennenga", "Bloody Mary"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"],
-    "disfavoredBy": ["Sherlock Holmes", "Deadpool", "Donatello"]
+    "favoredBy": ["Yennenga", "Bloody Mary", "Little Red Riding Hood", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Achilles", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Sherlock Holmes", "Deadpool", "Donatello", "Geralt of Rivia", "Moon Knight"]
   },
   {
     "id": 10,
@@ -95,9 +95,9 @@
     "set": "Battle of Legends, Volume One",
     "image": "maps/marmoreal.webp",
     "pickPercent": 31,
-    "favoredBy": ["Alice", "Sherlock Holmes", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula"],
-    "disfavoredBy": ["Achilles", "Bigfoot", "Donatello"]
+    "favoredBy": ["Alice", "Sherlock Holmes", "Golden Bat", "Yennenga", "Geralt of Rivia", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Achilles", "Nikola Tesla", "Alice"],
+    "disfavoredBy": ["Achilles", "Bigfoot", "Donatello", "Moon Knight", "Bruce Lee"]
   },
   {
     "id": 11,
@@ -105,9 +105,9 @@
     "set": "The Witcher - Realms Fall",
     "image": "maps/naglfar.webp",
     "pickPercent": 28,
-    "favoredBy": ["Bigfoot", "Robin Hood", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat"],
-    "disfavoredBy": ["Medusa", "Bruce Lee"]
+    "favoredBy": ["Bigfoot", "Robin Hood", "Donatello", "Achilles", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"],
+    "disfavoredBy": ["Medusa", "Bruce Lee", "Yennenga", "Nikola Tesla"]
   },
   {
     "id": 12,
@@ -115,9 +115,9 @@
     "set": "Teen Spirit",
     "image": "maps/navy_pier.webp",
     "pickPercent": 30,
-    "favoredBy": ["Bruce Lee", "Deadpool"],
-    "neutralTo": ["Sinbad", "Dracula"],
-    "disfavoredBy": ["Dracula", "Invisible Man", "Donatello", "Golden Bat"]
+    "favoredBy": ["Bruce Lee", "Deadpool", "Yennenga", "Geralt of Rivia", "Nikola Tesla"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Moon Knight", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Dracula", "Invisible Man", "Donatello", "Golden Bat", "Achilles", "Alice"]
   },
   {
     "id": 13,
@@ -125,9 +125,9 @@
     "set": "Brains and Brawn",
     "image": "maps/sanctum_sanctorum.webp",
     "pickPercent": 29,
-    "favoredBy": ["Invisible Man", "Sherlock Holmes"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Sinbad", "Yennenga", "Golden Bat"]
+    "favoredBy": ["Invisible Man", "Sherlock Holmes", "Geralt of Rivia", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Yennenga", "Moon Knight"],
+    "disfavoredBy": ["Sinbad", "Yennenga", "Golden Bat", "Bruce Lee", "Alice"]
   },
   {
     "id": 14,
@@ -135,9 +135,9 @@
     "set": "Battle of Legends, Volume Three",
     "image": "maps/santas_workshop.avif",
     "pickPercent": 34,
-    "favoredBy": ["King Arthur", "Bloody Mary", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula"],
-    "disfavoredBy": ["Alice", "Robin Hood", "Golden Bat"]
+    "favoredBy": ["King Arthur", "Bloody Mary", "Donatello", "Achilles", "Yennenga", "Geralt of Rivia", "Eredin"],
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Moon Knight", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Alice", "Robin Hood", "Golden Bat", "Nikola Tesla"]
   },
   {
     "id": 15,
@@ -146,8 +146,8 @@
     "image": "maps/sarpedon.webp",
     "pickPercent": 38,
     "favoredBy": ["Sinbad", "Achilles", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula"],
-    "disfavoredBy": ["Deadpool", "Dracula", "Donatello"]
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Deadpool", "Dracula", "Donatello", "Achilles", "Bruce Lee"]
   },
   {
     "id": 16,
@@ -155,8 +155,8 @@
     "set": "Cobble & Fog",
     "image": "maps/soho.webp",
     "pickPercent": 29,
-    "favoredBy": ["Dracula", "Invisible Man", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "favoredBy": ["Dracula", "Invisible Man", "Golden Bat", "Yennenga", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Geralt of Rivia", "Moon Knight", "Alice"],
     "disfavoredBy": ["Bigfoot", "Yennenga"]
   },
   {
@@ -165,9 +165,9 @@
     "set": "The Witcher - Realms Fall",
     "image": "maps/streets_of_novigrad.webp",
     "pickPercent": 34,
-    "favoredBy": ["Yennenga", "Robin Hood"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"],
-    "disfavoredBy": ["Medusa", "King Arthur"]
+    "favoredBy": ["Yennenga", "Robin Hood", "Yennenga", "Nikola Tesla", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin", "Alice"],
+    "disfavoredBy": ["Medusa", "Little Red Riding Hood", "King Arthur", "Achilles"]
   },
   {
     "id": 18,
@@ -175,9 +175,9 @@
     "set": "Buffy the Vampire Slayer",
     "image": "maps/sunnydale_high.webp",
     "pickPercent": 31,
-    "favoredBy": ["Alice", "Bloody Mary"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"],
-    "disfavoredBy": ["Sinbad", "Bruce Lee"]
+    "favoredBy": ["Alice", "Bloody Mary", "Nikola Tesla"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Golden Bat", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Sinbad", "Bruce Lee", "Alice"]
   },
   {
     "id": 19,
@@ -185,9 +185,9 @@
     "set": "Buffy the Vampire Slayer",
     "image": "maps/bronze.webp",
     "pickPercent": 35,
-    "favoredBy": ["Bruce Lee", "Medusa", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Sherlock Holmes", "Achilles"]
+    "favoredBy": ["Bruce Lee", "Medusa", "Golden Bat", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
+    "disfavoredBy": ["Sherlock Holmes", "Achilles", "Nikola Tesla", "Alice"]
   },
   {
     "id": 20,
@@ -195,9 +195,9 @@
     "set": "Redemption Row",
     "image": "maps/the_raft.webp",
     "pickPercent": 31,
-    "favoredBy": ["Deadpool", "Achilles"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"],
-    "disfavoredBy": ["Dracula", "Bigfoot"]
+    "favoredBy": ["Deadpool", "Achilles", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Yennenga", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Dracula", "Little Red Riding Hood", "Bigfoot"]
   },
   {
     "id": 21,
@@ -205,9 +205,9 @@
     "set": "Battle of Legends, Volume Three",
     "image": "maps/venice.avif",
     "pickPercent": 33,
-    "favoredBy": ["Medusa", "King Arthur"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "Invisible Man", "Golden Bat"]
+    "favoredBy": ["Medusa", "King Arthur", "Yennenga", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Little Red Riding Hood", "Invisible Man", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Bruce Lee"]
   },
   {
     "id": 22,
@@ -215,9 +215,9 @@
     "set": "Sun's Origin",
     "image": "maps/azuchi_castle.webp",
     "pickPercent": 31,
-    "favoredBy": ["Achilles", "Sinbad"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Alice", "Bloody Mary", "Golden Bat"]
+    "favoredBy": ["Achilles", "Little Red Riding Hood", "Sinbad"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Moon Knight", "Alice"],
+    "disfavoredBy": ["Alice", "Bloody Mary", "Golden Bat", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Bruce Lee", "Eredin"]
   },
   {
     "id": 23,
@@ -225,9 +225,9 @@
     "set": "Little Red Riding Hood vs. Beowulf",
     "image": "maps/heorot.webp",
     "pickPercent": 30,
-    "favoredBy": ["Bigfoot", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Dracula", "Deadpool", "Golden Bat"]
+    "favoredBy": ["Bigfoot", "Yennenga", "Bruce Lee"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin"],
+    "disfavoredBy": ["Dracula", "Deadpool", "Golden Bat", "Yennenga", "Nikola Tesla", "Alice"]
   },
   {
     "id": 24,
@@ -235,9 +235,9 @@
     "set": "Houdini vs. The Genie",
     "image": "maps/king_solomons_mine.webp",
     "pickPercent": 29,
-    "favoredBy": ["Sherlock Holmes", "Robin Hood"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Bruce Lee", "Achilles", "Golden Bat"]
+    "favoredBy": ["Sherlock Holmes", "Robin Hood", "Yennenga"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Bruce Lee", "Achilles", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"]
   },
   {
     "id": 25,
@@ -245,8 +245,8 @@
     "set": "Jurassic Park - Ingen vs. Raptors",
     "image": "maps/raptor_paddock.webp",
     "pickPercent": 28,
-    "favoredBy": ["Medusa", "Deadpool", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula"],
+    "favoredBy": ["Medusa", "Deadpool", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Yennenga", "Bruce Lee", "Alice"],
     "disfavoredBy": ["King Arthur", "Sinbad", "Golden Bat"]
   },
   {
@@ -255,9 +255,9 @@
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/sherwood_forest.webp",
     "pickPercent": 30,
-    "favoredBy": ["Robin Hood", "Bigfoot", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula"],
-    "disfavoredBy": ["Invisible Man", "Medusa", "Donatello"]
+    "favoredBy": ["Robin Hood", "Bigfoot", "Golden Bat", "Yennenga", "Eredin"],
+    "neutralTo": ["Sinbad", "Dracula", "Alice"],
+    "disfavoredBy": ["Invisible Man", "Little Red Riding Hood", "Medusa", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee"]
   },
   {
     "id": 27,
@@ -265,8 +265,8 @@
     "set": "Jurassic Park - Sattler vs. T-Rex",
     "image": "maps/trex_paddock.webp",
     "pickPercent": 26,
-    "favoredBy": ["Bruce Lee", "Achilles"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "favoredBy": ["Bruce Lee", "Achilles", "Geralt of Rivia"],
+    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
     "disfavoredBy": ["Sherlock Holmes", "Alice", "Golden Bat"]
   },
   {
@@ -275,9 +275,9 @@
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/yukon.webp",
     "pickPercent": 31,
-    "favoredBy": ["Bigfoot", "Sinbad", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Bloody Mary", "Deadpool"]
+    "favoredBy": ["Bigfoot", "Sinbad", "Golden Bat", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Moon Knight", "Nikola Tesla", "Eredin"],
+    "disfavoredBy": ["Bloody Mary", "Little Red Riding Hood", "Deadpool", "Geralt of Rivia", "Bruce Lee", "Alice"]
   },
   {
     "id": 29,
@@ -285,9 +285,9 @@
     "set": "N/A",
     "image": "maps/yukon_1900.webp",
     "pickPercent": 30,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "King Arthur"]
+    "favoredBy": ["Yennenga", "Invisible Man", "Yennenga"],
+    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Little Red Riding Hood", "King Arthur", "Eredin"]
   },
   {
     "id": 30,
@@ -296,8 +296,8 @@
     "image": "maps/alamo.webp",
     "pickPercent": 45,
     "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga"]
   },
   {
     "id": 31,
@@ -305,9 +305,9 @@
     "set": "Teenage Mutant Ninja Turtles",
     "image": "maps/new_york.jpg",
     "pickPercent": 20,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Golden Bat"],
-    "disfavoredBy": ["Robin Hood", "King Arthur"]
+    "favoredBy": ["Yennenga", "Invisible Man", "Achilles", "Yennenga", "Geralt of Rivia", "Nikola Tesla"],
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Golden Bat", "Moon Knight", "Bruce Lee"],
+    "disfavoredBy": ["Eredin", "Alice"]
   },
    {
     "id": 32,
@@ -315,8 +315,8 @@
     "set": "Stars & Stripes",
     "image": "maps/white_house.webp",
     "pickPercent": 20,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "favoredBy": ["Yennenga", "Little Red Riding Hood", "Invisible Man", "Geralt of Rivia", "Moon Knight"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Yennenga", "Nikola Tesla", "Bruce Lee", "Alice"],
     "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
   },
    {
@@ -326,8 +326,8 @@
     "image": "maps/manilla.jpg",
     "pickPercent": 40,
     "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Nikola Tesla", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga", "Geralt of Rivia", "Moon Knight", "Eredin"]
   },
    {
     "id": 34,
@@ -335,8 +335,8 @@
     "set": "Muhammad Ali vs Bruce Lee",
     "image": "maps/tsing_shan_monastery.webp",
     "pickPercent": 40,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
+    "favoredBy": ["Yennenga", "Little Red Riding Hood", "Invisible Man", "Moon Knight", "Bruce Lee", "Alice"],
+    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin"],
     "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
   },
    {
@@ -345,8 +345,8 @@
     "set": "Teenage Mutant Ninja Turtles",
     "image": "maps/technodrome.jpg",
     "pickPercent": 25,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
+    "favoredBy": ["Yennenga", "Invisible Man", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello"],
+    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga", "Geralt of Rivia"]
   }
 ]
