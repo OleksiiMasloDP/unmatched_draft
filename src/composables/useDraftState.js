@@ -1,4 +1,4 @@
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, reactive } from "vue";
 import { translations } from "../i18n.js";
 import { formats } from "../draftFormats.js";
 
@@ -10,8 +10,8 @@ const currentFormat = ref("summer_of_legends_2026");
 const availableFormats = ref(formats);
 const showInfoPopover = ref(false);
 
-const player = ref({ color: "#4f7cff", bans: [], picks: [] });
-const opponent = ref({ color: "#ff4f6d", bans: [], picks: [] });
+const player = reactive({ color: "#4f7cff", bans: [], picks: [] });
+const opponent = reactive({ color: "#ff4f6d", bans: [], picks: [] });
 
 const characters = ref([]);
 const history = ref([]);
@@ -35,40 +35,50 @@ function clearPreviewHeroes() {
 }
 
 const activePlayerPicks = computed(() =>
-  player.value.picks.filter((c) => !postBans.value.player.has(c.id)),
+  player.picks.filter((c) => !postBans.value.player.has(c.id)),
 );
 
 const activeOpponentPicks = computed(() =>
-  opponent.value.picks.filter((c) => !postBans.value.opponent.has(c.id)),
+  opponent.picks.filter((c) => !postBans.value.opponent.has(c.id)),
 );
 
 const takenIds = computed(() => {
   return new Set(
-    [
-      ...player.value.bans,
-      ...player.value.picks,
-      ...opponent.value.bans,
-      ...opponent.value.picks,
-    ].map((c) => c.id),
+    [...player.bans, ...player.picks, ...opponent.bans, ...opponent.picks].map(
+      (c) => c.id,
+    ),
   );
 });
 
 const filtered = computed(() => {
   const activeFormatConfig = availableFormats.value[currentFormat.value];
   if (!activeFormatConfig) return [];
+
   let arr = characters.value.filter(
     (c) =>
       isIdAllowedGlobal(c.id, activeFormatConfig.allowedHeroIds) &&
       !takenIds.value.has(c.id),
   );
+
   if (search.value) {
     arr = arr.filter((c) =>
       c.name.toLowerCase().includes(search.value.toLowerCase()),
     );
   }
-  if (sortMode.value === "name")
-    return arr.sort((a, b) => a.name.localeCompare(b.name));
-  return arr.sort((a, b) => getPickPercentGlobal(b) - getPickPercentGlobal(a));
+
+  if (sortMode.value === "name") {
+    return [...arr].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  return [...arr].sort((a, b) => {
+    const scoreA = getPickPercent(a);
+    const scoreB = getPickPercent(b);
+
+    const valA = scoreA === "UNKNOWN" ? -1 : Number(scoreA) || 0;
+    const valB = scoreB === "UNKNOWN" ? -1 : Number(scoreB) || 0;
+
+    return valB - valA;
+  });
 });
 
 // Повертає повний список взагалі всіх персонажів з бази даних
@@ -109,16 +119,14 @@ const currentTurnText = computed(() => {
 
 const turnColor = computed(() => {
   if (currentStep.value === "maps" || !current.value) return "#10b981";
-  return current.value.player === "player"
-    ? player.value.color
-    : opponent.value.color;
+  return current.value.player === "player" ? player.color : opponent.color;
 });
 
 const canProceedToMaps = computed(() => {
   return (
     !current.value &&
-    player.value.picks.length > 0 &&
-    opponent.value.picks.length > 0 &&
+    player.picks.length > 0 &&
+    opponent.picks.length > 0 &&
     postBans.value.player.size === 2 &&
     postBans.value.opponent.size === 2
   );
@@ -140,21 +148,62 @@ function isIdAllowedGlobal(id, allowedConfig) {
   return false;
 }
 
-function getPickPercentGlobal(char) {
-  const clamped = Math.max(MIN_ELO, Math.min(MAX_ELO, char.elo));
-  const base = ((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100;
-  const enemies = opponent.value.picks;
-  if (!enemies.length) return Math.round(base);
-  let total = 0,
-    count = 0;
+function getPickPercent(char) {
+  // 1. Розраховуємо базовий рейтинг на основі ELO (від 0 до 100)
+  const clamped = Math.max(MIN_ELO, Math.min(MAX_ELO, Number(char.elo) || 0));
+  const baseEloRating = ((clamped - MIN_ELO) / (MAX_ELO - MIN_ELO)) * 100;
+
+  const enemies = opponent?.picks || [];
+
+  // Якщо супротивників взагалі ще не обрано — показуємо чистий рейтинг за ELO
+  if (!enemies.length) return Math.round(baseEloRating);
+
+  let totalWinrate = 0;
+  let knownMatchupsCount = 0;
+  let unknownMatchupsCount = 0;
+
   for (const e of enemies) {
+    if (!e || !e.name) continue;
+
     const mu = char.matchups?.[e.name];
-    if (!mu) continue;
-    total += mu.winrate - 50;
-    count++;
+
+    // Рахуємо кількість невідомих матчапів
+    if (!mu || mu.winrate === null || mu.winrate === undefined) {
+      unknownMatchupsCount++;
+      continue;
+    }
+
+    totalWinrate += Number(mu.winrate);
+    knownMatchupsCount++;
   }
-  const avg = count ? total / count : 0;
-  return Math.max(0, Math.min(100, Math.round(base + avg * 1.5)));
+
+  // Якщо серед обраних ворогів немає жодного відомого матчапу:
+  // Ми оцінюємо цей вибір як нейтральний (50%), але додаємо мікро-коригування за ELO,
+  // щоб сильніший герой без даних був трохи вище за слабкого без даних.
+  if (knownMatchupsCount === 0) {
+    const unknownBase = 50; // База для невідомого матчапу — рівно 50%
+    const eloCorrection = ((baseEloRating - 50) / 50) * 5; // максимум від -5% до +5%
+    return Math.max(0, Math.min(100, Math.round(unknownBase + eloCorrection)));
+  }
+
+  // 2. Рахуємо середній вінрейт проти відомих ворогів
+  let averageWinrate = totalWinrate / knownMatchupsCount;
+
+  // Якщо частина матчапів відома, а частина — ні (наприклад, граємо проти 2 героїв, де 1 відомий, а 1 ні):
+  // Ми маємо змішати відомий вінрейт з нейтральними 50% за невідомого героя, щоб врахувати ризик.
+  if (unknownMatchupsCount > 0) {
+    const totalSlots = knownMatchupsCount + unknownMatchupsCount;
+    // Наприклад, якщо один відомий (60%), а другий ні (вважаємо як 50%): (60 + 50) / 2 = 55%
+    averageWinrate = (totalWinrate + unknownMatchupsCount * 50) / totalSlots;
+  }
+
+  // Дуже м'який мікро-бонус за ELO: максимум від -1.5% до +1.5%
+  // Потрібен лише для мікро-сортування героїв з однаковими матчапами
+  const eloBonus = ((baseEloRating - 50) / 50) * 1.5;
+
+  const dynamicScore = averageWinrate + eloBonus;
+
+  return Math.max(0, Math.min(100, Math.round(dynamicScore)));
 }
 
 function calculateTeamWinrate(playerPicks, opponentPicks) {
@@ -181,28 +230,21 @@ const finalWinrate = computed(() => {
 });
 
 const banRecommendation = computed(() => {
-  if (
-    current.value ||
-    !player.value.picks.length ||
-    !opponent.value.picks.length
-  )
+  if (current.value || !player.picks.length || !opponent.picks.length)
     return null;
 
   const oppBansCount = postBans.value.opponent.size;
   const playerBansCount = postBans.value.player.size;
-  const baseWinrate = calculateTeamWinrate(
-    player.value.picks,
-    opponent.value.picks,
-  );
+  const baseWinrate = calculateTeamWinrate(player.picks, opponent.picks);
   const currentLang = lang.value;
 
   if (oppBansCount === 0) {
     let maxBenefit = -999,
       candidates = [],
       bestWinrate = baseWinrate;
-    for (const targetChar of opponent.value.picks) {
-      const simOpp = opponent.value.picks.filter((c) => c.id !== targetChar.id);
-      const simWin = calculateTeamWinrate(player.value.picks, simOpp);
+    for (const targetChar of opponent.picks) {
+      const simOpp = opponent.picks.filter((c) => c.id !== targetChar.id);
+      const simWin = calculateTeamWinrate(player.picks, simOpp);
       const benefit = simWin - baseWinrate;
       if (benefit > maxBenefit) {
         maxBenefit = benefit;
@@ -244,7 +286,7 @@ const banRecommendation = computed(() => {
     let maxBenefit = -999,
       candidates = [],
       bestWinrate = currentActiveWinrate;
-    const remPlayer = player.value.picks.filter(
+    const remPlayer = player.picks.filter(
       (c) => !postBans.value.player.has(c.id),
     );
     for (const myChar of remPlayer) {
@@ -341,10 +383,10 @@ watch([lang, sortMode, currentStep, selectedMapId], () => {
     firstPicker: firstPicker.value,
     currentFormat: currentFormat.value,
     step: step.value,
-    playerPicks: player.value.picks,
-    playerBans: player.value.bans,
-    opponentPicks: opponent.value.picks,
-    opponentBans: opponent.value.bans,
+    playerPicks: player.picks,
+    playerBans: player.bans,
+    opponentPicks: opponent.picks,
+    opponentBans: opponent.bans,
     history: history.value,
     postBansPlayer: Array.from(postBans.value.player),
     postBansOpponent: Array.from(postBans.value.opponent),
@@ -379,10 +421,10 @@ export function useDraftState() {
       firstPicker: firstPicker.value,
       currentFormat: currentFormat.value,
       step: step.value,
-      playerPicks: player.value.picks,
-      playerBans: player.value.bans,
-      opponentPicks: opponent.value.picks,
-      opponentBans: opponent.value.bans,
+      playerPicks: player.picks,
+      playerBans: player.bans,
+      opponentPicks: opponent.picks,
+      opponentBans: opponent.bans,
       history: history.value,
       postBansPlayer: Array.from(postBans.value.player),
       postBansOpponent: Array.from(postBans.value.opponent),
@@ -402,10 +444,10 @@ export function useDraftState() {
       firstPicker.value = state.firstPicker || "player";
       currentFormat.value = state.currentFormat || "test_format";
       step.value = state.step || 0;
-      player.value.picks = state.playerPicks || [];
-      player.value.bans = state.playerBans || [];
-      opponent.value.picks = state.opponentPicks || [];
-      opponent.value.bans = state.opponentBans || [];
+      player.picks = state.playerPicks || [];
+      player.bans = state.playerBans || [];
+      opponent.picks = state.opponentPicks || [];
+      opponent.bans = state.opponentBans || [];
       history.value = state.history || [];
       postBans.value.player = new Set(state.postBansPlayer || []);
       postBans.value.opponent = new Set(state.postBansOpponent || []);
@@ -417,10 +459,10 @@ export function useDraftState() {
   }
 
   function resetAll() {
-    player.value.bans = [];
-    player.value.picks = [];
-    opponent.value.bans = [];
-    opponent.value.picks = [];
+    player.bans = [];
+    player.picks = [];
+    opponent.bans = [];
+    opponent.picks = [];
     history.value = [];
     step.value = 0;
     postBans.value.player.clear();
@@ -439,8 +481,7 @@ export function useDraftState() {
 
   function pick(char) {
     if (!current.value) return;
-    const target =
-      current.value.player === "player" ? player.value : opponent.value;
+    const target = current.value.player === "player" ? player : opponent;
     if (current.value.type === "ban") target.bans.push(char);
     else target.picks.push(char);
     history.value.push({
@@ -456,7 +497,7 @@ export function useDraftState() {
     const last = history.value.pop();
     if (!last) return;
     step.value--;
-    const target = last.player === "player" ? player.value : opponent.value;
+    const target = last.player === "player" ? player : opponent;
     const arr = last.type === "ban" ? target.bans : target.picks;
     arr.pop();
     postBans.value.player.clear();
@@ -599,7 +640,7 @@ export function useDraftState() {
     undo,
     togglePostBan,
     selectMap,
-    getPickPercent: getPickPercentGlobal,
+    getPickPercent,
     getPercentClass,
     getMatchupText,
     getMapGroups,
