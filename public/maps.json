@@ -4,349 +4,314 @@
     "name": "McMinnville",
     "set": "Adventures: Tales to Amaze",
     "image": "maps/mcMinnville.webp",
-    "pickPercent": 42,
-    "favoredBy": ["Sinbad", "Robin Hood", "Bigfoot", "Golden Bat", "Moon Knight"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin", "Alice"],
-    "disfavoredBy": ["Medusa", "Dracula", "Bruce Lee"]
+    "favoredBy": ["Dracula", "John Henry", "Raptors", "Robin Hood", "Golden Bat", "Moon Knight"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Daredevil", "Black Panther", "Tomoe Gozen", "Donatello", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Bruce Lee", "Dr. Sattler", "Chupacabra", "Bullseye", "The Wayward Sisters", "Pandora", "Annie Christmas"]
   },
   {
     "id": 2,
     "name": "Point Pleasant",
     "set": "Adventures: Tales to Amaze",
     "image": "maps/point_pleasant.webp",
-    "pickPercent": 42,
-    "favoredBy": ["Sherlock Holmes", "Deadpool", "Golden Bat", "Moon Knight", "Nikola Tesla", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Eredin", "Alice"],
-    "disfavoredBy": ["Alice", "King Arthur"]
-  },
+    "favoredBy": ["Golden Bat", "Dr. Sattler", "Chupacabra", "John Henry", "Raptors", "Moon Knight", "Nikola Tesla", "Bruce Lee"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "The Wayward Sisters", "Pandora", "Annie Christmas", "Tomoe Gozen", "Donatello", "Yennenga", "Geralt of Rivia", "Eredin", "Alice"],
+    "disfavoredBy": ["Alice", "Daredevil", "Bullseye", "Black Panther", "Dracula"]
+  },  
   {
     "id": 3,
     "name": "Baskerville Manor",
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
-    "pickPercent": 32,
-    "favoredBy": ["Robin Hood", "Dracula", "Bloody Mary", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": [ "Sinbad"]
+    "favoredBy": ["Robin Hood", "Tomoe Gozen", "Raptors", "Golden Bat"],
+    "neutralTo": ["Dracula", "Dr. Sattler", "Daredevil", "Chupacabra", "John Henry", "Black Panther", "Muhammad Ali", "Little Red Riding Hood", "Donatello", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Annie Christmas", "Robert Muldoon", "Bullseye", "The Wayward Sisters", "Pandora"]
   }, 
   {
     "id": 4,
     "name": "Fayrlund Forest",
     "set": "The Witcher - Steel & Silver",
     "image": "maps/fayrlund_forest.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Yennenga", "Achilles", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin"],
-    "disfavoredBy": ["Sherlock Holmes", "Little Red Riding Hood", "Bruce Lee", "Alice"]
+    "favoredBy": ["Achilles", "Chupacabra", "Pandora", "Raptors", "Donatello"],
+    "neutralTo": ["Golden Bat", "Robert Muldoon", "Dr. Sattler", "Bullseye", "Black Panther", "Annie Christmas", "Tomoe Gozen", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Dracula", "Daredevil", "John Henry", "The Wayward Sisters", "Little Red Riding Hood", "Bruce Lee", "Alice"]
   },
   {
     "id": 5,
     "name": "Globe Theatre",
     "set": "Slings and Arrows",
     "image": "maps/globe_theatre.webp",
-    "pickPercent": 32,
-    "favoredBy": ["King Arthur", "Alice", "Moon Knight", "Bruce Lee", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Golden Bat", "Donatello", "Alice"],
-    "disfavoredBy": ["Medusa", "Deadpool", "Yennenga", "Geralt of Rivia", "Nikola Tesla"]
+    "favoredBy": ["Alice", "John Henry", "Black Panther", "Raptors", "Moon Knight", "Bruce Lee", "Eredin"],
+    "neutralTo": ["Little Red Riding Hood", "Dr. Sattler", "Pandora", "Annie Christmas", "Tomoe Gozen", "Muhammad Ali", "Golden Bat", "Donatello", "Alice"],
+    "disfavoredBy": ["Dracula", "Robert Muldoon", "Chupacabra", "Daredevil", "Bullseye", "The Wayward Sisters", "Yennenga", "Geralt of Rivia", "Nikola Tesla"]
   },
   {
     "id": 6,
     "name": "Hanging Gardens",
     "set": "Battle of Legends, Volume Two",
     "image": "maps/hanging_gardens.webp",
-    "pickPercent": 33,
-    "favoredBy": ["Achilles", "Medusa", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Moon Knight", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["Bigfoot", "Sinbad", "Geralt of Rivia", "Nikola Tesla", "Eredin"]
+    "favoredBy": ["Achilles", "John Henry", "Dr. Sattler", "Black Panther", "The Wayward Sisters", "Pandora", "Golden Bat"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Bullseye", "Annie Christmas", "Tomoe Gozen", "Dracula", "Donatello", "Yennenga", "Moon Knight", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Geralt of Rivia", "Chupacabra", "Daredevil", "Raptors", "Muhammad Ali", "Nikola Tesla", "Eredin"]
   },
   {
     "id": 7,
     "name": "Helicarrier",
     "set": "For King and Country",
     "image": "maps/helicarrier.webp",
-    "pickPercent": 29,
-    "favoredBy": ["Deadpool", "Bruce Lee", "Donatello", "Achilles", "Geralt of Rivia"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Golden Bat", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": ["Yennenga", "Alice", "Yennenga"]
+    "favoredBy": ["Bruce Lee", "Donatello", "Achilles", "Geralt of Rivia"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Dr. Sattler", "Bullseye", "John Henry", "Black Panther", "The Wayward Sisters", "Tomoe Gozen", "Pandora", "Raptors", "Little Red Riding Hood", "Golden Bat", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Yennenga", "Chupacabra", "Daredevil", "Annie Christmas", "Muhammad Ali", "Alice"]
   },
   {
     "id": 8,
     "name": "Hell's Kitchen",
     "set": "Hell's Kitchen",
     "image": "maps/hells_kitchen.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Dracula", "Invisible Man", "Donatello"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Achilles", "Yennenga", "Geralt of Rivia", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": ["King Arthur", "Robin Hood", "Little Red Riding Hood", "Moon Knight", "Nikola Tesla"]
+    "favoredBy": ["Dracula", "Robert Muldoon", "Black Panther", "Dracula", "Donatello"],
+    "neutralTo": ["Golden Bat", "Dr. Sattler", "John Henry", "Tomoe Gozen", "Muhammad Ali", "Achilles", "Yennenga", "Geralt of Rivia", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Chupacabra", "Daredevil", "Bullseye", "The Wayward Sisters", "Pandora", "Annie Christmas", "Raptors", "Little Red Riding Hood", "Moon Knight", "Nikola Tesla"]
   },
   {
     "id": 9,
     "name": "Kaer Morhen",
     "set": "The Witcher - Steel & Silver",
     "image": "maps/kaer_morhen.webp",
-    "pickPercent": 32,
-    "favoredBy": ["Yennenga", "Bloody Mary", "Little Red Riding Hood", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Achilles", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": ["Sherlock Holmes", "Deadpool", "Donatello", "Geralt of Rivia", "Moon Knight"]
+    "favoredBy": ["Yennenga", "Dr. Sattler", "Little Red Riding Hood"],
+    "neutralTo": ["Dracula", "John Henry", "Chupacabra", "Black Panther", "The Wayward Sisters", "Pandora", "Raptors", "Golden Bat", "Achilles", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Donatello", "Robert Muldoon", "Daredevil", "Bullseye", "Annie Christmas", "Tomoe Gozen", "Geralt of Rivia", "Moon Knight"]
   },
   {
     "id": 10,
     "name": "Marmoreal",
     "set": "Battle of Legends, Volume One",
     "image": "maps/marmoreal.webp",
-    "pickPercent": 31,
-    "favoredBy": ["Alice", "Sherlock Holmes", "Golden Bat", "Yennenga", "Geralt of Rivia", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Achilles", "Nikola Tesla", "Alice"],
-    "disfavoredBy": ["Achilles", "Bigfoot", "Donatello", "Moon Knight", "Bruce Lee"]
+    "favoredBy": ["Alice", "Black Panther", "Annie Christmas", "Golden Bat", "Yennenga", "Geralt of Rivia", "Eredin"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Bullseye", "John Henry", "Tomoe Gozen", "Little Red Riding Hood", "Muhammad Ali", "Achilles", "Nikola Tesla", "Alice"],
+    "disfavoredBy": ["Achilles", "Dr. Sattler", "Chupacabra", "Daredevil", "The Wayward Sisters", "Pandora", "Raptors", "Donatello", "Moon Knight", "Bruce Lee"]
   },
   {
     "id": 11,
     "name": "Naglfar",
     "set": "The Witcher - Realms Fall",
     "image": "maps/naglfar.webp",
-    "pickPercent": 28,
-    "favoredBy": ["Bigfoot", "Robin Hood", "Donatello", "Achilles", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"],
-    "disfavoredBy": ["Medusa", "Bruce Lee", "Yennenga", "Nikola Tesla"]
+    "favoredBy": ["Robin Hood", "Chupacabra", "Black Panther", "Raptors", "Donatello", "Achilles", "Eredin"],
+    "neutralTo": ["Little Red Riding Hood", "Dr. Sattler", "Bullseye", "John Henry", "Pandora", "Annie Christmas", "Muhammad Ali", "Dracula", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"],
+    "disfavoredBy": ["Bruce Lee", "Robert Muldoon", "Daredevil", "The Wayward Sisters", "Tomoe Gozen", "Yennenga", "Nikola Tesla"]
   },
   {
     "id": 12,
     "name": "Navy Pier",
     "set": "Teen Spirit",
     "image": "maps/navy_pier.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Bruce Lee", "Deadpool", "Yennenga", "Geralt of Rivia", "Nikola Tesla"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Moon Knight", "Bruce Lee", "Eredin"],
-    "disfavoredBy": ["Dracula", "Invisible Man", "Donatello", "Golden Bat", "Achilles", "Alice"]
+    "favoredBy": ["Bruce Lee", "Dr. Sattler", "John Henry", "Raptors", "Pandora", "Yennenga", "Geralt of Rivia", "Nikola Tesla"],
+    "neutralTo": ["Little Red Riding Hood", "Chupacabra", "Daredevil", "Black Panther", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Muhammad Ali", "Moon Knight", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Dracula", "Robert Muldoon", "Bullseye", "Dracula", "Donatello", "Golden Bat", "Achilles", "Alice"]
   },
   {
     "id": 13,
     "name": "Sanctum Sanctorum",
     "set": "Brains and Brawn",
     "image": "maps/sanctum_sanctorum.webp",
-    "pickPercent": 29,
-    "favoredBy": ["Invisible Man", "Sherlock Holmes", "Geralt of Rivia", "Nikola Tesla", "Eredin"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Yennenga", "Moon Knight"],
-    "disfavoredBy": ["Sinbad", "Yennenga", "Golden Bat", "Bruce Lee", "Alice"]
+    "favoredBy": ["Geralt of Rivia", "Bullseye", "Tomoe Gozen", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Dr. Sattler", "Chupacabra", "Daredevil", "John Henry", "Pandora", "Annie Christmas", "Raptors", "Donatello", "Yennenga", "Moon Knight"],
+    "disfavoredBy": ["Dracula", "Black Panther", "Muhammad Ali", "The Wayward Sisters", "Golden Bat", "Bruce Lee", "Alice"]
   },
   {
     "id": 14,
     "name": "Santa's Workshop",
     "set": "Battle of Legends, Volume Three",
     "image": "maps/santas_workshop.avif",
-    "pickPercent": 34,
-    "favoredBy": ["King Arthur", "Bloody Mary", "Donatello", "Achilles", "Yennenga", "Geralt of Rivia", "Eredin"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Moon Knight", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["Alice", "Robin Hood", "Golden Bat", "Nikola Tesla"]
+    "favoredBy": ["Donatello", "The Wayward Sisters", "Achilles", "Yennenga", "Geralt of Rivia", "Eredin"],
+    "neutralTo": ["Little Red Riding Hood", "Dr. Sattler", "Chupacabra", "Daredevil", "Bullseye", "Black Panther", "Annie Christmas", "Tomoe Gozen", "Muhammad Ali", "Moon Knight", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Alice", "Robert Muldoon", "John Henry", "Pandora", "Raptors", "Dracula", "Robin Hood", "Golden Bat", "Nikola Tesla"]
   },
   {
     "id": 15,
     "name": "Sarpedon",
     "set": "Battle of Legends, Volume One",
     "image": "maps/sarpedon.webp",
-    "pickPercent": 38,
-    "favoredBy": ["Sinbad", "Achilles", "Golden Bat"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin", "Alice"],
-    "disfavoredBy": ["Deadpool", "Dracula", "Donatello", "Achilles", "Bruce Lee"]
+    "favoredBy": ["Achilles", "Pandora", "Annie Christmas", "Muhammad Ali", "Golden Bat"],
+    "neutralTo": ["Dracula", "Dr. Sattler", "Chupacabra", "John Henry", "The Wayward Sisters", "Raptors", "Little Red Riding Hood", "Yennenga", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Donatello", "Robert Muldoon", "Daredevil", "Bullseye", "Black Panther", "Tomoe Gozen", "Achilles", "Bruce Lee"]
   },
   {
     "id": 16,
     "name": "Soho",
     "set": "Cobble & Fog",
     "image": "maps/soho.webp",
-    "pickPercent": 29,
-    "favoredBy": ["Dracula", "Invisible Man", "Golden Bat", "Yennenga", "Nikola Tesla", "Bruce Lee", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Geralt of Rivia", "Moon Knight", "Alice"],
-    "disfavoredBy": ["Bigfoot", "Yennenga"]
+    "favoredBy": ["Golden Bat", "Dr. Sattler", "John Henry", "Raptors", "Yennenga", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Bullseye", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Little Red Riding Hood", "Donatello", "Geralt of Rivia", "Moon Knight", "Alice"],
+    "disfavoredBy": ["Muhammad Ali", "Chupacabra", "Daredevil", "Black Panther", "Pandora"]
   },
   {
     "id": 17,
     "name": "Streets of Novigrad",
     "set": "The Witcher - Realms Fall",
     "image": "maps/streets_of_novigrad.webp",
-    "pickPercent": 34,
-    "favoredBy": ["Yennenga", "Robin Hood", "Yennenga", "Nikola Tesla", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin", "Alice"],
-    "disfavoredBy": ["Medusa", "Little Red Riding Hood", "King Arthur", "Achilles"]
+    "favoredBy": ["Yennenga", "Dr. Sattler", "Daredevil", "Raptors", "Robin Hood", "Nikola Tesla", "Bruce Lee"],
+    "neutralTo": ["Dracula", "John Henry", "Black Panther", "The Wayward Sisters", "Annie Christmas", "Pandora", "Muhammad Ali", "Tomoe Gozen", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin", "Alice"],
+    "disfavoredBy": ["Little Red Riding Hood", "Robert Muldoon", "Chupacabra", "Bullseye", "Achilles"]
   },
   {
     "id": 18,
     "name": "Sunnydale High",
     "set": "Buffy the Vampire Slayer",
     "image": "maps/sunnydale_high.webp",
-    "pickPercent": 31,
-    "favoredBy": ["Alice", "Bloody Mary", "Nikola Tesla"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Golden Bat", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee", "Eredin"],
-    "disfavoredBy": ["Sinbad", "Bruce Lee", "Alice"]
+    "favoredBy": ["Alice", "Robert Muldoon", "Dr. Sattler", "Muhammad Ali", "Dracula", "Nikola Tesla"],
+    "neutralTo": ["Little Red Riding Hood", "Chupacabra", "John Henry", "Black Panther", "Pandora", "Annie Christmas", "Tomoe Gozen", "Raptors", "Donatello", "Golden Bat", "Achilles", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Bruce Lee", "Daredevil", "Bullseye", "The Wayward Sisters", "Alice"]
   },
   {
     "id": 19,
     "name": "The Bronze",
     "set": "Buffy the Vampire Slayer",
     "image": "maps/bronze.webp",
-    "pickPercent": 35,
-    "favoredBy": ["Bruce Lee", "Medusa", "Golden Bat", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
-    "disfavoredBy": ["Sherlock Holmes", "Achilles", "Nikola Tesla", "Alice"]
+    "favoredBy": ["Bruce Lee", "Chupacabra", "Raptors", "Golden Bat", "Eredin"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Dr. Sattler", "Daredevil", "Bullseye", "John Henry", "Black Panther", "The Wayward Sisters", "Annie Christmas", "Pandora", "Tomoe Gozen", "Muhammad Ali", "Little Red Riding Hood", "Donatello", "Yennenga", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
+    "disfavoredBy": ["Achilles", "Nikola Tesla", "Alice"]
   },
   {
     "id": 20,
     "name": "The Raft",
     "set": "Redemption Row",
     "image": "maps/the_raft.webp",
-    "pickPercent": 31,
-    "favoredBy": ["Deadpool", "Achilles", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Yennenga", "Nikola Tesla", "Eredin", "Alice"],
-    "disfavoredBy": ["Dracula", "Little Red Riding Hood", "Bigfoot"]
+    "favoredBy": ["Achilles", "Robert Muldoon", "Dr. Sattler", "Black Panther", "Dracula", "Geralt of Rivia", "Moon Knight", "Bruce Lee"],
+    "neutralTo": ["Golden Bat", "Chupacabra", "John Henry", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Raptors", "Donatello", "Yennenga", "Nikola Tesla", "Eredin", "Alice"],
+    "disfavoredBy": ["Dracula", "Daredevil", "Bullseye", "Pandora", "Little Red Riding Hood"]
   },
   {
     "id": 21,
     "name": "Venice",
     "set": "Battle of Legends, Volume Three",
     "image": "maps/venice.avif",
-    "pickPercent": 33,
-    "favoredBy": ["Medusa", "King Arthur", "Yennenga", "Nikola Tesla", "Eredin"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Alice"],
-    "disfavoredBy": ["Robin Hood", "Little Red Riding Hood", "Invisible Man", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Bruce Lee"]
+    "favoredBy": ["Yennenga", "Robert Muldoon", "Dr. Sattler", "Bullseye", "Black Panther", "Annie Christmas", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Donatello", "Daredevil", "The Wayward Sisters", "Tomoe Gozen", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Chupacabra", "John Henry", "Pandora", "Raptors", "Dracula", "Little Red Riding Hood", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Bruce Lee"]
   },
   {
     "id": 22,
     "name": "Azuchi Castle",
     "set": "Sun's Origin",
     "image": "maps/azuchi_castle.webp",
-    "pickPercent": 31,
-    "favoredBy": ["Achilles", "Little Red Riding Hood", "Sinbad"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Moon Knight", "Alice"],
-    "disfavoredBy": ["Alice", "Bloody Mary", "Golden Bat", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Bruce Lee", "Eredin"]
+    "favoredBy": ["Achilles", "Black Panther", "Raptors", "Muhammad Ali", "Dracula", "Little Red Riding Hood"],
+    "neutralTo": ["Donatello", "Dr. Sattler", "Daredevil", "Bullseye", "John Henry", "The Wayward Sisters", "Pandora", "Tomoe Gozen", "Moon Knight", "Alice"],
+    "disfavoredBy": ["Alice", "Robert Muldoon", "Chupacabra", "Annie Christmas", "Golden Bat", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Bruce Lee", "Eredin"]
   },
   {
     "id": 23,
     "name": "Heorot",
     "set": "Little Red Riding Hood vs. Beowulf",
     "image": "maps/heorot.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Bigfoot", "Yennenga", "Bruce Lee"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin"],
-    "disfavoredBy": ["Dracula", "Deadpool", "Golden Bat", "Yennenga", "Nikola Tesla", "Alice"]
+    "favoredBy": ["Dracula", "John Henry", "Annie Christmas", "Raptors", "Bruce Lee"],
+    "neutralTo": ["Little Red Riding Hood", "Dr. Sattler", "Chupacabra", "Daredevil", "The Wayward Sisters", "Muhammad Ali", "Donatello", "Geralt of Rivia", "Moon Knight", "Eredin"],
+    "disfavoredBy": ["Dracula", "Robert Muldoon", "Bullseye", "Pandora", "Black Panther", "Tomoe Gozen", "Golden Bat", "Yennenga", "Nikola Tesla", "Alice"]
   },
   {
     "id": 24,
     "name": "King Solomon's Mine",
     "set": "Houdini vs. The Genie",
     "image": "maps/king_solomons_mine.webp",
-    "pickPercent": 29,
-    "favoredBy": ["Sherlock Holmes", "Robin Hood", "Yennenga"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Nikola Tesla", "Bruce Lee", "Eredin"],
-    "disfavoredBy": ["Bruce Lee", "Achilles", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"]
+    "favoredBy": ["Robin Hood", "John Henry", "Annie Christmas", "Muhammad Ali", "Yennenga"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Chupacabra", "Black Panther", "The Wayward Sisters", "Pandora", "Tomoe Gozen", "Donatello", "Nikola Tesla", "Bruce Lee", "Eredin"],
+    "disfavoredBy": ["Bruce Lee", "Dr. Sattler", "Daredevil", "Bullseye", "Raptors", "Dracula", "Achilles", "Golden Bat", "Geralt of Rivia", "Moon Knight", "Alice"]
   },
   {
     "id": 25,
     "name": "Raptor Paddock",
     "set": "Jurassic Park - Ingen vs. Raptors",
     "image": "maps/raptor_paddock.webp",
-    "pickPercent": 28,
-    "favoredBy": ["Medusa", "Deadpool", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Yennenga", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["King Arthur", "Sinbad", "Golden Bat"]
+    "favoredBy": ["Donatello", "Chupacabra", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Eredin"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Dr. Sattler", "John Henry", "Pandora", "Annie Christmas", "Tomoe Gozen", "Raptors", "Muhammad Ali", "Little Red Riding Hood", "Yennenga", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Golden Bat", "Daredevil", "Bullseye", "Black Panther", "The Wayward Sisters"]
   },
   {
     "id": 26,
     "name": "Sherwood Forest",
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/sherwood_forest.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Robin Hood", "Bigfoot", "Golden Bat", "Yennenga", "Eredin"],
-    "neutralTo": ["Sinbad", "Dracula", "Alice"],
-    "disfavoredBy": ["Invisible Man", "Little Red Riding Hood", "Medusa", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee"]
+    "favoredBy": ["Robin Hood", "Robert Muldoon", "Raptors", "Golden Bat", "Yennenga", "Eredin"],
+    "neutralTo": ["Dracula", "John Henry", "Pandora", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Alice"],
+    "disfavoredBy": ["Little Red Riding Hood", "Dr. Sattler", "Chupacabra", "Daredevil", "Bullseye", "Black Panther", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee"]
   },
   {
     "id": 27,
     "name": "T. Rex Paddock",
     "set": "Jurassic Park - Sattler vs. T-Rex",
     "image": "maps/trex_paddock.webp",
-    "pickPercent": 26,
-    "favoredBy": ["Bruce Lee", "Achilles", "Geralt of Rivia"],
-    "neutralTo": ["Sinbad", "Little Red Riding Hood", "Dracula", "Donatello", "Yennenga", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": ["Sherlock Holmes", "Alice", "Golden Bat"]
+    "favoredBy": ["Bruce Lee", "Dr. Sattler", "The Wayward Sisters", "Achilles", "Geralt of Rivia"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Daredevil", "John Henry", "Black Panther", "Annie Christmas", "Tomoe Gozen", "Raptors", "Little Red Riding Hood", "Donatello", "Yennenga", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Alice", "Chupacabra", "Bullseye", "Pandora", "Golden Bat"]
   },
   {
     "id": 28,
     "name": "Yukon",
     "set": "Robin Hood vs Bigfoot",
     "image": "maps/yukon.webp",
-    "pickPercent": 31,
-    "favoredBy": ["Bigfoot", "Sinbad", "Golden Bat", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Moon Knight", "Nikola Tesla", "Eredin"],
-    "disfavoredBy": ["Bloody Mary", "Little Red Riding Hood", "Deadpool", "Geralt of Rivia", "Bruce Lee", "Alice"]
+    "favoredBy": ["Golden Bat", "Robert Muldoon", "Muhammad Ali", "Yennenga"],
+    "neutralTo": ["Dracula", "Bullseye", "John Henry", "Black Panther", "The Wayward Sisters", "Annie Christmas", "Pandora", "Raptors", "Donatello", "Moon Knight", "Nikola Tesla", "Eredin"],
+    "disfavoredBy": ["Little Red Riding Hood", "Dr. Sattler", "Chupacabra", "Daredevil", "Tomoe Gozen", "Geralt of Rivia", "Bruce Lee", "Alice"]
   },
   {
     "id": 29,
     "name": "Yukon 1900",
     "set": "N/A",
     "image": "maps/yukon_1900.webp",
-    "pickPercent": 30,
-    "favoredBy": ["Yennenga", "Invisible Man", "Yennenga"],
-    "neutralTo": ["Sinbad", "Dracula", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["Robin Hood", "Little Red Riding Hood", "King Arthur", "Eredin"]
+    "favoredBy": ["Yennenga", "Robert Muldoon", "Muhammad Ali"],
+    "neutralTo": ["Dracula", "Bullseye", "Dr. Sattler", "Chupacabra", "John Henry", "Raptors", "Black Panther", "The Wayward Sisters", "Pandora", "Annie Christmas", "Golden Bat", "Donatello", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Daredevil", "Tomoe Gozen", "Little Red Riding Hood", "Eredin"]
   },
   {
     "id": 30,
     "name": "Alamo",
     "set": "Stars & Stripes",
     "image": "maps/alamo.webp",
-    "pickPercent": 45,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga"]
+    "favoredBy": ["Annie Christmas", "Bullseye"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Dr. Sattler", "Chupacabra", "John Henry", "Black Panther", "The Wayward Sisters", "Pandora", "Tomoe Gozen", "Raptors", "Muhammad Ali", "Donatello", "Achilles", "Geralt of Rivia", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Daredevil", "Dracula", "Golden Bat", "Yennenga"]
   },
   {
     "id": 31,
     "name": "New York City",
     "set": "Teenage Mutant Ninja Turtles",
     "image": "maps/new_york.jpg",
-    "pickPercent": 20,
-    "favoredBy": ["Yennenga", "Invisible Man", "Achilles", "Yennenga", "Geralt of Rivia", "Nikola Tesla"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Golden Bat", "Moon Knight", "Bruce Lee"],
-    "disfavoredBy": ["Eredin", "Alice"]
+    "favoredBy": ["Yennenga", "Pandora", "Raptors", "Muhammad Ali", "Dracula", "Achilles", "Geralt of Rivia", "Nikola Tesla"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Dr. Sattler", "Bullseye", "Black Panther", "The Wayward Sisters", "Donatello", "Golden Bat", "Moon Knight", "Bruce Lee"],
+    "disfavoredBy": ["Eredin", "Chupacabra", "Daredevil", "John Henry", "Annie Christmas", "Tomoe Gozen", "Alice"]
   },
    {
     "id": 32,
     "name": "White House",
     "set": "Stars & Stripes",
     "image": "maps/white_house.webp",
-    "pickPercent": 20,
-    "favoredBy": ["Yennenga", "Little Red Riding Hood", "Invisible Man", "Geralt of Rivia", "Moon Knight"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Yennenga", "Nikola Tesla", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
+    "favoredBy": ["Little Red Riding Hood", "Robert Muldoon", "Geralt of Rivia", "Moon Knight"],
+    "neutralTo": ["Dracula", "Chupacabra", "Dr. Sattler", "John Henry", "Black Panther", "The Wayward Sisters", "Pandora", "Annie Christmas", "Muhammad Ali", "Tomoe Gozen", "Donatello", "Yennenga", "Nikola Tesla", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Daredevil", "Bullseye", "Golden Bat"]
   },
    {
     "id": 33,
     "name": "Thrilla In Manilla",
     "set": "Muhammad Ali vs Bruce Lee",
     "image": "maps/manilla.jpg",
-    "pickPercent": 40,
-    "favoredBy": ["Yennenga", "Invisible Man"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello", "Nikola Tesla", "Bruce Lee", "Alice"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga", "Geralt of Rivia", "Moon Knight", "Eredin"]
+    "favoredBy": ["Daredevil"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Chupacabra", "Dr. Sattler", "John Henry", "Black Panther", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Raptors", "Little Red Riding Hood", "Donatello", "Nikola Tesla", "Bruce Lee", "Alice"],
+    "disfavoredBy": ["Robin Hood", "Bullseye", "Pandora", "Muhammad Ali", "Golden Bat", "Yennenga", "Geralt of Rivia", "Moon Knight", "Eredin"]
   },
    {
     "id": 34,
     "name": "Tsing Shan Monastery",
     "set": "Muhammad Ali vs Bruce Lee",
     "image": "maps/tsing_shan_monastery.webp",
-    "pickPercent": 40,
-    "favoredBy": ["Yennenga", "Little Red Riding Hood", "Invisible Man", "Moon Knight", "Bruce Lee", "Alice"],
-    "neutralTo": ["Sinbad", "Dracula", "Donatello", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat"]
+    "favoredBy": ["Little Red Riding Hood", "John Henry", "Moon Knight", "Bruce Lee", "Alice"],
+    "neutralTo": ["Dracula", "Robert Muldoon", "Dr. Sattler", "Daredevil", "Black Panther", "Bullseye", "The Wayward Sisters", "Annie Christmas", "Tomoe Gozen", "Donatello", "Raptors", "Yennenga", "Geralt of Rivia", "Nikola Tesla", "Eredin"],
+    "disfavoredBy": ["Robin Hood", "Chupacabra", "Pandora", "Muhammad Ali", "Golden Bat"]
   },
    {
     "id": 35,
     "name": "Technodrome",
     "set": "Teenage Mutant Ninja Turtles",
     "image": "maps/technodrome.jpg",
-    "pickPercent": 25,
-    "favoredBy": ["Yennenga", "Invisible Man", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
-    "neutralTo": ["Sinbad", "Dracula", "Little Red Riding Hood", "Donatello"],
-    "disfavoredBy": ["Robin Hood", "King Arthur", "Golden Bat", "Yennenga", "Geralt of Rivia"]
+    "favoredBy": ["Dracula", "Moon Knight", "Nikola Tesla", "Bruce Lee", "Eredin", "Alice"],
+    "neutralTo": ["Little Red Riding Hood", "Robert Muldoon", "Dr. Sattler", "Daredevil", "Bullseye", "John Henry", "The Wayward Sisters", "Pandora", "Tomoe Gozen", "Raptors", "Donatello"],
+    "disfavoredBy": ["Robin Hood", "Chupacabra", "Black Panther", "Annie Christmas", "Muhammad Ali", "Golden Bat", "Yennenga", "Geralt of Rivia"]
   }
 ]

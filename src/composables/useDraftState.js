@@ -487,11 +487,11 @@ export function useDraftState() {
   function getMatchupTypeByWinrate(winrate) {
     if (winrate === undefined || winrate === null) return "UNKNOWN";
 
-    if (winrate >= 85) return "HARD_COUNTER";
+    if (winrate >= 80) return "HARD_COUNTER";
     else if (winrate >= 70) return "COUNTER";
     else if (winrate >= 58) return "FAVORED";
     else if (winrate >= 46) return "NEUTRAL";
-    else if (winrate <= 15) return "HARD_WEAK";
+    else if (winrate <= 25) return "HARD_WEAK";
     else if (winrate <= 35) return "WEAK";
     else if (winrate <= 45) return "DISFAVORED";
   }
@@ -501,8 +501,9 @@ export function useDraftState() {
     if (!mu) return "";
 
     const matchupType = getMatchupTypeByWinrate(mu.winrate);
+    const winrateText = mu.winrate ? `${mu.winrate}%` : "";
     const typeText = t(`matchups.${matchupType}`);
-    return `vs ${enemy.name}: ${mu.winrate}% (${typeText})`;
+    return `vs ${enemy.name}: ${winrateText} (${typeText})`;
   }
 
   function getMapGroups(map, options = {}) {
