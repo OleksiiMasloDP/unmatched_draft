@@ -1,5 +1,10 @@
 <template>
   <div class="container py-3 py-md-4">
+    <Disclaimer
+      title-key="charDisclaimerTitle"
+      text-key="charDisclaimerText"
+      storage-key="disclaimer_characters_dismissed"
+    />
     <div class="top-wrap" :class="{ 'sticky-active': current }">
       <div
         class="turn-banner"
@@ -233,6 +238,7 @@ import { onMounted, nextTick } from "vue";
 import { useDraftState } from "../composables/useDraftState.js";
 import CharacterDraft from "./CharacterDraft.vue";
 import MapSelect from "./MapSelect.vue";
+import Disclaimer from "./Disclaimer.vue";
 
 const {
   search,

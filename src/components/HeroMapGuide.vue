@@ -1,42 +1,53 @@
 <template>
-  <div class="maps-page">
+  <div class="maps-page container">
+    <Disclaimer
+      title-key="mapDisclaimerTitle"
+      text-key="mapDisclaimerText"
+      storage-key="disclaimer_maps_dismissed"
+    />
     <h1 class="page-main-title">
-      {{ t('heroMapGuide') }}
+      {{ t("heroMapGuide") }}
     </h1>
 
     <div class="hero-filter-section">
       <div class="filter-header" @click="isHeroFilterOpen = !isHeroFilterOpen">
         <div class="header-title-group">
-          <span class="filter-title">{{ t('filterByHeroes') }}</span>
-          <svg 
-            class="chevron-icon" 
-            :class="{ 'is-open': isHeroFilterOpen }" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
+          <span class="filter-title">{{ t("filterByHeroes") }}</span>
+          <svg
+            class="chevron-icon"
+            :class="{ 'is-open': isHeroFilterOpen }"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
             stroke-width="2"
           >
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
-        
-        <button 
-          v-if="selectedPreviewHeroIds.length > 0" 
-          @click.stop="clearPreviewHeroes" 
+
+        <button
+          v-if="selectedPreviewHeroIds.length > 0"
+          @click.stop="clearPreviewHeroes"
           class="clear-filter-btn"
         >
-          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            class="btn-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-          {{ t('clearFilter') }}
+          {{ t("clearFilter") }}
         </button>
       </div>
-      
+
       <div v-show="isHeroFilterOpen" class="heroes-badge-grid">
-        <div 
-          v-for="char in getAllCharacters()" 
-          :key="char.id" 
+        <div
+          v-for="char in getAllCharacters()"
+          :key="char.id"
           class="hero-badge-item"
           :class="{ 'is-active': selectedPreviewHeroIds.includes(char.id) }"
           @click="toggleHeroFilter(char.id)"
@@ -50,23 +61,24 @@
     </div>
 
     <div class="search-container">
-      <input 
+      <input
         id="search-input"
-        v-model="search" 
+        v-model="search"
         type="text"
         :placeholder="t('searchMapPlaceholder')"
         class="form-control form-control-sm search-field"
       />
     </div>
 
-    <MapSelect previewMode/>
+    <MapSelect previewMode />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useDraftState } from '../composables/useDraftState.js';
-import MapSelect from './MapSelect.vue';
+import { ref } from "vue";
+import { useDraftState } from "../composables/useDraftState.js";
+import MapSelect from "./MapSelect.vue";
+import Disclaimer from "./Disclaimer.vue";
 
 const { t, search, getAllCharacters, selectedPreviewHeroIds } = useDraftState();
 
@@ -89,8 +101,6 @@ function clearPreviewHeroes() {
 <style scoped>
 .maps-page {
   padding: 2rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .search-container {
@@ -220,7 +230,9 @@ function clearPreviewHeroes() {
 .hero-badge-item.is-active {
   background: rgba(59, 255, 0, 0.06);
   border-color: rgba(59, 255, 0, 0.75);
-  box-shadow: 0 0 12px rgba(59, 255, 0, 0.15), inset 0 0 6px rgba(59, 255, 0, 0.05);
+  box-shadow:
+    0 0 12px rgba(59, 255, 0, 0.15),
+    inset 0 0 6px rgba(59, 255, 0, 0.05);
 }
 
 .hero-badge-item.is-active .hero-img-wrapper {
@@ -239,6 +251,9 @@ function clearPreviewHeroes() {
   margin: 0 0 6px 0;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 </style>
