@@ -70,7 +70,7 @@
       />
     </div>
 
-    <MapSelect previewMode />
+    <MapSelect />
   </div>
 </template>
 

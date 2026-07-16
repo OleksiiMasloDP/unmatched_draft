@@ -646,6 +646,7 @@ export function useDraftState() {
     getMapGroups,
     proceedToMaps,
     getAllCharacters,
+    maps,
     selectedPreviewHeroIds,
   };
 }
