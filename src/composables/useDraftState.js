@@ -136,13 +136,23 @@ function isIdAllowedGlobal(id, allowedConfig) {
   if (allowedConfig === "all") return true;
   if (!Array.isArray(allowedConfig)) return false;
   if (allowedConfig.includes("all")) return true;
+
+  const numericId = Number(id);
+
   for (const item of allowedConfig) {
-    if (typeof item === "number" && item === id) return true;
+    if (typeof item === "number" && item === numericId) return true;
+
     if (typeof item === "string" && item.includes("-")) {
       const parts = item.split("-");
       const start = parseInt(parts[0], 10);
       const end = parseInt(parts[1], 10);
-      if (!isNaN(start) && !isNaN(end) && id >= start && id <= end) return true;
+      if (
+        !isNaN(start) &&
+        !isNaN(end) &&
+        numericId >= start &&
+        numericId <= end
+      )
+        return true;
     }
   }
   return false;
