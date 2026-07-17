@@ -20,7 +20,6 @@
 
 <script setup>
 import { onMounted, ref, watch, nextTick } from "vue";
-import { pageview } from "vue-gtag";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
 import HeroMapGuide from "./components/HeroMapGuide.vue";
@@ -40,10 +39,12 @@ watch(
   currentScreen,
   (newScreen) => {
     localStorage.setItem("active_screen", newScreen);
-    pageview({
-      page_title: `Screen: ${newScreen}`,
-      page_path: `/${newScreen}`,
-    });
+    if (typeof window.gtag === "function") {
+      window.gtag("config", "G-6BTH35KNGC", {
+        page_title: `Screen: ${newScreen}`,
+        page_path: `/${newScreen}`,
+      });
+    }
   },
   { immediate: true },
 );
