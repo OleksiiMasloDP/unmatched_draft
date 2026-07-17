@@ -100,13 +100,7 @@
     "name": "Baskerville Manor",
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
-    "favoredBy": [
-      "Tomoe Gozen",
-      "Titania",
-      "Raptors",
-      "Jill Trent",
-      "Golden Bat"
-    ],
+    "favoredBy": ["Tomoe Gozen", "Titania", "Jill Trent", "Golden Bat"],
     "neutralTo": [
       "Dracula",
       "Dr. Sattler",
@@ -118,7 +112,6 @@
       "Muhammad Ali",
       "Little Red Riding Hood",
       "Donatello",
-      "Achilles",
       "Yennenga",
       "Geralt of Rivia",
       "Moon Knight",
@@ -129,6 +122,8 @@
     ],
     "disfavoredBy": [
       "Annie Christmas",
+      "Raptors",
+      "Achilles",
       "Robin Hood",
       "The Genie",
       "Philippa",
@@ -553,6 +548,7 @@
       "Muhammad Ali",
       "Moon Knight",
       "Bruce Lee",
+      "Achilles",
       "Eredin"
     ],
     "disfavoredBy": [
@@ -562,7 +558,6 @@
       "Dracula",
       "Donatello",
       "Golden Bat",
-      "Achilles",
       "Alice"
     ]
   },
@@ -626,6 +621,7 @@
       "The Wayward Sisters",
       "Achilles",
       "Yennenga",
+      "Raptors",
       "Geralt of Rivia",
       "Eredin"
     ],
@@ -655,7 +651,6 @@
       "Robert Muldoon",
       "John Henry",
       "Pandora",
-      "Raptors",
       "Dracula",
       "Robin Hood",
       "Golden Bat",
