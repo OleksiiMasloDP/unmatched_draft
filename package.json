@@ -21,7 +21,8 @@
   "homepage": "https://github.com/OleksiiMasloDP/unmatched_draft#readme",
   "description": "",
   "dependencies": {
-    "vue": "^3.5.38"
+    "vue": "^3.5.38",
+    "vue-gtag": "^3.7.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
