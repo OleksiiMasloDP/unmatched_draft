@@ -22,7 +22,7 @@
   "description": "",
   "dependencies": {
     "vue": "^3.5.38",
-    "vue-gtag": "^3.7.1"
+    "vue-gtag": "^3.0.0-rc.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
