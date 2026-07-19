@@ -51,11 +51,11 @@
           class="hero-badge-item"
           :class="{ 'is-active': selectedPreviewHeroIds.includes(char.id) }"
           @click="toggleHeroFilter(char.id)"
+          :title="char.name"
         >
           <div class="hero-img-wrapper">
             <img :src="char.image" class="hero-badge-img" :alt="char.name" />
           </div>
-          <span class="hero-badge-name">{{ char.name }}</span>
         </div>
       </div>
     </div>
@@ -188,8 +188,7 @@ function clearPreviewHeroes() {
 .hero-badge-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 14px 6px 6px;
+  padding: 4px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
@@ -201,12 +200,12 @@ function clearPreviewHeroes() {
 .hero-badge-item:hover {
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .hero-img-wrapper {
-  width: 28px;
-  height: 28px;
+  width: 64px;
+  height: 64px;
   border-radius: 6px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.3);
@@ -220,13 +219,6 @@ function clearPreviewHeroes() {
   object-fit: cover;
 }
 
-.hero-badge-name {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
 .hero-badge-item.is-active {
   background: rgba(59, 255, 0, 0.06);
   border-color: rgba(59, 255, 0, 0.75);
@@ -236,12 +228,7 @@ function clearPreviewHeroes() {
 }
 
 .hero-badge-item.is-active .hero-img-wrapper {
-  border-color: rgba(59, 255, 0, 0.5);
-}
-
-.hero-badge-item.is-active .hero-badge-name {
-  color: #fff;
-  text-shadow: 0 0 10px rgba(59, 255, 0, 0.2);
+  border-color: rgba(59, 255, 0, 0.75);
 }
 
 .page-main-title {
