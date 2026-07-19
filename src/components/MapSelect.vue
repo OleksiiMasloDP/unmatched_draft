@@ -78,8 +78,16 @@
 import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 
-const { lang, selectedMapId, filteredMaps, maps, t, selectMap, getMapGroups } =
-  useDraftState();
+const {
+  lang,
+  selectedMapId,
+  filteredMaps,
+  maps,
+  search,
+  t,
+  selectMap,
+  getMapGroups,
+} = useDraftState();
 
 const props = defineProps({
   draftMode: {
@@ -93,7 +101,14 @@ const displayMaps = computed(() => {
     return filteredMaps.value;
   }
 
-  return [...(maps.value || [])];
+  const query = search.value.toLowerCase().trim();
+  let list = [...(maps.value || [])];
+
+  if (query) {
+    list = list.filter((map) => map.name.toLowerCase().includes(query));
+  }
+
+  return list;
 });
 
 function getMapPercentClass(rating) {
