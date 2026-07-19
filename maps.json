@@ -135,7 +135,8 @@
       "Michelangelo",
       "Leonardo",
       "The Wayward Sisters",
-      "Pandora"
+      "Pandora",
+      "Loki"
     ]
   },
   {
@@ -722,7 +723,6 @@
       "Raptors",
       "Yennenga",
       "Nikola Tesla",
-      "Bruce Lee",
       "Eredin"
     ],
     "neutralTo": [
@@ -747,6 +747,7 @@
       "Muhammad Ali",
       "Robin Hood",
       "Chupacabra",
+      "Bruce Lee",
       "Leonardo",
       "Daredevil",
       "Black Panther",
