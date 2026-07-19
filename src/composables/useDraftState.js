@@ -22,6 +22,29 @@ const selectedMapId = ref(null);
 
 const postBans = ref({ player: new Set(), opponent: new Set() });
 
+// Індекс матчапів у новому "плоскому" форматі: кожна пара зберігається один раз.
+// Ключ — "ІмʼяA|ІмʼяB" в алфавітному порядку, значення — winrate персонажа A проти B.
+const matchupIndex = new Map();
+
+function buildMatchupIndex(matchupsArr) {
+  matchupIndex.clear();
+  for (const m of matchupsArr || []) {
+    matchupIndex.set(`${m.a}|${m.b}`, m.winrate_a);
+  }
+}
+
+// Єдина точка доступу до матчапів. Замінює старе char.matchups?.[enemy.name].
+// Повертає число (0-100) або null, якщо матчап невідомий.
+function getWinrate(nameA, nameB) {
+  if (!nameA || !nameB || nameA === nameB) return null;
+  const [a, b] = [nameA, nameB].sort();
+  const key = `${a}|${b}`;
+  if (!matchupIndex.has(key)) return null;
+  const winrateA = matchupIndex.get(key);
+  if (winrateA === null || winrateA === undefined) return null;
+  return nameA === a ? winrateA : 100 - winrateA;
+}
+
 const MAX_ELO = 2000;
 const MIN_ELO = 1000;
 const STORAGE_KEY = "unmatched_draft_state_v4";
@@ -175,15 +198,15 @@ function getPickPercent(char) {
   for (const e of enemies) {
     if (!e || !e.name) continue;
 
-    const mu = char.matchups?.[e.name];
+    const winrate = getWinrate(char.name, e.name);
 
     // Рахуємо кількість невідомих матчапів
-    if (!mu || mu.winrate === null || mu.winrate === undefined) {
+    if (winrate === null) {
       unknownMatchupsCount++;
       continue;
     }
 
-    totalWinrate += Number(mu.winrate);
+    totalWinrate += Number(winrate);
     knownMatchupsCount++;
   }
 
@@ -222,11 +245,9 @@ function calculateTeamWinrate(playerPicks, opponentPicks) {
     count = 0;
   for (const p of playerPicks) {
     for (const o of opponentPicks) {
-      if (p.matchups?.[o.name]) {
-        const currentWinrate = p.matchups[o.name].winrate;
-        totalWinrate += currentWinrate === null ? 50 : currentWinrate;
-        count++;
-      }
+      const winrate = getWinrate(p.name, o.name);
+      totalWinrate += winrate === null ? 50 : winrate;
+      count++;
     }
   }
   return count ? Math.round(totalWinrate / count) : 50;
@@ -417,7 +438,9 @@ export function useDraftState() {
 
   const loadChars = async () => {
     const res = await fetch("characters.json");
-    characters.value = await res.json();
+    const data = await res.json();
+    characters.value = data.characters;
+    buildMatchupIndex(data.matchups);
   };
 
   const loadMaps = async () => {
@@ -549,11 +572,10 @@ export function useDraftState() {
   }
 
   function getMatchupText(char, enemy) {
-    const mu = char.matchups?.[enemy.name];
-    if (!mu) return "";
+    const winrate = getWinrate(char.name, enemy.name);
 
-    const matchupType = getMatchupTypeByWinrate(mu.winrate);
-    const winrateText = mu.winrate ? `${mu.winrate}%` : "";
+    const matchupType = getMatchupTypeByWinrate(winrate);
+    const winrateText = winrate ? `${winrate}%` : "";
     const typeText = t(`matchups.${matchupType}`);
     return `vs ${enemy.name}: ${winrateText} (${typeText})`;
   }
@@ -654,6 +676,7 @@ export function useDraftState() {
     getPickPercent,
     getPercentClass,
     getMatchupText,
+    getWinrate,
     getMapGroups,
     proceedToMaps,
     getAllCharacters,

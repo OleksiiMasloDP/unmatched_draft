@@ -90,7 +90,7 @@
           <div class="char-title">{{ char.name }}</div>
           <div class="mu-list">
             <template v-for="enemy in opponent.picks" :key="enemy.id">
-              <div v-if="char.matchups?.[enemy.name]">
+              <div v-if="getWinrate(char.name, enemy.name) !== null">
                 {{ getMatchupText(char, enemy) }}
               </div>
             </template>
@@ -192,6 +192,7 @@ const {
   getPercentClass,
   getPickPercent,
   getMatchupText,
+  getWinrate,
   proceedToMaps,
 } = useDraftState();
 </script>

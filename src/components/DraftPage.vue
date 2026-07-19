@@ -109,7 +109,7 @@
                   <template v-for="enemy in opponent.picks" :key="enemy.id">
                     <div
                       v-if="
-                        char.matchups?.[enemy.name] &&
+                        getWinrate(char.name, enemy.name) !== null &&
                         !postBans.opponent.has(enemy.id)
                       "
                     >
@@ -172,7 +172,7 @@
                   <template v-for="yourChar in player.picks" :key="yourChar.id">
                     <div
                       v-if="
-                        enemyChar.matchups?.[yourChar.name] &&
+                        getWinrate(enemyChar.name, yourChar.name) !== null &&
                         !postBans.player.has(yourChar.id)
                       "
                     >
@@ -260,6 +260,7 @@ const {
   resetAll,
   togglePostBan,
   getMatchupText,
+  getWinrate,
 } = useDraftState();
 
 let bsModalInstance = null;
