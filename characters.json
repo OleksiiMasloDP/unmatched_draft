@@ -1,4336 +1,3645 @@
-[
-  {
-    "id": 1,
-    "name": "Sinbad",
-    "elo": 1740,
-    "image": "images/sindbad.webp",
-    "matchups": {}
-  },
-  {
-    "id": 2,
-    "name": "Medusa",
-    "elo": 1960,
-    "image": "images/medusa.webp",
-    "matchups": {}
-  },
-  {
-    "id": 3,
-    "name": "Alice",
-    "elo": 1520,
-    "image": "images/alice.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Nikola Tesla": {
-        "winrate": 42
-      },
-      "Robin Hood": {
-        "winrate": 50
-      },
-      "Robert Muldoon": {
-        "winrate": 35
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Dracula": {
-        "winrate": 32
-      },
-      "Little Red Riding Hood": {
-        "winrate": 53
-      },
-      "Achilles": {
-        "winrate": 36
-      },
-      "Yennenga": {
-        "winrate": 39
-      },
-      "Geralt of Rivia": {
-        "winrate": 56
-      },
-      "Daredevil": {
-        "winrate": 49
-      },
-      "Bullseye": {
-        "winrate": 61
-      },
-      "Dr. Sattler": {
-        "winrate": 50
-      },
-      "The Genie": {
-        "winrate": 42
-      },
-      "Ms. Marvel": {
-        "winrate": 70
-      },
-      "Black Panther": {
-        "winrate": 46
-      },
-      "Annie Christmas": {
-        "winrate": 38
-      },
-      "Moon Knight": {
-        "winrate": 48
-      },
-      "Jill Trent": {
-        "winrate": 38
-      },
-      "Tomoe Gozen": {
-        "winrate": 42
-      },
-      "Titania": {
-        "winrate": 69
-      },
-      "The Wayward Sisters": {
-        "winrate": 66
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 66
-      },
-      "Philippa": {
-        "winrate": 56
-      },
-      "Pandora": {
-        "winrate": 49
-      },
-      "Chupacabra": {
-        "winrate": 50
-      },
-      "Leonardo": {
-        "winrate": 52
-      },
-      "Muhammad Ali": {
-        "winrate": 52
-      },
-      "John Henry": {
-        "winrate": 38
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 63
-      },
-      "Michelangelo": {
-        "winrate": 75
-      },
-      "Rosie the Riveter": {
-        "winrate": 66
-      }
+{
+  "characters": [
+    {
+      "id": 1,
+      "name": "Sinbad",
+      "elo": 1740,
+      "image": "images/sindbad.webp"
+    },
+    {
+      "id": 2,
+      "name": "Medusa",
+      "elo": 1960,
+      "image": "images/medusa.webp"
+    },
+    {
+      "id": 3,
+      "name": "Alice",
+      "elo": 1520,
+      "image": "images/alice.webp"
+    },
+    {
+      "id": 4,
+      "name": "King Arthur",
+      "elo": 1235,
+      "image": "images/arthur.webp"
+    },
+    {
+      "id": 5,
+      "name": "Robin Hood",
+      "elo": 1342,
+      "image": "images/robin_hood.webp"
+    },
+    {
+      "id": 6,
+      "name": "Bigfoot",
+      "elo": 1872,
+      "image": "images/bigfoot.webp"
+    },
+    {
+      "id": 7,
+      "name": "Bruce Lee",
+      "elo": 1474,
+      "image": "images/bruce_lee.webp"
+    },
+    {
+      "id": 8,
+      "name": "Robert Muldoon",
+      "elo": 1659,
+      "image": "images/ingen.webp"
+    },
+    {
+      "id": 9,
+      "name": "Raptors",
+      "elo": 1636,
+      "image": "images/raptors.webp"
+    },
+    {
+      "id": 10,
+      "name": "Sherlock Holmes",
+      "elo": 1988,
+      "image": "images/sherlock.webp"
+    },
+    {
+      "id": 11,
+      "name": "Dr. Jekyll & Mr. Hyde",
+      "elo": 1164,
+      "image": "images/jekyll_hyde.webp"
+    },
+    {
+      "id": 12,
+      "name": "Invisible Man",
+      "elo": 1192,
+      "image": "images/invisible_man.webp"
+    },
+    {
+      "id": 13,
+      "name": "Dracula",
+      "elo": 1531,
+      "image": "images/dracula.webp"
+    },
+    {
+      "id": 14,
+      "name": "Buffy",
+      "elo": 1220,
+      "image": "images/buffy.webp"
+    },
+    {
+      "id": 15,
+      "name": "Angel",
+      "elo": 1040,
+      "image": "images/angel.webp"
+    },
+    {
+      "id": 16,
+      "name": "Spike",
+      "elo": 1000,
+      "image": "images/spike.webp"
+    },
+    {
+      "id": 17,
+      "name": "Willow",
+      "elo": 1080,
+      "image": "images/willow.webp"
+    },
+    {
+      "id": 18,
+      "name": "Little Red Riding Hood",
+      "elo": 1729,
+      "image": "images/little_red.webp"
+    },
+    {
+      "id": 19,
+      "name": "Beowulf",
+      "elo": 1450,
+      "image": "images/beowulf.webp"
+    },
+    {
+      "id": 20,
+      "name": "Deadpool",
+      "elo": 1305,
+      "image": "images/deadpool.webp"
+    },
+    {
+      "id": 21,
+      "name": "Sun Wukong",
+      "elo": 1910,
+      "image": "images/sun_wukong.webp"
+    },
+    {
+      "id": 22,
+      "name": "Yennenga",
+      "elo": 1822,
+      "image": "images/yennenga.webp"
+    },
+    {
+      "id": 23,
+      "name": "Achilles",
+      "elo": 1835,
+      "image": "images/achilles.webp"
+    },
+    {
+      "id": 24,
+      "name": "Bloody Mary",
+      "elo": 1319,
+      "image": "images/bloody_mary.webp"
+    },
+    {
+      "id": 25,
+      "name": "Daredevil",
+      "elo": 1648,
+      "image": "images/daredevil.webp"
+    },
+    {
+      "id": 26,
+      "name": "Elektra",
+      "elo": 2000,
+      "image": "images/elektra.webp"
+    },
+    {
+      "id": 27,
+      "name": "Bullseye",
+      "elo": 1412,
+      "image": "images/bullseye.webp"
+    },
+    {
+      "id": 28,
+      "name": "Luke Cage",
+      "elo": 1775,
+      "image": "images/luke_cage.webp"
+    },
+    {
+      "id": 29,
+      "name": "Ghost Rider",
+      "elo": 1354,
+      "image": "images/ghost_rider.webp"
+    },
+    {
+      "id": 30,
+      "name": "Moon Knight",
+      "elo": 1682,
+      "image": "images/moon_knight.webp"
+    },
+    {
+      "id": 31,
+      "name": "Dr. Sattler",
+      "elo": 1378,
+      "image": "images/dr_sattler.webp"
+    },
+    {
+      "id": 32,
+      "name": "T-Rex",
+      "elo": 1706,
+      "image": "images/trex.webp"
+    },
+    {
+      "id": 33,
+      "name": "Harry Houdini",
+      "elo": 1885,
+      "image": "images/houdini.webp"
+    },
+    {
+      "id": 34,
+      "name": "The Genie",
+      "elo": 1603,
+      "image": "images/genie.webp"
+    },
+    {
+      "id": 35,
+      "name": "Ms. Marvel",
+      "elo": 1264,
+      "image": "images/ms_marvel.webp"
+    },
+    {
+      "id": 36,
+      "name": "Squirrel Girl",
+      "elo": 1120,
+      "image": "images/squirrel_girl.webp"
+    },
+    {
+      "id": 37,
+      "name": "Cloak & Dagger",
+      "elo": 1250,
+      "image": "images/cloak_dagger.webp"
+    },
+    {
+      "id": 38,
+      "name": "Black Widow",
+      "elo": 1450,
+      "image": "images/black_widow.webp"
+    },
+    {
+      "id": 39,
+      "name": "Black Panther",
+      "elo": 1425,
+      "image": "images/black_panther.webp"
+    },
+    {
+      "id": 40,
+      "name": "Winter Soldier",
+      "elo": 1389,
+      "image": "images/winter_soldier.webp"
+    },
+    {
+      "id": 41,
+      "name": "Nikola Tesla",
+      "elo": 1786,
+      "image": "images/nikola_tesla.webp"
+    },
+    {
+      "id": 42,
+      "name": "Annie Christmas",
+      "elo": 1568,
+      "image": "images/annie_christmas.webp"
+    },
+    {
+      "id": 43,
+      "name": "Golden Bat",
+      "elo": 1923,
+      "image": "images/golden_bat.webp"
+    },
+    {
+      "id": 44,
+      "name": "Jill Trent",
+      "elo": 1798,
+      "image": "images/jill_trent.webp"
+    },
+    {
+      "id": 45,
+      "name": "Spider-Man",
+      "elo": 1206,
+      "image": "images/spiderman.webp"
+    },
+    {
+      "id": 46,
+      "name": "Doctor Strange",
+      "elo": 1974,
+      "image": "images/doctor_strange.webp"
+    },
+    {
+      "id": 47,
+      "name": "She-Hulk",
+      "elo": 1810,
+      "image": "images/she_hulk.webp"
+    },
+    {
+      "id": 48,
+      "name": "Oda Nobunaga",
+      "elo": 1178,
+      "image": "images/oda.webp"
+    },
+    {
+      "id": 49,
+      "name": "Tomoe Gozen",
+      "elo": 1718,
+      "image": "images/tomoe.webp"
+    },
+    {
+      "id": 50,
+      "name": "William Shakespeare",
+      "elo": 1331,
+      "image": "images/shakespeare.webp"
+    },
+    {
+      "id": 51,
+      "name": "Hamlet",
+      "elo": 1150,
+      "image": "images/hamlet.webp"
+    },
+    {
+      "id": 52,
+      "name": "The Wayward Sisters",
+      "elo": 1439,
+      "image": "images/wayward_sisters.webp"
+    },
+    {
+      "id": 53,
+      "name": "Titania",
+      "elo": 1591,
+      "image": "images/titania.webp"
+    },
+    {
+      "id": 54,
+      "name": "Muhammad Ali",
+      "elo": 1292,
+      "image": "images/ali.webp"
+    },
+    {
+      "id": 55,
+      "name": "Geralt of Rivia",
+      "elo": 1508,
+      "image": "images/geralt.webp"
+    },
+    {
+      "id": 56,
+      "name": "Ciri",
+      "elo": 1948,
+      "image": "images/ciri.webp"
+    },
+    {
+      "id": 57,
+      "name": "Leshen",
+      "elo": 1695,
+      "image": "images/leshen.webp"
+    },
+    {
+      "id": 58,
+      "name": "Yennefer & Triss",
+      "elo": 1898,
+      "image": "images/yennefer_triss.webp"
+    },
+    {
+      "id": 59,
+      "name": "Eredin",
+      "elo": 1860,
+      "image": "images/eredin.webp"
+    },
+    {
+      "id": 60,
+      "name": "Philippa",
+      "elo": 1366,
+      "image": "images/philippa.webp"
+    },
+    {
+      "id": 61,
+      "name": "Leonardo",
+      "elo": 1462,
+      "image": "images/leonardo.webp"
+    },
+    {
+      "id": 62,
+      "name": "Donatello",
+      "elo": 1742,
+      "image": "images/donatello.webp"
+    },
+    {
+      "id": 63,
+      "name": "Raphael",
+      "elo": 1848,
+      "image": "images/raphael.webp"
+    },
+    {
+      "id": 64,
+      "name": "Michelangelo",
+      "elo": 1400,
+      "image": "images/michelangelo.webp"
+    },
+    {
+      "id": 65,
+      "name": "Shredder",
+      "elo": 1764,
+      "image": "images/shredder.webp"
+    },
+    {
+      "id": 66,
+      "name": "Krang",
+      "elo": 1614,
+      "image": "images/krang.webp"
+    },
+    {
+      "id": 67,
+      "name": "George Washington",
+      "elo": 1585,
+      "image": "images/george_washington.webp"
+    },
+    {
+      "id": 68,
+      "name": "Wyatt Earp",
+      "elo": 1555,
+      "image": "images/wyatt_earp.webp"
+    },
+    {
+      "id": 69,
+      "name": "Rosie the Riveter",
+      "elo": 1485,
+      "image": "images/rosie.webp"
+    },
+    {
+      "id": 70,
+      "name": "John Henry",
+      "elo": 1752,
+      "image": "images/john_henry.webp"
+    },
+    {
+      "id": 71,
+      "name": "Pandora",
+      "elo": 1580,
+      "image": "images/pandora.webp"
+    },
+    {
+      "id": 72,
+      "name": "Chupacabra",
+      "elo": 1497,
+      "image": "images/chupacabra.webp"
+    },
+    {
+      "id": 73,
+      "name": "Blackbeard",
+      "elo": 1935,
+      "image": "images/blackbeard.webp"
+    },
+    {
+      "id": 74,
+      "name": "Loki",
+      "elo": 1550,
+      "image": "images/loki.webp"
     }
-  },
-  {
-    "id": 4,
-    "name": "King Arthur",
-    "elo": 1235,
-    "image": "images/arthur.webp",
-    "matchups": {}
-  },
-  {
-    "id": 5,
-    "name": "Robin Hood",
-    "elo": 1342,
-    "image": "images/robin_hood.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 20
-      },
-      "Eredin": {
-        "winrate": 34
-      },
-      "Nikola Tesla": {
-        "winrate": 16
-      },
-      "John Henry": {
-        "winrate": 31
-      },
-      "Robert Muldoon": {
-        "winrate": 60
-      },
-      "Muhammad Ali": {
-        "winrate": 42
-      },
-      "Little Red Riding Hood": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 50
-      },
-      "Achilles": {
-        "winrate": 41
-      },
-      "Yennenga": {
-        "winrate": 26
-      },
-      "Geralt of Rivia": {
-        "winrate": 29
-      },
-      "Daredevil": {
-        "winrate": 44
-      },
-      "Bullseye": {
-        "winrate": 43
-      },
-      "Dr. Sattler": {
-        "winrate": 26
-      },
-      "The Genie": {
-        "winrate": 42
-      },
-      "Ms. Marvel": {
-        "winrate": 50
-      },
-      "Black Panther": {
-        "winrate": 38
-      },
-      "Jill Trent": {
-        "winrate": 41
-      },
-      "Moon Knight": {
-        "winrate": 26
-      },
-      "Tomoe Gozen": {
-        "winrate": 57
-      },
-      "Raptors": {
-        "winrate": 54
-      },
-      "Titania": {
-        "winrate": 51
-      },
-      "Pandora": {
-        "winrate": 48
-      },
-      "Golden Bat": {
-        "winrate": 16
-      },
-      "Bruce Lee": {
-        "winrate": 44
-      },
-      "Philippa": {
-        "winrate": 50
-      },
-      "Annie Christmas": {
-        "winrate": 23
-      },
-      "Chupacabra": {
-        "winrate": 46
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 49
-      },
-      "The Wayward Sisters": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 43
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
+  ],
+  "matchups": [
+    {
+      "a": "Achilles",
+      "b": "Alice",
+      "winrate_a": 64
+    },
+    {
+      "a": "Achilles",
+      "b": "Annie Christmas",
+      "winrate_a": 60
+    },
+    {
+      "a": "Achilles",
+      "b": "Black Panther",
+      "winrate_a": 59
+    },
+    {
+      "a": "Achilles",
+      "b": "Bruce Lee",
+      "winrate_a": 72
+    },
+    {
+      "a": "Achilles",
+      "b": "Bullseye",
+      "winrate_a": 59
+    },
+    {
+      "a": "Achilles",
+      "b": "Chupacabra",
+      "winrate_a": 70
+    },
+    {
+      "a": "Achilles",
+      "b": "Daredevil",
+      "winrate_a": 66
+    },
+    {
+      "a": "Achilles",
+      "b": "Donatello",
+      "winrate_a": 41
+    },
+    {
+      "a": "Achilles",
+      "b": "Dr. Sattler",
+      "winrate_a": 53
+    },
+    {
+      "a": "Achilles",
+      "b": "Dracula",
+      "winrate_a": 51
+    },
+    {
+      "a": "Achilles",
+      "b": "Eredin",
+      "winrate_a": 43
+    },
+    {
+      "a": "Achilles",
+      "b": "George Washington",
+      "winrate_a": 55
+    },
+    {
+      "a": "Achilles",
+      "b": "Geralt of Rivia",
+      "winrate_a": 58
+    },
+    {
+      "a": "Achilles",
+      "b": "Golden Bat",
+      "winrate_a": 36
+    },
+    {
+      "a": "Achilles",
+      "b": "Jill Trent",
+      "winrate_a": 40
+    },
+    {
+      "a": "Achilles",
+      "b": "John Henry",
+      "winrate_a": 62
+    },
+    {
+      "a": "Achilles",
+      "b": "Leonardo",
+      "winrate_a": 55
+    },
+    {
+      "a": "Achilles",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 64
+    },
+    {
+      "a": "Achilles",
+      "b": "Michelangelo",
+      "winrate_a": 75
+    },
+    {
+      "a": "Achilles",
+      "b": "Moon Knight",
+      "winrate_a": 55
+    },
+    {
+      "a": "Achilles",
+      "b": "Ms. Marvel",
+      "winrate_a": 70
+    },
+    {
+      "a": "Achilles",
+      "b": "Muhammad Ali",
+      "winrate_a": 42
+    },
+    {
+      "a": "Achilles",
+      "b": "Nikola Tesla",
+      "winrate_a": 60
+    },
+    {
+      "a": "Achilles",
+      "b": "Pandora",
+      "winrate_a": 58
+    },
+    {
+      "a": "Achilles",
+      "b": "Philippa",
+      "winrate_a": 72
+    },
+    {
+      "a": "Achilles",
+      "b": "Raptors",
+      "winrate_a": 70
+    },
+    {
+      "a": "Achilles",
+      "b": "Robert Muldoon",
+      "winrate_a": 20
+    },
+    {
+      "a": "Achilles",
+      "b": "Robin Hood",
+      "winrate_a": 59
+    },
+    {
+      "a": "Achilles",
+      "b": "Rosie the Riveter",
+      "winrate_a": 75
+    },
+    {
+      "a": "Achilles",
+      "b": "The Genie",
+      "winrate_a": 70
+    },
+    {
+      "a": "Achilles",
+      "b": "The Wayward Sisters",
+      "winrate_a": 62
+    },
+    {
+      "a": "Achilles",
+      "b": "Titania",
+      "winrate_a": 65
+    },
+    {
+      "a": "Achilles",
+      "b": "Tomoe Gozen",
+      "winrate_a": 68
+    },
+    {
+      "a": "Achilles",
+      "b": "Wyatt Earp",
+      "winrate_a": 75
+    },
+    {
+      "a": "Achilles",
+      "b": "Yennenga",
+      "winrate_a": 42
+    },
+    {
+      "a": "Alice",
+      "b": "Annie Christmas",
+      "winrate_a": 38
+    },
+    {
+      "a": "Alice",
+      "b": "Black Panther",
+      "winrate_a": 46
+    },
+    {
+      "a": "Alice",
+      "b": "Bruce Lee",
+      "winrate_a": 66
+    },
+    {
+      "a": "Alice",
+      "b": "Bullseye",
+      "winrate_a": 61
+    },
+    {
+      "a": "Alice",
+      "b": "Chupacabra",
+      "winrate_a": 50
+    },
+    {
+      "a": "Alice",
+      "b": "Daredevil",
+      "winrate_a": 49
+    },
+    {
+      "a": "Alice",
+      "b": "Donatello",
+      "winrate_a": 38
+    },
+    {
+      "a": "Alice",
+      "b": "Dr. Sattler",
+      "winrate_a": 50
+    },
+    {
+      "a": "Alice",
+      "b": "Dracula",
+      "winrate_a": 32
+    },
+    {
+      "a": "Alice",
+      "b": "Eredin",
+      "winrate_a": 41
+    },
+    {
+      "a": "Alice",
+      "b": "George Washington",
+      "winrate_a": 36
+    },
+    {
+      "a": "Alice",
+      "b": "Geralt of Rivia",
+      "winrate_a": 56
+    },
+    {
+      "a": "Alice",
+      "b": "Golden Bat",
+      "winrate_a": 50
+    },
+    {
+      "a": "Alice",
+      "b": "Jill Trent",
+      "winrate_a": 38
+    },
+    {
+      "a": "Alice",
+      "b": "John Henry",
+      "winrate_a": 38
+    },
+    {
+      "a": "Alice",
+      "b": "Leonardo",
+      "winrate_a": 36
+    },
+    {
+      "a": "Alice",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 53
+    },
+    {
+      "a": "Alice",
+      "b": "Michelangelo",
+      "winrate_a": 75
+    },
+    {
+      "a": "Alice",
+      "b": "Moon Knight",
+      "winrate_a": 48
+    },
+    {
+      "a": "Alice",
+      "b": "Ms. Marvel",
+      "winrate_a": 70
+    },
+    {
+      "a": "Alice",
+      "b": "Muhammad Ali",
+      "winrate_a": 52
+    },
+    {
+      "a": "Alice",
+      "b": "Nikola Tesla",
+      "winrate_a": 42
+    },
+    {
+      "a": "Alice",
+      "b": "Pandora",
+      "winrate_a": 49
+    },
+    {
+      "a": "Alice",
+      "b": "Philippa",
+      "winrate_a": 56
+    },
+    {
+      "a": "Alice",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Alice",
+      "b": "Robert Muldoon",
+      "winrate_a": 35
+    },
+    {
+      "a": "Alice",
+      "b": "Robin Hood",
+      "winrate_a": 50
+    },
+    {
+      "a": "Alice",
+      "b": "Rosie the Riveter",
+      "winrate_a": 45
+    },
+    {
+      "a": "Alice",
+      "b": "The Genie",
+      "winrate_a": 42
+    },
+    {
+      "a": "Alice",
+      "b": "The Wayward Sisters",
+      "winrate_a": 66
+    },
+    {
+      "a": "Alice",
+      "b": "Titania",
+      "winrate_a": 69
+    },
+    {
+      "a": "Alice",
+      "b": "Tomoe Gozen",
+      "winrate_a": 42
+    },
+    {
+      "a": "Alice",
+      "b": "Wyatt Earp",
+      "winrate_a": 45
+    },
+    {
+      "a": "Alice",
+      "b": "Yennenga",
+      "winrate_a": 39
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Black Panther",
+      "winrate_a": 38
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Bruce Lee",
+      "winrate_a": 52
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Bullseye",
+      "winrate_a": 77
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Chupacabra",
+      "winrate_a": 76
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Daredevil",
+      "winrate_a": 52
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Donatello",
+      "winrate_a": 24
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Dr. Sattler",
+      "winrate_a": 66
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Dracula",
+      "winrate_a": 32
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Eredin",
+      "winrate_a": 40
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "George Washington",
+      "winrate_a": null
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Geralt of Rivia",
+      "winrate_a": 50
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Golden Bat",
+      "winrate_a": 50
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Jill Trent",
+      "winrate_a": 40
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "John Henry",
+      "winrate_a": 78
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Leonardo",
+      "winrate_a": 52
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 60
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Michelangelo",
+      "winrate_a": 79
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Moon Knight",
+      "winrate_a": 61
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Ms. Marvel",
+      "winrate_a": 68
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Muhammad Ali",
+      "winrate_a": 56
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Nikola Tesla",
+      "winrate_a": 49
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Pandora",
+      "winrate_a": 50
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Philippa",
+      "winrate_a": 62
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Robert Muldoon",
+      "winrate_a": 36
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Robin Hood",
+      "winrate_a": 77
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Rosie the Riveter",
+      "winrate_a": 49
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "The Genie",
+      "winrate_a": 44
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "The Wayward Sisters",
+      "winrate_a": 40
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Titania",
+      "winrate_a": 44
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Tomoe Gozen",
+      "winrate_a": 62
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Wyatt Earp",
+      "winrate_a": 64
+    },
+    {
+      "a": "Annie Christmas",
+      "b": "Yennenga",
+      "winrate_a": 38
+    },
+    {
+      "a": "Black Panther",
+      "b": "Bruce Lee",
+      "winrate_a": 64
+    },
+    {
+      "a": "Black Panther",
+      "b": "Bullseye",
+      "winrate_a": 74
+    },
+    {
+      "a": "Black Panther",
+      "b": "Chupacabra",
+      "winrate_a": 54
+    },
+    {
+      "a": "Black Panther",
+      "b": "Daredevil",
+      "winrate_a": 60
+    },
+    {
+      "a": "Black Panther",
+      "b": "Donatello",
+      "winrate_a": 38
+    },
+    {
+      "a": "Black Panther",
+      "b": "Dr. Sattler",
+      "winrate_a": 69
+    },
+    {
+      "a": "Black Panther",
+      "b": "Dracula",
+      "winrate_a": 60
+    },
+    {
+      "a": "Black Panther",
+      "b": "Eredin",
+      "winrate_a": 40
+    },
+    {
+      "a": "Black Panther",
+      "b": "George Washington",
+      "winrate_a": null
+    },
+    {
+      "a": "Black Panther",
+      "b": "Geralt of Rivia",
+      "winrate_a": 60
+    },
+    {
+      "a": "Black Panther",
+      "b": "Golden Bat",
+      "winrate_a": 13
+    },
+    {
+      "a": "Black Panther",
+      "b": "Jill Trent",
+      "winrate_a": 50
+    },
+    {
+      "a": "Black Panther",
+      "b": "John Henry",
+      "winrate_a": null
+    },
+    {
+      "a": "Black Panther",
+      "b": "Leonardo",
+      "winrate_a": null
+    },
+    {
+      "a": "Black Panther",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 72
+    },
+    {
+      "a": "Black Panther",
+      "b": "Michelangelo",
+      "winrate_a": 49
+    },
+    {
+      "a": "Black Panther",
+      "b": "Moon Knight",
+      "winrate_a": 32
+    },
+    {
+      "a": "Black Panther",
+      "b": "Ms. Marvel",
+      "winrate_a": 59
+    },
+    {
+      "a": "Black Panther",
+      "b": "Muhammad Ali",
+      "winrate_a": 56
+    },
+    {
+      "a": "Black Panther",
+      "b": "Nikola Tesla",
+      "winrate_a": 31
+    },
+    {
+      "a": "Black Panther",
+      "b": "Pandora",
+      "winrate_a": 63
+    },
+    {
+      "a": "Black Panther",
+      "b": "Philippa",
+      "winrate_a": 66
+    },
+    {
+      "a": "Black Panther",
+      "b": "Raptors",
+      "winrate_a": 37
+    },
+    {
+      "a": "Black Panther",
+      "b": "Robert Muldoon",
+      "winrate_a": 58
+    },
+    {
+      "a": "Black Panther",
+      "b": "Robin Hood",
+      "winrate_a": 62
+    },
+    {
+      "a": "Black Panther",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Black Panther",
+      "b": "The Genie",
+      "winrate_a": 64
+    },
+    {
+      "a": "Black Panther",
+      "b": "The Wayward Sisters",
+      "winrate_a": 68
+    },
+    {
+      "a": "Black Panther",
+      "b": "Titania",
+      "winrate_a": 45
+    },
+    {
+      "a": "Black Panther",
+      "b": "Tomoe Gozen",
+      "winrate_a": 38
+    },
+    {
+      "a": "Black Panther",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "Black Panther",
+      "b": "Yennenga",
+      "winrate_a": 61
+    },
+    {
+      "a": "Blackbeard",
+      "b": "Wyatt Earp",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Bullseye",
+      "winrate_a": 62
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Chupacabra",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Daredevil",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Donatello",
+      "winrate_a": 8
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Dr. Sattler",
+      "winrate_a": 28
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Dracula",
+      "winrate_a": 36
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Eredin",
+      "winrate_a": 55
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "George Washington",
+      "winrate_a": 63
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Geralt of Rivia",
+      "winrate_a": 49
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Golden Bat",
+      "winrate_a": 45
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Jill Trent",
+      "winrate_a": 44
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "John Henry",
+      "winrate_a": 40
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Leonardo",
+      "winrate_a": 75
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Michelangelo",
+      "winrate_a": 75
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Moon Knight",
+      "winrate_a": 36
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Ms. Marvel",
+      "winrate_a": 64
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Muhammad Ali",
+      "winrate_a": 56
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Nikola Tesla",
+      "winrate_a": 61
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Pandora",
+      "winrate_a": 33
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Philippa",
+      "winrate_a": 34
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Raptors",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Robert Muldoon",
+      "winrate_a": 35
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Robin Hood",
+      "winrate_a": 56
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Rosie the Riveter",
+      "winrate_a": 62
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "The Genie",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "The Wayward Sisters",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Titania",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Tomoe Gozen",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Wyatt Earp",
+      "winrate_a": 63
+    },
+    {
+      "a": "Bruce Lee",
+      "b": "Yennenga",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bullseye",
+      "b": "Chupacabra",
+      "winrate_a": 34
+    },
+    {
+      "a": "Bullseye",
+      "b": "Daredevil",
+      "winrate_a": 50
+    },
+    {
+      "a": "Bullseye",
+      "b": "Donatello",
+      "winrate_a": 38
+    },
+    {
+      "a": "Bullseye",
+      "b": "Dr. Sattler",
+      "winrate_a": 28
+    },
+    {
+      "a": "Bullseye",
+      "b": "Dracula",
+      "winrate_a": 44
+    },
+    {
+      "a": "Bullseye",
+      "b": "Eredin",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bullseye",
+      "b": "George Washington",
+      "winrate_a": null
+    },
+    {
+      "a": "Bullseye",
+      "b": "Geralt of Rivia",
+      "winrate_a": 38
+    },
+    {
+      "a": "Bullseye",
+      "b": "Golden Bat",
+      "winrate_a": 66
+    },
+    {
+      "a": "Bullseye",
+      "b": "Jill Trent",
+      "winrate_a": 36
+    },
+    {
+      "a": "Bullseye",
+      "b": "John Henry",
+      "winrate_a": 42
+    },
+    {
+      "a": "Bullseye",
+      "b": "Leonardo",
+      "winrate_a": null
+    },
+    {
+      "a": "Bullseye",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 38
+    },
+    {
+      "a": "Bullseye",
+      "b": "Michelangelo",
+      "winrate_a": null
+    },
+    {
+      "a": "Bullseye",
+      "b": "Moon Knight",
+      "winrate_a": 35
+    },
+    {
+      "a": "Bullseye",
+      "b": "Ms. Marvel",
+      "winrate_a": 42
+    },
+    {
+      "a": "Bullseye",
+      "b": "Muhammad Ali",
+      "winrate_a": 58
+    },
+    {
+      "a": "Bullseye",
+      "b": "Nikola Tesla",
+      "winrate_a": 38
+    },
+    {
+      "a": "Bullseye",
+      "b": "Pandora",
+      "winrate_a": 33
+    },
+    {
+      "a": "Bullseye",
+      "b": "Philippa",
+      "winrate_a": 41
+    },
+    {
+      "a": "Bullseye",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Bullseye",
+      "b": "Robert Muldoon",
+      "winrate_a": 65
+    },
+    {
+      "a": "Bullseye",
+      "b": "Robin Hood",
+      "winrate_a": 57
+    },
+    {
+      "a": "Bullseye",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Bullseye",
+      "b": "The Genie",
+      "winrate_a": 38
+    },
+    {
+      "a": "Bullseye",
+      "b": "The Wayward Sisters",
+      "winrate_a": 42
+    },
+    {
+      "a": "Bullseye",
+      "b": "Titania",
+      "winrate_a": 40
+    },
+    {
+      "a": "Bullseye",
+      "b": "Tomoe Gozen",
+      "winrate_a": 32
+    },
+    {
+      "a": "Bullseye",
+      "b": "Wyatt Earp",
+      "winrate_a": 60
+    },
+    {
+      "a": "Bullseye",
+      "b": "Yennenga",
+      "winrate_a": 62
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Daredevil",
+      "winrate_a": 36
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Donatello",
+      "winrate_a": 24
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Dr. Sattler",
+      "winrate_a": 34
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Dracula",
+      "winrate_a": 32
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Eredin",
+      "winrate_a": 36
+    },
+    {
+      "a": "Chupacabra",
+      "b": "George Washington",
+      "winrate_a": null
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Geralt of Rivia",
+      "winrate_a": 36
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Golden Bat",
+      "winrate_a": 43
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Jill Trent",
+      "winrate_a": 40
+    },
+    {
+      "a": "Chupacabra",
+      "b": "John Henry",
+      "winrate_a": 52
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Leonardo",
+      "winrate_a": 50
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 56
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Michelangelo",
+      "winrate_a": 64
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Moon Knight",
+      "winrate_a": 41
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Ms. Marvel",
+      "winrate_a": 65
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Muhammad Ali",
+      "winrate_a": 50
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Nikola Tesla",
+      "winrate_a": 55
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Pandora",
+      "winrate_a": 48
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Philippa",
+      "winrate_a": 42
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Raptors",
+      "winrate_a": 51
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Robert Muldoon",
+      "winrate_a": 34
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Robin Hood",
+      "winrate_a": 54
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Chupacabra",
+      "b": "The Genie",
+      "winrate_a": 48
+    },
+    {
+      "a": "Chupacabra",
+      "b": "The Wayward Sisters",
+      "winrate_a": 65
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Titania",
+      "winrate_a": 67
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Tomoe Gozen",
+      "winrate_a": 50
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Wyatt Earp",
+      "winrate_a": 33
+    },
+    {
+      "a": "Chupacabra",
+      "b": "Yennenga",
+      "winrate_a": 38
+    },
+    {
+      "a": "Daredevil",
+      "b": "Donatello",
+      "winrate_a": 20
+    },
+    {
+      "a": "Daredevil",
+      "b": "Dr. Sattler",
+      "winrate_a": 61
+    },
+    {
+      "a": "Daredevil",
+      "b": "Dracula",
+      "winrate_a": 40
+    },
+    {
+      "a": "Daredevil",
+      "b": "Eredin",
+      "winrate_a": 50
+    },
+    {
+      "a": "Daredevil",
+      "b": "George Washington",
+      "winrate_a": 75
+    },
+    {
+      "a": "Daredevil",
+      "b": "Geralt of Rivia",
+      "winrate_a": 50
+    },
+    {
+      "a": "Daredevil",
+      "b": "Golden Bat",
+      "winrate_a": 17
+    },
+    {
+      "a": "Daredevil",
+      "b": "Jill Trent",
+      "winrate_a": 80
+    },
+    {
+      "a": "Daredevil",
+      "b": "John Henry",
+      "winrate_a": 60
+    },
+    {
+      "a": "Daredevil",
+      "b": "Leonardo",
+      "winrate_a": 69
+    },
+    {
+      "a": "Daredevil",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 50
+    },
+    {
+      "a": "Daredevil",
+      "b": "Michelangelo",
+      "winrate_a": 64
+    },
+    {
+      "a": "Daredevil",
+      "b": "Moon Knight",
+      "winrate_a": 38
+    },
+    {
+      "a": "Daredevil",
+      "b": "Ms. Marvel",
+      "winrate_a": 60
+    },
+    {
+      "a": "Daredevil",
+      "b": "Muhammad Ali",
+      "winrate_a": 73
+    },
+    {
+      "a": "Daredevil",
+      "b": "Nikola Tesla",
+      "winrate_a": 38
+    },
+    {
+      "a": "Daredevil",
+      "b": "Pandora",
+      "winrate_a": 64
+    },
+    {
+      "a": "Daredevil",
+      "b": "Philippa",
+      "winrate_a": 49
+    },
+    {
+      "a": "Daredevil",
+      "b": "Raptors",
+      "winrate_a": 30
+    },
+    {
+      "a": "Daredevil",
+      "b": "Robert Muldoon",
+      "winrate_a": 36
+    },
+    {
+      "a": "Daredevil",
+      "b": "Robin Hood",
+      "winrate_a": 56
+    },
+    {
+      "a": "Daredevil",
+      "b": "Rosie the Riveter",
+      "winrate_a": 65
+    },
+    {
+      "a": "Daredevil",
+      "b": "The Genie",
+      "winrate_a": 22
+    },
+    {
+      "a": "Daredevil",
+      "b": "The Wayward Sisters",
+      "winrate_a": 74
+    },
+    {
+      "a": "Daredevil",
+      "b": "Titania",
+      "winrate_a": 50
+    },
+    {
+      "a": "Daredevil",
+      "b": "Tomoe Gozen",
+      "winrate_a": 32
+    },
+    {
+      "a": "Daredevil",
+      "b": "Wyatt Earp",
+      "winrate_a": 39
+    },
+    {
+      "a": "Daredevil",
+      "b": "Yennenga",
+      "winrate_a": 68
+    },
+    {
+      "a": "Donatello",
+      "b": "Dr. Sattler",
+      "winrate_a": 50
+    },
+    {
+      "a": "Donatello",
+      "b": "Dracula",
+      "winrate_a": 33
+    },
+    {
+      "a": "Donatello",
+      "b": "Eredin",
+      "winrate_a": 50
+    },
+    {
+      "a": "Donatello",
+      "b": "George Washington",
+      "winrate_a": 36
+    },
+    {
+      "a": "Donatello",
+      "b": "Geralt of Rivia",
+      "winrate_a": 50
+    },
+    {
+      "a": "Donatello",
+      "b": "Golden Bat",
+      "winrate_a": 47
+    },
+    {
+      "a": "Donatello",
+      "b": "Jill Trent",
+      "winrate_a": 30
+    },
+    {
+      "a": "Donatello",
+      "b": "John Henry",
+      "winrate_a": 53
+    },
+    {
+      "a": "Donatello",
+      "b": "Leonardo",
+      "winrate_a": 50
+    },
+    {
+      "a": "Donatello",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 36
+    },
+    {
+      "a": "Donatello",
+      "b": "Michelangelo",
+      "winrate_a": 90
+    },
+    {
+      "a": "Donatello",
+      "b": "Moon Knight",
+      "winrate_a": 50
+    },
+    {
+      "a": "Donatello",
+      "b": "Ms. Marvel",
+      "winrate_a": 61
+    },
+    {
+      "a": "Donatello",
+      "b": "Muhammad Ali",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "Nikola Tesla",
+      "winrate_a": 58
+    },
+    {
+      "a": "Donatello",
+      "b": "Pandora",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "Philippa",
+      "winrate_a": 90
+    },
+    {
+      "a": "Donatello",
+      "b": "Raptors",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "Robert Muldoon",
+      "winrate_a": 53
+    },
+    {
+      "a": "Donatello",
+      "b": "Robin Hood",
+      "winrate_a": 80
+    },
+    {
+      "a": "Donatello",
+      "b": "Rosie the Riveter",
+      "winrate_a": 90
+    },
+    {
+      "a": "Donatello",
+      "b": "The Genie",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "The Wayward Sisters",
+      "winrate_a": 81
+    },
+    {
+      "a": "Donatello",
+      "b": "Titania",
+      "winrate_a": 63
+    },
+    {
+      "a": "Donatello",
+      "b": "Tomoe Gozen",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "Wyatt Earp",
+      "winrate_a": 62
+    },
+    {
+      "a": "Donatello",
+      "b": "Yennenga",
+      "winrate_a": 42
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Dracula",
+      "winrate_a": 31
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Eredin",
+      "winrate_a": 28
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "George Washington",
+      "winrate_a": null
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Geralt of Rivia",
+      "winrate_a": 36
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Golden Bat",
+      "winrate_a": 15
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Jill Trent",
+      "winrate_a": 36
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "John Henry",
+      "winrate_a": 60
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Leonardo",
+      "winrate_a": null
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 74
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Michelangelo",
+      "winrate_a": 76
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Moon Knight",
+      "winrate_a": 38
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Ms. Marvel",
+      "winrate_a": 69
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Muhammad Ali",
+      "winrate_a": 42
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Nikola Tesla",
+      "winrate_a": 37
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Pandora",
+      "winrate_a": 61
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Philippa",
+      "winrate_a": 40
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Raptors",
+      "winrate_a": 45
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Robert Muldoon",
+      "winrate_a": 39
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Robin Hood",
+      "winrate_a": 74
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "The Genie",
+      "winrate_a": 72
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "The Wayward Sisters",
+      "winrate_a": 64
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Titania",
+      "winrate_a": 51
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Tomoe Gozen",
+      "winrate_a": 39
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "Dr. Sattler",
+      "b": "Yennenga",
+      "winrate_a": 61
+    },
+    {
+      "a": "Dracula",
+      "b": "Eredin",
+      "winrate_a": 41
+    },
+    {
+      "a": "Dracula",
+      "b": "George Washington",
+      "winrate_a": 69
+    },
+    {
+      "a": "Dracula",
+      "b": "Geralt of Rivia",
+      "winrate_a": 37
+    },
+    {
+      "a": "Dracula",
+      "b": "Golden Bat",
+      "winrate_a": 42
+    },
+    {
+      "a": "Dracula",
+      "b": "Jill Trent",
+      "winrate_a": 34
+    },
+    {
+      "a": "Dracula",
+      "b": "John Henry",
+      "winrate_a": 50
+    },
+    {
+      "a": "Dracula",
+      "b": "Leonardo",
+      "winrate_a": 59
+    },
+    {
+      "a": "Dracula",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 58
+    },
+    {
+      "a": "Dracula",
+      "b": "Michelangelo",
+      "winrate_a": 74
+    },
+    {
+      "a": "Dracula",
+      "b": "Moon Knight",
+      "winrate_a": 34
+    },
+    {
+      "a": "Dracula",
+      "b": "Ms. Marvel",
+      "winrate_a": 69
+    },
+    {
+      "a": "Dracula",
+      "b": "Muhammad Ali",
+      "winrate_a": 40
+    },
+    {
+      "a": "Dracula",
+      "b": "Nikola Tesla",
+      "winrate_a": 37
+    },
+    {
+      "a": "Dracula",
+      "b": "Pandora",
+      "winrate_a": 50
+    },
+    {
+      "a": "Dracula",
+      "b": "Philippa",
+      "winrate_a": 55
+    },
+    {
+      "a": "Dracula",
+      "b": "Raptors",
+      "winrate_a": 50
+    },
+    {
+      "a": "Dracula",
+      "b": "Robert Muldoon",
+      "winrate_a": 49
+    },
+    {
+      "a": "Dracula",
+      "b": "Robin Hood",
+      "winrate_a": 51
+    },
+    {
+      "a": "Dracula",
+      "b": "Rosie the Riveter",
+      "winrate_a": 77
+    },
+    {
+      "a": "Dracula",
+      "b": "The Genie",
+      "winrate_a": 35
+    },
+    {
+      "a": "Dracula",
+      "b": "The Wayward Sisters",
+      "winrate_a": 39
+    },
+    {
+      "a": "Dracula",
+      "b": "Titania",
+      "winrate_a": 65
+    },
+    {
+      "a": "Dracula",
+      "b": "Tomoe Gozen",
+      "winrate_a": 35
+    },
+    {
+      "a": "Dracula",
+      "b": "Wyatt Earp",
+      "winrate_a": 35
+    },
+    {
+      "a": "Dracula",
+      "b": "Yennenga",
+      "winrate_a": 38
+    },
+    {
+      "a": "Eredin",
+      "b": "George Washington",
+      "winrate_a": 68
+    },
+    {
+      "a": "Eredin",
+      "b": "Geralt of Rivia",
+      "winrate_a": 59
+    },
+    {
+      "a": "Eredin",
+      "b": "Golden Bat",
+      "winrate_a": 50
+    },
+    {
+      "a": "Eredin",
+      "b": "Jill Trent",
+      "winrate_a": 44
+    },
+    {
+      "a": "Eredin",
+      "b": "John Henry",
+      "winrate_a": 60
+    },
+    {
+      "a": "Eredin",
+      "b": "Leonardo",
+      "winrate_a": 80
+    },
+    {
+      "a": "Eredin",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 60
+    },
+    {
+      "a": "Eredin",
+      "b": "Michelangelo",
+      "winrate_a": 77
+    },
+    {
+      "a": "Eredin",
+      "b": "Moon Knight",
+      "winrate_a": 59
+    },
+    {
+      "a": "Eredin",
+      "b": "Ms. Marvel",
+      "winrate_a": 66
+    },
+    {
+      "a": "Eredin",
+      "b": "Muhammad Ali",
+      "winrate_a": 61
+    },
+    {
+      "a": "Eredin",
+      "b": "Nikola Tesla",
+      "winrate_a": 59
+    },
+    {
+      "a": "Eredin",
+      "b": "Pandora",
+      "winrate_a": 60
+    },
+    {
+      "a": "Eredin",
+      "b": "Philippa",
+      "winrate_a": 58
+    },
+    {
+      "a": "Eredin",
+      "b": "Raptors",
+      "winrate_a": 60
+    },
+    {
+      "a": "Eredin",
+      "b": "Robert Muldoon",
+      "winrate_a": 34
+    },
+    {
+      "a": "Eredin",
+      "b": "Robin Hood",
+      "winrate_a": 66
+    },
+    {
+      "a": "Eredin",
+      "b": "Rosie the Riveter",
+      "winrate_a": 64
+    },
+    {
+      "a": "Eredin",
+      "b": "The Genie",
+      "winrate_a": 43
+    },
+    {
+      "a": "Eredin",
+      "b": "The Wayward Sisters",
+      "winrate_a": 64
+    },
+    {
+      "a": "Eredin",
+      "b": "Titania",
+      "winrate_a": 64
+    },
+    {
+      "a": "Eredin",
+      "b": "Tomoe Gozen",
+      "winrate_a": 59
+    },
+    {
+      "a": "Eredin",
+      "b": "Wyatt Earp",
+      "winrate_a": 60
+    },
+    {
+      "a": "Eredin",
+      "b": "Yennenga",
+      "winrate_a": 50
+    },
+    {
+      "a": "George Washington",
+      "b": "Geralt of Rivia",
+      "winrate_a": 50
+    },
+    {
+      "a": "George Washington",
+      "b": "Golden Bat",
+      "winrate_a": 20
+    },
+    {
+      "a": "George Washington",
+      "b": "Jill Trent",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "John Henry",
+      "winrate_a": 23
+    },
+    {
+      "a": "George Washington",
+      "b": "Leonardo",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Little Red Riding Hood",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Michelangelo",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Moon Knight",
+      "winrate_a": 33
+    },
+    {
+      "a": "George Washington",
+      "b": "Ms. Marvel",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Muhammad Ali",
+      "winrate_a": 37
+    },
+    {
+      "a": "George Washington",
+      "b": "Nikola Tesla",
+      "winrate_a": 35
+    },
+    {
+      "a": "George Washington",
+      "b": "Pandora",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Philippa",
+      "winrate_a": 51
+    },
+    {
+      "a": "George Washington",
+      "b": "Raptors",
+      "winrate_a": 37
+    },
+    {
+      "a": "George Washington",
+      "b": "Robert Muldoon",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Robin Hood",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Rosie the Riveter",
+      "winrate_a": 36
+    },
+    {
+      "a": "George Washington",
+      "b": "The Genie",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "The Wayward Sisters",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Titania",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Tomoe Gozen",
+      "winrate_a": 39
+    },
+    {
+      "a": "George Washington",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "George Washington",
+      "b": "Yennenga",
+      "winrate_a": 25
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Golden Bat",
+      "winrate_a": 47
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Jill Trent",
+      "winrate_a": 40
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "John Henry",
+      "winrate_a": 47
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Leonardo",
+      "winrate_a": 77
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 61
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Michelangelo",
+      "winrate_a": 80
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Moon Knight",
+      "winrate_a": 49
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Ms. Marvel",
+      "winrate_a": 68
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Muhammad Ali",
+      "winrate_a": 62
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Nikola Tesla",
+      "winrate_a": 39
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Pandora",
+      "winrate_a": 63
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Philippa",
+      "winrate_a": 83
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Raptors",
+      "winrate_a": 32
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Robert Muldoon",
+      "winrate_a": 50
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Robin Hood",
+      "winrate_a": 71
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Rosie the Riveter",
+      "winrate_a": 55
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "The Genie",
+      "winrate_a": 41
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "The Wayward Sisters",
+      "winrate_a": 49
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Titania",
+      "winrate_a": 65
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Tomoe Gozen",
+      "winrate_a": 52
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Wyatt Earp",
+      "winrate_a": 55
+    },
+    {
+      "a": "Geralt of Rivia",
+      "b": "Yennenga",
+      "winrate_a": 39
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Jill Trent",
+      "winrate_a": 66
+    },
+    {
+      "a": "Golden Bat",
+      "b": "John Henry",
+      "winrate_a": 50
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Leonardo",
+      "winrate_a": 79
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 57
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Michelangelo",
+      "winrate_a": 50
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Moon Knight",
+      "winrate_a": 60
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Ms. Marvel",
+      "winrate_a": 38
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Muhammad Ali",
+      "winrate_a": 70
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Nikola Tesla",
+      "winrate_a": 54
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Pandora",
+      "winrate_a": 38
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Philippa",
+      "winrate_a": 90
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Raptors",
+      "winrate_a": 36
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Robert Muldoon",
+      "winrate_a": 88
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Robin Hood",
+      "winrate_a": 84
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Rosie the Riveter",
+      "winrate_a": 53
+    },
+    {
+      "a": "Golden Bat",
+      "b": "The Genie",
+      "winrate_a": 81
+    },
+    {
+      "a": "Golden Bat",
+      "b": "The Wayward Sisters",
+      "winrate_a": 38
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Titania",
+      "winrate_a": 67
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Tomoe Gozen",
+      "winrate_a": 37
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Wyatt Earp",
+      "winrate_a": 54
+    },
+    {
+      "a": "Golden Bat",
+      "b": "Yennenga",
+      "winrate_a": 71
+    },
+    {
+      "a": "Harry Houdini",
+      "b": "Wyatt Earp",
+      "winrate_a": 44
+    },
+    {
+      "a": "Jill Trent",
+      "b": "John Henry",
+      "winrate_a": 60
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Leonardo",
+      "winrate_a": 40
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 27
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Michelangelo",
+      "winrate_a": 90
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Moon Knight",
+      "winrate_a": 60
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Ms. Marvel",
+      "winrate_a": 58
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Muhammad Ali",
+      "winrate_a": 62
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Nikola Tesla",
+      "winrate_a": 52
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Pandora",
+      "winrate_a": 53
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Philippa",
+      "winrate_a": 59
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Raptors",
+      "winrate_a": 50
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Robert Muldoon",
+      "winrate_a": 64
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Robin Hood",
+      "winrate_a": 59
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Rosie the Riveter",
+      "winrate_a": 78
+    },
+    {
+      "a": "Jill Trent",
+      "b": "The Genie",
+      "winrate_a": 75
+    },
+    {
+      "a": "Jill Trent",
+      "b": "The Wayward Sisters",
+      "winrate_a": 60
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Titania",
+      "winrate_a": 80
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Tomoe Gozen",
+      "winrate_a": 51
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Wyatt Earp",
+      "winrate_a": 75
+    },
+    {
+      "a": "Jill Trent",
+      "b": "Yennenga",
+      "winrate_a": 50
+    },
+    {
+      "a": "John Henry",
+      "b": "Leonardo",
+      "winrate_a": null
+    },
+    {
+      "a": "John Henry",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 48
+    },
+    {
+      "a": "John Henry",
+      "b": "Michelangelo",
+      "winrate_a": null
+    },
+    {
+      "a": "John Henry",
+      "b": "Moon Knight",
+      "winrate_a": 58
+    },
+    {
+      "a": "John Henry",
+      "b": "Ms. Marvel",
+      "winrate_a": 65
+    },
+    {
+      "a": "John Henry",
+      "b": "Muhammad Ali",
+      "winrate_a": 48
+    },
+    {
+      "a": "John Henry",
+      "b": "Nikola Tesla",
+      "winrate_a": 58
+    },
+    {
+      "a": "John Henry",
+      "b": "Pandora",
+      "winrate_a": 34
+    },
+    {
+      "a": "John Henry",
+      "b": "Philippa",
+      "winrate_a": 69
+    },
+    {
+      "a": "John Henry",
+      "b": "Raptors",
+      "winrate_a": 44
+    },
+    {
+      "a": "John Henry",
+      "b": "Robert Muldoon",
+      "winrate_a": 52
+    },
+    {
+      "a": "John Henry",
+      "b": "Robin Hood",
+      "winrate_a": 69
+    },
+    {
+      "a": "John Henry",
+      "b": "Rosie the Riveter",
+      "winrate_a": 42
+    },
+    {
+      "a": "John Henry",
+      "b": "The Genie",
+      "winrate_a": 52
+    },
+    {
+      "a": "John Henry",
+      "b": "The Wayward Sisters",
+      "winrate_a": 69
+    },
+    {
+      "a": "John Henry",
+      "b": "Titania",
+      "winrate_a": 68
+    },
+    {
+      "a": "John Henry",
+      "b": "Tomoe Gozen",
+      "winrate_a": 51
+    },
+    {
+      "a": "John Henry",
+      "b": "Wyatt Earp",
+      "winrate_a": 63
+    },
+    {
+      "a": "John Henry",
+      "b": "Yennenga",
+      "winrate_a": 62
+    },
+    {
+      "a": "Leonardo",
+      "b": "Little Red Riding Hood",
+      "winrate_a": 42
+    },
+    {
+      "a": "Leonardo",
+      "b": "Michelangelo",
+      "winrate_a": 50
+    },
+    {
+      "a": "Leonardo",
+      "b": "Moon Knight",
+      "winrate_a": 22
+    },
+    {
+      "a": "Leonardo",
+      "b": "Ms. Marvel",
+      "winrate_a": 42
+    },
+    {
+      "a": "Leonardo",
+      "b": "Muhammad Ali",
+      "winrate_a": 42
+    },
+    {
+      "a": "Leonardo",
+      "b": "Nikola Tesla",
+      "winrate_a": 23
+    },
+    {
+      "a": "Leonardo",
+      "b": "Pandora",
+      "winrate_a": 56
+    },
+    {
+      "a": "Leonardo",
+      "b": "Philippa",
+      "winrate_a": 65
+    },
+    {
+      "a": "Leonardo",
+      "b": "Raptors",
+      "winrate_a": 42
+    },
+    {
+      "a": "Leonardo",
+      "b": "Robert Muldoon",
+      "winrate_a": null
+    },
+    {
+      "a": "Leonardo",
+      "b": "Robin Hood",
+      "winrate_a": 52
+    },
+    {
+      "a": "Leonardo",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Leonardo",
+      "b": "The Genie",
+      "winrate_a": 58
+    },
+    {
+      "a": "Leonardo",
+      "b": "The Wayward Sisters",
+      "winrate_a": 43
+    },
+    {
+      "a": "Leonardo",
+      "b": "Titania",
+      "winrate_a": 68
+    },
+    {
+      "a": "Leonardo",
+      "b": "Tomoe Gozen",
+      "winrate_a": 38
+    },
+    {
+      "a": "Leonardo",
+      "b": "Wyatt Earp",
+      "winrate_a": 35
+    },
+    {
+      "a": "Leonardo",
+      "b": "Yennenga",
+      "winrate_a": 22
+    },
+    {
+      "a": "Leshen",
+      "b": "Wyatt Earp",
+      "winrate_a": 32
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Michelangelo",
+      "winrate_a": 39
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Moon Knight",
+      "winrate_a": 36
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Ms. Marvel",
+      "winrate_a": 75
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Muhammad Ali",
+      "winrate_a": 56
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Nikola Tesla",
+      "winrate_a": 58
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Pandora",
+      "winrate_a": 41
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Philippa",
+      "winrate_a": 66
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Robert Muldoon",
+      "winrate_a": 50
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Robin Hood",
+      "winrate_a": 50
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Rosie the Riveter",
+      "winrate_a": 51
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "The Genie",
+      "winrate_a": 55
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "The Wayward Sisters",
+      "winrate_a": 64
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Titania",
+      "winrate_a": 67
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Tomoe Gozen",
+      "winrate_a": 62
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Wyatt Earp",
+      "winrate_a": 62
+    },
+    {
+      "a": "Little Red Riding Hood",
+      "b": "Yennenga",
+      "winrate_a": 56
+    },
+    {
+      "a": "Loki",
+      "b": "Wyatt Earp",
+      "winrate_a": 35
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Wyatt Earp",
+      "winrate_a": 64
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Moon Knight",
+      "winrate_a": 43
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Ms. Marvel",
+      "winrate_a": 54
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Muhammad Ali",
+      "winrate_a": 50
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Nikola Tesla",
+      "winrate_a": 50
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Pandora",
+      "winrate_a": 28
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Philippa",
+      "winrate_a": 52
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Raptors",
+      "winrate_a": 64
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Robert Muldoon",
+      "winrate_a": 36
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Robin Hood",
+      "winrate_a": 56
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Rosie the Riveter",
+      "winrate_a": 68
+    },
+    {
+      "a": "Michelangelo",
+      "b": "The Genie",
+      "winrate_a": 20
+    },
+    {
+      "a": "Michelangelo",
+      "b": "The Wayward Sisters",
+      "winrate_a": 70
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Titania",
+      "winrate_a": 20
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Tomoe Gozen",
+      "winrate_a": 58
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Wyatt Earp",
+      "winrate_a": 39
+    },
+    {
+      "a": "Michelangelo",
+      "b": "Yennenga",
+      "winrate_a": 35
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Ms. Marvel",
+      "winrate_a": 69
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Muhammad Ali",
+      "winrate_a": 48
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Nikola Tesla",
+      "winrate_a": 63
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Pandora",
+      "winrate_a": 62
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Philippa",
+      "winrate_a": 72
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Robert Muldoon",
+      "winrate_a": 41
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Robin Hood",
+      "winrate_a": 74
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Rosie the Riveter",
+      "winrate_a": 45
+    },
+    {
+      "a": "Moon Knight",
+      "b": "The Genie",
+      "winrate_a": 68
+    },
+    {
+      "a": "Moon Knight",
+      "b": "The Wayward Sisters",
+      "winrate_a": 64
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Titania",
+      "winrate_a": 65
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Tomoe Gozen",
+      "winrate_a": 40
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Wyatt Earp",
+      "winrate_a": 43
+    },
+    {
+      "a": "Moon Knight",
+      "b": "Yennenga",
+      "winrate_a": 39
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Muhammad Ali",
+      "winrate_a": 25
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Nikola Tesla",
+      "winrate_a": 36
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Pandora",
+      "winrate_a": 42
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Philippa",
+      "winrate_a": null
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Raptors",
+      "winrate_a": 31
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Robert Muldoon",
+      "winrate_a": 31
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Robin Hood",
+      "winrate_a": 50
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "The Genie",
+      "winrate_a": 55
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "The Wayward Sisters",
+      "winrate_a": 42
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Titania",
+      "winrate_a": 75
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Tomoe Gozen",
+      "winrate_a": 35
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "Ms. Marvel",
+      "b": "Yennenga",
+      "winrate_a": 12
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Nikola Tesla",
+      "winrate_a": 50
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Pandora",
+      "winrate_a": 46
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Philippa",
+      "winrate_a": 61
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Raptors",
+      "winrate_a": 45
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Robert Muldoon",
+      "winrate_a": 60
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Robin Hood",
+      "winrate_a": 58
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Rosie the Riveter",
+      "winrate_a": 44
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "The Genie",
+      "winrate_a": 51
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "The Wayward Sisters",
+      "winrate_a": 50
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Titania",
+      "winrate_a": 50
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Tomoe Gozen",
+      "winrate_a": 38
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Wyatt Earp",
+      "winrate_a": 63
+    },
+    {
+      "a": "Muhammad Ali",
+      "b": "Yennenga",
+      "winrate_a": 34
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Pandora",
+      "winrate_a": 40
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Philippa",
+      "winrate_a": 82
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Raptors",
+      "winrate_a": 39
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Robert Muldoon",
+      "winrate_a": 63
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Robin Hood",
+      "winrate_a": 84
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Rosie the Riveter",
+      "winrate_a": 54
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "The Genie",
+      "winrate_a": 60
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "The Wayward Sisters",
+      "winrate_a": 54
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Titania",
+      "winrate_a": 58
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Tomoe Gozen",
+      "winrate_a": 40
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Wyatt Earp",
+      "winrate_a": 42
+    },
+    {
+      "a": "Nikola Tesla",
+      "b": "Yennenga",
+      "winrate_a": 64
+    },
+    {
+      "a": "Pandora",
+      "b": "Philippa",
+      "winrate_a": 50
+    },
+    {
+      "a": "Pandora",
+      "b": "Raptors",
+      "winrate_a": 66
+    },
+    {
+      "a": "Pandora",
+      "b": "Robert Muldoon",
+      "winrate_a": 42
+    },
+    {
+      "a": "Pandora",
+      "b": "Robin Hood",
+      "winrate_a": 52
+    },
+    {
+      "a": "Pandora",
+      "b": "Rosie the Riveter",
+      "winrate_a": 60
+    },
+    {
+      "a": "Pandora",
+      "b": "The Genie",
+      "winrate_a": 39
+    },
+    {
+      "a": "Pandora",
+      "b": "The Wayward Sisters",
+      "winrate_a": 60
+    },
+    {
+      "a": "Pandora",
+      "b": "Titania",
+      "winrate_a": 59
+    },
+    {
+      "a": "Pandora",
+      "b": "Tomoe Gozen",
+      "winrate_a": 50
+    },
+    {
+      "a": "Pandora",
+      "b": "Wyatt Earp",
+      "winrate_a": 59
+    },
+    {
+      "a": "Pandora",
+      "b": "Yennenga",
+      "winrate_a": 50
+    },
+    {
+      "a": "Philippa",
+      "b": "Raptors",
+      "winrate_a": 40
+    },
+    {
+      "a": "Philippa",
+      "b": "Robert Muldoon",
+      "winrate_a": 50
+    },
+    {
+      "a": "Philippa",
+      "b": "Robin Hood",
+      "winrate_a": 50
+    },
+    {
+      "a": "Philippa",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Philippa",
+      "b": "The Genie",
+      "winrate_a": 51
+    },
+    {
+      "a": "Philippa",
+      "b": "The Wayward Sisters",
+      "winrate_a": 50
+    },
+    {
+      "a": "Philippa",
+      "b": "Titania",
+      "winrate_a": 41
+    },
+    {
+      "a": "Philippa",
+      "b": "Tomoe Gozen",
+      "winrate_a": 42
+    },
+    {
+      "a": "Philippa",
+      "b": "Wyatt Earp",
+      "winrate_a": 44
+    },
+    {
+      "a": "Philippa",
+      "b": "Yennenga",
+      "winrate_a": 33
+    },
+    {
+      "a": "Raphael",
+      "b": "Wyatt Earp",
+      "winrate_a": 62
+    },
+    {
+      "a": "Raptors",
+      "b": "Robert Muldoon",
+      "winrate_a": 40
+    },
+    {
+      "a": "Raptors",
+      "b": "Robin Hood",
+      "winrate_a": 46
+    },
+    {
+      "a": "Raptors",
+      "b": "Rosie the Riveter",
+      "winrate_a": 45
+    },
+    {
+      "a": "Raptors",
+      "b": "The Genie",
+      "winrate_a": 32
+    },
+    {
+      "a": "Raptors",
+      "b": "The Wayward Sisters",
+      "winrate_a": 52
+    },
+    {
+      "a": "Raptors",
+      "b": "Titania",
+      "winrate_a": 64
+    },
+    {
+      "a": "Raptors",
+      "b": "Tomoe Gozen",
+      "winrate_a": 61
+    },
+    {
+      "a": "Raptors",
+      "b": "Wyatt Earp",
+      "winrate_a": 30
+    },
+    {
+      "a": "Raptors",
+      "b": "Yennenga",
+      "winrate_a": 60
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Robin Hood",
+      "winrate_a": 40
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Rosie the Riveter",
+      "winrate_a": 63
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "The Genie",
+      "winrate_a": 42
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "The Wayward Sisters",
+      "winrate_a": 49
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Titania",
+      "winrate_a": 60
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Tomoe Gozen",
+      "winrate_a": 56
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Wyatt Earp",
+      "winrate_a": 40
+    },
+    {
+      "a": "Robert Muldoon",
+      "b": "Yennenga",
+      "winrate_a": 26
+    },
+    {
+      "a": "Robin Hood",
+      "b": "Rosie the Riveter",
+      "winrate_a": null
+    },
+    {
+      "a": "Robin Hood",
+      "b": "The Genie",
+      "winrate_a": 42
+    },
+    {
+      "a": "Robin Hood",
+      "b": "The Wayward Sisters",
+      "winrate_a": 50
+    },
+    {
+      "a": "Robin Hood",
+      "b": "Titania",
+      "winrate_a": 51
+    },
+    {
+      "a": "Robin Hood",
+      "b": "Tomoe Gozen",
+      "winrate_a": 57
+    },
+    {
+      "a": "Robin Hood",
+      "b": "Wyatt Earp",
+      "winrate_a": 34
+    },
+    {
+      "a": "Robin Hood",
+      "b": "Yennenga",
+      "winrate_a": 26
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "The Genie",
+      "winrate_a": 34
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "The Wayward Sisters",
+      "winrate_a": 56
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "Titania",
+      "winrate_a": 42
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "Tomoe Gozen",
+      "winrate_a": 55
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "Wyatt Earp",
+      "winrate_a": 57
+    },
+    {
+      "a": "Rosie the Riveter",
+      "b": "Yennenga",
+      "winrate_a": 35
+    },
+    {
+      "a": "She-Hulk",
+      "b": "Wyatt Earp",
+      "winrate_a": 65
+    },
+    {
+      "a": "Sinbad",
+      "b": "Wyatt Earp",
+      "winrate_a": 63
+    },
+    {
+      "a": "The Genie",
+      "b": "The Wayward Sisters",
+      "winrate_a": 38
+    },
+    {
+      "a": "The Genie",
+      "b": "Titania",
+      "winrate_a": 44
+    },
+    {
+      "a": "The Genie",
+      "b": "Tomoe Gozen",
+      "winrate_a": 50
+    },
+    {
+      "a": "The Genie",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "The Genie",
+      "b": "Yennenga",
+      "winrate_a": 52
+    },
+    {
+      "a": "The Wayward Sisters",
+      "b": "Titania",
+      "winrate_a": 39
+    },
+    {
+      "a": "The Wayward Sisters",
+      "b": "Tomoe Gozen",
+      "winrate_a": 49
+    },
+    {
+      "a": "The Wayward Sisters",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "The Wayward Sisters",
+      "b": "Yennenga",
+      "winrate_a": 35
+    },
+    {
+      "a": "Titania",
+      "b": "Tomoe Gozen",
+      "winrate_a": 36
+    },
+    {
+      "a": "Titania",
+      "b": "Wyatt Earp",
+      "winrate_a": null
+    },
+    {
+      "a": "Titania",
+      "b": "Yennenga",
+      "winrate_a": 35
+    },
+    {
+      "a": "Tomoe Gozen",
+      "b": "Wyatt Earp",
+      "winrate_a": 39
+    },
+    {
+      "a": "Tomoe Gozen",
+      "b": "Yennenga",
+      "winrate_a": 36
+    },
+    {
+      "a": "Wyatt Earp",
+      "b": "Yennefer & Triss",
+      "winrate_a": 39
+    },
+    {
+      "a": "Wyatt Earp",
+      "b": "Yennenga",
+      "winrate_a": 35
     }
-  },
-  {
-    "id": 6,
-    "name": "Bigfoot",
-    "elo": 1872,
-    "image": "images/bigfoot.webp",
-    "matchups": {}
-  },
-  {
-    "id": 7,
-    "name": "Bruce Lee",
-    "elo": 1474,
-    "image": "images/bruce_lee.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 8
-      },
-      "Alice": {
-        "winrate": 34
-      },
-      "Nikola Tesla": {
-        "winrate": 61
-      },
-      "Robin Hood": {
-        "winrate": 56
-      },
-      "Robert Muldoon": {
-        "winrate": 35
-      },
-      "Raptors": {
-        "winrate": 50
-      },
-      "Dracula": {
-        "winrate": 36
-      },
-      "Little Red Riding Hood": {
-        "winrate": 60
-      },
-      "Achilles": {
-        "winrate": 28
-      },
-      "Yennenga": {
-        "winrate": 60
-      },
-      "Geralt of Rivia": {
-        "winrate": 49
-      },
-      "Daredevil": {
-        "winrate": 60
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Dr. Sattler": {
-        "winrate": 28
-      },
-      "The Genie": {
-        "winrate": 60
-      },
-      "Ms. Marvel": {
-        "winrate": 64
-      },
-      "Black Panther": {
-        "winrate": 36
-      },
-      "Annie Christmas": {
-        "winrate": 48
-      },
-      "Moon Knight": {
-        "winrate": 36
-      },
-      "Jill Trent": {
-        "winrate": 44
-      },
-      "Tomoe Gozen": {
-        "winrate": 50
-      },
-      "Titania": {
-        "winrate": 60
-      },
-      "The Wayward Sisters": {
-        "winrate": 50
-      },
-      "Golden Bat": {
-        "winrate": 45
-      },
-      "Eredin": {
-        "winrate": 55
-      },
-      "Philippa": {
-        "winrate": 34
-      },
-      "Pandora": {
-        "winrate": 33
-      },
-      "Chupacabra": {
-        "winrate": 50
-      },
-      "Leonardo": {
-        "winrate": 75
-      },
-      "Muhammad Ali": {
-        "winrate": 56
-      },
-      "John Henry": {
-        "winrate": 40
-      },
-      "George Washington": {
-        "winrate": 63
-      },
-      "Wyatt Earp": {
-        "winrate": 60
-      },
-      "Michelangelo": {
-        "winrate": 75
-      },
-      "Rosie the Riveter": {
-        "winrate": 62
-      }
-    }
-  },
-  {
-    "id": 8,
-    "name": "Robert Muldoon",
-    "elo": 1659,
-    "image": "images/ingen.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 47
-      },
-      "Eredin": {
-        "winrate": 66
-      },
-      "Nikola Tesla": {
-        "winrate": 37
-      },
-      "Robin Hood": {
-        "winrate": 40
-      },
-      "John Henry": {
-        "winrate": 48
-      },
-      "Muhammad Ali": {
-        "winrate": 40
-      },
-      "Little Red Riding Hood": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 65
-      },
-      "Achilles": {
-        "winrate": 80
-      },
-      "Yennenga": {
-        "winrate": 26
-      },
-      "Geralt of Rivia": {
-        "winrate": 50
-      },
-      "Daredevil": {
-        "winrate": 64
-      },
-      "Bullseye": {
-        "winrate": 35
-      },
-      "Dr. Sattler": {
-        "winrate": 61
-      },
-      "The Genie": {
-        "winrate": 42
-      },
-      "Ms. Marvel": {
-        "winrate": 69
-      },
-      "Black Panther": {
-        "winrate": 42
-      },
-      "Jill Trent": {
-        "winrate": 36
-      },
-      "Moon Knight": {
-        "winrate": 59
-      },
-      "Tomoe Gozen": {
-        "winrate": 56
-      },
-      "Raptors": {
-        "winrate": 60
-      },
-      "Titania": {
-        "winrate": 60
-      },
-      "Pandora": {
-        "winrate": 58
-      },
-      "Golden Bat": {
-        "winrate": 12
-      },
-      "Bruce Lee": {
-        "winrate": 65
-      },
-      "Philippa": {
-        "winrate": 50
-      },
-      "Annie Christmas": {
-        "winrate": 64
-      },
-      "Chupacabra": {
-        "winrate": 66
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 51
-      },
-      "The Wayward Sisters": {
-        "winrate": 49
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 49
-      },
-      "Michelangelo": {
-        "winrate": 64
-      },
-      "Rosie the Riveter": {
-        "winrate": 63
-      }
-    }
-  },
-  {
-    "id": 9,
-    "name": "Raptors",
-    "elo": 1636,
-    "image": "images/raptors.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 61
-      },
-      "Robin Hood": {
-        "winrate": 46
-      },
-      "Robert Muldoon": {
-        "winrate": 40
-      },
-      "Muhammad Ali": {
-        "winrate": 55
-      },
-      "Little Red Riding Hood": {
-        "winrate": 60
-      },
-      "Alice": {
-        "winrate": 60
-      },
-      "Achilles": {
-        "winrate": 32
-      },
-      "Yennenga": {
-        "winrate": 60
-      },
-      "Geralt of Rivia": {
-        "winrate": 68
-      },
-      "Daredevil": {
-        "winrate": 70
-      },
-      "Bullseye": {
-        "winrate": 60
-      },
-      "Dr. Sattler": {
-        "winrate": 55
-      },
-      "The Genie": {
-        "winrate": 32
-      },
-      "Ms. Marvel": {
-        "winrate": 69
-      },
-      "Black Panther": {
-        "winrate": 63
-      },
-      "Annie Christmas": {
-        "winrate": 60
-      },
-      "Moon Knight": {
-        "winrate": 60
-      },
-      "Jill Trent": {
-        "winrate": 50
-      },
-      "Tomoe Gozen": {
-        "winrate": 61
-      },
-      "Titania": {
-        "winrate": 64
-      },
-      "The Wayward Sisters": {
-        "winrate": 52
-      },
-      "Golden Bat": {
-        "winrate": 64
-      },
-      "Bruce Lee": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 60
-      },
-      "Pandora": {
-        "winrate": 34
-      },
-      "Chupacabra": {
-        "winrate": 49
-      },
-      "Leonardo": {
-        "winrate": 58
-      },
-      "Dracula": {
-        "winrate": 50
-      },
-      "John Henry": {
-        "winrate": 56
-      },
-      "George Washington": {
-        "winrate": 63
-      },
-      "Wyatt Earp": {
-        "winrate": 44
-      },
-      "Michelangelo": {
-        "winrate": 36
-      },
-      "Rosie the Riveter": {
-        "winrate": 45
-      }
-    }
-  },
-  {
-    "id": 10,
-    "name": "Sherlock Holmes",
-    "elo": 1988,
-    "image": "images/sherlock.webp",
-    "matchups": {}
-  },
-  {
-    "id": 11,
-    "name": "Dr. Jekyll & Mr. Hyde",
-    "elo": 1164,
-    "image": "images/jekyll_hyde.webp",
-    "matchups": {}
-  },
-  {
-    "id": 12,
-    "name": "Invisible Man",
-    "elo": 1192,
-    "image": "images/invisible_man.webp",
-    "matchups": {}
-  },
-  {
-    "id": 13,
-    "name": "Dracula",
-    "elo": 1531,
-    "image": "images/dracula.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 67
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Nikola Tesla": {
-        "winrate": 37
-      },
-      "Robin Hood": {
-        "winrate": 51
-      },
-      "Robert Muldoon": {
-        "winrate": 49
-      },
-      "Raptors": {
-        "winrate": 50
-      },
-      "Little Red Riding Hood": {
-        "winrate": 58
-      },
-      "Alice": {
-        "winrate": 68
-      },
-      "Achilles": {
-        "winrate": 49
-      },
-      "Yennenga": {
-        "winrate": 38
-      },
-      "Geralt of Rivia": {
-        "winrate": 37
-      },
-      "Daredevil": {
-        "winrate": 60
-      },
-      "Bullseye": {
-        "winrate": 56
-      },
-      "Dr. Sattler": {
-        "winrate": 69
-      },
-      "The Genie": {
-        "winrate": 35
-      },
-      "Ms. Marvel": {
-        "winrate": 69
-      },
-      "Black Panther": {
-        "winrate": 40
-      },
-      "Annie Christmas": {
-        "winrate": 68
-      },
-      "Moon Knight": {
-        "winrate": 34
-      },
-      "Jill Trent": {
-        "winrate": 34
-      },
-      "Tomoe Gozen": {
-        "winrate": 35
-      },
-      "Titania": {
-        "winrate": 65
-      },
-      "The Wayward Sisters": {
-        "winrate": 39
-      },
-      "Golden Bat": {
-        "winrate": 42
-      },
-      "Bruce Lee": {
-        "winrate": 64
-      },
-      "Philippa": {
-        "winrate": 55
-      },
-      "Pandora": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 68
-      },
-      "Leonardo": {
-        "winrate": 59
-      },
-      "Muhammad Ali": {
-        "winrate": 40
-      },
-      "John Henry": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 74
-      },
-      "Rosie the Riveter": {
-        "winrate": 77
-      }
-    }
-  },
-  {
-    "id": 14,
-    "name": "Buffy",
-    "elo": 1220,
-    "image": "images/buffy.webp",
-    "matchups": {}
-  },
-  {
-    "id": 15,
-    "name": "Angel",
-    "elo": 1040,
-    "image": "images/angel.webp",
-    "matchups": {}
-  },
-  {
-    "id": 16,
-    "name": "Spike",
-    "elo": 1000,
-    "image": "images/spike.webp",
-    "matchups": {}
-  },
-  {
-    "id": 17,
-    "name": "Willow",
-    "elo": 1080,
-    "image": "images/willow.webp",
-    "matchups": {}
-  },
-  {
-    "id": 18,
-    "name": "Little Red Riding Hood",
-    "elo": 1729,
-    "image": "images/little_red.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 64
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 58
-      },
-      "Robin Hood": {
-        "winrate": 50
-      },
-      "Robert Muldoon": {
-        "winrate": 50
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Dracula": {
-        "winrate": 42
-      },
-      "Alice": {
-        "winrate": 47
-      },
-      "Achilles": {
-        "winrate": 36
-      },
-      "Yennenga": {
-        "winrate": 56
-      },
-      "Geralt of Rivia": {
-        "winrate": 39
-      },
-      "Daredevil": {
-        "winrate": 50
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Dr. Sattler": {
-        "winrate": 26
-      },
-      "The Genie": {
-        "winrate": 55
-      },
-      "Ms. Marvel": {
-        "winrate": 75
-      },
-      "Black Panther": {
-        "winrate": 28
-      },
-      "Annie Christmas": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 36
-      },
-      "Jill Trent": {
-        "winrate": 73
-      },
-      "Tomoe Gozen": {
-        "winrate": 62
-      },
-      "Titania": {
-        "winrate": 67
-      },
-      "The Wayward Sisters": {
-        "winrate": 64
-      },
-      "Golden Bat": {
-        "winrate": 43
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Philippa": {
-        "winrate": 66
-      },
-      "Pandora": {
-        "winrate": 41
-      },
-      "Chupacabra": {
-        "winrate": 44
-      },
-      "Leonardo": {
-        "winrate": 58
-      },
-      "Muhammad Ali": {
-        "winrate": 56
-      },
-      "John Henry": {
-        "winrate": 52
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 62
-      },
-      "Michelangelo": {
-        "winrate": 39
-      },
-      "Rosie the Riveter": {
-        "winrate": 51
-      }
-    }
-  },
-  {
-    "id": 19,
-    "name": "Beowulf",
-    "elo": 1450,
-    "image": "images/beowulf.webp",
-    "matchups": {}
-  },
-  {
-    "id": 20,
-    "name": "Deadpool",
-    "elo": 1305,
-    "image": "images/deadpool.webp",
-    "matchups": {}
-  },
-  {
-    "id": 21,
-    "name": "Sun Wukong",
-    "elo": 1910,
-    "image": "images/sun_wukong.webp",
-    "matchups": {}
-  },
-  {
-    "id": 22,
-    "name": "Yennenga",
-    "elo": 1822,
-    "image": "images/yennenga.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 58
-      },
-      "Alice": {
-        "winrate": 61
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Golden Bat": {
-        "winrate": 29
-      },
-      "Moon Knight": {
-        "winrate": 61
-      },
-      "Robin Hood": {
-        "winrate": 74
-      },
-      "Robert Muldoon": {
-        "winrate": 74
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Dracula": {
-        "winrate": 62
-      },
-      "Little Red Riding Hood": {
-        "winrate": 44
-      },
-      "Achilles": {
-        "winrate": 58
-      },
-      "Daredevil": {
-        "winrate": 32
-      },
-      "Bullseye": {
-        "winrate": 38
-      },
-      "Dr. Sattler": {
-        "winrate": 39
-      },
-      "The Genie": {
-        "winrate": 48
-      },
-      "Ms. Marvel": {
-        "winrate": 88
-      },
-      "Black Panther": {
-        "winrate": 39
-      },
-      "Annie Christmas": {
-        "winrate": 62
-      },
-      "Nikola Tesla": {
-        "winrate": 36
-      },
-      "Jill Trent": {
-        "winrate": 50
-      },
-      "Tomoe Gozen": {
-        "winrate": 64
-      },
-      "Titania": {
-        "winrate": 65
-      },
-      "The Wayward Sisters": {
-        "winrate": 65
-      },
-      "Geralt of Rivia": {
-        "winrate": 61
-      },
-      "Eredin": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 67
-      },
-      "Pandora": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 62
-      },
-      "Leonardo": {
-        "winrate": 78
-      },
-      "Muhammad Ali": {
-        "winrate": 66
-      },
-      "John Henry": {
-        "winrate": 38
-      },
-      "George Washington": {
-        "winrate": 75
-      },
-      "Wyatt Earp": {
-        "winrate": 65
-      },
-      "Michelangelo": {
-        "winrate": 65
-      },
-      "Rosie the Riveter": {
-        "winrate": 65
-      }
-    }
-  },
-  {
-    "id": 23,
-    "name": "Achilles",
-    "elo": 1835,
-    "image": "images/achilles.webp",
-    "matchups": {
-      "Robert Muldoon": {
-        "winrate": 20
-      },
-      "Bruce Lee": {
-        "winrate": 72
-      },
-      "Alice": {
-        "winrate": 64
-      },
-      "Robin Hood": {
-        "winrate": 59
-      },
-      "Raptors": {
-        "winrate": 70
-      },
-      "Dracula": {
-        "winrate": 51
-      },
-      "Little Red Riding Hood": {
-        "winrate": 64
-      },
-      "Donatello": {
-        "winrate": 41
-      },
-      "Yennenga": {
-        "winrate": 42
-      },
-      "Moon Knight": {
-        "winrate": 55
-      },
-      "Daredevil": {
-        "winrate": 66
-      },
-      "Bullseye": {
-        "winrate": 59
-      },
-      "Dr. Sattler": {
-        "winrate": 53
-      },
-      "The Genie": {
-        "winrate": 70
-      },
-      "Ms. Marvel": {
-        "winrate": 70
-      },
-      "Black Panther": {
-        "winrate": 59
-      },
-      "Annie Christmas": {
-        "winrate": 60
-      },
-      "Golden Bat": {
-        "winrate": 36
-      },
-      "Nikola Tesla": {
-        "winrate": 60
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Tomoe Gozen": {
-        "winrate": 68
-      },
-      "Titania": {
-        "winrate": 65
-      },
-      "The Wayward Sisters": {
-        "winrate": 62
-      },
-      "Geralt of Rivia": {
-        "winrate": 58
-      },
-      "Eredin": {
-        "winrate": 43
-      },
-      "Philippa": {
-        "winrate": 72
-      },
-      "Pandora": {
-        "winrate": 58
-      },
-      "Chupacabra": {
-        "winrate": 70
-      },
-      "Leonardo": {
-        "winrate": 55
-      },
-      "Muhammad Ali": {
-        "winrate": 42
-      },
-      "John Henry": {
-        "winrate": 62
-      },
-      "George Washington": {
-        "winrate": 55
-      },
-      "Wyatt Earp": {
-        "winrate": 75
-      },
-      "Michelangelo": {
-        "winrate": 75
-      },
-      "Rosie the Riveter": {
-        "winrate": 75
-      }
-    }
-  },
-  {
-    "id": 24,
-    "name": "Bloody Mary",
-    "elo": 1319,
-    "image": "images/bloody_mary.webp",
-    "matchups": {}
-  },
-  {
-    "id": 25,
-    "name": "Daredevil",
-    "elo": 1648,
-    "image": "images/daredevil.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 20
-      },
-      "Eredin": {
-        "winrate": 50
-      },
-      "Nikola Tesla": {
-        "winrate": 38
-      },
-      "Robin Hood": {
-        "winrate": 56
-      },
-      "Robert Muldoon": {
-        "winrate": 36
-      },
-      "Muhammad Ali": {
-        "winrate": 73
-      },
-      "Little Red Riding Hood": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 51
-      },
-      "Achilles": {
-        "winrate": 34
-      },
-      "Yennenga": {
-        "winrate": 68
-      },
-      "Geralt of Rivia": {
-        "winrate": 50
-      },
-      "John Henry": {
-        "winrate": 60
-      },
-      "Bullseye": {
-        "winrate": 50
-      },
-      "Dr. Sattler": {
-        "winrate": 61
-      },
-      "The Genie": {
-        "winrate": 22
-      },
-      "Ms. Marvel": {
-        "winrate": 60
-      },
-      "Black Panther": {
-        "winrate": 40
-      },
-      "Jill Trent": {
-        "winrate": 80
-      },
-      "Moon Knight": {
-        "winrate": 38
-      },
-      "Tomoe Gozen": {
-        "winrate": 32
-      },
-      "Raptors": {
-        "winrate": 30
-      },
-      "Titania": {
-        "winrate": 50
-      },
-      "Pandora": {
-        "winrate": 64
-      },
-      "Golden Bat": {
-        "winrate": 17
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Philippa": {
-        "winrate": 49
-      },
-      "Annie Christmas": {
-        "winrate": 48
-      },
-      "Chupacabra": {
-        "winrate": 64
-      },
-      "Leonardo": {
-        "winrate": 69
-      },
-      "Dracula": {
-        "winrate": 40
-      },
-      "The Wayward Sisters": {
-        "winrate": 74
-      },
-      "George Washington": {
-        "winrate": 75
-      },
-      "Wyatt Earp": {
-        "winrate": 41
-      },
-      "Michelangelo": {
-        "winrate": 64
-      },
-      "Rosie the Riveter": {
-        "winrate": 65
-      }
-    }
-  },
-  {
-    "id": 26,
-    "name": "Elektra",
-    "elo": 2000,
-    "image": "images/elektra.webp",
-    "matchups": {}
-  },
-  {
-    "id": 27,
-    "name": "Bullseye",
-    "elo": 1412,
-    "image": "images/bullseye.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 60
-      },
-      "Nikola Tesla": {
-        "winrate": 38
-      },
-      "Robin Hood": {
-        "winrate": 57
-      },
-      "Robert Muldoon": {
-        "winrate": 65
-      },
-      "Muhammad Ali": {
-        "winrate": 58
-      },
-      "Little Red Riding Hood": {
-        "winrate": 38
-      },
-      "Alice": {
-        "winrate": 39
-      },
-      "Achilles": {
-        "winrate": 41
-      },
-      "Yennenga": {
-        "winrate": 62
-      },
-      "Geralt of Rivia": {
-        "winrate": 38
-      },
-      "Daredevil": {
-        "winrate": 50
-      },
-      "John Henry": {
-        "winrate": 42
-      },
-      "Dr. Sattler": {
-        "winrate": 28
-      },
-      "The Genie": {
-        "winrate": 38
-      },
-      "Ms. Marvel": {
-        "winrate": 42
-      },
-      "Black Panther": {
-        "winrate": 26
-      },
-      "Jill Trent": {
-        "winrate": 36
-      },
-      "Moon Knight": {
-        "winrate": 35
-      },
-      "Tomoe Gozen": {
-        "winrate": 32
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Titania": {
-        "winrate": 40
-      },
-      "Pandora": {
-        "winrate": 33
-      },
-      "Golden Bat": {
-        "winrate": 66
-      },
-      "Bruce Lee": {
-        "winrate": 38
-      },
-      "Philippa": {
-        "winrate": 41
-      },
-      "Annie Christmas": {
-        "winrate": 23
-      },
-      "Chupacabra": {
-        "winrate": 34
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 44
-      },
-      "The Wayward Sisters": {
-        "winrate": 42
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 60
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 28,
-    "name": "Luke Cage",
-    "elo": 1775,
-    "image": "images/luke_cage.webp",
-    "matchups": {}
-  },
-  {
-    "id": 29,
-    "name": "Ghost Rider",
-    "elo": 1354,
-    "image": "images/ghost_rider.webp",
-    "matchups": {}
-  },
-  {
-    "id": 30,
-    "name": "Moon Knight",
-    "elo": 1682,
-    "image": "images/moon_knight.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 52
-      },
-      "Bruce Lee": {
-        "winrate": 64
-      },
-      "Robin Hood": {
-        "winrate": 74
-      },
-      "Robert Muldoon": {
-        "winrate": 41
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Dracula": {
-        "winrate": 66
-      },
-      "Little Red Riding Hood": {
-        "winrate": 64
-      },
-      "Achilles": {
-        "winrate": 45
-      },
-      "Yennenga": {
-        "winrate": 39
-      },
-      "Geralt of Rivia": {
-        "winrate": 51
-      },
-      "Daredevil": {
-        "winrate": 62
-      },
-      "Bullseye": {
-        "winrate": 65
-      },
-      "Dr. Sattler": {
-        "winrate": 62
-      },
-      "The Genie": {
-        "winrate": 68
-      },
-      "Ms. Marvel": {
-        "winrate": 69
-      },
-      "Black Panther": {
-        "winrate": 68
-      },
-      "Annie Christmas": {
-        "winrate": 39
-      },
-      "Nikola Tesla": {
-        "winrate": 63
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Tomoe Gozen": {
-        "winrate": 40
-      },
-      "Titania": {
-        "winrate": 65
-      },
-      "The Wayward Sisters": {
-        "winrate": 64
-      },
-      "Golden Bat": {
-        "winrate": 40
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Philippa": {
-        "winrate": 72
-      },
-      "Pandora": {
-        "winrate": 62
-      },
-      "Chupacabra": {
-        "winrate": 59
-      },
-      "Leonardo": {
-        "winrate": 78
-      },
-      "Muhammad Ali": {
-        "winrate": 48
-      },
-      "John Henry": {
-        "winrate": 42
-      },
-      "George Washington": {
-        "winrate": 67
-      },
-      "Wyatt Earp": {
-        "winrate": 65
-      },
-      "Michelangelo": {
-        "winrate": 57
-      },
-      "Rosie the Riveter": {
-        "winrate": 45
-      }
-    }
-  },
-  {
-    "id": 31,
-    "name": "Dr. Sattler",
-    "elo": 1378,
-    "image": "images/dr_sattler.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 50
-      },
-      "Eredin": {
-        "winrate": 28
-      },
-      "Nikola Tesla": {
-        "winrate": 37
-      },
-      "Robin Hood": {
-        "winrate": 74
-      },
-      "Robert Muldoon": {
-        "winrate": 39
-      },
-      "Muhammad Ali": {
-        "winrate": 42
-      },
-      "Little Red Riding Hood": {
-        "winrate": 74
-      },
-      "Alice": {
-        "winrate": 50
-      },
-      "Achilles": {
-        "winrate": 47
-      },
-      "Yennenga": {
-        "winrate": 61
-      },
-      "Geralt of Rivia": {
-        "winrate": 36
-      },
-      "Daredevil": {
-        "winrate": 39
-      },
-      "Bullseye": {
-        "winrate": 72
-      },
-      "John Henry": {
-        "winrate": 60
-      },
-      "The Genie": {
-        "winrate": 72
-      },
-      "Ms. Marvel": {
-        "winrate": 69
-      },
-      "Black Panther": {
-        "winrate": 31
-      },
-      "Jill Trent": {
-        "winrate": 36
-      },
-      "Moon Knight": {
-        "winrate": 38
-      },
-      "Tomoe Gozen": {
-        "winrate": 39
-      },
-      "Raptors": {
-        "winrate": 45
-      },
-      "Titania": {
-        "winrate": 51
-      },
-      "Pandora": {
-        "winrate": 61
-      },
-      "Golden Bat": {
-        "winrate": 15
-      },
-      "Bruce Lee": {
-        "winrate": 72
-      },
-      "Philippa": {
-        "winrate": 40
-      },
-      "Annie Christmas": {
-        "winrate": 34
-      },
-      "Chupacabra": {
-        "winrate": 66
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 31
-      },
-      "The Wayward Sisters": {
-        "winrate": 64
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 76
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 32,
-    "name": "T-Rex",
-    "elo": 1706,
-    "image": "images/trex.webp",
-    "matchups": {}
-  },
-  {
-    "id": 33,
-    "name": "Harry Houdini",
-    "elo": 1885,
-    "image": "images/houdini.webp",
-    "matchups": {}
-  },
-  {
-    "id": 34,
-    "name": "The Genie",
-    "elo": 1603,
-    "image": "images/genie.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 58
-      },
-      "Robin Hood": {
-        "winrate": 58
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Robert Muldoon": {
-        "winrate": 58
-      },
-      "Raptors": {
-        "winrate": 68
-      },
-      "Dracula": {
-        "winrate": 65
-      },
-      "Little Red Riding Hood": {
-        "winrate": 45
-      },
-      "Yennenga": {
-        "winrate": 52
-      },
-      "Achilles": {
-        "winrate": 30
-      },
-      "Daredevil": {
-        "winrate": 78
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Moon Knight": {
-        "winrate": 32
-      },
-      "Dr. Sattler": {
-        "winrate": 28
-      },
-      "Black Panther": {
-        "winrate": 36
-      },
-      "Nikola Tesla": {
-        "winrate": 40
-      },
-      "Annie Christmas": {
-        "winrate": 56
-      },
-      "Golden Bat": {
-        "winrate": 19
-      },
-      "Tomoe Gozen": {
-        "winrate": 50
-      },
-      "The Wayward Sisters": {
-        "winrate": 38
-      },
-      "Muhammad Ali": {
-        "winrate": 49
-      },
-      "Geralt of Rivia": {
-        "winrate": 59
-      },
-      "Eredin": {
-        "winrate": 57
-      },
-      "Philippa": {
-        "winrate": 49
-      },
-      "Donatello": {
-        "winrate": 38
-      },
-      "John Henry": {
-        "winrate": 48
-      },
-      "Pandora": {
-        "winrate": 61
-      },
-      "Chupacabra": {
-        "winrate": 52
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": 25
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 80
-      },
-      "Ms. Marvel": {
-        "winrate": 45
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "Titania": {
-        "winrate": 44
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 35,
-    "name": "Ms. Marvel",
-    "elo": 1264,
-    "image": "images/ms_marvel.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 30
-      },
-      "Robin Hood": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 36
-      },
-      "Robert Muldoon": {
-        "winrate": 31
-      },
-      "Raptors": {
-        "winrate": 31
-      },
-      "Dracula": {
-        "winrate": 31
-      },
-      "Little Red Riding Hood": {
-        "winrate": 25
-      },
-      "Yennenga": {
-        "winrate": 12
-      },
-      "Achilles": {
-        "winrate": 30
-      },
-      "Daredevil": {
-        "winrate": 40
-      },
-      "Bullseye": {
-        "winrate": 58
-      },
-      "Moon Knight": {
-        "winrate": 31
-      },
-      "Dr. Sattler": {
-        "winrate": 31
-      },
-      "Black Panther": {
-        "winrate": 41
-      },
-      "Nikola Tesla": {
-        "winrate": 36
-      },
-      "Annie Christmas": {
-        "winrate": 32
-      },
-      "Golden Bat": {
-        "winrate": 62
-      },
-      "Tomoe Gozen": {
-        "winrate": 35
-      },
-      "The Wayward Sisters": {
-        "winrate": 42
-      },
-      "Muhammad Ali": {
-        "winrate": 25
-      },
-      "Geralt of Rivia": {
-        "winrate": 32
-      },
-      "Eredin": {
-        "winrate": 34
-      },
-      "Donatello": {
-        "winrate": 39
-      },
-      "John Henry": {
-        "winrate": 35
-      },
-      "Pandora": {
-        "winrate": 42
-      },
-      "Chupacabra": {
-        "winrate": 35
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": null
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": 55
-      },
-      "Titania": {
-        "winrate": 75
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Philippa": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 36,
-    "name": "Squirrel Girl",
-    "elo": 1120,
-    "image": "images/squirrel_girl.webp",
-    "matchups": {}
-  },
-  {
-    "id": 37,
-    "name": "Cloak & Dagger",
-    "elo": 1250,
-    "image": "images/cloak_dagger.webp",
-    "matchups": {}
-  },
-  {
-    "id": 38,
-    "name": "Black Widow",
-    "elo": 1450,
-    "image": "images/black_widow.webp",
-    "matchups": {}
-  },
-  {
-    "id": 39,
-    "name": "Black Panther",
-    "elo": 1425,
-    "image": "images/black_panther.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 31
-      },
-      "Robin Hood": {
-        "winrate": 62
-      },
-      "Robert Muldoon": {
-        "winrate": 58
-      },
-      "Muhammad Ali": {
-        "winrate": 56
-      },
-      "Little Red Riding Hood": {
-        "winrate": 72
-      },
-      "Alice": {
-        "winrate": 54
-      },
-      "Achilles": {
-        "winrate": 41
-      },
-      "Yennenga": {
-        "winrate": 61
-      },
-      "Geralt of Rivia": {
-        "winrate": 60
-      },
-      "Daredevil": {
-        "winrate": 60
-      },
-      "Bullseye": {
-        "winrate": 74
-      },
-      "Dr. Sattler": {
-        "winrate": 69
-      },
-      "The Genie": {
-        "winrate": 64
-      },
-      "Ms. Marvel": {
-        "winrate": 59
-      },
-      "The Wayward Sisters": {
-        "winrate": 68
-      },
-      "Jill Trent": {
-        "winrate": 50
-      },
-      "Moon Knight": {
-        "winrate": 32
-      },
-      "Tomoe Gozen": {
-        "winrate": 38
-      },
-      "Raptors": {
-        "winrate": 37
-      },
-      "Titania": {
-        "winrate": 45
-      },
-      "Pandora": {
-        "winrate": 63
-      },
-      "Golden Bat": {
-        "winrate": 13
-      },
-      "Bruce Lee": {
-        "winrate": 64
-      },
-      "Philippa": {
-        "winrate": 66
-      },
-      "Annie Christmas": {
-        "winrate": 62
-      },
-      "Chupacabra": {
-        "winrate": 54
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 60
-      },
-      "John Henry": {
-        "winrate": null
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 49
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 40,
-    "name": "Winter Soldier",
-    "elo": 1389,
-    "image": "images/winter_soldier.webp",
-    "matchups": {}
-  },
-  {
-    "id": 41,
-    "name": "Nikola Tesla",
-    "elo": 1786,
-    "image": "images/nikola_tesla.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 42
-      },
-      "Alice": {
-        "winrate": 58
-      },
-      "Bruce Lee": {
-        "winrate": 39
-      },
-      "Robin Hood": {
-        "winrate": 84
-      },
-      "Robert Muldoon": {
-        "winrate": 63
-      },
-      "Raptors": {
-        "winrate": 39
-      },
-      "Dracula": {
-        "winrate": 63
-      },
-      "Little Red Riding Hood": {
-        "winrate": 42
-      },
-      "Achilles": {
-        "winrate": 40
-      },
-      "Yennenga": {
-        "winrate": 64
-      },
-      "Geralt of Rivia": {
-        "winrate": 61
-      },
-      "Daredevil": {
-        "winrate": 62
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Dr. Sattler": {
-        "winrate": 63
-      },
-      "The Genie": {
-        "winrate": 60
-      },
-      "Ms. Marvel": {
-        "winrate": 64
-      },
-      "Black Panther": {
-        "winrate": 69
-      },
-      "Annie Christmas": {
-        "winrate": 51
-      },
-      "Moon Knight": {
-        "winrate": 37
-      },
-      "Jill Trent": {
-        "winrate": 48
-      },
-      "Tomoe Gozen": {
-        "winrate": 40
-      },
-      "Titania": {
-        "winrate": 58
-      },
-      "The Wayward Sisters": {
-        "winrate": 54
-      },
-      "Golden Bat": {
-        "winrate": 46
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Philippa": {
-        "winrate": 82
-      },
-      "Pandora": {
-        "winrate": 40
-      },
-      "Chupacabra": {
-        "winrate": 45
-      },
-      "Leonardo": {
-        "winrate": 77
-      },
-      "Muhammad Ali": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": 65
-      },
-      "Wyatt Earp": {
-        "winrate": 58
-      },
-      "Michelangelo": {
-        "winrate": 50
-      },
-      "John Henry": {
-        "winrate": 42
-      },
-      "Rosie the Riveter": {
-        "winrate": 54
-      }
-    }
-  },
-  {
-    "id": 42,
-    "name": "Annie Christmas",
-    "elo": 1568,
-    "image": "images/annie_christmas.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 24
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 49
-      },
-      "Robin Hood": {
-        "winrate": 77
-      },
-      "Robert Muldoon": {
-        "winrate": 36
-      },
-      "Muhammad Ali": {
-        "winrate": 56
-      },
-      "Little Red Riding Hood": {
-        "winrate": 60
-      },
-      "Alice": {
-        "winrate": 62
-      },
-      "Achilles": {
-        "winrate": 40
-      },
-      "Yennenga": {
-        "winrate": 38
-      },
-      "Geralt of Rivia": {
-        "winrate": 50
-      },
-      "Daredevil": {
-        "winrate": 52
-      },
-      "Bullseye": {
-        "winrate": 77
-      },
-      "Dr. Sattler": {
-        "winrate": 66
-      },
-      "The Genie": {
-        "winrate": 44
-      },
-      "Ms. Marvel": {
-        "winrate": 68
-      },
-      "Black Panther": {
-        "winrate": 38
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 61
-      },
-      "Tomoe Gozen": {
-        "winrate": 62
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Titania": {
-        "winrate": 44
-      },
-      "The Wayward Sisters": {
-        "winrate": 40
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 52
-      },
-      "Philippa": {
-        "winrate": 62
-      },
-      "Pandora": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 76
-      },
-      "Leonardo": {
-        "winrate": 52
-      },
-      "Dracula": {
-        "winrate": 32
-      },
-      "John Henry": {
-        "winrate": 78
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 64
-      },
-      "Michelangelo": {
-        "winrate": 79
-      },
-      "Rosie the Riveter": {
-        "winrate": 49
-      }
-    }
-  },
-  {
-    "id": 43,
-    "name": "Golden Bat",
-    "elo": 1923,
-    "image": "images/golden_bat.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 53
-      },
-      "Alice": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 55
-      },
-      "Robin Hood": {
-        "winrate": 84
-      },
-      "Robert Muldoon": {
-        "winrate": 88
-      },
-      "Raptors": {
-        "winrate": 36
-      },
-      "Dracula": {
-        "winrate": 58
-      },
-      "Little Red Riding Hood": {
-        "winrate": 57
-      },
-      "Achilles": {
-        "winrate": 64
-      },
-      "Yennenga": {
-        "winrate": 71
-      },
-      "Moon Knight": {
-        "winrate": 60
-      },
-      "Daredevil": {
-        "winrate": 83
-      },
-      "Bullseye": {
-        "winrate": 34
-      },
-      "Dr. Sattler": {
-        "winrate": 85
-      },
-      "The Genie": {
-        "winrate": 81
-      },
-      "Ms. Marvel": {
-        "winrate": 38
-      },
-      "Black Panther": {
-        "winrate": 87
-      },
-      "Annie Christmas": {
-        "winrate": 50
-      },
-      "Nikola Tesla": {
-        "winrate": 54
-      },
-      "Jill Trent": {
-        "winrate": 66
-      },
-      "Tomoe Gozen": {
-        "winrate": 37
-      },
-      "Titania": {
-        "winrate": 67
-      },
-      "The Wayward Sisters": {
-        "winrate": 38
-      },
-      "Geralt of Rivia": {
-        "winrate": 53
-      },
-      "Eredin": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 90
-      },
-      "Pandora": {
-        "winrate": 38
-      },
-      "Chupacabra": {
-        "winrate": 57
-      },
-      "Leonardo": {
-        "winrate": 79
-      },
-      "Muhammad Ali": {
-        "winrate": 70
-      },
-      "John Henry": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": 80
-      },
-      "Wyatt Earp": {
-        "winrate": 50
-      },
-      "Michelangelo": {
-        "winrate": 50
-      },
-      "Rosie the Riveter": {
-        "winrate": 53
-      }
-    }
-  },
-  {
-    "id": 44,
-    "name": "Jill Trent",
-    "elo": 1798,
-    "image": "images/jill_trent.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 62
-      },
-      "Robin Hood": {
-        "winrate": 59
-      },
-      "Bruce Lee": {
-        "winrate": 56
-      },
-      "Robert Muldoon": {
-        "winrate": 64
-      },
-      "Raptors": {
-        "winrate": 50
-      },
-      "Dracula": {
-        "winrate": 66
-      },
-      "Little Red Riding Hood": {
-        "winrate": 27
-      },
-      "Yennenga": {
-        "winrate": 50
-      },
-      "Achilles": {
-        "winrate": 60
-      },
-      "Daredevil": {
-        "winrate": 20
-      },
-      "Bullseye": {
-        "winrate": 64
-      },
-      "Moon Knight": {
-        "winrate": 60
-      },
-      "Dr. Sattler": {
-        "winrate": 64
-      },
-      "Black Panther": {
-        "winrate": 50
-      },
-      "Nikola Tesla": {
-        "winrate": 52
-      },
-      "Annie Christmas": {
-        "winrate": 60
-      },
-      "Golden Bat": {
-        "winrate": 34
-      },
-      "Tomoe Gozen": {
-        "winrate": 51
-      },
-      "The Wayward Sisters": {
-        "winrate": 60
-      },
-      "Muhammad Ali": {
-        "winrate": 62
-      },
-      "Geralt of Rivia": {
-        "winrate": 60
-      },
-      "Eredin": {
-        "winrate": 56
-      },
-      "Philippa": {
-        "winrate": 59
-      },
-      "Donatello": {
-        "winrate": 70
-      },
-      "John Henry": {
-        "winrate": 60
-      },
-      "Pandora": {
-        "winrate": 53
-      },
-      "Chupacabra": {
-        "winrate": 60
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 90
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": 75
-      },
-      "Titania": {
-        "winrate": 80
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 45,
-    "name": "Spider-Man",
-    "elo": 1206,
-    "image": "images/spiderman.webp",
-    "matchups": {}
-  },
-  {
-    "id": 46,
-    "name": "Doctor Strange",
-    "elo": 1974,
-    "image": "images/doctor_strange.webp",
-    "matchups": {}
-  },
-  {
-    "id": 47,
-    "name": "She-Hulk",
-    "elo": 1810,
-    "image": "images/she_hulk.webp",
-    "matchups": {}
-  },
-  {
-    "id": 48,
-    "name": "Oda Nobunaga",
-    "elo": 1178,
-    "image": "images/oda.webp",
-    "matchups": {}
-  },
-  {
-    "id": 49,
-    "name": "Tomoe Gozen",
-    "elo": 1718,
-    "image": "images/tomoe.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Nikola Tesla": {
-        "winrate": 60
-      },
-      "Robin Hood": {
-        "winrate": 43
-      },
-      "Robert Muldoon": {
-        "winrate": 44
-      },
-      "Muhammad Ali": {
-        "winrate": 62
-      },
-      "Little Red Riding Hood": {
-        "winrate": 38
-      },
-      "Alice": {
-        "winrate": 58
-      },
-      "Achilles": {
-        "winrate": 32
-      },
-      "Yennenga": {
-        "winrate": 36
-      },
-      "Geralt of Rivia": {
-        "winrate": 48
-      },
-      "Daredevil": {
-        "winrate": 68
-      },
-      "Bullseye": {
-        "winrate": 68
-      },
-      "Dr. Sattler": {
-        "winrate": 61
-      },
-      "The Genie": {
-        "winrate": 50
-      },
-      "Ms. Marvel": {
-        "winrate": 65
-      },
-      "Black Panther": {
-        "winrate": 62
-      },
-      "Annie Christmas": {
-        "winrate": 38
-      },
-      "Moon Knight": {
-        "winrate": 60
-      },
-      "Jill Trent": {
-        "winrate": 49
-      },
-      "Raptors": {
-        "winrate": 39
-      },
-      "Titania": {
-        "winrate": 64
-      },
-      "The Wayward Sisters": {
-        "winrate": 51
-      },
-      "Golden Bat": {
-        "winrate": 63
-      },
-      "Bruce Lee": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 58
-      },
-      "Pandora": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 50
-      },
-      "Leonardo": {
-        "winrate": 62
-      },
-      "Dracula": {
-        "winrate": 65
-      },
-      "John Henry": {
-        "winrate": 49
-      },
-      "George Washington": {
-        "winrate": 61
-      },
-      "Wyatt Earp": {
-        "winrate": 44
-      },
-      "Michelangelo": {
-        "winrate": 42
-      },
-      "Rosie the Riveter": {
-        "winrate": 45
-      }
-    }
-  },
-  {
-    "id": 50,
-    "name": "William Shakespeare",
-    "elo": 1331,
-    "image": "images/shakespeare.webp",
-    "matchups": {}
-  },
-  {
-    "id": 51,
-    "name": "Hamlet",
-    "elo": 1150,
-    "image": "images/hamlet.webp",
-    "matchups": {}
-  },
-  {
-    "id": 52,
-    "name": "The Wayward Sisters",
-    "elo": 1439,
-    "image": "images/wayward_sisters.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 19
-      },
-      "Eredin": {
-        "winrate": 36
-      },
-      "Nikola Tesla": {
-        "winrate": 46
-      },
-      "Robin Hood": {
-        "winrate": 50
-      },
-      "Robert Muldoon": {
-        "winrate": 51
-      },
-      "Muhammad Ali": {
-        "winrate": 50
-      },
-      "Little Red Riding Hood": {
-        "winrate": 36
-      },
-      "Alice": {
-        "winrate": 34
-      },
-      "Achilles": {
-        "winrate": 38
-      },
-      "Yennenga": {
-        "winrate": 35
-      },
-      "Geralt of Rivia": {
-        "winrate": 51
-      },
-      "Daredevil": {
-        "winrate": 26
-      },
-      "Bullseye": {
-        "winrate": 58
-      },
-      "Dr. Sattler": {
-        "winrate": 36
-      },
-      "The Genie": {
-        "winrate": 62
-      },
-      "Ms. Marvel": {
-        "winrate": 58
-      },
-      "Black Panther": {
-        "winrate": 32
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 36
-      },
-      "Tomoe Gozen": {
-        "winrate": 49
-      },
-      "Raptors": {
-        "winrate": 48
-      },
-      "Titania": {
-        "winrate": 39
-      },
-      "Pandora": {
-        "winrate": 40
-      },
-      "Golden Bat": {
-        "winrate": 62
-      },
-      "Bruce Lee": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 50
-      },
-      "Annie Christmas": {
-        "winrate": 60
-      },
-      "Chupacabra": {
-        "winrate": 35
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 61
-      },
-      "John Henry": {
-        "winrate": 31
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 53,
-    "name": "Titania",
-    "elo": 1591,
-    "image": "images/titania.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 31
-      },
-      "Robin Hood": {
-        "winrate": 49
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Robert Muldoon": {
-        "winrate": 40
-      },
-      "Raptors": {
-        "winrate": 36
-      },
-      "Dracula": {
-        "winrate": 35
-      },
-      "Little Red Riding Hood": {
-        "winrate": 33
-      },
-      "Yennenga": {
-        "winrate": 35
-      },
-      "Achilles": {
-        "winrate": 35
-      },
-      "Daredevil": {
-        "winrate": 50
-      },
-      "Bullseye": {
-        "winrate": 60
-      },
-      "Moon Knight": {
-        "winrate": 35
-      },
-      "Dr. Sattler": {
-        "winrate": 49
-      },
-      "Black Panther": {
-        "winrate": 55
-      },
-      "Nikola Tesla": {
-        "winrate": 42
-      },
-      "Annie Christmas": {
-        "winrate": 56
-      },
-      "Golden Bat": {
-        "winrate": 33
-      },
-      "Tomoe Gozen": {
-        "winrate": 36
-      },
-      "The Wayward Sisters": {
-        "winrate": 61
-      },
-      "Muhammad Ali": {
-        "winrate": 50
-      },
-      "Geralt of Rivia": {
-        "winrate": 35
-      },
-      "Eredin": {
-        "winrate": 36
-      },
-      "Philippa": {
-        "winrate": 59
-      },
-      "Donatello": {
-        "winrate": 37
-      },
-      "John Henry": {
-        "winrate": 32
-      },
-      "Pandora": {
-        "winrate": 41
-      },
-      "Chupacabra": {
-        "winrate": 33
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": 20
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 80
-      },
-      "Ms. Marvel": {
-        "winrate": 25
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": 56
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 54,
-    "name": "Muhammad Ali",
-    "elo": 1292,
-    "image": "images/ali.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 39
-      },
-      "Nikola Tesla": {
-        "winrate": 50
-      },
-      "Robin Hood": {
-        "winrate": 58
-      },
-      "Robert Muldoon": {
-        "winrate": 60
-      },
-      "Raptors": {
-        "winrate": 45
-      },
-      "Little Red Riding Hood": {
-        "winrate": 44
-      },
-      "Alice": {
-        "winrate": 48
-      },
-      "Achilles": {
-        "winrate": 58
-      },
-      "Yennenga": {
-        "winrate": 34
-      },
-      "Geralt of Rivia": {
-        "winrate": 38
-      },
-      "Daredevil": {
-        "winrate": 27
-      },
-      "Bullseye": {
-        "winrate": 42
-      },
-      "Dr. Sattler": {
-        "winrate": 58
-      },
-      "The Genie": {
-        "winrate": 51
-      },
-      "Ms. Marvel": {
-        "winrate": 75
-      },
-      "Black Panther": {
-        "winrate": 44
-      },
-      "Annie Christmas": {
-        "winrate": 44
-      },
-      "Moon Knight": {
-        "winrate": 52
-      },
-      "Jill Trent": {
-        "winrate": 38
-      },
-      "Tomoe Gozen": {
-        "winrate": 38
-      },
-      "Titania": {
-        "winrate": 50
-      },
-      "The Wayward Sisters": {
-        "winrate": 50
-      },
-      "Golden Bat": {
-        "winrate": 30
-      },
-      "Bruce Lee": {
-        "winrate": 44
-      },
-      "Philippa": {
-        "winrate": 61
-      },
-      "Pandora": {
-        "winrate": 46
-      },
-      "Chupacabra": {
-        "winrate": 50
-      },
-      "Leonardo": {
-        "winrate": 58
-      },
-      "Dracula": {
-        "winrate": 60
-      },
-      "John Henry": {
-        "winrate": 52
-      },
-      "George Washington": {
-        "winrate": 63
-      },
-      "Wyatt Earp": {
-        "winrate": 63
-      },
-      "Michelangelo": {
-        "winrate": 50
-      },
-      "Rosie the Riveter": {
-        "winrate": 44
-      }
-    }
-  },
-  {
-    "id": 55,
-    "name": "Geralt of Rivia",
-    "elo": 1508,
-    "image": "images/geralt.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 44
-      },
-      "Bruce Lee": {
-        "winrate": 51
-      },
-      "Robin Hood": {
-        "winrate": 71
-      },
-      "Robert Muldoon": {
-        "winrate": 50
-      },
-      "Raptors": {
-        "winrate": 32
-      },
-      "Dracula": {
-        "winrate": 63
-      },
-      "Little Red Riding Hood": {
-        "winrate": 61
-      },
-      "Achilles": {
-        "winrate": 42
-      },
-      "Yennenga": {
-        "winrate": 39
-      },
-      "Moon Knight": {
-        "winrate": 49
-      },
-      "Daredevil": {
-        "winrate": 50
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Dr. Sattler": {
-        "winrate": 64
-      },
-      "The Genie": {
-        "winrate": 41
-      },
-      "Ms. Marvel": {
-        "winrate": 68
-      },
-      "Black Panther": {
-        "winrate": 40
-      },
-      "Annie Christmas": {
-        "winrate": 50
-      },
-      "Nikola Tesla": {
-        "winrate": 39
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Tomoe Gozen": {
-        "winrate": 52
-      },
-      "Titania": {
-        "winrate": 65
-      },
-      "The Wayward Sisters": {
-        "winrate": 49
-      },
-      "Golden Bat": {
-        "winrate": 47
-      },
-      "Eredin": {
-        "winrate": 41
-      },
-      "Philippa": {
-        "winrate": 83
-      },
-      "Pandora": {
-        "winrate": 63
-      },
-      "Chupacabra": {
-        "winrate": 64
-      },
-      "Leonardo": {
-        "winrate": 77
-      },
-      "Muhammad Ali": {
-        "winrate": 62
-      },
-      "John Henry": {
-        "winrate": 47
-      },
-      "George Washington": {
-        "winrate": 50
-      },
-      "Wyatt Earp": {
-        "winrate": 67
-      },
-      "Michelangelo": {
-        "winrate": 80
-      },
-      "Rosie the Riveter": {
-        "winrate": 55
-      }
-    }
-  },
-  {
-    "id": 56,
-    "name": "Ciri",
-    "elo": 1948,
-    "image": "images/ciri.webp",
-    "matchups": {}
-  },
-  {
-    "id": 57,
-    "name": "Leshen",
-    "elo": 1695,
-    "image": "images/leshen.webp",
-    "matchups": {}
-  },
-  {
-    "id": 58,
-    "name": "Yennefer",
-    "elo": 1898,
-    "image": "images/yennefer_triss.webp",
-    "matchups": {}
-  },
-  {
-    "id": 59,
-    "name": "Eredin",
-    "elo": 1860,
-    "image": "images/eredin.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 50
-      },
-      "Alice": {
-        "winrate": 59
-      },
-      "Nikola Tesla": {
-        "winrate": 59
-      },
-      "Robin Hood": {
-        "winrate": 66
-      },
-      "Robert Muldoon": {
-        "winrate": 34
-      },
-      "Raptors": {
-        "winrate": 60
-      },
-      "Dracula": {
-        "winrate": 59
-      },
-      "Little Red Riding Hood": {
-        "winrate": 60
-      },
-      "Achilles": {
-        "winrate": 57
-      },
-      "Yennenga": {
-        "winrate": 50
-      },
-      "Geralt of Rivia": {
-        "winrate": 59
-      },
-      "Daredevil": {
-        "winrate": 50
-      },
-      "Bullseye": {
-        "winrate": 40
-      },
-      "Dr. Sattler": {
-        "winrate": 72
-      },
-      "The Genie": {
-        "winrate": 43
-      },
-      "Ms. Marvel": {
-        "winrate": 66
-      },
-      "Black Panther": {
-        "winrate": 60
-      },
-      "Annie Christmas": {
-        "winrate": 60
-      },
-      "Moon Knight": {
-        "winrate": 59
-      },
-      "Jill Trent": {
-        "winrate": 44
-      },
-      "Tomoe Gozen": {
-        "winrate": 59
-      },
-      "Titania": {
-        "winrate": 64
-      },
-      "The Wayward Sisters": {
-        "winrate": 64
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 45
-      },
-      "Philippa": {
-        "winrate": 58
-      },
-      "Pandora": {
-        "winrate": 60
-      },
-      "Chupacabra": {
-        "winrate": 64
-      },
-      "Leonardo": {
-        "winrate": 80
-      },
-      "Muhammad Ali": {
-        "winrate": 61
-      },
-      "John Henry": {
-        "winrate": 60
-      },
-      "George Washington": {
-        "winrate": 68
-      },
-      "Wyatt Earp": {
-        "winrate": 60
-      },
-      "Michelangelo": {
-        "winrate": 77
-      },
-      "Rosie the Riveter": {
-        "winrate": 64
-      }
-    }
-  },
-  {
-    "id": 60,
-    "name": "Philippa",
-    "elo": 1366,
-    "image": "images/philippa.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 10
-      },
-      "Eredin": {
-        "winrate": 42
-      },
-      "Nikola Tesla": {
-        "winrate": 18
-      },
-      "Robin Hood": {
-        "winrate": 50
-      },
-      "Robert Muldoon": {
-        "winrate": 50
-      },
-      "Muhammad Ali": {
-        "winrate": 39
-      },
-      "Little Red Riding Hood": {
-        "winrate": 34
-      },
-      "Alice": {
-        "winrate": 44
-      },
-      "Achilles": {
-        "winrate": 28
-      },
-      "Yennenga": {
-        "winrate": 33
-      },
-      "Geralt of Rivia": {
-        "winrate": 17
-      },
-      "Daredevil": {
-        "winrate": 51
-      },
-      "Bullseye": {
-        "winrate": 59
-      },
-      "Dr. Sattler": {
-        "winrate": 60
-      },
-      "The Genie": {
-        "winrate": 51
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Black Panther": {
-        "winrate": 34
-      },
-      "Jill Trent": {
-        "winrate": 41
-      },
-      "Moon Knight": {
-        "winrate": 28
-      },
-      "Tomoe Gozen": {
-        "winrate": 42
-      },
-      "Raptors": {
-        "winrate": 40
-      },
-      "Titania": {
-        "winrate": 41
-      },
-      "Pandora": {
-        "winrate": 50
-      },
-      "Golden Bat": {
-        "winrate": 10
-      },
-      "Bruce Lee": {
-        "winrate": 66
-      },
-      "John Henry": {
-        "winrate": 31
-      },
-      "Annie Christmas": {
-        "winrate": 38
-      },
-      "Chupacabra": {
-        "winrate": 58
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 45
-      },
-      "The Wayward Sisters": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": 49
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 61,
-    "name": "Leonardo",
-    "elo": 1462,
-    "image": "images/leonardo.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 48
-      },
-      "Bruce Lee": {
-        "winrate": 25
-      },
-      "Raptors": {
-        "winrate": 42
-      },
-      "Dracula": {
-        "winrate": 41
-      },
-      "Little Red Riding Hood": {
-        "winrate": 42
-      },
-      "Yennenga": {
-        "winrate": 22
-      },
-      "Achilles": {
-        "winrate": 45
-      },
-      "Daredevil": {
-        "winrate": 31
-      },
-      "Moon Knight": {
-        "winrate": 22
-      },
-      "Nikola Tesla": {
-        "winrate": 23
-      },
-      "Annie Christmas": {
-        "winrate": 48
-      },
-      "Golden Bat": {
-        "winrate": 21
-      },
-      "Tomoe Gozen": {
-        "winrate": 38
-      },
-      "Muhammad Ali": {
-        "winrate": 42
-      },
-      "Geralt of Rivia": {
-        "winrate": 23
-      },
-      "Eredin": {
-        "winrate": 20
-      },
-      "Donatello": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 50
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 50
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": null
-      },
-      "Titania": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Robin Hood": {
-        "winrate": null
-      },
-      "Robert Muldoon": {
-        "winrate": null
-      },
-      "Bullseye": {
-        "winrate": null
-      },
-      "Dr. Sattler": {
-        "winrate": null
-      },
-      "Black Panther": {
-        "winrate": null
-      },
-      "The Wayward Sisters": {
-        "winrate": null
-      },
-      "Philippa": {
-        "winrate": null
-      },
-      "John Henry": {
-        "winrate": null
-      },
-      "Pandora": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 62,
-    "name": "Donatello",
-    "elo": 1742,
-    "image": "images/donatello.webp",
-    "matchups": {
-      "Robert Muldoon": {
-        "winrate": 53
-      },
-      "Bruce Lee": {
-        "winrate": 92
-      },
-      "Alice": {
-        "winrate": 62
-      },
-      "Robin Hood": {
-        "winrate": 80
-      },
-      "Raptors": {
-        "winrate": 62
-      },
-      "Dracula": {
-        "winrate": 33
-      },
-      "Little Red Riding Hood": {
-        "winrate": 36
-      },
-      "Achilles": {
-        "winrate": 59
-      },
-      "Yennenga": {
-        "winrate": 42
-      },
-      "Moon Knight": {
-        "winrate": 50
-      },
-      "Daredevil": {
-        "winrate": 80
-      },
-      "Bullseye": {
-        "winrate": 62
-      },
-      "Dr. Sattler": {
-        "winrate": 50
-      },
-      "The Genie": {
-        "winrate": 62
-      },
-      "Ms. Marvel": {
-        "winrate": 61
-      },
-      "Black Panther": {
-        "winrate": 62
-      },
-      "Annie Christmas": {
-        "winrate": 76
-      },
-      "Golden Bat": {
-        "winrate": 47
-      },
-      "Nikola Tesla": {
-        "winrate": 58
-      },
-      "Jill Trent": {
-        "winrate": 30
-      },
-      "Tomoe Gozen": {
-        "winrate": 62
-      },
-      "Titania": {
-        "winrate": 63
-      },
-      "The Wayward Sisters": {
-        "winrate": 81
-      },
-      "Geralt of Rivia": {
-        "winrate": 50
-      },
-      "Eredin": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 90
-      },
-      "Pandora": {
-        "winrate": 62
-      },
-      "Chupacabra": {
-        "winrate": 76
-      },
-      "Leonardo": {
-        "winrate": 50
-      },
-      "Muhammad Ali": {
-        "winrate": 62
-      },
-      "John Henry": {
-        "winrate": 53
-      },
-      "George Washington": {
-        "winrate": 36
-      },
-      "Wyatt Earp": {
-        "winrate": 62
-      },
-      "Michelangelo": {
-        "winrate": 90
-      },
-      "Rosie the Riveter": {
-        "winrate": 90
-      }
-    }
-  },
-  {
-    "id": 63,
-    "name": "Raphael",
-    "elo": 1848,
-    "image": "images/raphael.webp",
-    "matchups": {}
-  },
-  {
-    "id": 64,
-    "name": "Michelangelo",
-    "elo": 1400,
-    "image": "images/michelangelo.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 25
-      },
-      "Bruce Lee": {
-        "winrate": 25
-      },
-      "Robert Muldoon": {
-        "winrate": 36
-      },
-      "Raptors": {
-        "winrate": 64
-      },
-      "Dracula": {
-        "winrate": 26
-      },
-      "Little Red Riding Hood": {
-        "winrate": 61
-      },
-      "Yennenga": {
-        "winrate": 35
-      },
-      "Achilles": {
-        "winrate": 25
-      },
-      "Daredevil": {
-        "winrate": 36
-      },
-      "Moon Knight": {
-        "winrate": 43
-      },
-      "Dr. Sattler": {
-        "winrate": 24
-      },
-      "Black Panther": {
-        "winrate": 51
-      },
-      "Nikola Tesla": {
-        "winrate": 50
-      },
-      "Annie Christmas": {
-        "winrate": 21
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Tomoe Gozen": {
-        "winrate": 58
-      },
-      "Muhammad Ali": {
-        "winrate": 50
-      },
-      "Geralt of Rivia": {
-        "winrate": 20
-      },
-      "Eredin": {
-        "winrate": 23
-      },
-      "Donatello": {
-        "winrate": 10
-      },
-      "Pandora": {
-        "winrate": 28
-      },
-      "Chupacabra": {
-        "winrate": 36
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": 10
-      },
-      "Leonardo": {
-        "winrate": 50
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": 20
-      },
-      "Titania": {
-        "winrate": 20
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Robin Hood": {
-        "winrate": null
-      },
-      "Bullseye": {
-        "winrate": null
-      },
-      "The Wayward Sisters": {
-        "winrate": null
-      },
-      "Philippa": {
-        "winrate": null
-      },
-      "John Henry": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 65,
-    "name": "Shredder",
-    "elo": 1764,
-    "image": "images/shredder.webp",
-    "matchups": {}
-  },
-  {
-    "id": 66,
-    "name": "Krang",
-    "elo": 1614,
-    "image": "images/krang.webp",
-    "matchups": {}
-  },
-  {
-    "id": 67,
-    "name": "George Washington",
-    "elo": 1585,
-    "image": "images/george_washington.webp",
-    "matchups": {
-      "Bruce Lee": {
-        "winrate": 37
-      },
-      "Raptors": {
-        "winrate": 37
-      },
-      "Yennenga": {
-        "winrate": 25
-      },
-      "Achilles": {
-        "winrate": 45
-      },
-      "Daredevil": {
-        "winrate": 25
-      },
-      "Moon Knight": {
-        "winrate": 33
-      },
-      "Nikola Tesla": {
-        "winrate": 35
-      },
-      "Golden Bat": {
-        "winrate": 20
-      },
-      "Tomoe Gozen": {
-        "winrate": 39
-      },
-      "Muhammad Ali": {
-        "winrate": 37
-      },
-      "Geralt of Rivia": {
-        "winrate": 50
-      },
-      "Eredin": {
-        "winrate": 32
-      },
-      "Philippa": {
-        "winrate": 51
-      },
-      "Donatello": {
-        "winrate": 64
-      },
-      "John Henry": {
-        "winrate": 23
-      },
-      "Jill Trent": {
-        "winrate": null
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": null
-      },
-      "Titania": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Alice": {
-        "winrate": null
-      },
-      "Robin Hood": {
-        "winrate": null
-      },
-      "Robert Muldoon": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": null
-      },
-      "Little Red Riding Hood": {
-        "winrate": null
-      },
-      "Bullseye": {
-        "winrate": null
-      },
-      "Dr. Sattler": {
-        "winrate": null
-      },
-      "Black Panther": {
-        "winrate": null
-      },
-      "Annie Christmas": {
-        "winrate": null
-      },
-      "The Wayward Sisters": {
-        "winrate": null
-      },
-      "Pandora": {
-        "winrate": null
-      },
-      "Chupacabra": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 68,
-    "name": "Wyatt Earp",
-    "elo": 1555,
-    "image": "images/wyatt_earp.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 37
-      },
-      "Robin Hood": {
-        "winrate": 57
-      },
-      "Bruce Lee": {
-        "winrate": 40
-      },
-      "Robert Muldoon": {
-        "winrate": 51
-      },
-      "Raptors": {
-        "winrate": 56
-      },
-      "Little Red Riding Hood": {
-        "winrate": 38
-      },
-      "Yennenga": {
-        "winrate": 35
-      },
-      "Achilles": {
-        "winrate": 25
-      },
-      "Daredevil": {
-        "winrate": 59
-      },
-      "Bullseye": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 35
-      },
-      "Nikola Tesla": {
-        "winrate": 42
-      },
-      "Annie Christmas": {
-        "winrate": 36
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Tomoe Gozen": {
-        "winrate": 56
-      },
-      "Muhammad Ali": {
-        "winrate": 37
-      },
-      "Geralt of Rivia": {
-        "winrate": 33
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Donatello": {
-        "winrate": 38
-      },
-      "John Henry": {
-        "winrate": 37
-      },
-      "Pandora": {
-        "winrate": 41
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": null
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": null
-      },
-      "Titania": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": null
-      },
-      "Dr. Sattler": {
-        "winrate": null
-      },
-      "Black Panther": {
-        "winrate": null
-      },
-      "The Wayward Sisters": {
-        "winrate": null
-      },
-      "Philippa": {
-        "winrate": null
-      },
-      "Chupacabra": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 69,
-    "name": "Rosie the Riveter",
-    "elo": 1485,
-    "image": "images/rosie.webp",
-    "matchups": {
-      "Alice": {
-        "winrate": 34
-      },
-      "Bruce Lee": {
-        "winrate": 38
-      },
-      "Robert Muldoon": {
-        "winrate": 37
-      },
-      "Raptors": {
-        "winrate": 55
-      },
-      "Dracula": {
-        "winrate": 23
-      },
-      "Little Red Riding Hood": {
-        "winrate": 49
-      },
-      "Yennenga": {
-        "winrate": 35
-      },
-      "Achilles": {
-        "winrate": 25
-      },
-      "Daredevil": {
-        "winrate": 35
-      },
-      "Moon Knight": {
-        "winrate": 55
-      },
-      "Nikola Tesla": {
-        "winrate": 46
-      },
-      "Annie Christmas": {
-        "winrate": 51
-      },
-      "Golden Bat": {
-        "winrate": 47
-      },
-      "Tomoe Gozen": {
-        "winrate": 55
-      },
-      "Muhammad Ali": {
-        "winrate": 56
-      },
-      "Geralt of Rivia": {
-        "winrate": 45
-      },
-      "Eredin": {
-        "winrate": 36
-      },
-      "Donatello": {
-        "winrate": 10
-      },
-      "John Henry": {
-        "winrate": 58
-      },
-      "Pandora": {
-        "winrate": 40
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": null
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Ms. Marvel": {
-        "winrate": null
-      },
-      "The Genie": {
-        "winrate": null
-      },
-      "Titania": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Robin Hood": {
-        "winrate": null
-      },
-      "Bullseye": {
-        "winrate": null
-      },
-      "Dr. Sattler": {
-        "winrate": null
-      },
-      "Black Panther": {
-        "winrate": null
-      },
-      "The Wayward Sisters": {
-        "winrate": null
-      },
-      "Philippa": {
-        "winrate": null
-      },
-      "Chupacabra": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 70,
-    "name": "John Henry",
-    "elo": 1752,
-    "image": "images/john_henry.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 47
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 58
-      },
-      "Robin Hood": {
-        "winrate": 69
-      },
-      "Robert Muldoon": {
-        "winrate": 52
-      },
-      "Muhammad Ali": {
-        "winrate": 48
-      },
-      "Little Red Riding Hood": {
-        "winrate": 48
-      },
-      "Alice": {
-        "winrate": 62
-      },
-      "Achilles": {
-        "winrate": 38
-      },
-      "Yennenga": {
-        "winrate": 62
-      },
-      "Geralt of Rivia": {
-        "winrate": 53
-      },
-      "Daredevil": {
-        "winrate": 40
-      },
-      "Bullseye": {
-        "winrate": 58
-      },
-      "Dr. Sattler": {
-        "winrate": 40
-      },
-      "The Genie": {
-        "winrate": 52
-      },
-      "Ms. Marvel": {
-        "winrate": 65
-      },
-      "Black Panther": {
-        "winrate": null
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 58
-      },
-      "Tomoe Gozen": {
-        "winrate": 51
-      },
-      "Raptors": {
-        "winrate": 44
-      },
-      "Titania": {
-        "winrate": 68
-      },
-      "Pandora": {
-        "winrate": 34
-      },
-      "Golden Bat": {
-        "winrate": 50
-      },
-      "Bruce Lee": {
-        "winrate": 60
-      },
-      "Philippa": {
-        "winrate": 69
-      },
-      "Annie Christmas": {
-        "winrate": 22
-      },
-      "Chupacabra": {
-        "winrate": 48
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 50
-      },
-      "The Wayward Sisters": {
-        "winrate": 69
-      },
-      "George Washington": {
-        "winrate": 77
-      },
-      "Wyatt Earp": {
-        "winrate": 63
-      },
-      "Michelangelo": {
-        "winrate": null
-      },
-      "Rosie the Riveter": {
-        "winrate": 42
-      }
-    }
-  },
-  {
-    "id": 71,
-    "name": "Pandora",
-    "elo": 1580,
-    "image": "images/pandora.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 38
-      },
-      "Eredin": {
-        "winrate": 40
-      },
-      "Nikola Tesla": {
-        "winrate": 60
-      },
-      "Robin Hood": {
-        "winrate": 52
-      },
-      "Robert Muldoon": {
-        "winrate": 42
-      },
-      "Muhammad Ali": {
-        "winrate": 54
-      },
-      "Little Red Riding Hood": {
-        "winrate": 59
-      },
-      "Alice": {
-        "winrate": 51
-      },
-      "Achilles": {
-        "winrate": 42
-      },
-      "Yennenga": {
-        "winrate": 50
-      },
-      "Geralt of Rivia": {
-        "winrate": 37
-      },
-      "Daredevil": {
-        "winrate": 36
-      },
-      "Bullseye": {
-        "winrate": 67
-      },
-      "Dr. Sattler": {
-        "winrate": 39
-      },
-      "The Genie": {
-        "winrate": 39
-      },
-      "Ms. Marvel": {
-        "winrate": 58
-      },
-      "Black Panther": {
-        "winrate": 37
-      },
-      "Jill Trent": {
-        "winrate": 47
-      },
-      "Moon Knight": {
-        "winrate": 38
-      },
-      "Tomoe Gozen": {
-        "winrate": 50
-      },
-      "Raptors": {
-        "winrate": 66
-      },
-      "Titania": {
-        "winrate": 59
-      },
-      "The Wayward Sisters": {
-        "winrate": 60
-      },
-      "Golden Bat": {
-        "winrate": 62
-      },
-      "Bruce Lee": {
-        "winrate": 67
-      },
-      "Philippa": {
-        "winrate": 50
-      },
-      "Annie Christmas": {
-        "winrate": 50
-      },
-      "Chupacabra": {
-        "winrate": 52
-      },
-      "Leonardo": {
-        "winrate": null
-      },
-      "Dracula": {
-        "winrate": 50
-      },
-      "John Henry": {
-        "winrate": 66
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": 59
-      },
-      "Michelangelo": {
-        "winrate": 72
-      },
-      "Rosie the Riveter": {
-        "winrate": 60
-      }
-    }
-  },
-  {
-    "id": 72,
-    "name": "Chupacabra",
-    "elo": 1497,
-    "image": "images/chupacabra.webp",
-    "matchups": {
-      "Donatello": {
-        "winrate": 24
-      },
-      "Eredin": {
-        "winrate": 36
-      },
-      "Nikola Tesla": {
-        "winrate": 55
-      },
-      "Robin Hood": {
-        "winrate": 54
-      },
-      "Robert Muldoon": {
-        "winrate": 34
-      },
-      "Muhammad Ali": {
-        "winrate": 50
-      },
-      "Little Red Riding Hood": {
-        "winrate": 56
-      },
-      "Alice": {
-        "winrate": 50
-      },
-      "Achilles": {
-        "winrate": 30
-      },
-      "Yennenga": {
-        "winrate": 38
-      },
-      "Geralt of Rivia": {
-        "winrate": 36
-      },
-      "Daredevil": {
-        "winrate": 36
-      },
-      "Bullseye": {
-        "winrate": 66
-      },
-      "Dr. Sattler": {
-        "winrate": 34
-      },
-      "The Genie": {
-        "winrate": 48
-      },
-      "Ms. Marvel": {
-        "winrate": 65
-      },
-      "Black Panther": {
-        "winrate": 46
-      },
-      "Jill Trent": {
-        "winrate": 40
-      },
-      "Moon Knight": {
-        "winrate": 41
-      },
-      "Tomoe Gozen": {
-        "winrate": 50
-      },
-      "Raptors": {
-        "winrate": 51
-      },
-      "Titania": {
-        "winrate": 67
-      },
-      "Pandora": {
-        "winrate": 48
-      },
-      "Golden Bat": {
-        "winrate": 43
-      },
-      "Bruce Lee": {
-        "winrate": 50
-      },
-      "Philippa": {
-        "winrate": 42
-      },
-      "Annie Christmas": {
-        "winrate": 24
-      },
-      "John Henry": {
-        "winrate": 52
-      },
-      "Leonardo": {
-        "winrate": 50
-      },
-      "Dracula": {
-        "winrate": 32
-      },
-      "The Wayward Sisters": {
-        "winrate": 65
-      },
-      "George Washington": {
-        "winrate": null
-      },
-      "Wyatt Earp": {
-        "winrate": null
-      },
-      "Michelangelo": {
-        "winrate": 64
-      },
-      "Rosie the Riveter": {
-        "winrate": null
-      }
-    }
-  },
-  {
-    "id": 73,
-    "name": "Blackbeard",
-    "elo": 1935,
-    "image": "images/blackbeard.webp",
-    "matchups": {}
-  },
-  {
-    "id": 74,
-    "name": "Loki",
-    "elo": 1550,
-    "image": "images/loki.webp",
-    "matchups": {}
-  }
-]
+  ]
+}
