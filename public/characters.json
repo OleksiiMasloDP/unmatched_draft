@@ -3761,19 +3761,19 @@
     "image": "images/wyatt_earp.webp",
     "matchups": {
       "Alice": {
-        "winrate": 37
+        "winrate": 55
       },
       "Robin Hood": {
-        "winrate": 57
+        "winrate": 74
       },
       "Bruce Lee": {
-        "winrate": 40
+        "winrate": 38
       },
       "Robert Muldoon": {
-        "winrate": 51
+        "winrate": 63
       },
       "Raptors": {
-        "winrate": 56
+        "winrate": 70
       },
       "Little Red Riding Hood": {
         "winrate": 38
@@ -3785,25 +3785,25 @@
         "winrate": 25
       },
       "Daredevil": {
-        "winrate": 59
+        "winrate": 70
       },
       "Bullseye": {
         "winrate": 40
       },
       "Moon Knight": {
-        "winrate": 35
+        "winrate": 43
       },
       "Nikola Tesla": {
-        "winrate": 42
+        "winrate": 58
       },
       "Annie Christmas": {
-        "winrate": 36
+        "winrate": 41
       },
       "Golden Bat": {
-        "winrate": 50
+        "winrate": 46
       },
       "Tomoe Gozen": {
-        "winrate": 56
+        "winrate": 66
       },
       "Muhammad Ali": {
         "winrate": 37
@@ -3830,10 +3830,10 @@
         "winrate": null
       },
       "Leonardo": {
-        "winrate": null
+        "winrate": 74
       },
       "Michelangelo": {
-        "winrate": null
+        "winrate": 62
       },
       "Ms. Marvel": {
         "winrate": null
@@ -3848,7 +3848,7 @@
         "winrate": null
       },
       "Dracula": {
-        "winrate": null
+        "winrate": 74
       },
       "Dr. Sattler": {
         "winrate": null
@@ -3860,10 +3860,40 @@
         "winrate": null
       },
       "Philippa": {
-        "winrate": null
+        "winrate": 56
       },
       "Chupacabra": {
-        "winrate": null
+        "winrate": 67
+      },
+      "Houdini": {
+        "winrate": 56
+      },
+      "Ancient Leshen": {
+        "winrate": 68
+      },
+      "Loki": {
+        "winrate": 65
+      },
+      "Geralt": {
+        "winrate": 43
+      },
+      "Raphael": {
+        "winrate": 41
+      },
+      "Blackbeard": {
+        "winrate": 50
+      },
+      "Sindbad": {
+        "winrate": 37
+      },
+      "Yennefer & Triss": {
+        "winrate": 39
+      },
+      "Luke Cage": {
+        "winrate": 36
+      },
+      "She Hulk": {
+        "winrate": 35
       }
     }
   },

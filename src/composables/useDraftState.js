@@ -223,7 +223,8 @@ function calculateTeamWinrate(playerPicks, opponentPicks) {
   for (const p of playerPicks) {
     for (const o of opponentPicks) {
       if (p.matchups?.[o.name]) {
-        totalWinrate += p.matchups[o.name].winrate;
+        const currentWinrate = p.matchups[o.name].winrate;
+        totalWinrate += currentWinrate === null ? 50 : currentWinrate;
         count++;
       }
     }
