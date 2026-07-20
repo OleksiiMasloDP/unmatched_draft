@@ -144,6 +144,21 @@
             @click="selectCharacter(char)"
           >
             <img :src="char.image" :alt="char.name" loading="lazy" />
+            <div v-if="pickerReferenceChar" class="char-picker-info">
+              <span
+                class="char-picker-percent"
+                :class="
+                  char.refWinrate === null
+                    ? 'unknown'
+                    : getPercentClass(char.refWinrate)
+                "
+              >
+                {{ char.refWinrate === null ? "?" : char.refWinrate + "%" }}
+              </span>
+              <span class="char-picker-type">{{
+                t(`matchups.${getMatchupTypeByWinrate(char.refWinrate)}`)
+              }}</span>
+            </div>
           </div>
 
           <p v-if="!pickerFilteredCharacters.length" class="no-maps-text">
@@ -200,16 +215,41 @@ function selectCharacter(char) {
   closePicker();
 }
 
+// Персонаж, вже обраний у протилежному слоті — відносно нього
+// показуємо статистику і сортуємо список у попапі
+const pickerReferenceChar = computed(() => {
+  if (pickerTarget.value === "a") return charB.value;
+  if (pickerTarget.value === "b") return charA.value;
+  return null;
+});
+
 const pickerFilteredCharacters = computed(() => {
   const excludeId =
     pickerTarget.value === "a" ? charB.value?.id : charA.value?.id;
   const query = pickerSearch.value.toLowerCase().trim();
+  const reference = pickerReferenceChar.value;
 
-  return getAllCharacters().filter((c) => {
+  let list = getAllCharacters().filter((c) => {
     if (c.id === excludeId) return false;
     if (query && !c.name.toLowerCase().includes(query)) return false;
     return true;
   });
+
+  if (reference) {
+    list = list.map((c) => ({
+      ...c,
+      refWinrate: getWinrate(reference.name, c.name),
+    }));
+
+    list.sort((a, b) => {
+      if (a.refWinrate === null && b.refWinrate === null) return 0;
+      if (a.refWinrate === null) return 1;
+      if (b.refWinrate === null) return -1;
+      return b.refWinrate - a.refWinrate;
+    });
+  }
+
+  return list;
 });
 
 const winrateA = computed(() => {
@@ -281,6 +321,14 @@ const badMaps = computed(() => {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+.vs-col-heading {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .vs-slot {
@@ -531,13 +579,14 @@ const badMaps = computed(() => {
   padding: 16px;
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 8px;
 }
 
 .char-picker-item {
   cursor: pointer;
-  height: 70px;
+  position: relative;
+  height: 140px;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -556,5 +605,63 @@ const badMaps = computed(() => {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.char-picker-info {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.char-picker-percent {
+  width: 100%;
+  padding: 2px 0;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: center;
+  border-radius: 5px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.char-picker-type {
+  width: 100%;
+  padding: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+  border-radius: 4px;
+  background: rgb(15, 23, 42);
+  backdrop-filter: blur(8px);
+  color: #cbd5e1;
+}
+
+.char-picker-percent.green {
+  color: #4ade80;
+  border: 1px solid #22c55e;
+}
+.char-picker-percent.yellow {
+  color: #facc15;
+  border: 1px solid #eab308;
+}
+.char-picker-percent.orange {
+  color: #fb923c;
+  border: 1px solid #f97316;
+}
+.char-picker-percent.red {
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+.char-picker-percent.unknown {
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 </style>
