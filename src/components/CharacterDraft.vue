@@ -73,7 +73,7 @@
       v-if="canProceedToMaps"
       class="proceed-maps-btn-wrap mobile-proceed-wrap"
     >
-      <button class="btn-proceed-maps" @click="proceedToMaps">
+      <button class="btn-proceed-maps" @click="proceedToMapsEvent">
         {{ t("toMapsLabel") }}
       </button>
     </div>
@@ -81,7 +81,7 @@
 
   <div v-if="current" class="row g-2 g-md-3">
     <div v-for="char in filtered" :key="char.id" class="col-6 col-sm-4">
-      <div class="character" @click="pickCharacter(char)">
+      <div class="character" @click="pick(char)">
         <img :src="char.image" />
         <div class="percent" :class="getPercentClass(getPickPercent(char))">
           {{ getPickPercent(char) }}%
@@ -168,7 +168,7 @@
     </div>
 
     <div v-if="canProceedToMaps" class="proceed-maps-btn-wrap">
-      <button class="btn-proceed-maps" @click="proceedToMaps">
+      <button class="btn-proceed-maps" @click="proceedToMapsEvent">
         {{ t("toMapsLabel") }}
       </button>
     </div>
@@ -177,6 +177,7 @@
 
 <script setup>
 import { useDraftState } from "../composables/useDraftState";
+import { trackProceedToMaps } from "@/utils/gaAnalytics";
 
 const {
   t,
@@ -196,30 +197,9 @@ const {
   proceedToMaps,
 } = useDraftState();
 
-function pickCharacter(char) {
-  pick(char);
-
-  const isBanPhase = current.value.type === "ban";
-  const activePlayer = current.value.player;
-
-  if (typeof window.gtag === "function") {
-    if (isBanPhase) {
-      window.gtag("event", "hero_banned", {
-        character_name: char.name,
-        banned_by: activePlayer,
-      });
-    } else {
-      window.gtag("event", "hero_picked_total", { character_name: char.name });
-
-      if (activePlayer === "player") {
-        window.gtag("event", "hero_picked_user", { character_name: char.name });
-      } else if (activePlayer === "opponent") {
-        window.gtag("event", "hero_picked_opponent", {
-          character_name: char.name,
-        });
-      }
-    }
-  }
+function proceedToMapsEvent() {
+  trackProceedToMaps();
+  proceedToMaps();
 }
 </script>
 

@@ -26,6 +26,7 @@ import HeroMapGuide from "./components/HeroMapGuide.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
 import DraftPage from "./components/DraftPage.vue";
 import MatchupExplorer from "./components/MatchupExplorer.vue";
+import { trackPageView } from "@/utils/gaAnalytics";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
@@ -38,15 +39,10 @@ const screens = {
 
 const currentScreen = ref(localStorage.getItem("active_screen") || "main");
 watch(
-  currentScreen,
+  () => currentScreen.value,
   (newScreen) => {
     localStorage.setItem("active_screen", newScreen);
-    if (typeof window.gtag === "function") {
-      window.gtag("event", "page_view", {
-        page_title: `Screen: ${newScreen}`,
-        page_path: `/${newScreen}`,
-      });
-    }
+    trackPageView(newScreen);
   },
   { immediate: true },
 );

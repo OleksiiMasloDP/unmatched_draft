@@ -100,7 +100,7 @@
                 'clickable-post-draft': !current,
                 'post-banned': postBans.player.has(char.id),
               }"
-              @click="togglePostBanEvent('player', char.id)"
+              @click="togglePostBan('player', char.id)"
             >
               <img :src="char.image" />
               <div class="pick-name">
@@ -163,7 +163,7 @@
                 'clickable-post-draft': !current,
                 'post-banned': postBans.opponent.has(enemyChar.id),
               }"
-              @click="togglePostBanEvent('opponent', enemyChar.id)"
+              @click="togglePostBan('opponent', enemyChar.id)"
             >
               <img :src="enemyChar.image" />
               <div class="pick-name">
@@ -261,6 +261,7 @@ const {
   togglePostBan,
   getMatchupText,
   getWinrate,
+  getAllCharacters,
 } = useDraftState();
 
 let bsModalInstance = null;
@@ -285,25 +286,5 @@ function cancelReset() {
 function confirmReset() {
   resetAll();
   if (bsModalInstance) bsModalInstance.hide();
-}
-
-function togglePostBanEvent(team, charId) {
-  togglePostBan(team, charId);
-
-  const char = allCharacters.value.find((c) => c.id === charId);
-  if (!char) return;
-
-  const isNowBanned =
-    team === "player"
-      ? postBans.player.has(charId)
-      : postBans.opponent.has(charId);
-
-  if (isNowBanned && typeof window.gtag === "function") {
-    window.gtag("event", "hero_banned", {
-      character_name: char.name,
-      banned_by: "post_draft_click",
-      target_team: team,
-    });
-  }
 }
 </script>
