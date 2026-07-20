@@ -2,22 +2,28 @@
   <header class="app-header" :class="{ 'is-hidden': isHeaderHidden }">
     <div class="header-container">
       <div class="header-left">
-        <button class="burger-btn" @click="isMenuOpen = !isMenuOpen" :class="{ 'is-active': isMenuOpen }">
+        <button
+          class="burger-btn"
+          @click="isMenuOpen = !isMenuOpen"
+          :class="{ 'is-active': isMenuOpen }"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
-        
+
         <div class="logo-wrapper" @click="navigate('main')">
-          <span class="engine-title-text char-title-bold engine-title-desktop">UNMATCHED</span>
+          <span class="engine-title-text char-title-bold engine-title-desktop"
+            >UNMATCHED</span
+          >
           <span class="logo-accent">DRAFT</span>
         </div>
       </div>
 
       <div class="header-right">
         <div class="lang-switcher">
-          <button 
-            v-for="langOption in ['en', 'ua']" 
+          <button
+            v-for="langOption in ['en', 'ua']"
             :key="langOption"
             :class="['lang-btn', { active: lang === langOption }]"
             @click="changeLang(langOption)"
@@ -31,55 +37,86 @@
     <transition name="slide">
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
-          <li class="menu-section-title">{{ t('navigation') }}</li>
+          <li class="menu-section-title">{{ t("navigation") }}</li>
           <li>
             <button class="menu-item" @click="navigate('maps')">
-              <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
-                <line x1="9" y1="3" x2="9" y2="18"/>
-                <line x1="15" y1="6" x2="15" y2="21"/>
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                <line x1="9" y1="3" x2="9" y2="18" />
+                <line x1="15" y1="6" x2="15" y2="21" />
               </svg>
-              <span>{{ t('heroMapGuide') }}</span>
+              <span>{{ t("heroMapGuide") }}</span>
+            </button>
+          </li>
+          <li>
+            <button class="menu-item" @click="navigate('matchups')">
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="3" x2="12" y2="21" />
+                <line x1="6" y1="7" x2="18" y2="7" />
+                <path d="M6 7L3 15H9L6 7Z" />
+                <path d="M18 7L15 15H21L18 7Z" />
+              </svg>
+
+              <span>{{ t("matchupsPage") }}</span>
             </button>
           </li>
         </ul>
       </nav>
     </transition>
 
-    <div v-if="isMenuOpen" class="menu-overlay" @click="isMenuOpen = false"></div>
+    <div
+      v-if="isMenuOpen"
+      class="menu-overlay"
+      @click="isMenuOpen = false"
+    ></div>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps({
   lang: {
     type: String,
-    default: 'ua'
+    default: "ua",
   },
   t: {
     type: Function,
-    default: (key) => key
-  }
+    default: (key) => key,
+  },
 });
 
-const emit = defineEmits(['update:lang', 'navigate']);
+const emit = defineEmits(["update:lang", "navigate"]);
 const isMenuOpen = ref(false);
 
 const changeLang = (newLang) => {
-  emit('update:lang', newLang);
+  emit("update:lang", newLang);
 };
 
 const navigate = (screenName) => {
   isMenuOpen.value = false;
-  emit('navigate', screenName);
+  emit("navigate", screenName);
 };
 
 const isHeaderHidden = ref(false);
 
 function handleScroll() {
-  const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const currentScrollTop =
+    window.pageYOffset || document.documentElement.scrollTop;
 
   // Якщо ми на самому верху сторінки — хедер ЗАВЖДИ показується.
   // Якщо скролимо вниз (більше ніж на 50px від верху) — ховаємо його.
@@ -91,21 +128,23 @@ function handleScroll() {
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener("scroll", handleScroll, { passive: true });
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener("scroll", handleScroll);
 });
 </script>
 
 <style scoped>
-.app-header{
+.app-header {
   position: fixed; /* Хедер зафіксований, але ми керуємо його зміщенням */
   top: 0;
   left: 0;
   right: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease; /* Плавна анімація зникнення */
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease; /* Плавна анімація зникнення */
 
   width: 100%;
   padding: 12px 16px;
@@ -115,7 +154,6 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1100;
   user-select: none;
-
 }
 
 /* Клас, який ховає хедер, виштовхуючи його вгору за межі екрана */
@@ -175,9 +213,15 @@ onBeforeUnmount(() => {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.burger-btn.is-active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.burger-btn.is-active span:nth-child(2) { opacity: 0; }
-.burger-btn.is-active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.burger-btn.is-active span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.burger-btn.is-active span:nth-child(2) {
+  opacity: 0;
+}
+.burger-btn.is-active span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
 
 .burger-menu {
   position: absolute;
@@ -278,17 +322,27 @@ onBeforeUnmount(() => {
   box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3);
 }
 
-.slide-enter-active, .slide-leave-active { 
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.slide-enter-from, .slide-leave-to { 
-  transform: translateY(-10px); 
-  opacity: 0; 
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
 }
 
 @media (max-width: 1023px) {
-  .engine-title-desktop { font-size: 16px; }
-  .logo-accent { font-size: 16px; }
-  .burger-menu { left: 16px; right: 16px; width: auto; }
+  .engine-title-desktop {
+    font-size: 16px;
+  }
+  .logo-accent {
+    font-size: 16px;
+  }
+  .burger-menu {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
 }
 </style>

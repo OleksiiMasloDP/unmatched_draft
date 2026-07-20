@@ -547,6 +547,29 @@ export function useDraftState() {
     saveToStorage();
   }
 
+  // Для сторінки "Матчапи персонажів": повертає карти, де charAName грає
+  // краще за charBName (charA у favoredBy і/або charB у disfavoredBy),
+  // відсортовані від найкращих до найгірших.
+  function getBestMapsForMatchup(charAName, charBName) {
+    if (!charAName || !charBName) return [];
+
+    const scoreOnMap = (map, charName) => {
+      const favoredBy = map.favoredBy || [];
+      const disfavoredBy = map.disfavoredBy || [];
+      if (favoredBy.includes(charName)) return 1;
+      if (disfavoredBy.includes(charName)) return -1;
+      return 0;
+    };
+
+    return (maps.value || [])
+      .map((map) => ({
+        ...map,
+        matchupDiff: scoreOnMap(map, charAName) - scoreOnMap(map, charBName),
+      }))
+      .filter((map) => map.matchupDiff > 0)
+      .sort((a, b) => b.matchupDiff - a.matchupDiff);
+  }
+
   function selectMap(mapId) {
     selectedMapId.value = mapId;
     saveToStorage();
@@ -677,7 +700,9 @@ export function useDraftState() {
     getPercentClass,
     getMatchupText,
     getWinrate,
+    getMatchupTypeByWinrate,
     getMapGroups,
+    getBestMapsForMatchup,
     proceedToMaps,
     getAllCharacters,
     maps,

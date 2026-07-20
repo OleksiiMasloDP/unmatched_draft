@@ -51,6 +51,7 @@ export const translations = {
     filterByHeroes: "Filter by heroes",
     clearFilter: "Clear Filter",
     heroMapGuide: "Hero map guide",
+    matchupsPage: "Heroes matchups",
     charDisclaimerTitle: "Please Note",
     charDisclaimerText:
       "Statistics reflect the maximum potential of the characters. However, whether you can fully realize this potential in-game, or whether you choose to follow the program's recommendations and pick the suggested hero, is entirely a matter of your own personal skill.",
@@ -58,6 +59,9 @@ export const translations = {
     mapDisclaimerText:
       'Map suitability also heavily depends on the specific matchup. Note that a "Neutral" status often simply means there is not enough data for that hero on this map. Focus primarily on clear "Favored" or "Disfavored" indicators.',
     closeBtn: "Got it",
+    matchupsTitle: "Hero Matchups",
+    matchupsDesc:
+      "Select your hero and your opponent's hero to analyze their head-to-head win rate and find the best or worst maps for this specific duel.",
   },
   ua: {
     navigation: "Навігація",
@@ -111,6 +115,7 @@ export const translations = {
     filterByHeroes: "Фільтр за персонажами",
     clearFilter: "Скинути",
     heroMapGuide: "Гайд по мапам",
+    matchupsPage: "Матчапи героїв",
     charDisclaimerTitle: "Зверніть увагу",
     charDisclaimerText:
       "Статистика показує потенціал персонажів на їхньому максимумі. Проте, чи зможете ви реалізувати цей потенціал у грі, чи вирішите дослухатися до порад програми й обрати запропонованого героя — це вже питання виключно до вашої власної майстерності.",
@@ -118,5 +123,8 @@ export const translations = {
     mapDisclaimerText:
       "Придатність карти залежить і від конкретного матчапу. Також враховуйте, що статус «Нейтральна» у багатьох героїв означає брак даних для аналізу. Краще орієнтуйтеся на чіткі маркери «Підходить» або «Не підходить».",
     closeBtn: "Зрозуміло",
+    matchupsTitle: "Матчапи героїв",
+    matchupsDesc:
+      "Оберіть свого героя та героя суперника, щоб проаналізувати їхній вінрейт у дуелі, а також дізнатися, які карти ідеально підходять або не підходять для цього протистояння.",
   },
 };

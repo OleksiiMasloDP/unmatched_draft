@@ -25,6 +25,7 @@ import Header from "./components/Header.vue";
 import HeroMapGuide from "./components/HeroMapGuide.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
 import DraftPage from "./components/DraftPage.vue";
+import MatchupExplorer from "./components/MatchupExplorer.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
@@ -32,6 +33,7 @@ const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
 const screens = {
   main: DraftPage,
   maps: HeroMapGuide,
+  matchups: MatchupExplorer,
 };
 
 const currentScreen = ref(localStorage.getItem("active_screen") || "main");
