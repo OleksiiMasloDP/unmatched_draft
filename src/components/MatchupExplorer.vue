@@ -489,7 +489,7 @@ const badMaps = computed(() => {
 }
 
 .matchup-maps-title {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
