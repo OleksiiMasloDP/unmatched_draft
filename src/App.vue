@@ -42,7 +42,7 @@ watch(
   (newScreen) => {
     localStorage.setItem("active_screen", newScreen);
     if (typeof window.gtag === "function") {
-      window.gtag("config", "G-6BTH35KNGC", {
+      window.gtag("event", "page_view", {
         page_title: `Screen: ${newScreen}`,
         page_path: `/${newScreen}`,
       });
