@@ -40,6 +40,13 @@
             </div>
           </div>
         </template>
+
+        <div v-if="showNoData" class="analysis-group">
+          <div class="analysis-group-title none">
+            <span class="group-icon"></span>
+            {{ t("mapNoDataForSelection") }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -113,8 +120,11 @@ const analysisBlocks = computed(() =>
         ? block.heroes.filter((h) => props.heroesFilter.includes(h.name))
         : block.heroes,
     }))
-    // У компактному режимі ховаємо групи, де після фільтра нікого не лишилось
-    .filter((block) => !props.compact || block.heroes.length > 0),
+    .filter((block) => block.heroes.length > 0),
+);
+
+const showNoData = computed(
+  () => props.isPreview && analysisBlocks.value.length === 0,
 );
 
 function getMapPercentClass(rating) {
@@ -207,6 +217,17 @@ function getMapPercentClass(rating) {
 .analysis-group-title.bad::before {
   background-color: #f87171;
   box-shadow: 0 0 6px #ef4444;
+}
+
+.analysis-group-title.none {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.analysis-group-title.none::before {
+  background-color: #94a3b8;
+  box-shadow: 0 0 6px #64748b;
 }
 
 /* Компактний вигляд — тільки для сторінки матчапів */

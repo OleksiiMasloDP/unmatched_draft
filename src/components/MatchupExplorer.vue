@@ -80,11 +80,11 @@
     </div>
 
     <div v-if="charA && charB" class="matchup-maps-section">
-      <div class="matchup-maps-group">
+      <div v-if="goodMaps.length" class="matchup-maps-group">
         <h6 class="matchup-maps-title good">
           {{ t("mapSuitableFor") }} {{ charA.name }}
         </h6>
-        <div v-if="goodMaps.length" class="mini-maps-grid">
+        <div class="mini-maps-grid">
           <MapCard
             v-for="map in goodMaps"
             :key="map.id"
@@ -95,14 +95,13 @@
             compact
           />
         </div>
-        <p v-else class="no-maps-text">{{ t("matchupNoBetterMaps") }}</p>
       </div>
 
-      <div class="matchup-maps-group">
+      <div v-if="badMaps.length" class="matchup-maps-group">
         <h6 class="matchup-maps-title bad">
           {{ t("mapUnsuitableFor") }} {{ charA.name }}
         </h6>
-        <div v-if="badMaps.length" class="mini-maps-grid">
+        <div class="mini-maps-grid">
           <MapCard
             v-for="map in badMaps"
             :key="map.id"
@@ -113,11 +112,9 @@
             compact
           />
         </div>
-        <p v-else class="no-maps-text">{{ t("matchupNoWorseMaps") }}</p>
       </div>
     </div>
 
-    <!-- Попап вибору персонажа -->
     <div
       v-if="pickerOpen"
       class="char-picker-overlay"
@@ -130,7 +127,6 @@
             type="text"
             class="form-control form-control-sm search-field"
             :placeholder="t('searchPlaceholder')"
-            autofocus
           />
           <button class="char-picker-close" @click="closePicker">✕</button>
         </div>
@@ -144,7 +140,8 @@
             @click="selectCharacter(char)"
           >
             <img :src="char.image" :alt="char.name" loading="lazy" />
-            <div v-if="pickerReferenceChar" class="char-picker-info">
+            <div v-if="pickerReferenceChar" class="char-picker-name">
+              <span class="char-picker-versus">vs {{ char.name }}:</span>
               <span
                 class="char-picker-percent"
                 :class="
@@ -191,7 +188,7 @@ const charA = ref(null);
 const charB = ref(null);
 
 const pickerOpen = ref(false);
-const pickerTarget = ref(null); // 'a' | 'b'
+const pickerTarget = ref(null);
 const pickerSearch = ref("");
 
 function openPicker(target) {
@@ -485,11 +482,11 @@ const badMaps = computed(() => {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 6rem;
+  gap: 2rem;
 }
 
 .matchup-maps-title {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -523,6 +520,8 @@ const badMaps = computed(() => {
 .char-picker-overlay {
   position: fixed;
   inset: 0;
+  height: 100vh;
+  height: 100dvh;
   background: rgba(4, 6, 11, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -579,19 +578,45 @@ const badMaps = computed(() => {
   padding: 16px;
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(79, 124, 255, 0.6) rgba(15, 23, 42, 0.4);
+}
+
+.char-picker-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.char-picker-grid::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 8px;
+}
+
+.char-picker-grid::-webkit-scrollbar-thumb {
+  background: rgba(79, 124, 255, 0.6);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.char-picker-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 124, 255, 0.9);
+  background-clip: padding-box;
 }
 
 .char-picker-item {
   cursor: pointer;
-  position: relative;
-  height: 140px;
-  border-radius: 10px;
+  border-radius: 12px;
+  height: 110px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #121824;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #121824;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
 }
 
 .char-picker-item:hover {
@@ -607,61 +632,58 @@ const badMaps = computed(() => {
   display: block;
 }
 
-.char-picker-info {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
-  z-index: 2;
+.char-picker-name {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(7, 10, 18, 0.99) 85%,
+    rgba(11, 15, 25, 0.9)
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  padding: 6px 6px 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  gap: 3px;
+  flex-grow: 1;
+}
+
+.char-picker-versus {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .char-picker-percent {
-  width: 100%;
-  padding: 2px 0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
-  text-align: center;
-  border-radius: 5px;
-  background: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(8px);
 }
 
 .char-picker-type {
-  width: 100%;
-  padding: 2px;
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  text-align: center;
-  border-radius: 4px;
-  background: rgb(15, 23, 42);
-  backdrop-filter: blur(8px);
   color: #cbd5e1;
 }
 
 .char-picker-percent.green {
   color: #4ade80;
-  border: 1px solid #22c55e;
 }
 .char-picker-percent.yellow {
   color: #facc15;
-  border: 1px solid #eab308;
 }
 .char-picker-percent.orange {
   color: #fb923c;
-  border: 1px solid #f97316;
 }
 .char-picker-percent.red {
   color: #f87171;
-  border: 1px solid #ef4444;
 }
 .char-picker-percent.unknown {
   color: #94a3b8;
-  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 </style>

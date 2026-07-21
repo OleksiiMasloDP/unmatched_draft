@@ -50,7 +50,7 @@
         </div>
 
         <button
-          v-if="current && history.length > 0"
+          v-if="currentStep === 'characters' && history.length > 0"
           class="btn btn-primary btn-sm action-btn"
           @click="undo"
         >

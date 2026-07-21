@@ -179,15 +179,22 @@ function clearPreviewHeroes() {
 }
 
 .heroes-badge-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   gap: 8px;
   margin-top: 16px;
+}
+
+@media (min-width: 770px) {
+  .heroes-badge-grid {
+    grid-template-columns: repeat(auto-fill, 73.6px);
+  }
 }
 
 .hero-badge-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 4px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -204,8 +211,8 @@ function clearPreviewHeroes() {
 }
 
 .hero-img-wrapper {
-  width: 64px;
-  height: 64px;
+  width: 100%;
+  height: 100%;
   border-radius: 6px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.3);
