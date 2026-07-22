@@ -89,7 +89,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
-const props = defineProps({
+defineProps({
   lang: {
     type: String,
     default: "ua",
@@ -118,8 +118,6 @@ function handleScroll() {
   const currentScrollTop =
     window.pageYOffset || document.documentElement.scrollTop;
 
-  // Якщо ми на самому верху сторінки — хедер ЗАВЖДИ показується.
-  // Якщо скролимо вниз (більше ніж на 50px від верху) — ховаємо його.
   if (currentScrollTop > 50) {
     isHeaderHidden.value = true;
   } else {
@@ -138,13 +136,13 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .app-header {
-  position: fixed; /* Хедер зафіксований, але ми керуємо його зміщенням */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   transition:
     transform 0.3s ease,
-    opacity 0.3s ease; /* Плавна анімація зникнення */
+    opacity 0.3s ease;
 
   width: 100%;
   padding: 12px 16px;
@@ -156,11 +154,10 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 
-/* Клас, який ховає хедер, виштовхуючи його вгору за межі екрана */
 .app-header.is-hidden {
   transform: translateY(-100%);
   opacity: 0;
-  pointer-events: none; /* Щоб випадково не клікнути на прихований елемент */
+  pointer-events: none;
 }
 
 .header-container {
@@ -187,7 +184,7 @@ onBeforeUnmount(() => {
 .logo-accent {
   font-weight: 800;
   font-size: 18px;
-  background: linear-gradient(135deg, #4f7cff, #ff4f6d);
+  background: rgb(79, 124, 255);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
@@ -294,32 +291,32 @@ onBeforeUnmount(() => {
 
 .lang-switcher {
   display: flex;
-  background-color: rgba(30, 41, 59, 0.8);
+  background: rgba(15, 23, 42, 0.8);
   padding: 2px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .lang-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
-  padding: 4px 10px;
+  color: #64748b;
+  padding: 5px 12px;
   font-size: 11px;
   font-weight: 800;
   cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .lang-btn:hover {
-  color: #f1f5f9;
+  color: #cbd5e1;
 }
 
 .lang-btn.active {
-  background: linear-gradient(135deg, #4f7cff, #3b60d1);
+  background: #1e293b;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .slide-enter-active,
