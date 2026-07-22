@@ -3,6 +3,68 @@
     <h1 class="page-main-title">{{ t("matchupsTitle") }}</h1>
     <p class="page-subtitle">{{ t("matchupsDesc") }}</p>
 
+    <div class="generator-panel">
+      <div class="generator-actions">
+        <button class="btn-generate" @click="generateBalancedMatchup">
+          🎲 {{ t("matchupGenerateBtn") }}
+        </button>
+        <button class="btn-collection-toggle" @click="collectionToggle">
+          {{
+            showCollectionOptions
+              ? t("matchupHideCollection")
+              : t("matchupUseCollection")
+          }}
+        </button>
+      </div>
+
+      <p v-if="generatorNote" class="generator-note">{{ generatorNote }}</p>
+
+      <div v-if="showCollectionOptions" class="collection-panel">
+        <label class="collection-checkbox-row">
+          <input type="checkbox" v-model="useMyCollection" />
+          {{ t("matchupUseOnlyOwned") }}
+        </label>
+
+        <div class="collection-block">
+          <div class="collection-block-title">
+            {{ t("matchupOwnedSets") }}
+          </div>
+          <div class="collection-sets-list">
+            <label
+              v-for="setName in allMapSets"
+              :key="setName"
+              class="collection-set-item"
+            >
+              <input
+                type="checkbox"
+                :checked="ownedMapSets.includes(setName)"
+                @change="toggleOwnedMapSet(setName)"
+              />
+              {{ setName }}
+            </label>
+          </div>
+        </div>
+
+        <div class="collection-block">
+          <div class="collection-block-title">
+            {{ t("matchupOwnedCharacters") }}
+          </div>
+          <div class="collection-chars-grid scroll">
+            <div
+              v-for="char in getAllCharacters()"
+              :key="char.id"
+              class="collection-char-item"
+              :class="{ 'is-owned': ownedCharIds.includes(char.id) }"
+              :title="char.name"
+              @click="toggleOwnedChar(char.id)"
+            >
+              <img :src="char.image" :alt="char.name" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="vs-picker">
       <div class="vs-col">
         <div
@@ -31,7 +93,9 @@
               >
                 {{ winrateA === null ? "?" : winrateA + "%" }}
               </span>
-              <span class="vs-slot-type">{{ matchupTypeTextA }}</span>
+              <span class="vs-slot-type" v-if="winrateA !== null">{{
+                matchupTypeTextA
+              }}</span>
             </div>
           </template>
           <template v-else>
@@ -69,7 +133,9 @@
               >
                 {{ winrateB === null ? "?" : winrateB + "%" }}
               </span>
-              <span class="vs-slot-type">{{ matchupTypeTextB }}</span>
+              <span class="vs-slot-type" v-if="winrateB !== null">{{
+                matchupTypeTextB
+              }}</span>
             </div>
           </template>
           <template v-else>
@@ -80,6 +146,24 @@
     </div>
 
     <div v-if="charA && charB" class="matchup-maps-section">
+      <div class="matchup-maps-group">
+        <h6 class="matchup-maps-title balanced">
+          {{ t("matchupBalancedMaps") }}
+        </h6>
+        <div v-if="balancedMaps.length" class="mini-maps-grid">
+          <MapCard
+            v-for="map in balancedMaps"
+            :key="map.id"
+            :map="map"
+            :categories="['good', 'neutral', 'bad']"
+            :heroes-filter="[charA.name, charB.name]"
+            :is-preview="true"
+            compact
+          />
+        </div>
+        <p v-else class="no-maps-text">{{ t("matchupNoBalancedMaps") }}</p>
+      </div>
+
       <div v-if="goodMaps.length" class="matchup-maps-group">
         <h6 class="matchup-maps-title good">
           {{ t("mapSuitableFor") }} {{ charA.name }}
@@ -131,7 +215,7 @@
           <button class="char-picker-close" @click="closePicker">✕</button>
         </div>
 
-        <div class="char-picker-grid">
+        <div class="char-picker-grid scroll">
           <div
             v-for="char in pickerFilteredCharacters"
             :key="char.id"
@@ -152,7 +236,7 @@
               >
                 {{ char.refWinrate === null ? "?" : char.refWinrate + "%" }}
               </span>
-              <span class="char-picker-type">{{
+              <span class="char-picker-type" v-if="char.refWinrate !== null">{{
                 t(`matchups.${getMatchupTypeByWinrate(char.refWinrate)}`)
               }}</span>
             </div>
@@ -182,6 +266,7 @@ const {
   getBestMapsForMatchup,
   player,
   opponent,
+  maps,
 } = useDraftState();
 
 const charA = ref(null);
@@ -190,6 +275,122 @@ const charB = ref(null);
 const pickerOpen = ref(false);
 const pickerTarget = ref(null);
 const pickerSearch = ref("");
+
+const showCollectionOptions = ref(false);
+const useMyCollection = ref(false);
+const ownedCharIds = ref([]);
+const ownedMapSets = ref([]);
+const generatorNote = ref("");
+
+const allMapSets = computed(() => {
+  const sets = new Set();
+  (maps.value || []).forEach((m) => {
+    if (m.set) sets.add(m.set);
+  });
+  return [...sets].sort();
+});
+
+function toggleOwnedChar(id) {
+  const idx = ownedCharIds.value.indexOf(id);
+  if (idx === -1) ownedCharIds.value.push(id);
+  else ownedCharIds.value.splice(idx, 1);
+}
+
+// Ставимо/знімаємо галочку набору карт — і разом з нею вибираємо/знімаємо
+// всіх персонажів цього ж сету (char.set === setName)
+function toggleOwnedMapSet(setName) {
+  const idx = ownedMapSets.value.indexOf(setName);
+  const charsInSet = getAllCharacters().filter((c) => c.set === setName);
+
+  if (idx === -1) {
+    ownedMapSets.value.push(setName);
+    charsInSet.forEach((c) => {
+      if (!ownedCharIds.value.includes(c.id)) {
+        ownedCharIds.value.push(c.id);
+      }
+    });
+  } else {
+    ownedMapSets.value.splice(idx, 1);
+    const idsInSet = charsInSet.map((c) => c.id);
+    ownedCharIds.value = ownedCharIds.value.filter(
+      (id) => !idsInSet.includes(id),
+    );
+  }
+}
+
+function scoreOnMapFor(map, name) {
+  const favoredBy = map.favoredBy || [];
+  const disfavoredBy = map.disfavoredBy || [];
+  if (favoredBy.includes(name)) return 1;
+  if (disfavoredBy.includes(name)) return -1;
+  return 0;
+}
+
+// Мапи, рівні для обох: обом підходить (найкраще), обом нейтрально
+// (середнє), обом не підходить (гірше). Змішані варіанти (один за, інший
+// проти) — це вже не рівний матчап на карті, тому вони не пропонуються.
+function pickBalancedMaps(nameA, nameB, pool) {
+  const good = [];
+  const neutral = [];
+  const bad = [];
+
+  for (const map of pool) {
+    const sa = scoreOnMapFor(map, nameA);
+    const sb = scoreOnMapFor(map, nameB);
+    if (sa === 1 && sb === 1) good.push(map);
+    else if (sa === 0 && sb === 0) neutral.push(map);
+    else if (sa === -1 && sb === -1) bad.push(map);
+  }
+
+  if (good.length) return good;
+  if (neutral.length) return neutral;
+  return bad;
+}
+
+function generateBalancedMatchup() {
+  generatorNote.value = "";
+  const allChars = getAllCharacters();
+
+  let charPool = allChars;
+  if (useMyCollection.value && ownedCharIds.value.length >= 2) {
+    charPool = allChars.filter((c) => ownedCharIds.value.includes(c.id));
+  }
+
+  const pairs = [];
+  for (let i = 0; i < charPool.length; i++) {
+    for (let j = i + 1; j < charPool.length; j++) {
+      const a = charPool[i];
+      const b = charPool[j];
+      const wr = getWinrate(a.name, b.name);
+      if (wr !== null) {
+        pairs.push({ a, b, diff: Math.abs(wr - 50) });
+      }
+    }
+  }
+
+  if (!pairs.length) {
+    generatorNote.value = t("matchupGenNoData");
+    return;
+  }
+
+  // Шукаємо максимально рівну пару, поступово розширюючи "коридор",
+  // якщо у вузькому діапазоні нічого не знайшлось
+  const bands = [3, 5, 8, 12, 20, 100];
+  let candidates = [];
+  for (const band of bands) {
+    candidates = pairs.filter((p) => p.diff <= band);
+    if (candidates.length) break;
+  }
+
+  const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+
+  charA.value = chosen.a;
+  charB.value = chosen.b;
+
+  if (!balancedMaps.value.length) {
+    generatorNote.value = t("matchupGenNoMap");
+  }
+}
 
 function openPicker(target) {
   pickerTarget.value = target;
@@ -266,17 +467,41 @@ const matchupTypeTextB = computed(() =>
   t(`matchups.${getMatchupTypeByWinrate(winrateB.value)}`),
 );
 
+// Мапи, рівні для обох обраних персонажів (з урахуванням обраних наборів,
+// якщо увімкнено "лише мої набори")
+const balancedMaps = computed(() => {
+  if (!charA.value || !charB.value) return [];
+  let mapPool = maps.value || [];
+  if (useMyCollection.value && ownedMapSets.value.length) {
+    mapPool = mapPool.filter((m) => ownedMapSets.value.includes(m.set));
+  }
+  return pickBalancedMaps(charA.value.name, charB.value.name, mapPool);
+});
+
 // Карти, де перевага у charA (favoredBy для нього і/або disfavoredBy для charB)
 const goodMaps = computed(() => {
   if (!charA.value || !charB.value) return [];
-  return getBestMapsForMatchup(charA.value.name, charB.value.name);
+  let result = getBestMapsForMatchup(charA.value.name, charB.value.name);
+  if (useMyCollection.value && ownedMapSets.value.length) {
+    result = result.filter((m) => ownedMapSets.value.includes(m.set));
+  }
+  return result;
 });
 
 // Карти, де перевага у charB — тобто погані для charA
 const badMaps = computed(() => {
   if (!charA.value || !charB.value) return [];
-  return getBestMapsForMatchup(charB.value.name, charA.value.name);
+  let result = getBestMapsForMatchup(charB.value.name, charA.value.name);
+  if (useMyCollection.value && ownedMapSets.value.length) {
+    result = result.filter((m) => ownedMapSets.value.includes(m.set));
+  }
+  return result;
 });
+
+function collectionToggle() {
+  showCollectionOptions.value = !showCollectionOptions.value;
+  useMyCollection.value = showCollectionOptions.value;
+}
 </script>
 
 <style scoped>
@@ -302,7 +527,6 @@ const badMaps = computed(() => {
   opacity: 0.8;
   font-size: 14px;
   margin-bottom: 2rem;
-  max-width: 640px;
 }
 
 .vs-picker {
@@ -482,7 +706,7 @@ const badMaps = computed(() => {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 6rem;
 }
 
 .matchup-maps-title {
@@ -503,6 +727,181 @@ const badMaps = computed(() => {
 .matchup-maps-title.bad {
   color: #f87171;
   border-color: #ef4444;
+}
+
+.matchup-maps-title.balanced {
+  color: #38bdf8;
+  border-color: #0ea5e9;
+}
+
+.generator-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.generator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-generate {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 800;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  background: rgb(79, 124, 255);
+  box-shadow: 0 6px 18px rgba(79, 124, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-generate:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(79, 124, 255, 0.5);
+}
+
+.btn-collection-toggle {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-weight: 700;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+
+.btn-collection-toggle:hover {
+  border-color: rgba(79, 124, 255, 0.6);
+  color: white;
+}
+
+.generator-note {
+  margin: 12px 0 0;
+  color: #facc15;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.collection-panel {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.collection-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  cursor: pointer;
+}
+
+.collection-checkbox-row input[type="checkbox"],
+.collection-set-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(15, 23, 42, 0.6);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.collection-checkbox-row input[type="checkbox"]:hover,
+.collection-set-item input[type="checkbox"]:hover {
+  border-color: rgba(79, 124, 255, 0.7);
+}
+
+.collection-checkbox-row input[type="checkbox"]:checked,
+.collection-set-item input[type="checkbox"]:checked {
+  background: #4f7cff;
+  border-color: transparent;
+}
+
+.collection-checkbox-row input[type="checkbox"]:checked::after,
+.collection-set-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.collection-block-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.collection-chars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.collection-char-item {
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.collection-char-item.is-owned {
+  opacity: 1;
+  border-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+}
+
+.collection-char-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.collection-sets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.collection-set-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
 }
 
 .mini-maps-grid {
@@ -582,27 +981,6 @@ const badMaps = computed(() => {
   gap: 10px;
   scrollbar-width: thin;
   scrollbar-color: rgba(79, 124, 255, 0.6) rgba(15, 23, 42, 0.4);
-}
-
-.char-picker-grid::-webkit-scrollbar {
-  width: 8px;
-}
-
-.char-picker-grid::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
-  border-radius: 8px;
-}
-
-.char-picker-grid::-webkit-scrollbar-thumb {
-  background: rgba(79, 124, 255, 0.6);
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.char-picker-grid::-webkit-scrollbar-thumb:hover {
-  background: rgba(79, 124, 255, 0.9);
-  background-clip: padding-box;
 }
 
 .char-picker-item {

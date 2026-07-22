@@ -1328,7 +1328,7 @@
   {
     "id": 29,
     "name": "Yukon 1900",
-    "set": "N/A",
+    "set": null,
     "image": "maps/yukon_1900.webp",
     "favoredBy": ["Yennenga", "Wyatt Earp", "Robert Muldoon", "Muhammad Ali"],
     "neutralTo": [

@@ -63,6 +63,12 @@ export const translations = {
     matchupsTitle: "Hero Matchups",
     matchupsDesc:
       "Select your hero and your opponent's hero to analyze their head-to-head win rate and find the best or worst maps for this specific duel.",
+    matchupGenerateBtn: "Generate Balanced Matchup",
+    matchupHideCollection: "Hide my collection",
+    matchupUseOnlyOwned: "Use only my boxes",
+    matchupOwnedCharacters: "Available fighters",
+    matchupOwnedSets: "Available sets",
+    matchupUseCollection: "Use my collection",
   },
   ua: {
     navigation: "Навігація",
@@ -128,5 +134,11 @@ export const translations = {
     matchupsTitle: "Матчапи героїв",
     matchupsDesc:
       "Оберіть свого героя та героя суперника, щоб проаналізувати їхній вінрейт у дуелі, а також дізнатися, які карти ідеально підходять або не підходять для цього протистояння.",
+    matchupGenerateBtn: "Згенерувати рівний матчап",
+    matchupHideCollection: "Сховати мою колекцію",
+    matchupUseOnlyOwned: "Враховувати лише мої коробки",
+    matchupOwnedCharacters: "Персонажі в наявності",
+    matchupOwnedSets: "Сети в наявності",
+    matchupUseCollection: "Враховувати мою колекцію",
   },
 };
