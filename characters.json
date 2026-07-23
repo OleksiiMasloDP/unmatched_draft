@@ -4,445 +4,519 @@
       "id": 1,
       "name": "Sinbad",
       "elo": 1740,
-      "image": "images/sindbad.webp"
+      "image": "images/sindbad.webp",
+      "set": "Battle of Legends, Volume One"
     },
     {
       "id": 2,
       "name": "Medusa",
       "elo": 1960,
-      "image": "images/medusa.webp"
+      "image": "images/medusa.webp",
+      "set": "Battle of Legends, Volume One"
     },
     {
       "id": 3,
       "name": "Alice",
       "elo": 1520,
-      "image": "images/alice.webp"
+      "image": "images/alice.webp",
+      "set": "Battle of Legends, Volume One"
     },
     {
       "id": 4,
       "name": "King Arthur",
       "elo": 1235,
-      "image": "images/arthur.webp"
+      "image": "images/arthur.webp",
+      "set": "Battle of Legends, Volume One"
     },
     {
       "id": 5,
       "name": "Robin Hood",
       "elo": 1342,
-      "image": "images/robin_hood.webp"
+      "image": "images/robin_hood.webp",
+      "set": "Robin Hood vs. Bigfoot"
     },
     {
       "id": 6,
       "name": "Bigfoot",
       "elo": 1872,
-      "image": "images/bigfoot.webp"
+      "image": "images/bigfoot.webp",
+      "set": "Robin Hood vs. Bigfoot"
     },
     {
       "id": 7,
       "name": "Bruce Lee",
       "elo": 1474,
-      "image": "images/bruce_lee.webp"
+      "image": "images/bruce_lee.webp",
+      "set": ["Bruce Lee (Fighter Pack)", "Muhammad Ali vs Bruce Lee"]
     },
     {
       "id": 8,
       "name": "Robert Muldoon",
       "elo": 1659,
-      "image": "images/ingen.webp"
+      "image": "images/ingen.webp",
+      "set": "Jurassic Park - Ingen vs. Raptors"
     },
     {
       "id": 9,
       "name": "Raptors",
       "elo": 1636,
-      "image": "images/raptors.webp"
+      "image": "images/raptors.webp",
+      "set": "Jurassic Park - Ingen vs. Raptors"
     },
     {
       "id": 10,
       "name": "Sherlock Holmes",
       "elo": 1988,
-      "image": "images/sherlock.webp"
+      "image": "images/sherlock.webp",
+      "set": "Cobble & Fog"
     },
     {
       "id": 11,
       "name": "Dr. Jekyll & Mr. Hyde",
       "elo": 1164,
-      "image": "images/jekyll_hyde.webp"
+      "image": "images/jekyll_hyde.webp",
+      "set": "Cobble & Fog"
     },
     {
       "id": 12,
       "name": "Invisible Man",
       "elo": 1192,
-      "image": "images/invisible_man.webp"
+      "image": "images/invisible_man.webp",
+      "set": "Cobble & Fog"
     },
     {
       "id": 13,
       "name": "Dracula",
       "elo": 1531,
-      "image": "images/dracula.webp"
+      "image": "images/dracula.webp",
+      "set": "Cobble & Fog"
     },
     {
       "id": 14,
       "name": "Buffy",
       "elo": 1220,
-      "image": "images/buffy.webp"
+      "image": "images/buffy.webp",
+      "set": "Buffy the Vampire Slayer"
     },
     {
       "id": 15,
       "name": "Angel",
       "elo": 1040,
-      "image": "images/angel.webp"
+      "image": "images/angel.webp",
+      "set": "Buffy the Vampire Slayer"
     },
     {
       "id": 16,
       "name": "Spike",
       "elo": 1000,
-      "image": "images/spike.webp"
+      "image": "images/spike.webp",
+      "set": "Buffy the Vampire Slayer"
     },
     {
       "id": 17,
       "name": "Willow",
       "elo": 1080,
-      "image": "images/willow.webp"
+      "image": "images/willow.webp",
+      "set": "Buffy the Vampire Slayer"
     },
     {
       "id": 18,
       "name": "Little Red Riding Hood",
       "elo": 1729,
-      "image": "images/little_red.webp"
+      "image": "images/little_red.webp",
+      "set": "Little Red Riding Hood vs. Beowulf"
     },
     {
       "id": 19,
       "name": "Beowulf",
       "elo": 1450,
-      "image": "images/beowulf.webp"
+      "image": "images/beowulf.webp",
+      "set": "Little Red Riding Hood vs. Beowulf"
     },
     {
       "id": 20,
       "name": "Deadpool",
       "elo": 1305,
-      "image": "images/deadpool.webp"
+      "image": "images/deadpool.webp",
+      "set": "Deadpool (Fighter Pack)"
     },
     {
       "id": 21,
       "name": "Sun Wukong",
       "elo": 1910,
-      "image": "images/sun_wukong.webp"
+      "image": "images/sun_wukong.webp",
+      "set": "Deadpool (Fighter Pack)"
     },
     {
       "id": 22,
       "name": "Yennenga",
       "elo": 1822,
-      "image": "images/yennenga.webp"
+      "image": "images/yennenga.webp",
+      "set": "Battle of Legends, Volume Two"
     },
     {
       "id": 23,
       "name": "Achilles",
       "elo": 1835,
-      "image": "images/achilles.webp"
+      "image": "images/achilles.webp",
+      "set": "Battle of Legends, Volume Two"
     },
     {
       "id": 24,
       "name": "Bloody Mary",
       "elo": 1319,
-      "image": "images/bloody_mary.webp"
+      "image": "images/bloody_mary.webp",
+      "set": "Battle of Legends, Volume Two"
     },
     {
       "id": 25,
       "name": "Daredevil",
       "elo": 1648,
-      "image": "images/daredevil.webp"
+      "image": "images/daredevil.webp",
+      "set": "Hell's Kitchen"
     },
     {
       "id": 26,
       "name": "Elektra",
       "elo": 2000,
-      "image": "images/elektra.webp"
+      "image": "images/elektra.webp",
+      "set": "Hell's Kitchen"
     },
     {
       "id": 27,
       "name": "Bullseye",
       "elo": 1412,
-      "image": "images/bullseye.webp"
+      "image": "images/bullseye.webp",
+      "set": "Hell's Kitchen"
     },
     {
       "id": 28,
       "name": "Luke Cage",
       "elo": 1775,
-      "image": "images/luke_cage.webp"
+      "image": "images/luke_cage.webp",
+      "set": "Redemption Row"
     },
     {
       "id": 29,
       "name": "Ghost Rider",
       "elo": 1354,
-      "image": "images/ghost_rider.webp"
+      "image": "images/ghost_rider.webp",
+      "set": "Redemption Row"
     },
     {
       "id": 30,
       "name": "Moon Knight",
       "elo": 1682,
-      "image": "images/moon_knight.webp"
+      "image": "images/moon_knight.webp",
+      "set": "Redemption Row"
     },
     {
       "id": 31,
       "name": "Dr. Sattler",
       "elo": 1378,
-      "image": "images/dr_sattler.webp"
+      "image": "images/dr_sattler.webp",
+      "set": "Jurassic Park - Sattler vs. T-Rex"
     },
     {
       "id": 32,
       "name": "T-Rex",
       "elo": 1706,
-      "image": "images/trex.webp"
+      "image": "images/trex.webp",
+      "set": "Jurassic Park - Sattler vs. T-Rex"
     },
     {
       "id": 33,
       "name": "Harry Houdini",
       "elo": 1885,
-      "image": "images/houdini.webp"
+      "image": "images/houdini.webp",
+      "set": "Houdini vs. The Genie"
     },
     {
       "id": 34,
       "name": "The Genie",
       "elo": 1603,
-      "image": "images/genie.webp"
+      "image": "images/genie.webp",
+      "set": "Houdini vs. The Genie"
     },
     {
       "id": 35,
       "name": "Ms. Marvel",
       "elo": 1264,
-      "image": "images/ms_marvel.webp"
+      "image": "images/ms_marvel.webp",
+      "set": "Teen Spirit"
     },
     {
       "id": 36,
       "name": "Squirrel Girl",
       "elo": 1120,
-      "image": "images/squirrel_girl.webp"
+      "image": "images/squirrel_girl.webp",
+      "set": "Teen Spirit"
     },
     {
       "id": 37,
       "name": "Cloak & Dagger",
       "elo": 1250,
-      "image": "images/cloak_dagger.webp"
+      "image": "images/cloak_dagger.webp",
+      "set": "Teen Spirit"
     },
     {
       "id": 38,
       "name": "Black Widow",
       "elo": 1450,
-      "image": "images/black_widow.webp"
+      "image": "images/black_widow.webp",
+      "set": "For King and Country"
     },
     {
       "id": 39,
       "name": "Black Panther",
       "elo": 1425,
-      "image": "images/black_panther.webp"
+      "image": "images/black_panther.webp",
+      "set": "For King and Country"
     },
     {
       "id": 40,
       "name": "Winter Soldier",
       "elo": 1389,
-      "image": "images/winter_soldier.webp"
+      "image": "images/winter_soldier.webp",
+      "set": "For King and Country"
     },
     {
       "id": 41,
       "name": "Nikola Tesla",
       "elo": 1786,
-      "image": "images/nikola_tesla.webp"
+      "image": "images/nikola_tesla.webp",
+      "set": "Adventures: Tales to Amaze"
     },
     {
       "id": 42,
       "name": "Annie Christmas",
       "elo": 1568,
-      "image": "images/annie_christmas.webp"
+      "image": "images/annie_christmas.webp",
+      "set": "Adventures: Tales to Amaze"
     },
     {
       "id": 43,
       "name": "Golden Bat",
       "elo": 1923,
-      "image": "images/golden_bat.webp"
+      "image": "images/golden_bat.webp",
+      "set": "Adventures: Tales to Amaze"
     },
     {
       "id": 44,
       "name": "Jill Trent",
       "elo": 1798,
-      "image": "images/jill_trent.webp"
+      "image": "images/jill_trent.webp",
+      "set": "Adventures: Tales to Amaze"
     },
     {
       "id": 45,
       "name": "Spider-Man",
       "elo": 1206,
-      "image": "images/spiderman.webp"
+      "image": "images/spiderman.webp",
+      "set": "Brains and Brawn"
     },
     {
       "id": 46,
       "name": "Doctor Strange",
       "elo": 1974,
-      "image": "images/doctor_strange.webp"
+      "image": "images/doctor_strange.webp",
+      "set": "Brains and Brawn"
     },
     {
       "id": 47,
       "name": "She-Hulk",
       "elo": 1810,
-      "image": "images/she_hulk.webp"
+      "image": "images/she_hulk.webp",
+      "set": "Brains and Brawn"
     },
     {
       "id": 48,
       "name": "Oda Nobunaga",
       "elo": 1178,
-      "image": "images/oda.webp"
+      "image": "images/oda.webp",
+      "set": "Sun's Origin"
     },
     {
       "id": 49,
       "name": "Tomoe Gozen",
       "elo": 1718,
-      "image": "images/tomoe.webp"
+      "image": "images/tomoe.webp",
+      "set": "Sun's Origin"
     },
     {
       "id": 50,
       "name": "William Shakespeare",
       "elo": 1331,
-      "image": "images/shakespeare.webp"
+      "image": "images/shakespeare.webp",
+      "set": "Slings and Arrows"
     },
     {
       "id": 51,
       "name": "Hamlet",
       "elo": 1150,
-      "image": "images/hamlet.webp"
+      "image": "images/hamlet.webp",
+      "set": "Slings and Arrows"
     },
     {
       "id": 52,
       "name": "The Wayward Sisters",
       "elo": 1439,
-      "image": "images/wayward_sisters.webp"
+      "image": "images/wayward_sisters.webp",
+      "set": "Slings and Arrows"
     },
     {
       "id": 53,
       "name": "Titania",
       "elo": 1591,
-      "image": "images/titania.webp"
+      "image": "images/titania.webp",
+      "set": "Slings and Arrows"
     },
     {
       "id": 54,
       "name": "Muhammad Ali",
       "elo": 1292,
-      "image": "images/ali.webp"
+      "image": "images/ali.webp",
+      "set": "Muhammad Ali vs Bruce Lee"
     },
     {
       "id": 55,
       "name": "Geralt of Rivia",
       "elo": 1508,
-      "image": "images/geralt.webp"
+      "image": "images/geralt.webp",
+      "set": "The Witcher - Steel & Silver"
     },
     {
       "id": 56,
       "name": "Ciri",
       "elo": 1948,
-      "image": "images/ciri.webp"
+      "image": "images/ciri.webp",
+      "set": "The Witcher - Steel & Silver"
     },
     {
       "id": 57,
       "name": "Leshen",
       "elo": 1695,
-      "image": "images/leshen.webp"
+      "image": "images/leshen.webp",
+      "set": "The Witcher - Steel & Silver"
     },
     {
       "id": 58,
       "name": "Yennefer & Triss",
       "elo": 1898,
-      "image": "images/yennefer_triss.webp"
+      "image": "images/yennefer_triss.webp",
+      "set": "The Witcher - Realms Fall"
     },
     {
       "id": 59,
       "name": "Eredin",
       "elo": 1860,
-      "image": "images/eredin.webp"
+      "image": "images/eredin.webp",
+      "set": "The Witcher - Realms Fall"
     },
     {
       "id": 60,
       "name": "Philippa",
       "elo": 1366,
-      "image": "images/philippa.webp"
+      "image": "images/philippa.webp",
+      "set": "The Witcher - Realms Fall"
     },
     {
       "id": 61,
       "name": "Leonardo",
       "elo": 1462,
-      "image": "images/leonardo.webp"
+      "image": "images/leonardo.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 62,
       "name": "Donatello",
       "elo": 1742,
-      "image": "images/donatello.webp"
+      "image": "images/donatello.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 63,
       "name": "Raphael",
       "elo": 1848,
-      "image": "images/raphael.webp"
+      "image": "images/raphael.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 64,
       "name": "Michelangelo",
       "elo": 1400,
-      "image": "images/michelangelo.webp"
+      "image": "images/michelangelo.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 65,
       "name": "Shredder",
       "elo": 1764,
-      "image": "images/shredder.webp"
+      "image": "images/shredder.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 66,
       "name": "Krang",
       "elo": 1614,
-      "image": "images/krang.webp"
+      "image": "images/krang.webp",
+      "set": "Teenage Mutant Ninja Turtles"
     },
     {
       "id": 67,
       "name": "George Washington",
       "elo": 1585,
-      "image": "images/george_washington.webp"
+      "image": "images/george_washington.webp",
+      "set": "Stars & Stripes"
     },
     {
       "id": 68,
       "name": "Wyatt Earp",
       "elo": 1555,
-      "image": "images/wyatt_earp.webp"
+      "image": "images/wyatt_earp.webp",
+      "set": "Stars & Stripes"
     },
     {
       "id": 69,
       "name": "Rosie the Riveter",
       "elo": 1485,
-      "image": "images/rosie.webp"
+      "image": "images/rosie.webp",
+      "set": "Stars & Stripes"
     },
     {
       "id": 70,
       "name": "John Henry",
       "elo": 1752,
-      "image": "images/john_henry.webp"
+      "image": "images/john_henry.webp",
+      "set": "Stars & Stripes"
     },
     {
       "id": 71,
       "name": "Pandora",
       "elo": 1580,
-      "image": "images/pandora.webp"
+      "image": "images/pandora.webp",
+      "set": "Battle of Legends, Volume Three"
     },
     {
       "id": 72,
       "name": "Chupacabra",
       "elo": 1497,
-      "image": "images/chupacabra.webp"
+      "image": "images/chupacabra.webp",
+      "set": "Battle of Legends, Volume Three"
     },
     {
       "id": 73,
       "name": "Blackbeard",
       "elo": 1935,
-      "image": "images/blackbeard.webp"
+      "image": "images/blackbeard.webp",
+      "set": "Battle of Legends, Volume Three"
     },
     {
       "id": 74,
       "name": "Loki",
       "elo": 1550,
-      "image": "images/loki.webp"
+      "image": "images/loki.webp",
+      "set": "Battle of Legends, Volume Three"
     }
   ],
   "matchups": [
