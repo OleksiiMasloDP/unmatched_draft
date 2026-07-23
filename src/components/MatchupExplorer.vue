@@ -20,10 +20,16 @@
       <p v-if="generatorNote" class="generator-note">{{ generatorNote }}</p>
 
       <div v-if="showCollectionOptions" class="collection-panel">
-        <label class="collection-checkbox-row">
-          <input type="checkbox" v-model="useMyCollection" />
-          {{ t("matchupUseOnlyOwned") }}
-        </label>
+        <div class="collection-checkbox-row">
+          <label class="collection-checkbox-label">
+            <input type="checkbox" v-model="useMyCollection" />
+            {{ t("matchupUseOnlyOwned") }}
+          </label>
+          <button class="btn-reset-filter" @click="resetCollectionFilter">
+            {{ t("matchupResetFilter") }}
+          </button>
+        </div>
+        <p class="collection-hint">{{ t("matchupCollectionHint") }}</p>
 
         <div class="collection-block">
           <div class="collection-block-title">
@@ -291,6 +297,7 @@ const allMapSets = computed(() => {
 });
 
 function toggleOwnedChar(id) {
+  useMyCollection.value = true;
   const idx = ownedCharIds.value.indexOf(id);
   if (idx === -1) ownedCharIds.value.push(id);
   else ownedCharIds.value.splice(idx, 1);
@@ -299,6 +306,7 @@ function toggleOwnedChar(id) {
 // Ставимо/знімаємо галочку набору карт — і разом з нею вибираємо/знімаємо
 // всіх персонажів цього ж сету (char.set === setName)
 function toggleOwnedMapSet(setName) {
+  useMyCollection.value = true;
   const idx = ownedMapSets.value.indexOf(setName);
   const charsInSet = getAllCharacters().filter((c) => c.set === setName);
 
@@ -351,19 +359,35 @@ function generateBalancedMatchup() {
   generatorNote.value = "";
   const allChars = getAllCharacters();
 
-  let charPool = allChars;
-  if (useMyCollection.value && ownedCharIds.value.length >= 2) {
-    charPool = allChars.filter((c) => ownedCharIds.value.includes(c.id));
-  }
-
   const pairs = [];
-  for (let i = 0; i < charPool.length; i++) {
-    for (let j = i + 1; j < charPool.length; j++) {
-      const a = charPool[i];
-      const b = charPool[j];
-      const wr = getWinrate(a.name, b.name);
-      if (wr !== null) {
-        pairs.push({ a, b, diff: Math.abs(wr - 50) });
+
+  if (useMyCollection.value && ownedCharIds.value.length === 1) {
+    // Обраний лише один персонаж — шукаємо йому рівного суперника
+    // серед усього ростеру, а не тільки серед "своїх"
+    const fixedChar = allChars.find((c) => c.id === ownedCharIds.value[0]);
+    if (fixedChar) {
+      for (const b of allChars) {
+        if (b.id === fixedChar.id) continue;
+        const wr = getWinrate(fixedChar.name, b.name);
+        if (wr !== null) {
+          pairs.push({ a: fixedChar, b, diff: Math.abs(wr - 50) });
+        }
+      }
+    }
+  } else {
+    let charPool = allChars;
+    if (useMyCollection.value && ownedCharIds.value.length >= 2) {
+      charPool = allChars.filter((c) => ownedCharIds.value.includes(c.id));
+    }
+
+    for (let i = 0; i < charPool.length; i++) {
+      for (let j = i + 1; j < charPool.length; j++) {
+        const a = charPool[i];
+        const b = charPool[j];
+        const wr = getWinrate(a.name, b.name);
+        if (wr !== null) {
+          pairs.push({ a, b, diff: Math.abs(wr - 50) });
+        }
       }
     }
   }
@@ -501,6 +525,12 @@ const badMaps = computed(() => {
 function collectionToggle() {
   showCollectionOptions.value = !showCollectionOptions.value;
   useMyCollection.value = showCollectionOptions.value;
+}
+
+function resetCollectionFilter() {
+  ownedCharIds.value = [];
+  ownedMapSets.value = [];
+  useMyCollection.value = true;
 }
 </script>
 
@@ -802,11 +832,43 @@ function collectionToggle() {
 .collection-checkbox-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.collection-checkbox-label {
+  display: flex;
+  align-items: center;
   gap: 10px;
   font-size: 13px;
   font-weight: 700;
   color: #f1f5f9;
   cursor: pointer;
+}
+
+.btn-reset-filter {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-reset-filter:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.7);
+}
+
+.collection-hint {
+  margin: -6px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
 }
 
 .collection-checkbox-row input[type="checkbox"],

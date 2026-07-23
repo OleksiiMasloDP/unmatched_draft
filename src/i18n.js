@@ -62,13 +62,16 @@ export const translations = {
     closeBtn: "Got it",
     matchupsTitle: "Hero Matchups",
     matchupsDesc:
-      "Select your hero and your opponent's hero to analyze their head-to-head win rate and find the best or worst maps for this specific duel.",
+      "Select heroes manually to analyze their head-to-head win rate and find the best maps for the duel, or use the generator to instantly create a balanced matchup based on your own board game collection.",
     matchupGenerateBtn: "Generate Balanced Matchup",
     matchupHideCollection: "Hide my collection",
     matchupUseOnlyOwned: "Use only my boxes",
     matchupOwnedCharacters: "Available fighters",
     matchupOwnedSets: "Available sets",
     matchupUseCollection: "Use my collection",
+    matchupGenNoData: "Could not find a balanced matchup.",
+    matchupCollectionHint:
+      "The filter will become active as soon as you select at least one box or character.",
   },
   ua: {
     navigation: "Навігація",
@@ -133,12 +136,15 @@ export const translations = {
     closeBtn: "Зрозуміло",
     matchupsTitle: "Матчапи героїв",
     matchupsDesc:
-      "Оберіть свого героя та героя суперника, щоб проаналізувати їхній вінрейт у дуелі, а також дізнатися, які карти ідеально підходять або не підходять для цього протистояння.",
+      "Обирайте героїв вручну, щоб проаналізувати їхній вінрейт та знайти найкращі карти для дуелі, або використовуйте генератор, щоб миттєво створити рівний матчап на основі вашої колекції настільних ігор.",
     matchupGenerateBtn: "Згенерувати рівний матчап",
     matchupHideCollection: "Сховати мою колекцію",
     matchupUseOnlyOwned: "Враховувати лише мої коробки",
     matchupOwnedCharacters: "Персонажі в наявності",
     matchupOwnedSets: "Сети в наявності",
     matchupUseCollection: "Враховувати мою колекцію",
+    matchupGenNoData: "Не вдалося знайти збалансований матчап.",
+    matchupCollectionHint:
+      "Фільтр активується автоматично, щойно ви оберете хоча б одну коробку або персонажа.",
   },
 };
