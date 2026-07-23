@@ -25,23 +25,10 @@
           </svg>
         </div>
 
-        <button
+        <ClearFilterBtn
           v-if="selectedPreviewHeroIds.length > 0"
           @click.stop="clearPreviewHeroes"
-          class="clear-filter-btn"
-        >
-          <svg
-            class="btn-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-          {{ t("clearFilter") }}
-        </button>
+        />
       </div>
 
       <div v-show="isHeroFilterOpen" class="heroes-badge-grid">
@@ -79,6 +66,7 @@ import { ref } from "vue";
 import { useDraftState } from "../composables/useDraftState.js";
 import MapSelect from "./MapSelect.vue";
 import Disclaimer from "./Disclaimer.vue";
+import ClearFilterBtn from "./buttons/ClearFilterBtn.vue";
 
 const { t, search, getAllCharacters, selectedPreviewHeroIds } = useDraftState();
 
@@ -129,53 +117,12 @@ function clearPreviewHeroes() {
   gap: 8px;
 }
 
-.chevron-icon {
-  width: 16px;
-  height: 16px;
-  color: rgba(255, 255, 255, 0.6);
-  transition: transform 0.2s ease;
-}
-
-.chevron-icon.is-open {
-  transform: rotate(-180deg);
-}
-
 .filter-title {
   font-size: 0.8rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 1px;
-}
-
-.clear-filter-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 79, 79, 0.1);
-  border: 1px solid rgba(255, 79, 79, 0.2);
-  color: #ff5f5f;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.clear-filter-btn:hover {
-  background: rgba(255, 79, 79, 0.2);
-  border-color: rgba(255, 79, 79, 0.4);
-  transform: translateY(-1px);
-}
-
-.clear-filter-btn:active {
-  transform: translateY(0);
-}
-
-.btn-icon {
-  width: 14px;
-  height: 14px;
 }
 
 .heroes-badge-grid {

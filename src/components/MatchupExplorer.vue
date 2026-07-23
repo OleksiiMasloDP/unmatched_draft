@@ -14,21 +14,29 @@
               ? t("matchupHideCollection")
               : t("matchupUseCollection")
           }}
+
+          <svg
+            class="chevron-icon"
+            :class="{ 'is-open': showCollectionOptions }"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </button>
+
+        <ClearFilterBtn v-if="isFilterApplied" @click="resetCollectionFilter" />
+
+        <div v-if="isFilterApplied" class="filters-active-badge">
+          <span>●</span> {{ t("matchupFiltersActive") || "Фільтри активні" }}
+        </div>
       </div>
 
       <p v-if="generatorNote" class="generator-note">{{ generatorNote }}</p>
 
       <div v-if="showCollectionOptions" class="collection-panel">
-        <div class="collection-checkbox-row">
-          <label class="collection-checkbox-label">
-            <input type="checkbox" v-model="useMyCollection" />
-            {{ t("matchupUseOnlyOwned") }}
-          </label>
-          <button class="btn-reset-filter" @click="resetCollectionFilter">
-            {{ t("matchupResetFilter") }}
-          </button>
-        </div>
         <p class="collection-hint">{{ t("matchupCollectionHint") }}</p>
 
         <div class="collection-block">
@@ -152,11 +160,11 @@
     </div>
 
     <div v-if="charA && charB" class="matchup-maps-section">
-      <div class="matchup-maps-group">
+      <div v-if="balancedMaps.length" class="matchup-maps-group">
         <h6 class="matchup-maps-title balanced">
           {{ t("matchupBalancedMaps") }}
         </h6>
-        <div v-if="balancedMaps.length" class="mini-maps-grid">
+        <div class="mini-maps-grid">
           <MapCard
             v-for="map in balancedMaps"
             :key="map.id"
@@ -167,7 +175,6 @@
             compact
           />
         </div>
-        <p v-else class="no-maps-text">{{ t("matchupNoBalancedMaps") }}</p>
       </div>
 
       <div v-if="goodMaps.length" class="matchup-maps-group">
@@ -262,6 +269,7 @@ import { ref, computed } from "vue";
 import { useDraftState } from "../composables/useDraftState.js";
 import Disclaimer from "./Disclaimer.vue";
 import MapCard from "./MapCard.vue";
+import ClearFilterBtn from "./buttons/ClearFilterBtn.vue";
 
 const {
   t,
@@ -283,7 +291,6 @@ const pickerTarget = ref(null);
 const pickerSearch = ref("");
 
 const showCollectionOptions = ref(false);
-const useMyCollection = ref(false);
 const ownedCharIds = ref([]);
 const ownedMapSets = ref([]);
 const generatorNote = ref("");
@@ -296,17 +303,17 @@ const allMapSets = computed(() => {
   return [...sets].sort();
 });
 
+const isFilterApplied = computed(() => {
+  return ownedCharIds.value.length > 0 || ownedMapSets.value.length > 0;
+});
+
 function toggleOwnedChar(id) {
-  useMyCollection.value = true;
   const idx = ownedCharIds.value.indexOf(id);
   if (idx === -1) ownedCharIds.value.push(id);
   else ownedCharIds.value.splice(idx, 1);
 }
 
-// Ставимо/знімаємо галочку набору карт — і разом з нею вибираємо/знімаємо
-// всіх персонажів цього ж сету (char.set === setName)
 function toggleOwnedMapSet(setName) {
-  useMyCollection.value = true;
   const idx = ownedMapSets.value.indexOf(setName);
   const charsInSet = getAllCharacters().filter((c) => c.set === setName);
 
@@ -334,9 +341,6 @@ function scoreOnMapFor(map, name) {
   return 0;
 }
 
-// Мапи, рівні для обох: обом підходить (найкраще), обом нейтрально
-// (середнє), обом не підходить (гірше). Змішані варіанти (один за, інший
-// проти) — це вже не рівний матчап на карті, тому вони не пропонуються.
 function pickBalancedMaps(nameA, nameB, pool) {
   const good = [];
   const neutral = [];
@@ -361,9 +365,7 @@ function generateBalancedMatchup() {
 
   const pairs = [];
 
-  if (useMyCollection.value && ownedCharIds.value.length === 1) {
-    // Обраний лише один персонаж — шукаємо йому рівного суперника
-    // серед усього ростеру, а не тільки серед "своїх"
+  if (ownedCharIds.value.length === 1) {
     const fixedChar = allChars.find((c) => c.id === ownedCharIds.value[0]);
     if (fixedChar) {
       for (const b of allChars) {
@@ -376,7 +378,7 @@ function generateBalancedMatchup() {
     }
   } else {
     let charPool = allChars;
-    if (useMyCollection.value && ownedCharIds.value.length >= 2) {
+    if (ownedCharIds.value.length >= 2) {
       charPool = allChars.filter((c) => ownedCharIds.value.includes(c.id));
     }
 
@@ -397,8 +399,6 @@ function generateBalancedMatchup() {
     return;
   }
 
-  // Шукаємо максимально рівну пару, поступово розширюючи "коридор",
-  // якщо у вузькому діапазоні нічого не знайшлось
   const bands = [3, 5, 8, 12, 20, 100];
   let candidates = [];
   for (const band of bands) {
@@ -412,7 +412,7 @@ function generateBalancedMatchup() {
   charB.value = chosen.b;
 
   if (!balancedMaps.value.length) {
-    generatorNote.value = t("matchupGenNoMap");
+    generatorNote.value = t("matchupGenNoBalancedMap");
   }
 }
 
@@ -437,8 +437,6 @@ function selectCharacter(char) {
   closePicker();
 }
 
-// Персонаж, вже обраний у протилежному слоті — відносно нього
-// показуємо статистику і сортуємо список у попапі
 const pickerReferenceChar = computed(() => {
   if (pickerTarget.value === "a") return charB.value;
   if (pickerTarget.value === "b") return charA.value;
@@ -491,32 +489,28 @@ const matchupTypeTextB = computed(() =>
   t(`matchups.${getMatchupTypeByWinrate(winrateB.value)}`),
 );
 
-// Мапи, рівні для обох обраних персонажів (з урахуванням обраних наборів,
-// якщо увімкнено "лише мої набори")
 const balancedMaps = computed(() => {
   if (!charA.value || !charB.value) return [];
   let mapPool = maps.value || [];
-  if (useMyCollection.value && ownedMapSets.value.length) {
+  if (ownedMapSets.value.length) {
     mapPool = mapPool.filter((m) => ownedMapSets.value.includes(m.set));
   }
   return pickBalancedMaps(charA.value.name, charB.value.name, mapPool);
 });
 
-// Карти, де перевага у charA (favoredBy для нього і/або disfavoredBy для charB)
 const goodMaps = computed(() => {
   if (!charA.value || !charB.value) return [];
   let result = getBestMapsForMatchup(charA.value.name, charB.value.name);
-  if (useMyCollection.value && ownedMapSets.value.length) {
+  if (ownedMapSets.value.length) {
     result = result.filter((m) => ownedMapSets.value.includes(m.set));
   }
   return result;
 });
 
-// Карти, де перевага у charB — тобто погані для charA
 const badMaps = computed(() => {
   if (!charA.value || !charB.value) return [];
   let result = getBestMapsForMatchup(charB.value.name, charA.value.name);
-  if (useMyCollection.value && ownedMapSets.value.length) {
+  if (ownedMapSets.value.length) {
     result = result.filter((m) => ownedMapSets.value.includes(m.set));
   }
   return result;
@@ -524,13 +518,11 @@ const badMaps = computed(() => {
 
 function collectionToggle() {
   showCollectionOptions.value = !showCollectionOptions.value;
-  useMyCollection.value = showCollectionOptions.value;
 }
 
 function resetCollectionFilter() {
   ownedCharIds.value = [];
   ownedMapSets.value = [];
-  useMyCollection.value = true;
 }
 </script>
 
@@ -572,14 +564,6 @@ function resetCollectionFilter() {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-}
-
-.vs-col-heading {
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .vs-slot {
@@ -753,12 +737,10 @@ function resetCollectionFilter() {
   color: #4ade80;
   border-color: #22c55e;
 }
-
 .matchup-maps-title.bad {
   color: #f87171;
   border-color: #ef4444;
 }
-
 .matchup-maps-title.balanced {
   color: #38bdf8;
   border-color: #0ea5e9;
@@ -775,6 +757,7 @@ function resetCollectionFilter() {
 .generator-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
 }
 
@@ -813,6 +796,55 @@ function resetCollectionFilter() {
   color: white;
 }
 
+.btn-reset-filter {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-reset-filter:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #ffffff;
+}
+
+.filters-active-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.06);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 222, 128, 0.15);
+}
+
+.filters-active-badge span {
+  font-size: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
 .generator-note {
   margin: 12px 0 0;
   color: #facc15;
@@ -829,86 +861,11 @@ function resetCollectionFilter() {
   gap: 1.25rem;
 }
 
-.collection-checkbox-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.collection-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #f1f5f9;
-  cursor: pointer;
-}
-
-.btn-reset-filter {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  background: rgba(239, 68, 68, 0.08);
-  color: #f87171;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.btn-reset-filter:hover {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: rgba(239, 68, 68, 0.7);
-}
-
 .collection-hint {
   margin: -6px 0 0;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   font-style: italic;
-}
-
-.collection-checkbox-row input[type="checkbox"],
-.collection-set-item input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  margin: 0;
-  border-radius: 5px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  background: rgba(15, 23, 42, 0.6);
-  cursor: pointer;
-  position: relative;
-  transition: all 0.15s ease;
-}
-
-.collection-checkbox-row input[type="checkbox"]:hover,
-.collection-set-item input[type="checkbox"]:hover {
-  border-color: rgba(79, 124, 255, 0.7);
-}
-
-.collection-checkbox-row input[type="checkbox"]:checked,
-.collection-set-item input[type="checkbox"]:checked {
-  background: #4f7cff;
-  border-color: transparent;
-}
-
-.collection-checkbox-row input[type="checkbox"]:checked::after,
-.collection-set-item input[type="checkbox"]:checked::after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 1px;
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
 }
 
 .collection-block-title {
@@ -976,6 +933,8 @@ function resetCollectionFilter() {
   color: #94a3b8;
   font-size: 13px;
   font-style: italic;
+  grid-column: 1 / -1;
+  margin: 0;
 }
 
 .char-picker-overlay {
@@ -1102,7 +1061,6 @@ function resetCollectionFilter() {
   font-size: 12px;
   font-weight: 900;
 }
-
 .char-picker-type {
   font-size: 8px;
   font-weight: 800;

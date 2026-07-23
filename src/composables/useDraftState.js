@@ -127,19 +127,6 @@ const sequence = computed(() => {
 
 const current = computed(() => sequence.value[step.value] || null);
 
-const currentTurnText = computed(() => {
-  if (currentStep.value === "maps")
-    return lang.value === "ua" ? "Фаза вибору карти" : "Map Selection Phase";
-  if (!current.value)
-    return translations[lang.value]?.["matrixReady"] || "matrixReady";
-  const targetName =
-    current.value.player === "player"
-      ? translations[lang.value]?.["teamYou"] || "teamYou"
-      : translations[lang.value]?.["teamOpponent"] || "teamOpponent";
-  const selectingText = translations[lang.value]?.["selecting"] || "selecting";
-  return `${targetName} ${selectingText} ${current.value.type}...`;
-});
-
 const turnColor = computed(() => {
   if (currentStep.value === "maps" || !current.value) return "#10b981";
   return current.value.player === "player" ? player.color : opponent.color;
@@ -658,6 +645,25 @@ export function useDraftState() {
 
     return { goodFor, badFor, neutralFor };
   }
+
+  const currentTurnText = computed(() => {
+    if (currentStep.value === "maps") {
+      return t("phaseMapSelection");
+    }
+
+    if (!current.value) {
+      return t("matrixReady");
+    }
+
+    const target = current.value.player === "player" ? "Player" : "Opponent";
+
+    const actionType =
+      current.value.type.charAt(0).toUpperCase() + current.value.type.slice(1);
+
+    const translationKey = `turn${target}${actionType}`;
+
+    return t(translationKey);
+  });
 
   return {
     lang,
