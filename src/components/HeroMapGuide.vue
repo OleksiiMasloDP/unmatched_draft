@@ -9,52 +9,57 @@
       {{ t("heroMapGuide") }}
     </h1>
 
-    <div class="hero-filter-section">
-      <div class="filter-header" @click="isHeroFilterOpen = !isHeroFilterOpen">
-        <div class="header-title-group">
-          <span class="filter-title">{{ t("filterByHeroes") }}</span>
-          <svg
-            class="chevron-icon"
-            :class="{ 'is-open': isHeroFilterOpen }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
+    <div class="top-wrap">
+      <div class="hero-filter-section">
+        <div
+          class="filter-header"
+          @click="isHeroFilterOpen = !isHeroFilterOpen"
+        >
+          <div class="header-title-group">
+            <span class="filter-title">{{ t("filterByHeroes") }}</span>
+            <svg
+              class="chevron-icon"
+              :class="{ 'is-open': isHeroFilterOpen }"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <ClearFilterBtn
+            v-if="selectedPreviewHeroIds.length > 0"
+            @click.stop="clearPreviewHeroes"
+          />
         </div>
 
-        <ClearFilterBtn
-          v-if="selectedPreviewHeroIds.length > 0"
-          @click.stop="clearPreviewHeroes"
-        />
-      </div>
-
-      <div v-show="isHeroFilterOpen" class="heroes-badge-grid">
-        <div
-          v-for="char in getAllCharacters()"
-          :key="char.id"
-          class="hero-badge-item"
-          :class="{ 'is-active': selectedPreviewHeroIds.includes(char.id) }"
-          @click="toggleHeroFilter(char.id)"
-          :title="char.name"
-        >
-          <div class="hero-img-wrapper">
-            <img :src="char.image" class="hero-badge-img" :alt="char.name" />
+        <div v-show="isHeroFilterOpen" class="heroes-badge-grid">
+          <div
+            v-for="char in getAllCharacters()"
+            :key="char.id"
+            class="hero-badge-item"
+            :class="{ 'is-active': selectedPreviewHeroIds.includes(char.id) }"
+            @click="toggleHeroFilter(char.id)"
+            :title="char.name"
+          >
+            <div class="hero-img-wrapper">
+              <img :src="char.image" class="hero-badge-img" :alt="char.name" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="search-container">
-      <input
-        id="search-input"
-        v-model="search"
-        type="text"
-        :placeholder="t('searchMapPlaceholder')"
-        class="form-control form-control-sm search-field"
-      />
+      <div class="search-container">
+        <input
+          id="search-input"
+          v-model="search"
+          type="text"
+          :placeholder="t('searchMapPlaceholder')"
+          class="form-control form-control-sm search-field"
+        />
+      </div>
     </div>
 
     <MapSelect />
@@ -91,12 +96,7 @@ function clearPreviewHeroes() {
   padding: 2rem 1rem;
 }
 
-.search-container {
-  margin-bottom: 2rem;
-}
-
 .hero-filter-section {
-  margin: 24px 0;
   padding: 16px;
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -130,12 +130,6 @@ function clearPreviewHeroes() {
   grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   gap: 8px;
   margin-top: 16px;
-}
-
-@media (min-width: 770px) {
-  .heroes-badge-grid {
-    grid-template-columns: repeat(auto-fill, 73.6px);
-  }
 }
 
 .hero-badge-item {
