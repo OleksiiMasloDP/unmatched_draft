@@ -296,35 +296,6 @@ h6 {
   text-overflow: ellipsis;
 }
 
-.mu-list {
-  width: 100%;
-  font-size: 0.7rem;
-  background: rgba(var(--ban-color-rgb), 0.15);
-  border-radius: 4px;
-  padding: 4px 6px;
-  margin-top: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  font-size: 11px;
-  color: #cbd5e1;
-  line-height: 1.4;
-  font-weight: 600;
-}
-
-.mu-list > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #e2e8f0;
-  line-height: 1.4;
-}
-
-.mu-list > div:not(:last-child) {
-  margin-bottom: 3px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-  padding-bottom: 3px;
-}
-
 .percent {
   position: absolute;
   top: 8px;

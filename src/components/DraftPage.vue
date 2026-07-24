@@ -104,21 +104,11 @@
               <img :src="char.image" />
               <div class="pick-name">
                 <div class="char-title-bold">{{ char.name }}</div>
-                <div class="mu-list">
-                  <template
-                    v-for="enemyChar in opponent.picks"
-                    :key="enemyChar.id"
-                  >
-                    <div
-                      v-if="
-                        getWinrate(char.name, enemyChar.name) !== null &&
-                        !postBans.opponent.has(enemyChar.id)
-                      "
-                    >
-                      {{ getMatchupText(char, enemyChar) }}
-                    </div>
-                  </template>
-                </div>
+                <MatchupList
+                  :char-name="char.name"
+                  :opponent-picks="opponent.picks"
+                  :ignored-ids="postBans.opponent"
+                />
               </div>
             </div>
           </template>
@@ -170,18 +160,11 @@
               <img :src="enemyChar.image" />
               <div class="pick-name">
                 <div class="char-title-bold">{{ enemyChar.name }}</div>
-                <div class="mu-list">
-                  <template v-for="yourChar in player.picks" :key="yourChar.id">
-                    <div
-                      v-if="
-                        getWinrate(enemyChar.name, yourChar.name) !== null &&
-                        !postBans.player.has(yourChar.id)
-                      "
-                    >
-                      {{ getMatchupText(enemyChar, yourChar) }}
-                    </div>
-                  </template>
-                </div>
+                <MatchupList
+                  :char-name="enemyChar.name"
+                  :opponent-picks="player.picks"
+                  :ignored-ids="postBans.player"
+                />
               </div>
             </div>
           </template>
@@ -241,6 +224,7 @@ import { useDraftState } from "../composables/useDraftState.js";
 import CharacterDraft from "./CharacterDraft.vue";
 import MapSelect from "./MapSelect.vue";
 import Disclaimer from "./Disclaimer.vue";
+import MatchupList from "./MatchupList.vue";
 
 const {
   search,
@@ -261,7 +245,6 @@ const {
   undo,
   resetAll,
   togglePostBan,
-  getMatchupText,
   getWinrate,
 } = useDraftState();
 

@@ -79,7 +79,6 @@
     </div>
   </div>
 
-  <!-- Стабильная сетка пула персонажей -->
   <div v-if="current" class="row g-2 g-md-3">
     <div
       v-for="char in filtered"
@@ -104,24 +103,17 @@
         <div class="char-name">
           <div class="char-title">{{ char.name }}</div>
 
-          <div v-if="getThreatData(char).isThreat" class="threat-details mt-2">
-            <div
-              v-for="target in getThreatData(char).targets"
-              :key="target.name"
-              class="threat-target-row"
-            >
-              <span>vs {{ target.name }}</span>
-              <strong class="text-danger">{{ target.winrate }}%</strong>
-            </div>
-          </div>
+          <MatchupList
+            v-if="getThreatData(char).isThreat"
+            :char-name="char.name"
+            :opponent-picks="getThreatData(char).targets"
+            :is-threat="true"
+          />
 
-          <div class="mu-list">
-            <template v-for="enemy in opponent.picks" :key="enemy.id">
-              <div v-if="getWinrate(char.name, enemy.name) !== null">
-                {{ getMatchupText(char, enemy) }}
-              </div>
-            </template>
-          </div>
+          <MatchupList
+            :char-name="char.name"
+            :opponent-picks="opponent.picks"
+          />
         </div>
       </div>
     </div>
@@ -205,6 +197,7 @@
 <script setup>
 import { useDraftState } from "../composables/useDraftState";
 import { trackProceedToMaps } from "@/utils/gaAnalytics";
+import MatchupList from "./MatchupList.vue";
 
 const {
   t,
@@ -219,7 +212,6 @@ const {
   pick,
   getPercentClass,
   getPickPercent,
-  getMatchupText,
   getWinrate,
   proceedToMaps,
 } = useDraftState();

@@ -581,14 +581,6 @@ export function useDraftState() {
     else if (winrate <= 45) return "DISFAVORED";
   }
 
-  function getMatchupText(char, enemy) {
-    const winrate = getWinrate(char.name, enemy.name);
-
-    const matchupType = getMatchupTypeByWinrate(winrate);
-    const winrateText = winrate ? `${winrate}%` : "";
-    return `vs ${enemy.name}: ${winrateText}`;
-  }
-
   function getMapGroups(map, options = {}) {
     const isPreview = options.isPreview || false;
 
@@ -702,7 +694,6 @@ export function useDraftState() {
     selectMap,
     getPickPercent,
     getPercentClass,
-    getMatchupText,
     getWinrate,
     getMatchupTypeByWinrate,
     getMapGroups,
