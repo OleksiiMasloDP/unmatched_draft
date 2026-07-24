@@ -66,7 +66,10 @@
     </div>
 
     <div class="row g-3 gy-md-4 gx-lg-5 main-draft-row">
-      <div class="col-lg-2 order-player">
+      <div
+        class="order-player"
+        :class="current ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
+      >
         <div
           class="team-title-banner"
           :style="{ backgroundColor: player.color }"
@@ -115,12 +118,18 @@
         </div>
       </div>
 
-      <div class="col-lg-8 order-pool">
+      <div
+        class="order-pool"
+        :class="current ? 'col-12 col-lg-8' : 'col-12 col-lg-6'"
+      >
         <CharacterDraft v-if="currentStep === 'characters'" />
         <MapSelect v-else-if="currentStep === 'maps'" draftMode />
       </div>
 
-      <div class="col-lg-2 order-opponent">
+      <div
+        class="col-lg-2 order-opponent"
+        :class="current ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
+      >
         <div
           class="team-title-banner"
           :style="{ backgroundColor: opponent.color }"
