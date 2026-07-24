@@ -586,12 +586,10 @@ export function useDraftState() {
 
     const matchupType = getMatchupTypeByWinrate(winrate);
     const winrateText = winrate ? `${winrate}%` : "";
-    const typeText = t(`matchups.${matchupType}`);
-    return `vs ${enemy.name}: ${winrateText} (${typeText})`;
+    return `vs ${enemy.name}: ${winrateText}`;
   }
 
   function getMapGroups(map, options = {}) {
-    // Витягуємо прапорець прев'ю (за замовчуванням false для звичайного драфту)
     const isPreview = options.isPreview || false;
 
     const favoredBy = map.favoredBy || [];

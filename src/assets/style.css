@@ -1,3 +1,7 @@
+:root {
+  --ban-color-rgb: 79, 124, 255;
+}
+
 html,
 body,
 #app {
@@ -244,7 +248,7 @@ h6 {
   overflow: hidden;
   position: relative;
   min-height: 165px;
-  height: auto;
+  height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #121824;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -261,7 +265,7 @@ h6 {
 
 .character img {
   width: 100%;
-  height: 120px;
+  height: 180px;
   object-fit: cover;
 }
 
@@ -293,10 +297,32 @@ h6 {
 }
 
 .mu-list {
+  width: 100%;
+  font-size: 0.7rem;
+  background: rgba(var(--ban-color-rgb), 0.15);
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin-top: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
   font-size: 11px;
   color: #cbd5e1;
   line-height: 1.4;
   font-weight: 600;
+}
+
+.mu-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.mu-list > div:not(:last-child) {
+  margin-bottom: 3px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 3px;
 }
 
 .percent {

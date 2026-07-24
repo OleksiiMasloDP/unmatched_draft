@@ -12,6 +12,7 @@ export const translations = {
     bannedSlots: "Banned Slots",
     activeLineup: "Choosen heroes",
     emptyCell: "Empty Cell",
+    ghostThreat: "Threat",
     engineTitle: "Predictive Analytics Engine",
     engineDesc:
       "Team victory weight calculated over active head-to-head simulations",
@@ -96,6 +97,7 @@ export const translations = {
     bannedSlots: "Слоти банів",
     activeLineup: "Обрані персонажі",
     emptyCell: "Порожня комірка",
+    ghostThreat: "Загроза",
     engineTitle: "Прогноз",
     engineDesc:
       "Вага перемоги команди розрахована на основі симуляцій прямих зіткнень",

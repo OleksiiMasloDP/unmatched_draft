@@ -79,15 +79,42 @@
     </div>
   </div>
 
+  <!-- Стабильная сетка пула персонажей -->
   <div v-if="current" class="row g-2 g-md-3">
-    <div v-for="char in filtered" :key="char.id" class="col-6 col-sm-4">
-      <div class="character" @click="pick(char)">
+    <div
+      v-for="char in filtered"
+      :key="char.id"
+      class="col-6 col-sm-6 col-md-4"
+    >
+      <div
+        class="character"
+        :class="{ 'threat-card': getThreatData(char).isThreat }"
+        @click="pick(char)"
+      >
         <img :src="char.image" />
+
         <div class="percent" :class="getPercentClass(getPickPercent(char))">
           {{ getPickPercent(char) }}%
         </div>
+
+        <div v-if="getThreatData(char).isThreat" class="threat-badge">
+          ⚠️ {{ t("ghostThreat") || "Загроза" }}
+        </div>
+
         <div class="char-name">
           <div class="char-title">{{ char.name }}</div>
+
+          <div v-if="getThreatData(char).isThreat" class="threat-details mt-2">
+            <div
+              v-for="target in getThreatData(char).targets"
+              :key="target.name"
+              class="threat-target-row"
+            >
+              <span>vs {{ target.name }}</span>
+              <strong class="text-danger">{{ target.winrate }}%</strong>
+            </div>
+          </div>
+
           <div class="mu-list">
             <template v-for="enemy in opponent.picks" :key="enemy.id">
               <div v-if="getWinrate(char.name, enemy.name) !== null">
@@ -100,7 +127,7 @@
     </div>
   </div>
 
-  <div v-else class="desktop-only-analytics">
+  <div class="desktop-only-analytics" v-else>
     <div class="result-card">
       <div
         class="d-flex align-items-center justify-content-between engine-outer-mb"
@@ -197,6 +224,34 @@ const {
   proceedToMaps,
 } = useDraftState();
 
+function getThreatData(char) {
+  const data = { isThreat: false, targets: [] };
+  if (!player.picks || !player.picks.length) return data;
+
+  let totalWinrateAgainstUs = 0;
+  let count = 0;
+
+  for (const myChar of player.picks) {
+    const winrate = getWinrate(char.name, myChar.name);
+    if (winrate !== null) {
+      totalWinrateAgainstUs += winrate;
+      count++;
+
+      if (winrate >= 53) {
+        data.targets.push({
+          name: myChar.name,
+          winrate: winrate,
+        });
+      }
+    }
+  }
+
+  data.isThreat = count > 0 && totalWinrateAgainstUs / count >= 53;
+  data.targets.sort((a, b) => b.winrate - a.winrate);
+
+  return data;
+}
+
 function proceedToMapsEvent() {
   trackProceedToMaps();
   proceedToMaps();
@@ -209,5 +264,54 @@ function proceedToMapsEvent() {
 }
 .engine-inner-mb {
   margin-bottom: 12px;
+}
+
+.character {
+  position: relative;
+}
+
+.character.threat-card {
+  border: 1px solid rgba(255, 79, 109, 0.6) !important;
+  box-shadow: 0 0 10px rgba(255, 79, 109, 0.25);
+  background: rgba(255, 79, 109, 0.03);
+}
+
+.threat-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.9);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.threat-details {
+  width: 100%;
+  font-size: 0.7rem;
+  background: rgba(255, 79, 109, 0.08);
+  border-radius: 4px;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 79, 109, 0.15);
+}
+
+.threat-target-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #f8fafc;
+  line-height: 1.3;
+}
+
+.threat-target-row:not(:last-child) {
+  margin-bottom: 2px;
+  border-bottom: 1px dashed rgba(255, 79, 109, 0.15);
+  padding-bottom: 2px;
 }
 </style>

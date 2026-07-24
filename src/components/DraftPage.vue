@@ -65,8 +65,8 @@
       </div>
     </div>
 
-    <div class="row g-3 g-md-4 main-draft-row">
-      <div class="col-lg-3 order-player">
+    <div class="row g-3 gy-md-4 gx-lg-5 main-draft-row">
+      <div class="col-lg-2 order-player">
         <div
           class="team-title-banner"
           :style="{ backgroundColor: player.color }"
@@ -81,7 +81,6 @@
             :key="i"
             class="ban-slot"
             :class="{ filled: player.bans[i - 1] }"
-            :style="{ '--ban-color-rgb': '79, 124, 255' }"
           >
             <span class="ban-icon" v-if="!player.bans[i - 1]">[✕]</span>
             {{ player.bans[i - 1]?.name || t("emptyCell") }}
@@ -106,14 +105,17 @@
               <div class="pick-name">
                 <div class="char-title-bold">{{ char.name }}</div>
                 <div class="mu-list">
-                  <template v-for="enemy in opponent.picks" :key="enemy.id">
+                  <template
+                    v-for="enemyChar in opponent.picks"
+                    :key="enemyChar.id"
+                  >
                     <div
                       v-if="
-                        getWinrate(char.name, enemy.name) !== null &&
-                        !postBans.opponent.has(enemy.id)
+                        getWinrate(char.name, enemyChar.name) !== null &&
+                        !postBans.opponent.has(enemyChar.id)
                       "
                     >
-                      {{ getMatchupText(char, enemy) }}
+                      {{ getMatchupText(char, enemyChar) }}
                     </div>
                   </template>
                 </div>
@@ -123,12 +125,12 @@
         </div>
       </div>
 
-      <div class="col-lg-6 order-pool">
+      <div class="col-lg-8 order-pool">
         <CharacterDraft v-if="currentStep === 'characters'" />
         <MapSelect v-else-if="currentStep === 'maps'" draftMode />
       </div>
 
-      <div class="col-lg-3 order-opponent">
+      <div class="col-lg-2 order-opponent">
         <div
           class="team-title-banner"
           :style="{ backgroundColor: opponent.color }"
@@ -261,7 +263,6 @@ const {
   togglePostBan,
   getMatchupText,
   getWinrate,
-  getAllCharacters,
 } = useDraftState();
 
 let bsModalInstance = null;
