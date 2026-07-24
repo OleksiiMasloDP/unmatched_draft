@@ -1,6 +1,4 @@
-<!-- MatchupList.vue -->
 <template>
-  <!-- Рендерим контейнер только если есть список целей/врагов -->
   <div
     v-if="items && items.length"
     class="mu-list"
@@ -84,25 +82,25 @@ function getTargetWinrate(enemy) {
   background: rgba(var(--ban-color-rgb), 0.2);
   border-radius: 4px;
   padding: 4px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
 }
 
 .mu-list:not(.is-threat) .mu-item-row:not(:last-child) {
-  border-bottom: 1px solid rgba(79, 124, 255, 0.15);
+  border-bottom: 1px solid rgba(var(--color-player-rgb), 0.15);
 }
 
 .mu-list.is-threat {
-  background: rgba(255, 79, 109, 0.08);
   border-radius: 4px;
   padding: 4px 6px;
-  border: 1px solid rgba(255, 79, 109, 0.15);
+  background: rgba(var(--color-opponent-rgb), 0.08);
+  border: 1px solid rgba(var(--color-opponent-rgb), 0.15);
 }
 
 .mu-list.is-threat .mu-item-row span:first-child {
-  color: #f8fafc;
+  color: var(--text-light);
 }
 
 .mu-list.is-threat .mu-item-row:not(:last-child) {
-  border-bottom: 1px dashed rgba(255, 79, 109, 0.15);
+  border-bottom: 1px dashed rgba(var(--color-opponent-rgb), 0.15);
 }
 </style>

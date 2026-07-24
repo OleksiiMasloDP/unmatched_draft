@@ -146,10 +146,10 @@ onBeforeUnmount(() => {
 
   width: 100%;
   padding: 12px 16px;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(var(--bg-slate-rgb), 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-light);
   z-index: 1100;
   user-select: none;
 }
@@ -184,7 +184,7 @@ onBeforeUnmount(() => {
 .logo-accent {
   font-weight: 800;
   font-size: 18px;
-  background: rgb(79, 124, 255);
+  background: var(--color-player);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
@@ -205,7 +205,7 @@ onBeforeUnmount(() => {
 .burger-btn span {
   width: 100%;
   height: 2px;
-  background-color: #f1f5f9;
+  background-color: var(--text-white);
   border-radius: 2px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -225,11 +225,11 @@ onBeforeUnmount(() => {
   top: calc(100% + 8px);
   left: 16px;
   width: 260px;
-  background: rgba(30, 41, 59);
+  background: var(--bg-slate);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   padding: 12px 0;
 }
@@ -245,7 +245,7 @@ onBeforeUnmount(() => {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: #64748b;
+  color: var(--text-dim);
   padding: 4px 16px 8px;
 }
 
@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
   padding: 10px 16px;
   background: transparent;
   border: none;
-  color: #cbd5e1;
+  color: var(--text-light);
   text-align: left;
   font-size: 13.5px;
   font-weight: 700;
@@ -267,7 +267,7 @@ onBeforeUnmount(() => {
 
 .menu-item:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: #4f7cff;
+  color: var(--color-player);
   padding-left: 20px;
 }
 
@@ -291,16 +291,16 @@ onBeforeUnmount(() => {
 
 .lang-switcher {
   display: flex;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(var(--bg-slate-rgb), 0.8);
   padding: 2px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
 }
 
 .lang-btn {
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--text-dim);
   padding: 5px 12px;
   font-size: 11px;
   font-weight: 800;
@@ -310,13 +310,13 @@ onBeforeUnmount(() => {
 }
 
 .lang-btn:hover {
-  color: #cbd5e1;
+  color: var(--text-light);
 }
 
 .lang-btn.active {
-  background: #1e293b;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-slate-hover);
+  color: var(--text-white);
+  border: 1px solid var(--border-medium);
 }
 
 .slide-enter-active,

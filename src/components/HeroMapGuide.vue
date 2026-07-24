@@ -98,8 +98,8 @@ function clearPreviewHeroes() {
 
 .hero-filter-section {
   padding: 16px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(var(--bg-slate-rgb), 0.8);
+  border: 1px solid var(--border-medium);
   border-radius: 12px;
 }
 
@@ -120,7 +120,7 @@ function clearPreviewHeroes() {
 .filter-title {
   font-size: 0.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -138,7 +138,7 @@ function clearPreviewHeroes() {
   justify-content: center;
   padding: 4px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   cursor: pointer;
   user-select: none;
@@ -147,7 +147,7 @@ function clearPreviewHeroes() {
 
 .hero-badge-item:hover {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-strong);
   transform: translateY(-2px);
 }
 
@@ -157,7 +157,7 @@ function clearPreviewHeroes() {
   border-radius: 6px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-light);
   transition: border-color 0.2s ease;
 }
 
@@ -168,27 +168,14 @@ function clearPreviewHeroes() {
 }
 
 .hero-badge-item.is-active {
-  background: rgba(59, 255, 0, 0.06);
-  border-color: rgba(59, 255, 0, 0.75);
+  background: rgba(var(--color-neon-rgb), 0.06);
+  border-color: rgba(var(--color-neon-rgb), 0.75);
   box-shadow:
-    0 0 12px rgba(59, 255, 0, 0.15),
-    inset 0 0 6px rgba(59, 255, 0, 0.05);
+    0 0 12px rgba(var(--color-neon-rgb), 0.15),
+    inset 0 0 6px rgba(var(--color-neon-rgb), 0.05);
 }
 
 .hero-badge-item.is-active .hero-img-wrapper {
-  border-color: rgba(59, 255, 0, 0.75);
-}
-
-.page-main-title {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0 0 6px 0;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  border-color: rgba(var(--color-neon-rgb), 0.75);
 }
 </style>

@@ -1,12 +1,18 @@
 <template>
   <Transition name="fade">
-    <button 
-      v-if="isVisible" 
-      @click="scrollToTop" 
+    <button
+      v-if="isVisible"
+      @click="scrollToTop"
       class="scroll-top-btn"
       aria-label="Вгору"
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="arrow-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        class="arrow-icon"
+      >
         <polyline points="18 15 12 9 6 15"></polyline>
       </svg>
     </button>
@@ -14,32 +20,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const isVisible = ref(false);
 
-// Перевіряємо, чи проскролив користувач достатньо вниз
 function handleScroll() {
-  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+  const currentScroll =
+    window.pageYOffset || document.documentElement.scrollTop;
   isVisible.value = currentScroll > 300;
 }
 
-// Плавний скрол на саму гору
 function scrollToTop() {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 }
 
-// Слухач подій при монтуванні компонента
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener("scroll", handleScroll, { passive: true });
 });
 
-// Чистимо за собою слухач, коли компонент знищується
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener("scroll", handleScroll);
 });
 </script>
 
@@ -50,9 +53,6 @@ onBeforeUnmount(() => {
   right: 24px;
   width: 44px;
   height: 44px;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -61,6 +61,9 @@ onBeforeUnmount(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 99;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--bg-slate);
+  border: 1px solid var(--border-strong);
+  color: var(--text-white);
 }
 
 .arrow-icon {
@@ -70,11 +73,11 @@ onBeforeUnmount(() => {
 }
 
 .scroll-top-btn:hover {
-  background: #27374d;
-  border-color: rgba(59, 255, 0, 0.75);
-  color: rgba(59, 255, 0, 1);
-  box-shadow: 0 4px 16px rgba(59, 255, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(var(--color-neon-rgb), 0.25);
   transform: translateY(-2px);
+  background: var(--bg-slate-hover);
+  border-color: rgba(var(--color-neon-rgb), 0.75);
+  color: var(--color-neon);
 }
 
 .scroll-top-btn:hover .arrow-icon {
@@ -87,7 +90,9 @@ onBeforeUnmount(() => {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .fade-enter-from,

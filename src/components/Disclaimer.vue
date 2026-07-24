@@ -23,7 +23,6 @@ import { useDraftState } from "../composables/useDraftState.js";
 
 const { t } = useDraftState();
 
-// Оголошуємо пропси
 const props = defineProps({
   titleKey: {
     type: String,
@@ -56,11 +55,11 @@ function dismissBanner() {
 
 <style scoped>
 .disclaimer-banner {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(var(--bg-slate-rgb), 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
   padding: 16px;
   margin: 16px 0;
 }
@@ -81,7 +80,7 @@ function dismissBanner() {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-white);
 }
 
 .disclaimer-icon {
@@ -92,13 +91,13 @@ function dismissBanner() {
   margin: 0;
   font-size: 0.9rem;
   line-height: 1.5;
-  color: #cbd5e1;
+  color: var(--text-light);
 }
 
 .disclaimer-close-btn {
   align-self: flex-end;
-  background: rgb(79, 124, 255);
-  color: white;
+  background: var(--color-player);
+  color: var(--text-white);
   border: none;
   border-radius: 6px;
   padding: 6px 16px;
@@ -109,7 +108,7 @@ function dismissBanner() {
 }
 
 .disclaimer-close-btn:hover {
-  background: rgb(35, 65, 153);
+  background: var(--color-player-dark, rgb(35, 65, 153));
 }
 
 .d-flex {

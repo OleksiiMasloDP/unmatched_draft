@@ -24,9 +24,9 @@ const { t } = useDraftState();
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 79, 79, 0.1);
-  border: 1px solid rgba(255, 79, 79, 0.2);
-  color: #ff5f5f;
+  background: rgba(var(--color-danger-rgb), 0.1);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+  color: var(--color-danger-light);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -36,8 +36,8 @@ const { t } = useDraftState();
 }
 
 .clear-filter-btn:hover {
-  background: rgba(255, 79, 79, 0.2);
-  border-color: rgba(255, 79, 79, 0.4);
+  background: rgba(var(--color-danger-rgb), 0.2);
+  border-color: rgba(var(--color-danger-rgb), 0.4);
   transform: translateY(-1px);
 }
 

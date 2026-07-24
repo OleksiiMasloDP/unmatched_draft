@@ -67,28 +67,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // Показувати відсотковий бейдж (актуально лише в реальному драфті)
   showPercent: {
     type: Boolean,
     default: false,
   },
-  // Прев'ю-режим для getMapGroups (не враховує поточний драфт-контекст)
   isPreview: {
     type: Boolean,
     default: true,
   },
-  // Які категорії показувати: будь-яка комбінація 'good' | 'neutral' | 'bad'
   categories: {
     type: Array,
     default: () => ["good", "neutral", "bad"],
   },
-  // Якщо задано — показувати в блоках лише героїв з цим переліком імен
-  // (наприклад, на сторінці матчапів — тільки 2 обраних персонажі)
   heroesFilter: {
     type: Array,
     default: null,
   },
-  // Компактний вигляд — менша картинка, без сету карти, для адаптивних сіток
   compact: {
     type: Boolean,
     default: false,
@@ -128,10 +122,10 @@ const showNoData = computed(
 );
 
 function getMapPercentClass(rating) {
-  if (rating >= 65) return "map-pct-green";
-  if (rating >= 45) return "map-pct-yellow";
-  if (rating >= 30) return "map-pct-orange";
-  return "map-pct-red";
+  if (rating >= 65) return "green";
+  if (rating >= 45) return "yellow";
+  if (rating >= 30) return "orange";
+  return "red";
 }
 </script>
 
@@ -188,49 +182,45 @@ function getMapPercentClass(rating) {
 }
 
 .analysis-group-title.good {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.25);
+  color: var(--color-success);
+  background: rgba(var(--color-success-rgb), 0.12);
+  border-color: rgba(var(--color-success-rgb), 0.25);
 }
 .analysis-group-title.good::before {
-  background-color: #4ade80;
-  box-shadow: 0 0 6px #22c55e;
+  background-color: var(--color-success-light);
+  box-shadow: 0 0 6px var(--color-success);
 }
 
 .analysis-group-title.neutral {
-  color: rgb(79, 124, 255);
-  background: rgba(79, 124, 255, 0.12);
-  border-color: rgba(79, 124, 255, 0.25);
+  color: var(--color-player);
+  background: rgba(var(--color-player-rgb), 0.12);
+  border-color: rgba(var(--color-player-rgb), 0.25);
 }
-
 .analysis-group-title.neutral::before {
-  background-color: rgb(120, 155, 255);
-  box-shadow: 0 0 6px rgb(79, 124, 255);
+  background-color: var(--color-player-light);
+  box-shadow: 0 0 6px var(--color-player);
 }
 
 .analysis-group-title.bad {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--color-danger);
+  background: rgba(var(--color-danger-rgb), 0.12);
+  border-color: rgba(var(--color-danger-rgb), 0.25);
 }
-
 .analysis-group-title.bad::before {
-  background-color: #f87171;
-  box-shadow: 0 0 6px #ef4444;
+  background-color: var(--color-danger-light);
+  box-shadow: 0 0 6px var(--color-danger);
 }
 
 .analysis-group-title.none {
-  color: #94a3b8;
-  background: rgba(148, 163, 184, 0.1);
-  border-color: rgba(148, 163, 184, 0.25);
+  color: var(--text-dim);
+  background: rgba(var(--border-light-rgb), 0.1);
+  border-color: rgba(var(--border-light-rgb), 0.25);
 }
-
 .analysis-group-title.none::before {
-  background-color: #94a3b8;
-  box-shadow: 0 0 6px #64748b;
+  background-color: var(--text-dim);
+  box-shadow: 0 0 6px var(--text-muted);
 }
 
-/* Компактний вигляд — тільки для сторінки матчапів */
 .map-card--compact .map-img {
   height: 150px;
 }

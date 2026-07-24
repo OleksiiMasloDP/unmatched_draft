@@ -36,8 +36,8 @@
               :style="{
                 borderColor:
                   banRecommendation.stage === 'opponent'
-                    ? '#ef4444'
-                    : '#4f7cff',
+                    ? 'var(--color-danger)'
+                    : 'var(--color-player)',
               }"
             >
               <img :src="img" />
@@ -92,7 +92,7 @@
       >
         <img :src="char.image" />
 
-        <div class="percent" :class="getPercentClass(getPickPercent(char))">
+        <div class="stat-badge" :class="getPercentClass(getPickPercent(char))">
           {{ getPickPercent(char) }}%
         </div>
 
@@ -263,9 +263,9 @@ function proceedToMapsEvent() {
 }
 
 .character.threat-card {
-  border: 1px solid rgba(255, 79, 109, 0.6) !important;
-  box-shadow: 0 0 10px rgba(255, 79, 109, 0.25);
-  background: rgba(255, 79, 109, 0.03);
+  border: 1px solid rgba(var(--color-opponent-rgb), 0.6) !important;
+  box-shadow: 0 0 10px rgba(var(--color-opponent-rgb), 0.25);
+  background: rgba(var(--color-opponent-rgb), 0.03);
 }
 
 .threat-badge {
@@ -276,9 +276,9 @@ function proceedToMapsEvent() {
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(239, 68, 68, 0.9);
+  background: rgba(var(--color-danger-rgb), 0.9);
   backdrop-filter: blur(4px);
-  color: #fff;
+  color: var(--text-white);
   z-index: 2;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -287,23 +287,23 @@ function proceedToMapsEvent() {
 .threat-details {
   width: 100%;
   font-size: 0.7rem;
-  background: rgba(255, 79, 109, 0.08);
+  background: rgba(var(--color-opponent-rgb), 0.08);
   border-radius: 4px;
   padding: 4px 6px;
-  border: 1px solid rgba(255, 79, 109, 0.15);
+  border: 1px solid rgba(var(--color-opponent-rgb), 0.15);
 }
 
 .threat-target-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #f8fafc;
+  color: var(--text-light);
   line-height: 1.3;
 }
 
 .threat-target-row:not(:last-child) {
   margin-bottom: 2px;
-  border-bottom: 1px dashed rgba(255, 79, 109, 0.15);
+  border-bottom: 1px dashed rgba(var(--color-opponent-rgb), 0.15);
   padding-bottom: 2px;
 }
 </style>
