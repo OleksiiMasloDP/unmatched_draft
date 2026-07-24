@@ -33,21 +33,21 @@
       "name": "Robin Hood",
       "elo": 1342,
       "image": "images/robin_hood.webp",
-      "set": "Robin Hood vs. Bigfoot"
+      "set": "Robin Hood vs Bigfoot"
     },
     {
       "id": 6,
       "name": "Bigfoot",
       "elo": 1872,
       "image": "images/bigfoot.webp",
-      "set": "Robin Hood vs. Bigfoot"
+      "set": "Robin Hood vs Bigfoot"
     },
     {
       "id": 7,
       "name": "Bruce Lee",
       "elo": 1474,
       "image": "images/bruce_lee.webp",
-      "set": ["Bruce Lee (Fighter Pack)", "Muhammad Ali vs Bruce Lee"]
+      "set": "Muhammad Ali vs Bruce Lee"
     },
     {
       "id": 8,
@@ -145,7 +145,7 @@
       "name": "Sun Wukong",
       "elo": 1910,
       "image": "images/sun_wukong.webp",
-      "set": "Deadpool (Fighter Pack)"
+      "set": "Battle of Legends, Volume Two"
     },
     {
       "id": 22,
