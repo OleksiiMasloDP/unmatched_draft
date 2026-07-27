@@ -1258,7 +1258,7 @@
     {
       "a": "Bruce Lee",
       "b": "Leonardo",
-      "winrate_a": 75
+      "winrate_a": 47
     },
     {
       "a": "Bruce Lee",
@@ -2058,7 +2058,7 @@
     {
       "a": "Dracula",
       "b": "George Washington",
-      "winrate_a": 69
+      "winrate_a": 43
     },
     {
       "a": "Dracula",
@@ -2863,7 +2863,7 @@
     {
       "a": "Leonardo",
       "b": "Philippa",
-      "winrate_a": 65
+      "winrate_a": 67
     },
     {
       "a": "Leonardo",
@@ -2888,7 +2888,7 @@
     {
       "a": "Leonardo",
       "b": "The Genie",
-      "winrate_a": 58
+      "winrate_a": 50
     },
     {
       "a": "Leonardo",
