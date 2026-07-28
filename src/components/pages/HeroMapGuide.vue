@@ -68,10 +68,10 @@
 
 <script setup>
 import { ref } from "vue";
-import { useDraftState } from "../composables/useDraftState.js";
-import MapSelect from "./MapSelect.vue";
-import Disclaimer from "./Disclaimer.vue";
-import ClearFilterBtn from "./buttons/ClearFilterBtn.vue";
+import { useDraftState } from "../../composables/useDraftState.js";
+import MapSelect from "../MapSelect.vue";
+import Disclaimer from "../Disclaimer.vue";
+import ClearFilterBtn from "../buttons/ClearFilterBtn.vue";
 
 const { t, search, getAllCharacters, selectedPreviewHeroIds } = useDraftState();
 

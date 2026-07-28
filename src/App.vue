@@ -22,11 +22,11 @@
 import { onMounted, ref, watch, nextTick } from "vue";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
-import HeroMapGuide from "./components/HeroMapGuide.vue";
+import HeroMapGuide from "./components/pages/HeroMapGuide.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
-import DraftPage from "./components/DraftPage.vue";
-import MatchupExplorer from "./components/MatchupExplorer.vue";
-import { trackPageView } from "@/utils/gaAnalytics";
+import DraftPage from "./components/pages/DraftPage.vue";
+import MatchupExplorer from "./components/pages/MatchupExplorer.vue";
+import CharacterGuide from "./components/pages/CharacterGuide.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
@@ -35,14 +35,20 @@ const screens = {
   main: DraftPage,
   maps: HeroMapGuide,
   matchups: MatchupExplorer,
+  guide: CharacterGuide,
 };
 
 const currentScreen = ref(localStorage.getItem("active_screen") || "main");
 watch(
-  () => currentScreen.value,
+  currentScreen,
   (newScreen) => {
     localStorage.setItem("active_screen", newScreen);
-    trackPageView(newScreen);
+    if (typeof window.gtag === "function") {
+      window.gtag("config", "G-6BTH35KNGC", {
+        page_title: `Screen: ${newScreen}`,
+        page_path: `/${newScreen}`,
+      });
+    }
   },
   { immediate: true },
 );

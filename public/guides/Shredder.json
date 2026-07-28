@@ -1,0 +1,70 @@
+{
+  "complexity": 5.0,
+  "keyCards": [
+    { "image": "swarming_strike.webp" },
+    { "image": "gruff_escort.webp" },
+    { "image": "obedient_subjects.webp" }
+  ],
+  "style": {
+    "en": "Value / Combo",
+    "ua": "Велью / Комбо"
+  },
+  "features": {
+    "en": [
+      "Extremely powerful hybrid value combo fighter with the craziest combo potential in the entire game.",
+      "Demands intense, precise positioning to set up devastating counter-pressure attacks and multi-action burst turns.",
+      "Incredible strategic flexibility: highly capable of playing a slow, pure exhaustion game or turning on an aggressive kill switch.",
+      "Foot Soldiers can effectively 'shrink' the map for the opponent, walling off solo threats and heavily disrupting enemy movement."
+    ],
+    "ua": [
+      "Надзвичайно потужний гібридний велью-комбо боєць із найбожевільнішим комбо-потенціалом у всій грі.",
+      "Вимагає ювелірного та вивіреного позиціонування для підготовки нищівних зустрічних атак та вибухових багатоходових комбо.",
+      "Неймовірна стратегічна гнучкість: здатний грати як у повільне повне виснаження (викатку колоди), так і миттєво вмикати агресивний режим убивства.",
+      "Кланові ніндзя (Foot Soldiers) здатні буквально «стискати» мапу для суперника, повністю відрізаючи поодиноких бійців від переміщення."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Struggles significantly against hand disruption effects that take away key combo pieces.",
+      "Vulnerable to aggressive fighters who possess repeatable action gains to break through his defenses.",
+      "Suffers against exceptional 'super defenses' that trade efficiently two-for-one or completely deny his high-damage setups.",
+      "Highly complex setup dependencies; tunnel-visioning exclusively on his gimmicks instead of core Unmatched fundamentals will lead to losses."
+    ],
+    "ua": [
+      "Серйозно страждає від ефектів руйнування руки (дискарду), які позбавляють його ключових елементів комбо.",
+      "Вразливий до агресивних бійців, які мають постійний додатковий приріст дій для пробиття його захисту.",
+      "Суттєво здає позиції проти «супер-захисту», який ефективно розмінюється два в один або повністю нівелює його потужні атаки.",
+      "Надзвичайно залежний від правильної підготовки поля бою; сліпе фокусування виключно на фішках Шреддера замість базових основ гри веде до поразки."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Avoid the temptation to 'turtle' passively; stay highly mobile, abuse your move 3 stat, and utilize your ranged attacks.",
+      "Focus heavily on Foot Soldier nest management: position to build two nests from a single soldier, and balance quantity vs. quality based on the matchup.",
+      "Use both health pools dynamically: build nests around Bebop & Rocksteady if the enemy pressures Shredder, and vice versa.",
+      "Manage your sidekicks wisely: use them to absorb raw damage in fast matchups, but protect them to squeeze maximum card value in slower ones.",
+      "Aim for calculated, compact combo turns consisting of 3 to 5 actions rather than always waiting for an unrealistically massive setup.",
+      "Abuse item maps or large battlefields to supplement your defensive package, and actively close down the space once your combo is fully assembled."
+    ],
+    "ua": [
+      "Уникайте спокуси грати в пасивний глухий захист («черепаху»); залишайтеся мобільними, витискайте максимум із руху 3 та дальніх атак.",
+      "Максимально фокусуйтеся на менеджменті «гнізд» ніндзя: позиціонуйтеся так, щоб будувати два гнізда з одного солдата, і балансуйте їх кількість та якість під матчап.",
+      "Динамічно використовуйте обидва пули здоров'я: будуйте гнізда навколо Бібопа та Рокстеді, якщо тиснуть на Шреддера, і навпаки.",
+      "Керуйте помічниками розумно: використовуйте їх як живий щит в агресивних швидких матчапах, але бережіть для отримання максимального велью з карт у повільних.",
+      "Ціліться в розрахункові, компактні комбо-ходи на 3-5 дій, замість того, щоб нескінченно чекати на ідеальний масштабний хід.",
+      "Активно використовуйте мапи з предметами або просто великі локації для підсилення свого захисного пакета, а після збору комбо — затискайте опонента й добивайте."
+    ]
+  },
+  "matchups": {
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "Highly favored matchup. Shredder heavily overperforms against solo fighters by using sidekicks and Foot Soldiers to wall them off completely."
+        ],
+        "ua": [
+          "Вкрай вигідний матчап. Шреддер домінує над соло-бійцями, використовуючи помічників та ніндзя для їх повного блокування."
+        ]
+      }
+    }
+  }
+}

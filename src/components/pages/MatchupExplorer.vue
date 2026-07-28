@@ -87,18 +87,14 @@
         >
           {{ t("teamYou") }}
         </div>
-        <div
-          class="vs-slot"
-          :class="{ 'is-filled': charA }"
-          @click="openPicker('a')"
+        <CharacterSlot
+          :character="charA"
+          clearable
+          @pick="openPicker('a')"
+          @clear="clearSlot('a')"
         >
-          <template v-if="charA">
-            <button class="vs-slot-clear" @click.stop="clearSlot('a')">
-              ✕
-            </button>
-            <img :src="charA.image" class="vs-slot-img" />
-            <div class="vs-slot-name">{{ charA.name }}</div>
-            <div v-if="charB" class="vs-slot-badge">
+          <template #badge v-if="charA && charB">
+            <div class="vs-slot-badge">
               <span
                 class="stat-badge"
                 :class="
@@ -107,15 +103,10 @@
               >
                 {{ winrateA === null ? "?" : winrateA + "%" }}
               </span>
-              <span class="vs-slot-type" v-if="winrateA !== null">{{
-                matchupTypeTextA
-              }}</span>
+              <span class="vs-slot-type">{{ matchupTypeTextA }}</span>
             </div>
           </template>
-          <template v-else>
-            <div class="vs-slot-plus">+</div>
-          </template>
-        </div>
+        </CharacterSlot>
       </div>
 
       <div class="vs-divider">VS</div>
@@ -127,18 +118,14 @@
         >
           {{ t("teamOpponent") }}
         </div>
-        <div
-          class="vs-slot"
-          :class="{ 'is-filled': charB }"
-          @click="openPicker('b')"
+        <CharacterSlot
+          :character="charB"
+          clearable
+          @pick="openPicker('b')"
+          @clear="clearSlot('b')"
         >
-          <template v-if="charB">
-            <button class="vs-slot-clear" @click.stop="clearSlot('b')">
-              ✕
-            </button>
-            <img :src="charB.image" class="vs-slot-img" />
-            <div class="vs-slot-name">{{ charB.name }}</div>
-            <div v-if="charA" class="vs-slot-badge">
+          <template #badge v-if="charA && charB">
+            <div class="vs-slot-badge">
               <span
                 class="stat-badge"
                 :class="
@@ -147,17 +134,19 @@
               >
                 {{ winrateB === null ? "?" : winrateB + "%" }}
               </span>
-              <span class="vs-slot-type" v-if="winrateB !== null">{{
-                matchupTypeTextB
-              }}</span>
+              <span class="vs-slot-type">{{ matchupTypeTextB }}</span>
             </div>
           </template>
-          <template v-else>
-            <div class="vs-slot-plus">+</div>
-          </template>
-        </div>
+        </CharacterSlot>
       </div>
     </div>
+
+    <CharPickerModal
+      v-if="pickerOpen"
+      :characters-list="pickerFilteredCharacters"
+      @close="closePicker"
+      @select="selectCharacter"
+    />
 
     <div v-if="charA && charB" class="matchup-maps-section">
       <div v-if="balancedMaps.length" class="matchup-maps-group">
@@ -262,10 +251,12 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useDraftState } from "../composables/useDraftState.js";
-import Disclaimer from "./Disclaimer.vue";
-import MapCard from "./MapCard.vue";
-import ClearFilterBtn from "./buttons/ClearFilterBtn.vue";
+import { useDraftState } from "../../composables/useDraftState.js";
+import Disclaimer from "../Disclaimer.vue";
+import MapCard from "../MapCard.vue";
+import ClearFilterBtn from "../buttons/ClearFilterBtn.vue";
+import CharPickerModal from "../CharPickerModal.vue";
+import CharacterSlot from "../CharacterSlot.vue";
 
 const {
   t,

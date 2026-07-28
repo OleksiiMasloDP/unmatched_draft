@@ -229,11 +229,11 @@
 
 <script setup>
 import { onMounted, nextTick } from "vue";
-import { useDraftState } from "../composables/useDraftState.js";
-import CharacterDraft from "./CharacterDraft.vue";
-import MapSelect from "./MapSelect.vue";
-import Disclaimer from "./Disclaimer.vue";
-import MatchupList from "./MatchupList.vue";
+import { useDraftState } from "../../composables/useDraftState.js";
+import CharacterDraft from "../CharacterDraft.vue";
+import MapSelect from "../MapSelect.vue";
+import Disclaimer from "../Disclaimer.vue";
+import MatchupList from "../MatchupList.vue";
 
 const {
   search,

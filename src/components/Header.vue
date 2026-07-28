@@ -70,8 +70,26 @@
                 <path d="M6 7L3 15H9L6 7Z" />
                 <path d="M18 7L15 15H21L18 7Z" />
               </svg>
-
-              <span>{{ t("matchupsPage") }}</span>
+              <span>{{ t("matchupsTitle") }}</span>
+            </button>
+          </li>
+          <li>
+            <button class="menu-item" @click="navigate('guide')">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+              </svg>
+              <span>{{ t("guideTitle") }}</span>
             </button>
           </li>
         </ul>
@@ -89,7 +107,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
-defineProps({
+const props = defineProps({
   lang: {
     type: String,
     default: "ua",
@@ -146,10 +164,10 @@ onBeforeUnmount(() => {
 
   width: 100%;
   padding: 12px 16px;
-  background: rgba(var(--bg-slate-rgb), 0.65);
+  background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1100;
   user-select: none;
 }
@@ -184,7 +202,7 @@ onBeforeUnmount(() => {
 .logo-accent {
   font-weight: 800;
   font-size: 18px;
-  background: var(--color-player);
+  background: linear-gradient(135deg, #4f7cff, #ff4f6d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
@@ -205,7 +223,7 @@ onBeforeUnmount(() => {
 .burger-btn span {
   width: 100%;
   height: 2px;
-  background-color: var(--text-white);
+  background-color: #f1f5f9;
   border-radius: 2px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -225,11 +243,11 @@ onBeforeUnmount(() => {
   top: calc(100% + 8px);
   left: 16px;
   width: 260px;
-  background: var(--bg-slate);
+  background: rgba(30, 41, 59);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 16px;
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   padding: 12px 0;
 }
@@ -245,7 +263,7 @@ onBeforeUnmount(() => {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-dim);
+  color: #64748b;
   padding: 4px 16px 8px;
 }
 
@@ -257,7 +275,7 @@ onBeforeUnmount(() => {
   padding: 10px 16px;
   background: transparent;
   border: none;
-  color: var(--text-light);
+  color: #cbd5e1;
   text-align: left;
   font-size: 13.5px;
   font-weight: 700;
@@ -267,7 +285,7 @@ onBeforeUnmount(() => {
 
 .menu-item:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: var(--color-player);
+  color: #4f7cff;
   padding-left: 20px;
 }
 
@@ -291,32 +309,32 @@ onBeforeUnmount(() => {
 
 .lang-switcher {
   display: flex;
-  background: rgba(var(--bg-slate-rgb), 0.8);
+  background-color: rgba(30, 41, 59, 0.8);
   padding: 2px;
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .lang-btn {
   background: transparent;
   border: none;
-  color: var(--text-dim);
-  padding: 5px 12px;
+  color: #94a3b8;
+  padding: 4px 10px;
   font-size: 11px;
   font-weight: 800;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.15s ease;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .lang-btn:hover {
-  color: var(--text-light);
+  color: #f1f5f9;
 }
 
 .lang-btn.active {
-  background: var(--bg-slate-hover);
-  color: var(--text-white);
-  border: 1px solid var(--border-medium);
+  background: linear-gradient(135deg, #4f7cff, #3b60d1);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3);
 }
 
 .slide-enter-active,
