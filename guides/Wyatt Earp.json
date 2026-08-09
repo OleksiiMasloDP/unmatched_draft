@@ -33,48 +33,35 @@
   },
   "weaknesses": {
     "en": [
-      "Losing Doc Holliday early drastically reduces map control and offensive options.",
-      "Struggles against exceptionally tanky fighters, heavy card draw, or hard attack punishers."
+      "Losing Doc Holliday early drastically reduces map control and offensive options",
+      "Struggles against exceptionally tanky fighters, heavy card draw, or hard attack punishers"
     ],
     "ua": [
-      "Втрата Дока Холлідея критично знижує контроль мапи та обрізає атакуючий потенціал.",
-      "Страждає проти живучих бійців, великого добору карт або тих, хто сильно карає за атаки."
+      "Втрата Дока Холлідея критично знижує контроль мапи та обрізає атакуючий потенціал",
+      "Страждає проти живучих бійців, великого добору карт або тих, хто сильно карає за атаки"
     ]
   },
   "generalTips": {
     "en": [
-      "Offense is your best defense. All 3 parts of your ability are very good.",
-      "Think when to boost and full-aggro, and when to play for tempo and value.",
-      "Take more risks when you are behind. Two ranged fighters give crazy map control.",
-      "You can run most fighters out of defenses. Mulligan for 'You're A Daisy if You Do'.",
-      "Find creative spots for movement schemes and Doc reds. Throw bait attacks, boost away your blue cards.",
-      "Keep track of their bottom-decked cards. Think when to remove damage or defense.",
-      "Look for ways to empty your hand for 'In Vino Veritas', but don't be afraid to play it to draw 1-2 cards or as a pass.",
+      "Offense is your best defense. All 3 parts of your ability are very good",
+      "Think when to boost and full-aggro, and when to play for tempo and value",
+      "Take more risks when you are behind. Two ranged fighters give crazy map control",
+      "You can run most fighters out of defenses. Mulligan for 'You're A Daisy if You Do'",
+      "Find creative spots for movement schemes and Doc reds. Throw bait attacks, boost away your blue cards",
+      "Keep track of their bottom-decked cards. Think when to remove damage or defense",
+      "Look for ways to empty your hand for 'In Vino Veritas', but don't be afraid to play it to draw 1-2 cards or as a pass",
       "Great 'filler' fighter for your pool. Impactful decision-making every game. When in doubt, full send!"
     ],
     "ua": [
-      "Напад — ваш найкращий захист. Усі 3 частини вашої здібності дуже сильні.",
-      "Думайте, коли бустити та йти в фул-агро, а коли грати на темп і вигоду.",
-      "Ризикуйте більше, якщо відстаєте. Два далекобійних бійця дають божевільний контроль мапи.",
-      "Ви можете вибити всі щити у більшості бійців. Шукайте на мулігані 'You're A Daisy if You Do'.",
-      "Знаходьте креативні місця для схем переміщення та червоних карт Дока. Кидайте байт-атаки.",
-      "Слідкуйте за картами супротивника, які пішли під низ колоди.",
-      "Шукайте способи спустошити руку для 'In Vino Veritas', але не бійтеся грати її для добору 1-2 карт або просто як пас.",
+      "Напад — ваш найкращий захист. Усі 3 частини вашої здібності дуже сильні",
+      "Думайте, коли бустити та йти в фул-агро, а коли грати на темп і вигоду",
+      "Ризикуйте більше, якщо відстаєте. Два далекобійних бійця дають божевільний контроль мапи",
+      "Ви можете вибити всі щити у більшості бійців. Шукайте на мулігані 'You're A Daisy if You Do'",
+      "Знаходьте креативні місця для схем переміщення та червоних карт Дока. Кидайте байт-атаки",
+      "Слідкуйте за картами супротивника, які пішли під низ колоди",
+      "Шукайте способи спустошити руку для 'In Vino Veritas', але не бійтеся грати її для добору 1-2 карт або просто як пас",
       "Чудовий боєць для розширення вашого пулу. Впливові рішення в кожній грі. Якщо сумніваєтеся — тисніть на максимум!"
     ]
   },
-  "matchups": {
-    "Sherlock Holmes": {
-      "tips": {
-        "en": [
-          "Keep high pressure early on before he deduces your entire hand.",
-          "Use your scheme passes to mess with his counter-strategies."
-        ],
-        "ua": [
-          "Тисніть з перших ходів, поки він не прорахував вашу руку.",
-          "Використовуйте паси через схеми, щоб зламати його плани на контратаки."
-        ]
-      }
-    }
-  }
+  "matchups": {}
 }

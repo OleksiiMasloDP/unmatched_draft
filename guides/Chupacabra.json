@@ -1,0 +1,78 @@
+{
+  "complexity": 2.5,
+  "keyCards": [
+    {
+      "image": "ambush.webp"
+    },
+    {
+      "image": "feeding.webp"
+    },
+    {
+      "image": "blood_in_the_air.webp"
+    },
+    {
+      "image": "traveler_of_the_night.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Value",
+    "ua": "Агро / Велью"
+  },
+  "features": {
+    "en": [
+      "Strong sustain through healing allows winning long trades",
+      "Solid defensive value with 3-value cards against common 4 attacks",
+      "Can apply constant pressure without fearing damage trades",
+      "Capable of explosive double-combo finishes with high damage output",
+      "Flexible gameplan: can play aggressive or slow value depending on matchup"
+    ],
+    "ua": [
+      "Сильне виживання через лікування дозволяє вигравати затяжні обміни",
+      "Надійний захист трійками проти популярних атак на 4",
+      "Може постійно тиснути без страху розмінів по здоров'ю",
+      "Здатна закривати гру через потужні подвійні комбо",
+      "Гнучкий геймплан: може грати агресивно або через повільне велью"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Limited maximum defense values make it vulnerable to big burst turns",
+      "Struggles against heavy control, feints, and card denial",
+      "Relies on landing value trades — bad exchanges can snowball quickly",
+      "Hard matchups against fighters with strong high-value defenses or constant feints"
+    ],
+    "ua": [
+      "Обмежений захист робить її вразливою до сильних комбо",
+      "Слабка проти контролю, фінтів і скидання карт",
+      "Залежить від вигідних розмінів — погані трейди швидко програють гру",
+      "Складно проти бійців із сильними захистами або постійними фінтами"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Can apply constant pressure without fearing damage trades",
+      "Can also play slow thanks to healing and high mobility (move 3)",
+      "Flexible pacing depending on matchup and game state",
+      "If you play aggressively, force constant trades — your healing gives you the edge",
+      "Use 3-value defenses efficiently against 4 attacks to gain value",
+      "Do not be afraid to take damage — you can recover it later",
+      "Look for opportunities to transition into a finishing combo",
+      "Against slower decks, pressure early before they stabilize",
+      "Manage your hand carefully — you still need resources for your finishing turn",
+      "Most games are won through pressure + final burst, not pure aggression"
+    ],
+    "ua": [
+      "Може грати швидко через абілку і постійний тиск",
+      "Може грати повільно завдяки лікуванню і мобільності (рух 3)",
+      "Гнучкий темп гри залежно від матчапу і ситуації",
+      "Якщо граєте агресивно, — нав'язуйте постійні розміни (лікування дає вам перевагу)",
+      "Ефективно використовуйте трійки проти атак на 4 для вигідних трейдів",
+      "Не бійтеся втрачати HP — ви можете його відновити",
+      "Шукайте момент для переходу в добиваюче комбо",
+      "Проти повільних колод тисніть рано, поки вони не стабілізувались",
+      "Контролюйте руку — ресурси потрібні для фінального заходу",
+      "Більшість ігор виграється через тиск і фінальний бурст, а не просто агро"
+    ]
+  },
+  "matchups": {}
+}
