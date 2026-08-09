@@ -11,104 +11,74 @@
   },
   "features": {
     "en": [
-      "Extreme flexibility: can easily switch between standard slow value, aggressive tempo, pure aggro, or combo setups.",
-      "Incredible survivability using good base defense and unique mechanics to disperse damage onto respawnable 2-HP archer sidekicks.",
-      "High skill expression that rewards strong game fundamentals and deep matchup spread knowledge.",
-      "Potential to gain massive action advantage and even burst down certain fighters in a single turn."
+      "Extreme flexibility: can easily switch between standard slow value, aggressive tempo, pure aggro, or combo setups",
+      "Incredible survivability using good base defense and unique mechanics to disperse damage onto respawnable 2-HP archer sidekicks",
+      "High skill expression that rewards strong game fundamentals and deep matchup spread knowledge",
+      "Potential to gain massive action advantage and even burst down certain fighters in a single turn"
     ],
     "ua": [
-      "Екстремальна гнучкість: здатна легко перемикатися між повільним велью, агресивним темпом, чистим агро чи комбо-стратегіями.",
-      "Неймовірна виживаність завдяки хорошому базовому захисту та механіці перенаправлення шкоди на лучників (помічники з 2 HP).",
-      "Високий поріг майстерності, який щедро винагороджує за хороше знання фундаментальних основ гри та матчапів.",
-      "Здатність отримувати величезну перевагу в діях та знищувати деяких бійців за один єдиний хід."
+      "Екстремальна гнучкість: здатна легко перемикатися між повільним велью, агресивним темпом, чистим агро чи комбо-стратегіями",
+      "Неймовірна виживаність завдяки хорошому базовому захисту та механіці перенаправлення шкоди на лучників (помічники з 2 HP)",
+      "Високий поріг майстерності, який щедро винагороджує за хороше знання фундаментальних основ гри та матчапів",
+      "Здатність отримувати величезну перевагу в діях та знищувати деяких бійців за один єдиний хід"
     ]
   },
   "weaknesses": {
     "en": [
-      "Suffers heavily against hyper-value fighters who can continuously cheat infinite value into play.",
-      "Lacks direct cancel effects, making her highly vulnerable to fighters with exceptionally powerful card effects.",
-      "Requires precise positioning and tricky archer management; grouping them leaves them open to dangerous area-of-effect damage."
+      "Suffers heavily against hyper-value fighters who can continuously cheat infinite value into play",
+      "Lacks direct cancel effects, making her highly vulnerable to fighters with exceptionally powerful card effects",
+      "Requires precise positioning and tricky archer management; grouping them leaves them open to dangerous area-of-effect damage"
     ],
     "ua": [
-      "Страждає проти гіпер-велью персонажів, які здатні безкінечно генерувати ресурси на полі бою.",
-      "Повна відсутність карток скасування ефектів (увімкнень), що робить її вразливою до надпотужних ворожих прийомів.",
-      "Вимагає ювелірного позиціонування; скупчення лучників в одній зоні робить їх легкою мішенню для масової шкоди (AoE)."
+      "Страждає проти гіпер-велью персонажів, які здатні безкінечно генерувати ресурси на полі бою",
+      "Повна відсутність карток скасування ефектів (увімкнень), що робить її вразливою до надпотужних ворожих прийомів",
+      "Вимагає ювелірного позиціонування; скупчення лучників в одній зоні робить їх легкою мішенню для масової шкоди (AoE)"
     ]
   },
   "generalTips": {
     "en": [
-      "Recognize your win condition early: know when to poke for a combo, when to control tempo, and when to rush the enemy down.",
-      "Master archer deployment: spread them out to control map space and avoid enemy boost combos, or body-block to shield Yennenga.",
-      "Carefully balance your choices between respawning archers for defense or taking action gains for aggressive tempo swings.",
-      "Synergize movement effects to setup point-blank shots, land high-value Momentum Shifts, or trap enemies into Jaws of the Beast.",
-      "Use clever baits and mix-ups to control the board, minimize your own boosts, and abuse auto-damage when pressured."
+      "Recognize your win condition early: know when to poke for a combo, when to control tempo, and when to rush the enemy down",
+      "Master archer deployment: spread them out to control map space and avoid enemy boost combos, or body-block to shield Yennenga",
+      "Carefully balance your choices between respawning archers for defense or taking action gains for aggressive tempo swings",
+      "Synergize movement effects to setup point-blank shots, land high-value Momentum Shifts, or trap enemies into Jaws of the Beast",
+      "Use clever baits and mix-ups to control the board, minimize your own boosts, and abuse auto-damage when pressured"
     ],
     "ua": [
-      "Вчасно визначайте свій план на гру: знайте, кого потрібно повільно виснажувати, а кого — наздоганяти й вибухово знищувати.",
-      "Грамотно керуйте лучниками: розділяйте їх для контролю карти або використовуйте як живий щит для захисту самої Йенненги.",
-      "Балансуйте вибір: вчасно вирішуйте, коли краще відродити лучників для захисту, а коли — взяти додаткові дії для темпу.",
-      "Поєднуйте ефекти переміщення для реалізації пострілів впритул, потужних зсувів імпульсу або пасток у Щелепи звіра.",
-      "Використовуйте блеф, контролюйте карту та витискайте максимум з авто-шкоди, якщо опонент намагається затиснути вас."
+      "Вчасно визначайте свій план на гру: знайте, кого потрібно повільно виснажувати, а кого — наздоганяти й вибухово знищувати",
+      "Грамотно керуйте лучниками: розділяйте їх для контролю карти або використовуйте як живий щит для захисту самої Йенненги",
+      "Балансуйте вибір: вчасно вирішуйте, коли краще відродити лучників для захисту, а коли — взяти додаткові дії для темпу",
+      "Поєднуйте ефекти переміщення для реалізації пострілів впритул, потужних зсувів імпульсу або пасток у Щелепи звіра",
+      "Використовуйте блеф, контролюйте карту та витискайте максимум з авто-шкоди, якщо опонент намагається затиснути вас"
     ]
   },
   "matchups": {
-    "Yennefer & Triss": {
+    "Donatello": {
       "tips": {
         "en": [
-          "A losing matchup. Their value generation and ability to manipulate options put heavy strain on your defense.",
-          "Look to pivot towards a faster tempo or aggro strategy to pressure them before their engine dominates."
+          "Donatello's winning plan is built around baiting out and using up all of your defense cards with a value of 4, so watch how many of those you're spending",
+          "Play proactively — spend extra-action turns to actively pressure Donatello rather than waiting for him to come to you",
+          "Use that pressure to bait out his defense cards, then land a couple of attacks into the opening once they're gone",
+          "Ignore Metalhead completely — it's not worth reacting to at all",
+          "Keeping him under constant pressure also keeps his hand small, which is what actually takes the danger out of his big combo turn",
+          "He also grinds his carts against your archers for free value along the way — don't let that go completely unanswered"
         ],
         "ua": [
-          "Програшний матчап. Їхня генерація ресурсів та маніпуляція вибором створюють занадто високий тиск на ваш захист.",
-          "Намагайтеся грати в агресивний темп, щоб пробити їх до того, як вони повністю розкрутять свою перевагу."
+          "Виграшний план Донателло будується на тому, щоб виманити й витратити всі ваші картки захисту зі значенням 4 — стежте, скільки їх ви розмінюєте",
+          "Грайте проактивно — використовуйте ходи з додатковими діями, щоб самим пресувати Донателло, а не чекати, поки він піде на вас",
+          "Цим тиском виманюйте його захисти, а потім вписуйте пару атак у порожнє, коли захисту вже немає",
+          "Металхеда ігноруйте повністю — реагувати на нього не варто взагалі",
+          "Постійний тиск заодно тримає його руку маленькою — а саме мала рука і забирає небезпеку з його великого комбо-ходу",
+          "Він також безкоштовно розкручує вагончики об ваших лучників по ходу гри — не давайте йому робити це зовсім безкарно"
         ]
       }
     },
-    "Elektra": {
+    "Little Red Riding Hood": {
       "tips": {
         "en": [
-          "A nightmare matchup due to her multi-phase high value and powerful effects.",
-          "Focus heavily on managing your archers to absorb critical strikes and minimize her combat tempo."
+          "As Yennenga, you can largely disregard her Huntsman — don't waste effort reacting to it and just keep your offense focused directly on Little Red Riding Hood herself"
         ],
         "ua": [
-          "Кошмарний матчап через багатофазність Електри та її вкрай небезпечні бойові ефекти.",
-          "Максимально фокусуйтеся на правильному розподілі лучників, щоб приймати на них критичні удари."
-        ]
-      }
-    },
-    "Golden Bat": {
-      "tips": {
-        "en": [
-          "Classified as a nightmare matchup. His raw static power and high-value attacks heavily punish Yennenga's lack of cancel cards.",
-          "Try to maintain precise positioning to force him into suboptimal movement before committing to defense."
-        ],
-        "ua": [
-          "Кошмарний бій. Його колосальна статична атака жорстоко карає за відсутність скасувань у вашій колоді.",
-          "Тримайте дистанцію та змушуйте його витрачати рух неефективно, перш ніж йти в глухий захист."
-        ]
-      }
-    },
-    "Dr. Jill Trent": {
-      "tips": {
-        "en": [
-          "A balanced, highly skill-dependent matchup.",
-          "You possess enough raw value in your deck to completely outlast and beat Jill through both of your main scheme cards if played carefully."
-        ],
-        "ua": [
-          "Рівний матчап, що повністю залежить від твоїх фундаментальних навичок.",
-          "У вас абсолютно достатньо велью в колоді, щоб переграти та виснажити Джилл за допомогою обох ваших карт умислів."
-        ]
-      }
-    },
-    "Sinbad": {
-      "tips": {
-        "en": [
-          "This is one of the worst matchups in the entire game. Sinbad acts as a nightmare hyper-value fighter.",
-          "Avoid letting the game drag out passively; you must carefully watch his voyage progress while trying to maximize every single card interaction."
-        ],
-        "ua": [
-          "Один із найгірших матчапів у всій грі (кошмарний рівень). Синдбад повністю перекриває Йенненгу своїм гіпер-велью.",
-          "Не затягуйте гру пасивно; уважно стежте за його подорожами та намагайтеся витискати максимум з кожної карти."
+          "За Йеннегу можна сміливо забити на її Мисливця — не витрачайте зусилля на реакцію на нього, а тримайте тиск напряму на саму Червону Шапочку"
         ]
       }
     }

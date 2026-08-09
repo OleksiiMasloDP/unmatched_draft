@@ -1,0 +1,57 @@
+{
+  "complexity": 4,
+  "keyCards": [
+    { "image": "heras_curiosity.webp" },
+    { "image": "aphrodites_beauty.webp" },
+    { "image": "forged_by_hephaestus.webp" }
+  ],
+  "style": {
+    "en": "Tempo / Value / Risk-Management / Control",
+    "ua": "Темпо / Велью / Менеджмент ризику / Контроль"
+  },
+  "features": {
+    "en": [
+      "Unique mechanic with Pandora’s Box creating constant value and decision pressure every turn",
+      "Strong synergy between ability and deck — effects amplify each other",
+      "Flexible playstyle: can play slow value, control tempo, or push aggression depending on flips",
+      "Access to additional value through sidekicks and box effects"
+    ],
+    "ua": [
+      "Унікальна механіка Скриньки Пандори, яка створює постійний велью та тиск вибору кожен хід",
+      "Сильна синергія між здібністю та колодою — ефекти підсилюють один одного",
+      "Гнучкий стиль гри: можна грати від повільного велью, контролю темпу або агресії залежно від відкриттів",
+      "Додаткове велью через помічників і ефекти скриньки"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "High randomness: outcomes depend heavily on box flips",
+      "Self-damage risk when pushing too many flips (feathers)",
+      "Requires strong decision-making on when to stop opening cards",
+      "Low HP on sidekicks makes them easy to remove"
+    ],
+    "ua": [
+      "Висока рандомність: результат сильно залежить від відкриттів скриньки",
+      "Ризик самопошкодження при жадібній грі (пера)",
+      "Потребує точного таймінгу, коли зупиняти відкриття карт",
+      "Помічники мають 1 HP і легко знищуються"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Do not greed flips — stopping early is often stronger than risking damage",
+      "Track feathers probability and manage risk accordingly",
+      "Use sidekicks actively but don’t overcommit them",
+      "Adapt your plan based on current box outcomes",
+      "Your strength is consistency over time, not explosive turns"
+    ],
+    "ua": [
+      "Не жаднічайте з відкриттями — часто краще зупинитися раніше",
+      "Рахуйте ймовірність пер і керуйте ризиком",
+      "Використовуйте помічників активно, але не переоцінюйте їх",
+      "Адаптуйте план гри під результати скриньки",
+      "Ваша сила — у стабільному велью, а не в одному вибуховому ході"
+    ]
+  },
+  "matchups": {}
+}

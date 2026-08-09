@@ -379,8 +379,12 @@ h6 {
   text-overflow: ellipsis;
 }
 
-.stat-badge {
+.character .stat-badge,
+.char-picker-item .stat-badge {
   position: absolute;
+}
+
+.stat-badge {
   top: 8px;
   left: 8px;
   padding: 3px 8px;

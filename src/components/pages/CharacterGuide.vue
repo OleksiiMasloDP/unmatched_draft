@@ -602,8 +602,7 @@ function openMatchupPopup(opp) {
 }
 
 .matchup-modal {
-  width: 100%;
-  max-width: 760px;
+  width: 80%;
   max-height: 85vh;
   background: var(--bg-dark);
   border: 1px solid var(--border-medium);
@@ -668,8 +667,13 @@ function openMatchupPopup(opp) {
   flex: 1;
   min-width: 0;
   padding: 1.75rem;
-  padding-top: 4rem;
   overflow-y: auto;
+}
+
+@media (min-width: 769px) {
+  .matchup-modal-content {
+    padding-top: 4rem;
+  }
 }
 
 .matchup-winrate-section {
@@ -731,6 +735,7 @@ function openMatchupPopup(opp) {
   .matchup-modal {
     flex-direction: column;
     max-height: 90vh;
+    width: 100%;
   }
   .matchup-modal-image {
     width: 100%;

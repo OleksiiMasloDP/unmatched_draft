@@ -1,0 +1,80 @@
+{
+  "complexity": 5,
+  "keyCards": [
+    { "image": "electro_grenade.webp" },
+    { "image": "thinking_ahead.webp" },
+    { "image": "untested_enhancements.webp" },
+    { "image": "smoke_bomb.webp" },
+    { "image": "party_wagon.webp" }
+  ],
+  "style": {
+    "en": "Combo / Tempo / Resource Engine",
+    "ua": "Комбо / Темпо / Генерація ресурсів"
+  },
+  "features": {
+    "en": [
+      "Strong combo-based win condition with multiple attack chains in one turn",
+      "High tempo through gaining extra actions from schemes and Metalhead cards",
+      "Powerful recursion engine allowing reuse of key attacks and defenses",
+      "Flexible combo paths: early pressure, surprise burst, or full setup finisher"
+    ],
+    "ua": [
+      "Сильна комбо-умова перемоги через серії атак за один хід",
+      "Високий темп через отримання додаткових дій зі схем і карт Металхеда",
+      "Потужна рекурсія — повторне використання ключових атак і захистів",
+      "Гнучкі варіанти комбо: ранній тиск, сюрприз або повний сетап"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Relies heavily on combo timing — wrong moment can lose the game",
+      "Resource intensive: requires setup in discard and hand",
+      "Can run out of cards during early aggressive combos",
+      "Struggles if opponent avoids engagement or constantly defends"
+    ],
+    "ua": [
+      "Сильно залежить від таймінгу комбо — помилка часто програє гру",
+      "Потребує ресурсів і підготовки (скид + рука)",
+      "Може швидко виснажитися при ранніх агресивних комбо",
+      "Проблеми проти кайтінгу або постійного захисту суперника"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Plan your combo in advance — track damage and available actions",
+      "Keep at least one wagon for finishing",
+      "Use recursion cards to repeat your strongest attacks",
+      "Do not rush early combo unless necessary",
+      "Most games are won through a well-prepared full combo"
+    ],
+    "ua": [
+      "Плануйте комбо наперед — рахуйте шкоду і дії",
+      "Тримайте хоча б один вагон для добивання",
+      "Використовуйте рекурсію для повтору сильних атак",
+      "Не поспішайте з раннім комбо без причини",
+      "Більшість ігор виграється через підготовлене фінальне комбо"
+    ]
+  },
+  "matchups": {
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "Your main goal is to bait out all of Enenra’s defense cards with value 4 — your combo turn becomes much stronger once they are gone",
+          "Avoid overcommitting into her proactive turns — she wants you to walk into her pressure",
+          "Play patiently and build your combo while minimizing unnecessary damage taken",
+          "Metalhead can be ignored by Yennenga, so use it mainly for value and combo setup, not pressure",
+          "Try to keep your hand size healthy — a larger hand makes your combo turn much stronger",
+          "Be careful around her archers — avoid giving free value by feeding them with carts without purpose"
+        ],
+        "ua": [
+          "Ваше головне завдання — виманити всі захисти Єненги зі значенням 4, адже без них ваше комбо стає значно сильнішим",
+          "Не переінвестуйтеся в її проактивні ходи — вона хоче, щоб ви самі заходили під її тиск",
+          "Грайте терпляче, збираючи комбо і мінімізуючи зайву втрату HP",
+          "Металхед для неї не є ціллю, тому використовуйте його більше для велью і підготовки комбо, а не тиску",
+          "Намагайтесь тримати велику руку — це критично для сильного комбо-ходу",
+          "Обережно з лучниками — не давайте безкоштовного велью, бездумно прокручуючи вагончики"
+        ]
+      }
+    }
+  }
+}
