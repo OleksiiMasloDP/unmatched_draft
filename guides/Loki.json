@@ -1,0 +1,189 @@
+{
+  "complexity": 4,
+  "keyCards": [
+    {
+      "image": "fall_of_balder.webp"
+    },
+    {
+      "image": "looking_for_trouble.webp"
+    },
+    {
+      "image": "ragnarok.webp"
+    },
+    {
+      "image": "freyjas_rescue.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Tempo / Mind Games",
+    "ua": "Агро / Темпо / Психологічна гра"
+  },
+  "features": {
+    "en": [
+      "Unique ability revolves around giving Tricks to the opponent and punishing them for playing or discarding them",
+      "Extremely strong card draw allows constant pressure and aggressive play",
+      "Tricks increase movement, making it difficult for the opponent to escape",
+      "Strong attacks and solid defenses, especially against fighters with high card values",
+      "Can manipulate the opponent's hand and force specific cards to be played",
+      "Powerful recursion allows important Tricks to be returned to hand or placed on top of the deck"
+    ],
+    "ua": [
+      "Унікальна здібність будується на передачі Трюків супернику та покаранні за їх розіграш або скид",
+      "Надзвичайно сильний добір дозволяє постійно підтримувати агресію",
+      "Трюки в руці суперника збільшують ваше переміщення, тому від вас важко втекти",
+      "Сильні атаки та надійний захист, особливо проти бійців із високими значеннями карт",
+      "Може контролювати руку суперника та змушувати його грати конкретні карти",
+      "Сильна рекурсія дозволяє повертати важливі Трюки в руку або класти їх наверх колоди"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Extremely demanding to play and heavily punishes mistakes",
+      "Has no real value or exhaustion gameplan — must kill the opponent before running out of cards",
+      "Giving Tricks to the opponent can backfire against fighters who benefit from receiving strong cards",
+      "Struggles heavily when the opponent keeps only 3–4 cards in hand",
+      "Very dependent on finding the red 4 Tricks early; having them near the bottom of the deck can lose the game",
+      "Limited against fighters with low card values or many cards that change their values",
+      "Has no true passes, making it difficult to slow the game down"
+    ],
+    "ua": [
+      "Надзвичайно вимогливий до гри та дуже сильно карає за помилки",
+      "Не має повноцінного велью- або фатіг-плану — потрібно вбити суперника до виснаження колоди",
+      "Передача Трюків може зіграти проти вас, якщо суперник отримує з них сильний профіт",
+      "Сильно страждає проти суперників, які тримають лише 3–4 карти в руці",
+      "Дуже залежить від раннього знаходження червоних четвірок; якщо вони внизу колоди, це може програти гру",
+      "Слабкий проти бійців із низькими значеннями карт або великою кількістю карт зі змінним значенням",
+      "Не має справжніх пасів, тому складно сповільнювати гру"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Keep the opponent's hand large — your ability becomes much stronger when they hold several Tricks",
+      "Play aggressively and keep attacking; you do not have a reliable value or exhaustion plan",
+      "Find the red 4 Tricks as early as possible — their automatic damage is a major part of your win condition",
+      "Use your Schemes to pull the opponent back into range and set up Ragnarok turns",
+      "Ragnarok is usually a 3–6 attack, not the huge attack its ability suggests; use it when the opponent has 2–3 Tricks in hand",
+      "Use your Tricks as bait — cards like Werewolf can force high defenses or Feints and create another attack",
+      "Freya's Sanctuary and other Tricks can be used offensively, not only as defenses",
+      "Use Looking for Trouble to see the opponent's hand and force them to play the card you want",
+      "Use Leviathan to reuse important Tricks, manipulate the opponent's hand, and punish high-value cards",
+      "Be careful not to overdraw — Loki can run out of cards surprisingly quickly",
+      "Track the opponent's hand size constantly; keeping them at 3–4 cards makes finding damage much harder",
+      "Your goal is to accumulate small chunks of damage from Tricks and convert them into a final kill"
+    ],
+    "ua": [
+      "Тримайте в суперника велику руку — ваша здібність стає значно сильнішою, коли в нього багато Трюків",
+      "Грайте агресивно та постійно атакуйте — надійного велью- або фатіг-плану у вас немає",
+      "Якомога швидше знаходьте червоні четвірки — їхній автоурон є важливою частиною вашої умови перемоги",
+      "Використовуйте схеми, щоб підтягувати суперника назад у зону атаки та готувати ходи з Рагнароком",
+      "Рагнарок зазвичай є атакою на 3–6, а не величезною атакою, яку обіцяє його ефект; грайте його, коли в суперника 2–3 Трюки",
+      "Використовуйте Трюки як байти — Перевертень може виманювати сильний захист або каверзу та створювати додаткову атаку",
+      "Притулок Фреї та інші Трюки можна використовувати не лише в захисті, а й в атаці",
+      "Використовуйте Пошук неприємностей, щоб побачити руку суперника та змусити його зіграти потрібну вам карту",
+      "Використовуйте Леватін для повторного використання важливих Трюків, маніпуляції рукою суперника та покарання сильних карт",
+      "Слідкуйте за розміром власної руки — Локі може несподівано швидко залишитися без колоди",
+      "Постійно відстежуйте кількість карт у руці суперника; на 3–4 картах знаходити шкоду значно складніше",
+      "Ваша мета — поступово накопичувати невеликі порції шкоди через Трюки та перетворити їх на фінальне добивання"
+    ]
+  },
+  "matchups": {
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Bigfoot's high card values and boosts give Loki strong defensive targets.",
+          "Use his high-value cards against him and take advantage of your strong defenses.",
+          "Keep Tricks in his hand to increase your movement and maintain pressure."
+        ],
+        "ua": [
+          "Високі значення карт Бігфута та його бусти дають Локі зручні цілі для захисту.",
+          "Використовуйте його сильні карти проти нього самого та отримуйте перевагу від своїх захистів.",
+          "Тримайте Трюки в його руці, щоб збільшувати своє переміщення та підтримувати тиск."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "Achilles can benefit heavily from receiving your Tricks, so be careful about which ones you give him.",
+          "Use his Helmets against him when possible, but watch out for accidentally giving Patroclus value.",
+          "Leviathan can help manipulate his hand and reuse important Tricks."
+        ],
+        "ua": [
+          "Ахіллес може отримувати великий профіт від ваших Трюків, тому обережно обирайте, що йому передавати.",
+          "За можливості використовуйте його Шоломи проти нього самого, але не давайте зайвого велью Патроклу.",
+          "Левіафан допомагає маніпулювати його рукою та повторно використовувати важливі Трюки."
+        ]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "Alice's strong boosts give Leviathan excellent targets to copy.",
+          "Use her high-value cards to amplify your own attacks when possible.",
+          "Be careful about giving her Tricks that provide too much value."
+        ],
+        "ua": [
+          "Сильні бусти Аліси дають Левіафану чудові цілі для копіювання.",
+          "За можливості використовуйте її карти для посилення власних атак.",
+          "Обережно передавайте їй Трюки, які можуть дати занадто багато велью."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Looking for Trouble is especially useful for manipulating Hood's hand.",
+          "Use it to see what she has and force her to play the card you want.",
+          "Be careful with her Symbols and avoid giving her the exact cards she needs."
+        ],
+        "ua": [
+          "Looking for Trouble особливо корисна для маніпуляції рукою Шапочки.",
+          "Використовуйте її, щоб побачити її руку та змусити зіграти потрібну вам карту.",
+          "Обережно грайте навколо її символів і не давайте їй саме ті карти, які їй потрібні."
+        ]
+      }
+    },
+    "Electra": {
+      "tips": {
+        "en": [
+          "Looking for Trouble can reveal Electra's hand and let you manipulate her options.",
+          "Use your Tricks to control which cards she is forced to play.",
+          "Be aware of her ability to replace cards with her sidekick."
+        ],
+        "ua": [
+          "Looking for Trouble дозволяє побачити руку Електри та маніпулювати її можливостями.",
+          "Використовуйте Трюки, щоб контролювати, які карти вона змушена зіграти.",
+          "Пам'ятайте про її можливість замінювати карти своїм помічником."
+        ]
+      }
+    },
+    "Raphael": {
+      "tips": {
+        "en": [
+          "Rafael's boosts are particularly effective against Loki's variable-value defenses.",
+          "Avoid relying on your changing-value defenses to stop his biggest attacks.",
+          "Try to maintain distance and use Tricks to control his hand."
+        ],
+        "ua": [
+          "Бусти Рафаеля особливо ефективні проти захистів Локі зі змінним значенням.",
+          "Не покладайтеся на захисти зі змінним значенням проти його найсильніших атак.",
+          "Намагайтеся тримати дистанцію та використовуйте Трюки для контролю його руки."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "Moon Knight's variable-value attacks can reduce the effectiveness of Loki's defenses.",
+          "Be careful about giving him Tricks that he can convert into additional value.",
+          "Use your movement advantage to keep pressure on him."
+        ],
+        "ua": [
+          "Його атаки зі змінним значенням можуть знижувати ефективність ваших захистів.",
+          "Обережно передавайте йому Трюки, які він може перетворити на додаткове велью.",
+          "Використовуйте перевагу в переміщенні, щоб постійно тримати його під тиском."
+        ]
+      }
+    }
+  }
+}

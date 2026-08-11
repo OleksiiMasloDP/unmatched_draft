@@ -53,5 +53,176 @@
       "Ваша сила — у стабільному велью, а не в одному вибуховому ході"
     ]
   },
-  "matchups": {}
+  "matchups": {
+    "Leshen": {
+      "tips": {
+        "en": [
+          "This is a very favorable matchup for Pandora.",
+          "Open the Box aggressively and use the accumulated value to overwhelm Leshen before it can stabilize.",
+          "After a couple of strong Box turns, use Zeus, Teleport and Hera to finish the fight.",
+          "Leshen simply cannot survive Pandora's repeated burst for long."
+        ],
+        "ua": [
+          "Це дуже сприятливий матчап для Пандори.",
+          "Агресивно відкривайте Скриньку та використовуйте накопичене велью, щоб задавити Лісовика до його стабілізації.",
+          "Після кількох сильних ходів зі Скринькою використовуйте Зевса, Телепорт і Геру для добивання.",
+          "Лісовик просто не витримує повторного бурсту Пандори."
+        ]
+      }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "Pandora has a strong advantage thanks to superior card draw, defensive retreats and useful Feints.",
+          "Use Box effects to deal automatic damage while keeping enough resources to defend yourself.",
+          "Teleport and Hera allow you to maintain pressure without giving the Raptors easy counterplay.",
+          "Kill one Raptor as quickly as possible — once one is gone, their overall pressure drops dramatically."
+        ],
+        "ua": [
+          "Пандора має сильну перевагу завдяки кращому добору, відходам у захист і корисним каверзам.",
+          "Використовуйте ефекти Скриньки для автоматичної шкоди, залишаючи достатньо ресурсів для захисту.",
+          "Телепорт і Гера дозволяють постійно тиснути, не даючи Рапторам легко контрити вас.",
+          "Якомога швидше вбивайте одного Раптора — після цього їхній загальний тиск різко зменшується."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "Bruce likes defending with 3-value cards, while Pandora can attack over them with boosted 7s and 8s.",
+          "His 3-value attacks are also inefficient against Pandora's defensive options and auto-damage.",
+          "Be especially careful about early Skirmishes — they are one of the few cards that can significantly disrupt your plan.",
+          "Keep attacking and use healing to win the damage race."
+        ],
+        "ua": [
+          "Брюс любить захищатися картами на 3, тоді як Пандора може бити поверх них посиленими 7 і 8.",
+          "Його атаки на 3 також неефективні проти захисту Пандори та її автоматичної шкоди.",
+          "Особливо остерігайтеся ранніх Skirmish — це одна з небагатьох карт, яка може серйозно зламати ваш план.",
+          "Продовжуйте атакувати та використовуйте лікування, щоб виграти гонку по шкоді."
+        ]
+      }
+    },
+    "Houdini": {
+      "tips": {
+        "en": [
+          "Pandora can comfortably outpace Houdini, even when he starts the game.",
+          "Houdini does not like defending consistently, which gives Pandora room to apply repeated pressure.",
+          "Use healing to offset the damage taken while maintaining aggression.",
+          "Keep attacking rather than allowing Houdini to dictate the pace of the game."
+        ],
+        "ua": [
+          "Пандора може впевнено переграти Гудіні по темпу, навіть якщо він починає першим.",
+          "Гудіні не любить постійно захищатися, що дає Пандорі можливість безперервно тиснути.",
+          "Використовуйте лікування, щоб компенсувати отриману шкоду та продовжувати агресію.",
+          "Продовжуйте атакувати й не дозволяйте Гудіні самому диктувати темп гри."
+        ]
+      }
+    },
+    "Nicola Tesla": {
+      "tips": {
+        "en": [
+          "Do not play this matchup slowly — Tesla must be pressured constantly.",
+          "Attack frequently and force him to spend his coils defensively.",
+          "Use Teleport to prevent Tesla from simply escaping your pressure.",
+          "Pandora's aggression can overwhelm Tesla before he gets enough value from his engine."
+        ],
+        "ua": [
+          "Не грайте цей матчап повільно — Теслу потрібно постійно пресувати.",
+          "Часто атакуйте та змушуйте його витрачати котушки на захист.",
+          "Використовуйте Телепорт, щоб Тесла не міг просто втекти від вашого тиску.",
+          "Агресія Пандори може задавити Теслу до того, як він отримає достатньо велью зі свого двигуна."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Little Red Riding Hood struggles to withstand Pandora's strong attacks and healing.",
+          "Use your healing effects to negate her automatic damage whenever possible.",
+          "When Huntsman card does not have the relevant symbol, use Looking Back to reliably return Hera and continue the pressure."
+        ],
+        "ua": [
+          "Шапочці складно витримувати сильні атаки Пандори та її лікування.",
+          "За можливості використовуйте лікування, щоб нівелювати її автоматичну шкоду.",
+          "Коли на карті Мисливеця немає потрібного символу, використовуйте Погляд у минуле, щоб гарантовано повернути Геру та продовжити тиск."
+        ]
+      }
+    },
+    "John Henry": {
+      "tips": {
+        "en": [
+          "John Henry has no reliable Feint, which makes him very vulnerable to Pandora's attacks.",
+          "Pressure him directly rather than giving him time to establish his gameplan.",
+          "Pandora can simply overwhelm him with repeated attacks and mobility."
+        ],
+        "ua": [
+          "У Джона Генрі немає надійної каверзи, що робить його дуже вразливим до атак Пандори.",
+          "Тисніть безпосередньо на нього, не даючи часу розіграти свій геймплан.",
+          "Пандора може просто задавити його повторними атаками та мобільністю."
+        ]
+      }
+    },
+    "Rosie the Riveter": {
+      "tips": {
+        "en": [
+          "Wait for Rosie's upgrades to fall off before committing to your strongest attacks.",
+          "Once her defense drops to 2 or lower, Hera becomes extremely effective.",
+          "Use one or two strong attacks at the right moment to finish her quickly."
+        ],
+        "ua": [
+          "Дочекайтеся, поки з Розі спадуть її покращення, перш ніж використовувати найсильніші атаки.",
+          "Коли її захист падає до 2 або нижче, Гера стає надзвичайно ефективною.",
+          "У потрібний момент дайте одну-дві сильні атаки, щоб швидко її добити."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "This matchup becomes favorable when Pandora gets a strong Box opening.",
+          "Use Teleport and your high-value attacks to punish Tomoe when she cannot maintain distance.",
+          "If Tomoe retreats with Tis'o, do not chase recklessly — open the Box, Teleport and use Hera or a boosted maneuver to reset the situation.",
+          "Do not give her an easy opportunity to control the pace of the game."
+        ],
+        "ua": [
+          "Цей матчап стає сприятливим, коли Пандора отримує сильний захід зі Скриньки.",
+          "Використовуйте Телепорт і сильні атаки, щоб карати Томое, коли вона не може утримувати дистанцію.",
+          "Якщо Томое відходить, не женіться за нею бездумно — відкрийте Скриньку, використайте Телепорт і Геру або посилене переміщення, щоб перезапустити ситуацію.",
+          "Не давайте їй легко контролювати темп гри."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Pandora's aggression is particularly effective against Jill Trent's slow value game.",
+          "Do not allow Jill to spend the game freely maneuvering and building value.",
+          "Use Teleport and repeated attacks to keep her under constant pressure.",
+          "You need to manage your own damage carefully — use healing and know when to disengage."
+        ],
+        "ua": [
+          "Агресія Пандори особливо ефективна проти повільної гри Джилл Трент на велью.",
+          "Не дозволяйте Джилл спокійно маневрувати та накопичувати велью протягом усієї гри.",
+          "Використовуйте Телепорт і повторні атаки, щоб постійно тримати її під тиском.",
+          "Уважно контролюйте власне здоров'я — використовуйте лікування та вчасно відходьте."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "Golden Bat does not like being attacked repeatedly, so keep the pressure constant.",
+          "Use Teleport or boosted maneuvers to stay on top of him and prevent him from simply running away.",
+          "Map choice matters a lot here — Pandora wants a map that allows her to maintain contact.",
+          "Do not let Golden Bat turn the matchup into a slow game where he can freely reposition."
+        ],
+        "ua": [
+          "Голден Бет не любить, коли його постійно атакують, тому підтримуйте безперервний тиск.",
+          "Використовуйте Телепорт або посилені переміщення, щоб не відпускати його та не дозволяти просто тікати.",
+          "Карта тут дуже важлива — Пандорі потрібна карта, на якій вона може підтримувати контакт.",
+          "Не дозволяйте Голден Бету перевести матчап у повільну гру, де він зможе вільно переміщатися."
+        ]
+      }
+    }
+  }
 }
