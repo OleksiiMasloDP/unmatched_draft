@@ -74,5 +74,513 @@
       "Більшість ігор виграється через тиск і фінальний бурст, а не просто агро"
     ]
   },
-  "matchups": {}
+  "matchups": {
+    "Winter Soldier": {
+      "tips": {
+        "en": [
+          "Chupacabra can quickly overwhelm Soldier because he does not like dealing with 4-value attacks.",
+          "Keep the pressure on and force him to spend his limited defenses.",
+          "Do not give him time to stabilize."
+        ],
+        "ua": [
+          "Чупакабра може швидко загризти Солдата, бо він погано переносить атаки на 4.",
+          "Постійно тисніть і змушуйте його витрачати обмежені захисти.",
+          "Не давайте йому часу стабілізуватися."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "Tesla does not like being attacked repeatedly, which plays directly into Chupacabra's gameplan.",
+          "Keep attacking and use your healing to recover from the damage you take.",
+          "Do not allow Tesla enough time to build value with his coils."
+        ],
+        "ua": [
+          "Тесла не любить, коли його постійно атакують, що напряму грає на користь Чупакабри.",
+          "Продовжуйте атакувати та використовуйте лікування, щоб відновлювати отриману шкоду.",
+          "Не давайте Теслі часу накопичувати велью через свої котушки."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "Robin Hood has only 3-value defenses and lacks reliable defensive retreats.",
+          "Keep attacking — Chupacabra's 4-value attacks put constant pressure on his defenses.",
+          "Use your healing to comfortably survive the trades."
+        ],
+        "ua": [
+          "У Робін Гуда захисти лише на 3, а надійних відходів із захистом немає.",
+          "Постійно атакуйте — атаки Чупакабри на 4 створюють постійний тиск на його захист.",
+          "Використовуйте лікування, щоб спокійно переживати розміни."
+        ]
+      }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "The Raptors have no card draw, making them vulnerable to Chupacabra's sustained pressure.",
+          "Keep attacking and force them to spend their limited hand.",
+          "Your healing gives you an advantage in the damage race."
+        ],
+        "ua": [
+          "У Рапторів немає добору карт, тому вони вразливі до постійного тиску Чупакабри.",
+          "Продовжуйте атакувати та змушуйте їх витрачати обмежену руку.",
+          "Лікування дає вам перевагу в гонці по здоров'ю."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Use Ambush to punish her symbols and force her into bad defensive choices.",
+          "Keep the pressure constant — she has a hard time surviving repeated attacks."
+        ],
+        "ua": [
+          "Використовуйте Ambush, щоб карати її символи та змушувати робити невигідні захисти.",
+          "Постійно тисніть — їй складно переживати повторні атаки."
+        ]
+      }
+    },
+    "Yennefer & Triss": {
+      "tips": {
+        "en": [
+          "Yennefer is a serious opponent because she can choose to attack Chupacabra instead of playing passively.",
+          "The goal is to eat through her defenses faster than she can pressure you.",
+          "She has fewer defenses than Triss, making her much more vulnerable to Chupacabra's aggression."
+        ],
+        "ua": [
+          "Йенефер — серйозний суперник, тому що вона може сама атакувати Чупакабру, а не грати пасивно.",
+          "Ваше завдання — швидше прогризти її захисти, ніж вона встигне вас продавити.",
+          "У неї менше захистів, ніж у Трісс, тому вона значно вразливіша до агресії Чупакабри."
+        ]
+      }
+    },
+    "The Wayward Sisters": {
+      "tips": {
+        "en": [
+          "This matchup was initially considered even, but testing showed an advantage for Chupacabra.",
+          "Keep pressuring them and use your healing to win the long damage race.",
+          "Do not give them enough time to establish their own value engine."
+        ],
+        "ua": [
+          "Спочатку цей матчап вважався рівним, але тестування показало перевагу Чупакабри.",
+          "Постійно тисніть і використовуйте лікування, щоб виграти довгу гонку по шкоді.",
+          "Не давайте їм достатньо часу розкрутити власний двигун велью."
+        ]
+      }
+    },
+    "King Arthur": {
+      "tips": {
+        "en": [
+          "Arthur does not have enough defense to comfortably withstand Chupacabra's pressure.",
+          "Keep attacking and force him into repeated defensive trades.",
+          "Your healing allows you to stay aggressive without being afraid of the damage race."
+        ],
+        "ua": [
+          "У Артура недостатньо захисту, щоб комфортно витримувати тиск Чупакабри.",
+          "Продовжуйте атакувати та змушуйте його постійно захищатися.",
+          "Лікування дозволяє залишатися агресивною, не боячись гонки по здоров'ю."
+        ]
+      }
+    },
+    "Michelangelo": {
+      "tips": {
+        "en": [
+          "Michelangelo does not have enough defenses to stop Chupacabra's pressure.",
+          "Keep attacking and force him to spend his defensive cards.",
+          "Do not give him time to build his multi-action turns."
+        ],
+        "ua": [
+          "У Мікеланджело недостатньо захистів, щоб зупинити тиск Чупакабри.",
+          "Продовжуйте атакувати та змушуйте його витрачати карти захисту.",
+          "Не давайте йому часу підготувати свої багатоходові ходи."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "This matchup is slightly unfavorable and requires careful aggression.",
+          "Annie can bring Chupacabra down to 6 HP and finish her with boosts if you play carelessly.",
+          "Use healing to prevent her from converting early damage into a lethal turn."
+        ],
+        "ua": [
+          "Цей матчап трохи не на користь Чупакабри та вимагає акуратної агресії.",
+          "Анька може опустити Чупакабру до 6 здоров'я і добити бустами, якщо грати необережно.",
+          "Використовуйте лікування, щоб не дати їй перетворити ранню шкоду на летальний хід."
+        ]
+      }
+    },
+    "Rosie the Riveter": {
+      "tips": {
+        "en": [
+          "This matchup is heavily favored for Chupacabra.",
+          "Rosie mainly wants to attack, which allows Chupacabra to absorb the pressure with 3-value defenses.",
+          "Use your 3-value defenses against her 4-value attacks and heal back the damage you take.",
+          "Once Rosie's upgrades fall off, unleash a combo of 4-value attacks to finish her."
+        ],
+        "ua": [
+          "Цей матчап сильно на користь Чупакабри.",
+          "Розі переважно хоче атакувати, що дозволяє Чупакабрі спокійно приймати її тиск захистами на 3.",
+          "Використовуйте трійки проти її атак на 4 і відновлюйте отриману шкоду лікуванням.",
+          "Коли з Розі спадають покращення, запускайте комбо з атак на 4 для добивання."
+        ]
+      }
+    },
+    "Wyatt Earp": {
+      "tips": {
+        "en": [
+          "Wyatt is another matchup where Chupacabra's 3-value defenses are extremely effective against repeated 4-value attacks.",
+          "Let him spend his attacks while you preserve your health through healing."
+        ],
+        "ua": [
+          "Ваєт — ще один матчап, де захисти Чупакабри на 3 надзвичайно ефективні проти його повторних атак на 4.",
+          "Дозвольте йому витрачати атаки, зберігаючи здоров'я завдяки лікуванню."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "The matchup depends heavily on the map.",
+          "Center 5 favors Golden Bat, while Center 4 is more favorable for Chupacabra.",
+          "Avoid Yukon — the map makes the matchup significantly worse."
+        ],
+        "ua": [
+          "Матчап сильно залежить від карти.",
+          "Центр на 5 на користь Голден Бета, а центр на 4 більше підходить Чупакабрі.",
+          "Уникайте Юкону — ця карта значно погіршує матчап."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "This is a fast and aggressive matchup where the key question is who kills the other first.",
+          "Play aggressively and do not allow Knight to establish a comfortable defensive position.",
+          "Chupacabra can use her healing to survive the early exchanges and then finish the fight with a burst."
+        ],
+        "ua": [
+          "Це швидкий та агресивний матчап, де головне питання — хто кого швидше вб'є.",
+          "Грайте агресивно та не давайте Лицарю зайняти комфортну оборонну позицію.",
+          "Чупакабра може пережити перші розміни завдяки лікуванню, а потім закінчити бій бурстом."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "This is essentially an all-in aggression matchup.",
+          "Both fighters want to race each other down before the opponent can stabilize.",
+          "From first position, Chupacabra can commit to an all-in Full Send approach."
+        ],
+        "ua": [
+          "Це фактично матчап на повний all-in.",
+          "Обидва бійці хочуть швидше загризти суперника, перш ніж той стабілізується.",
+          "З першої позиції Чупакабра може піти у повну агрессію."
+        ]
+      }
+    },
+    "Titania": {
+      "tips": {
+        "en": [
+          "The matchup is even and depends heavily on the map.",
+          "On a large map, Titania can stall and put Chupacabra to sleep.",
+          "On a small map, Chupacabra can close the distance and overwhelm her."
+        ],
+        "ua": [
+          "Матчап рівний і сильно залежить від карти.",
+          "На великій карті Титанія може затягувати гру та присипляти Чупакабру.",
+          "На маленькій карті Чупакабра може швидко скоротити дистанцію та задавити її."
+        ]
+      }
+    },
+    "Geralt of Rivia": {
+      "tips": {
+        "en": [
+          "The matchup is about who can establish pressure first.",
+          "Use 3-value defenses against Geralt's swords and keep Feints for Tinker Bell.",
+          "Try to force Geralt to use his strong defenses defensively — his other defensive options are much weaker.",
+          "Your 0-value cards work very well against his 4s and 5s.",
+          "Be careful around his potion, which can make Ambush less effective."
+        ],
+        "ua": [
+          "Матчап залежить від того, хто першим зможе нав'язати тиск.",
+          "Використовуйте трійки проти мечів Геральта, а каверзи бережіть для Лютика.",
+          "Намагайтеся змусити Геральта використовувати його сильні захисти саме в захисті — інші його варіанти значно слабші.",
+          "Ваші нульові карти дуже добре працюють проти його четвірок і п'ятірок.",
+          "Обережно грайте навколо його зілля, яке може зробити Ambush менш ефективним."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "This is an even matchup.",
+          "Chupacabra can either play for value and healing or switch into an aggressive gameplan.",
+          "Pandora's performance depends on her Box draws, while Chupacabra's success depends on reading the interactions correctly.",
+          "Be flexible and choose between slow value and direct pressure based on the game state."
+        ],
+        "ua": [
+          "Це рівний матчап.",
+          "Чупакабра може грати як через велью та лікування, так і переходити в агресивний план.",
+          "Сила Пандори залежить від її заходу Скриньки, а успіх Чупакабри — від того, наскільки правильно вона вгадує взаємодії.",
+          "Будьте гнучкими та обирайте між повільним велью і прямим тиском залежно від ситуації."
+        ]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "This is an even matchup.",
+          "Alice's sidekick can deal significant damage, but Chupacabra can answer with equally strong attacks.",
+          "Be especially careful around Alice's Mirrors and try to Feint them whenever possible.",
+          "Do not give her easy value from her defensive tools."
+        ],
+        "ua": [
+          "Це рівний матчап.",
+          "Помічник Аліси може завдавати значної шкоди, але Чупакабра може відповідати такими ж сильними атаками.",
+          "Особливо обережно грайте навколо дзеркал Аліси та намагайтеся ловити їх каверзами.",
+          "Не давайте їй легко отримувати велью зі своїх захисних інструментів."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "Tomoe can spend the game running away, making the matchup difficult to approach directly.",
+          "A straightforward aggression plan does not work well because her defensive game is stronger.",
+          "Try to read her hand and commit to attacks when you expect her to hold red and yellow cards.",
+          "You need to take calculated risks rather than simply chasing her around the map."
+        ],
+        "ua": [
+          "Томое може всю гру тікати, тому матчап складно нав'язати напряму.",
+          "Банальний план через агресію працює погано, бо її захисна гра сильніша.",
+          "Намагайтеся читати її руку та атакувати в моменти, коли очікуєте червоні й жовті карти.",
+          "Потрібно йти на розраховані ризики, а не просто ганятися за нею по мапі."
+        ]
+      }
+    },
+    "Leonardo": {
+      "tips": {
+        "en": [
+          "Leonardo's automatic damage can actually help Chupacabra reach the low-health range needed for her finishing turn.",
+          "His defenses are not strong enough to comfortably withstand Chupacabra's pressure.",
+          "Use the damage he gives you as an opportunity to set up your own burst."
+        ],
+        "ua": [
+          "Автоматична шкода Леонардо може навіть допомогти Чупакабрі вийти на низький рівень здоров'я, потрібний для добиваючого ходу.",
+          "Його захисти недостатньо сильні, щоб комфортно витримувати тиск Чупакабри.",
+          "Використовуйте шкоду від нього як можливість підготувати власний бурст."
+        ]
+      }
+    },
+    "Raphael": {
+      "tips": {
+        "en": [
+          "Rafael is heavily pressured by Chupacabra's aggression.",
+          "His Relentless is only a 3, so Chupacabra's 3-value defenses can handle it efficiently.",
+          "Watch out for his Payback effects, which can become 5s."
+        ],
+        "ua": [
+          "Чупакабра дуже сильно тисне на Рафаеля своєю агресією.",
+          "Його Relentless — лише трійка, тому трійки Чупакабри ефективно його приймають.",
+          "Обережно грайте навколо його Payback, які можуть ставати п'ятірками."
+        ]
+      }
+    },
+
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "This is a pure all-in brawl where both fighters want to kill the other first.",
+          "Commit to aggression and do not let Bruce establish a comfortable tempo.",
+          "The matchup is decided primarily by the damage race and the timing of each fighter's burst."
+        ],
+        "ua": [
+          "Це чисте all-in місилово, де обидва бійці хочуть убити суперника першими.",
+          "Грайте агресивно та не дозволяйте Брюсу встановити комфортний темп.",
+          "Матчап переважно вирішується гонкою по шкоді та таймінгом бурсту обох бійців."
+        ]
+      }
+    },
+    "John Henry": {
+      "tips": {
+        "en": [
+          "This matchup is better for Chupacabra than expected.",
+          "John Henry's lack of reliable Feints makes him vulnerable to Chupacabra's attacks.",
+          "Use your superior card draw to maintain pressure and keep attacking.",
+          "Do not be afraid to pressure him even when he reaches the health threshold where his hammers become dangerous."
+        ],
+        "ua": [
+          "Цей матчап кращий для Чупакабри, ніж можна було очікувати.",
+          "Відсутність надійних каверз у Джона Генрі робить його вразливим до атак Чупакабри.",
+          "Використовуйте перевагу в доборі карт, щоб підтримувати тиск і продовжувати атакувати.",
+          "Не бійтеся тиснути на нього навіть після досягнення рівня здоров'я, де його молоти стають небезпечними."
+        ]
+      }
+    },
+    "Sinbad": {
+      "tips": {
+        "en": [
+          "This is a pure Full Send matchup.",
+          "Chupacabra attacks Sinbad while Sinbad attacks back.",
+          "Commit to the damage race and try to finish him before his stronger late-game tools take over."
+        ],
+        "ua": [
+          "Це чистий матчап на агрессію.",
+          "Чупакабра б'є Синдбада, а Синдбад відповідає своїми атаками.",
+          "Приймайте гонку по шкоді та намагайтеся закінчити гру до того, як його сильніші інструменти пізньої гри почнуть домінувати."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "This is a very unfavorable matchup for Chupacabra.",
+          "Bigfoot has strong 4 and 5 defenses, multiple Feints and 6-value attacks.",
+          "His automatic damage and strong mobility make it difficult for Chupacabra to establish her usual pressure.",
+          "Be especially careful about the Rabbit, which is difficult to remove."
+        ],
+        "ua": [
+          "Це дуже несприятливий матчап для Чупакабри.",
+          "У Бігфута сильні захисти на 4 і 5, багато каверз та атаки на 6.",
+          "Його автоматична шкода й хороша мобільність ускладнюють Чупакабрі її звичний план через тиск.",
+          "Особливо обережно грайте навколо Кроля, якого складно прибрати."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Jill Trent is favored because her healing works extremely well against Chupacabra's low defensive values.",
+          "Her 5-value attacks are difficult for Chupacabra's printed 3-value defenses to handle efficiently.",
+          "There are two possible plans: full-send Jill while ignoring Daisy, or kill Daisy first and switch to a value game."
+        ],
+        "ua": [
+          "Джилл Трент має перевагу, тому що її лікування дуже добре працює проти низьких захистів Чупакабри.",
+          "Її атаки на 5 складно ефективно приймати надрукованими захистами Чупакабри на 3.",
+          "Є дві можливі стратегії: максимальна агресія у Джилл, ігноруючи Дейзі, або спочатку вбити Дейзі та перейти в гру на велью."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "Achilles is a difficult matchup for Chupacabra.",
+          "He can pressure Chupacabra with strong 4-value attacks and punish her directly.",
+          "Even keeping Patroclus alive, Achilles can eventually overwhelm Chupacabra with his attacks and Feints."
+        ],
+        "ua": [
+          "Ахіллес — складний матчап для Чупакабри.",
+          "Він може тиснути сильними атаками на 4 та напряму карати Чупакабру.",
+          "Навіть якщо Патрокл залишається живим, Ахіллес зрештою може задавити Чупакабру своїми атаками та каверзами."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "Yennenga does not have many Feints, which gives Chupacabra opportunities to land attacks.",
+          "However, she has many defensive retreats and a large health pool.",
+          "Do not expect a quick kill — you need to steadily work through her defenses."
+        ],
+        "ua": [
+          "У Єненги небагато каверз, що дає Чупакабрі можливості проводити атаки.",
+          "Однак у неї багато захисних відходів і великий запас здоров'я.",
+          "Не розраховуйте на швидке вбивство — потрібно поступово прогризати її захист."
+        ]
+      }
+    },
+    "Daredevil": {
+      "tips": {
+        "en": [
+          "Daredevil has an enormous number of Feints, making it extremely difficult for Chupacabra to execute her normal attack plan.",
+          "He can effectively deny the attacks and interactions Chupacabra relies on.",
+          "Do not expect to win through a straightforward aggression plan."
+        ],
+        "ua": [
+          "У Дедпула надзвичайно багато каверз, через що Чупакабрі дуже складно реалізувати свій звичний план через атаки.",
+          "Він може ефективно заперечувати атаки та взаємодії, на яких залежить Чупакабра.",
+          "Не розраховуйте виграти простим планом через агресію."
+        ]
+      }
+    },
+    "Dr. Sattler": {
+      "tips": {
+        "en": [
+          "Sattler's defenses are particularly bad for Chupacabra because her 0-value cards lose much of their effectiveness.",
+          "She can pressure Chupacabra heavily with her attacks.",
+          "Avoid relying on your 0-value defensive interactions and look for other ways to absorb her pressure."
+        ],
+        "ua": [
+          "Захисти Саттлер особливо незручні для Чупакабри, тому що її нульові карти втрачають значну частину ефективності.",
+          "Вона може дуже сильно тиснути на Чупакабру своїми атаками.",
+          "Не покладайтеся на захисні взаємодії з нулями та шукайте інші способи пережити її тиск."
+        ]
+      }
+    },
+    "The Genie": {
+      "tips": {
+        "en": [
+          "Genie's value game works very well against Chupacabra.",
+          "He can discard Chupacabra's best cards and either keep running away or finish her with his accumulated value.",
+          "Do not allow Genie to dictate the pace of the game through repeated retreats and value generation."
+        ],
+        "ua": [
+          "Гра Джина через велью дуже добре працює проти Чупакабри.",
+          "Він може скидати найкращі карти Чупакабри та або постійно тікати, або добивати її накопиченим велью.",
+          "Не дозволяйте Джину диктувати темп гри через постійні відходи та накопичення велью."
+        ]
+      }
+    },
+    "Leshen": {
+      "tips": {
+        "en": [
+          "Leshen can simply avoid Chupacabra for most of the game.",
+          "His ability to stall and pass makes it very difficult for Chupacabra to reach him.",
+          "He can repeatedly heal back damage and maintain a high health total.",
+          "If Leshen makes a mistake and allows Chupacabra to reach him at low health, she can still finish him with a combo."
+        ],
+        "ua": [
+          "Лісовик може просто уникати Чупакабри більшу частину гри.",
+          "Його можливість затягувати гру та пасувати робить для Чупакабри дуже складним завданням дістатися до нього.",
+          "Він може постійно лікувати отриману шкоду та триматися на високому рівні здоров'я.",
+          "Якщо Лісовик помилиться і дозволить Чупакабрі дістатися до нього на низькому здоров'ї, вона все ще може добити його комбо."
+        ]
+      }
+    },
+    "Houdini": {
+      "tips": {
+        "en": [
+          "Houdini can discard Chupacabra's only defense, making the matchup more dangerous.",
+          "Despite that, Chupacabra can still play the matchup through aggression.",
+          "Going first is particularly valuable because it lets Chupacabra establish pressure before Houdini gets comfortable.",
+          "The matchup is generally easier for Houdini, but Chupacabra can absolutely win it."
+        ],
+        "ua": [
+          "Гудіні може скинути єдиний захист Чупакабри, що робить матчап небезпечнішим.",
+          "Попри це, Чупакабра все ще може грати через агресію.",
+          "Перша позиція особливо цінна, оскільки дозволяє Чупакабрі встановити тиск до того, як Гудіні стане комфортно.",
+          "Зазвичай матчап простіший для Гудіні, але Чупакабра цілком може його виграти."
+        ]
+      }
+    },
+    "Ciri": {
+      "tips": {
+        "en": [
+          "Ciri is another matchup where Chupacabra needs to rely on aggression.",
+          "Keep pressure on her before she can establish her own tempo and value.",
+          "Use healing to survive the early exchanges and look for the finishing window."
+        ],
+        "ua": [
+          "Цирі — ще один матчап, де Чупакабрі потрібно покладатися на агресію.",
+          "Тримайте її під тиском, перш ніж вона зможе встановити власний темп і набрати велью.",
+          "Використовуйте лікування, щоб пережити перші розміни та знайти момент для добивання."
+        ]
+      }
+    }
+  }
 }

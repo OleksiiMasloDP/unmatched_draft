@@ -547,7 +547,7 @@ function openMatchupPopup(opp) {
 
 .guide-opponent-grid {
   margin-top: 1.25rem;
-  padding: 12px 0;
+  padding: 12px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 16px;

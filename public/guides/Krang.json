@@ -1,0 +1,243 @@
+{
+  "complexity": 4,
+  "keyCards": [
+    {
+      "image": "iq.webp"
+    },
+    {
+      "image": "pan_dimension_portal.webp"
+    },
+    {
+      "image": "molecular_amplification_unit.webp"
+    },
+    {
+      "image": "minimizer.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Combo / Value",
+    "ua": "Агро / Комбо / Велью"
+  },
+  "features": {
+    "en": [
+      "Very high burst damage through boosted attacks (6–8)",
+      "Strong card draw and healing engine via IQ",
+      "Flexible gameplans: aggression, slowdown, or fatigue win",
+      "Good mobility with schemes and movement effects",
+      "Powerful tempo control with turn-ending effects (Minimizer)",
+      "Can generate huge value swings with Pan Dimension Portal"
+    ],
+    "ua": [
+      "Дуже високий бурст через атаки на 6–8",
+      "Сильний добір і лікування через IQ",
+      "Гнучкі плани гри: агресія, контроль або фатіг",
+      "Хороша мобільність через схеми і ефекти руху",
+      "Сильний контроль темпу через закінчення ходу (Minimizer)",
+      "Може створювати великі свінги цінності через портал"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Unstable outcomes due to heavy reliance on dice rolls",
+      "Weak and inconsistent defenses",
+      "Key damage cards often needed for attack, not defense",
+      "Can lose games from bad Portal or IQ rolls",
+      "Vulnerable if forced to waste high-value cards defensively"
+    ],
+    "ua": [
+      "Нестабільність через залежність від кубика",
+      "Слабкий і нестабільний захист",
+      "Ключові карти потрібні для атаки, а не захисту",
+      "Може програвати через невдалі кидки порталу або IQ",
+      "Вразливий, якщо змушений віддавати сильні карти в захист"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Mulligan aggressively for IQ — it is your core card",
+      "Play proactively: pressure with big attacks and tempo tools",
+      "Do not waste Molecular Amplification Unit on defense unless necessary",
+      "Use Minimizer to deny opponent turns and regain tempo",
+      "Portal can reset hand advantage — use it when behind on cards",
+      "You can switch to slow play and win via fatigue if needed",
+      "Manage hand carefully before committing to big combo turns",
+      "Accept taking damage early if you can heal it back with IQ",
+      "Primary plan: overwhelm opponent with constant pressure",
+      "Alternative plan: stall, heal, and win through exhaustion"
+    ],
+    "ua": [
+      "Муліганьте в IQ — це ключова карта",
+      "Грайте активно: тисніть великими атаками і темпом",
+      "Не витрачайте Molecular Amplification Unit в захист без потреби",
+      "Використовуйте Minimizer для зриву ходів суперника",
+      "Портал використовуйте для обнулення переваги по руці",
+      "Можна перейти в повільну гру і виграти через фатіг",
+      "Контролюйте руку перед великими комбо",
+      "Можна приймати шкоду і відхилювати її через IQ",
+      "Основний план — задавити постійним тиском",
+      "Альтернатива — затягнути гру і виграти на виснаженні"
+    ]
+  },
+  "matchups": {
+    "Houdini": {
+      "tips": {
+        "en": [
+          "Your discard effects are extremely strong against Houdini.",
+          "Use end-turn effects to deny him the value he wants from his cards.",
+          "Keep the pressure high — Houdini struggles to generate enough value against Krang."
+        ],
+        "ua": [
+          "Ваші ефекти скидання надзвичайно сильні проти Гудіні.",
+          "Використовуйте ефекти завершення ходу, щоб не давати йому отримувати потрібне велью з карт.",
+          "Постійно тисніть — Гудіні складно генерувати достатньо велью проти Кренга."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Hood has very limited ways to meaningfully threaten Krang.",
+          "Use your superior card value and pressure to keep her from stabilizing.",
+          "Do not give her time to build a strong hand and establish her gameplan.",
+          "Your discard effects are especially effective against Huntsman's low-value defenses.",
+          "Exploit the lack of Feints to make your attacks more reliable.",
+          "Be careful around his 6-value attacks, but do not let them stop you from applying pressure."
+        ],
+        "ua": [
+          "У Шапочки дуже мало способів реально загрожувати Кренгу.",
+          "Використовуйте перевагу в цінності карт і тиск, щоб не дати їй стабілізуватися.",
+          "Не давайте їй часу зібрати сильну руку та розіграти свій геймплан.",
+          "Ваші ефекти скидання особливо ефективні проти слабких захистів Мисливця.",
+          "Використовуйте відсутність каверз, щоб ваші атаки проходили надійніше.",
+          "Обережно ставтеся до його атак на 6, але не дозволяйте їм зупинити ваш тиск."
+        ]
+      }
+    },
+    "Dracula": {
+      "tips": {
+        "en": [
+          "Keep Dracula under ranged pressure and use your schemes to control the distance.",
+          "Your defenses work well against Beastform, making it difficult for Dracula to finish you.",
+          "Use IQ to sustain yourself while continuing to pressure him."
+        ],
+        "ua": [
+          "Тримайте Дракулу під дальнім тиском і використовуйте схеми для контролю дистанції.",
+          "Ваші захисти добре працюють проти Beastform, тому Дракулі складно вас добити.",
+          "Використовуйте IQ для виживання та продовжуйте чинити тиск."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "Play full aggression — do not try to out-value Tesla in a long game.",
+          "Constant pressure forces Tesla to spend coils defensively instead of using them offensively.",
+          "Use your turn-ending effects to prevent Tesla from getting comfortable with his engine."
+        ],
+        "ua": [
+          "Грайте через повну агресію — не намагайтеся перестояти Теслу у довгій грі на велью.",
+          "Постійний тиск змушує Теслу витрачати котушки на захист замість використання їх для атаки.",
+          "Використовуйте ефекти завершення ходу, щоб не дати Теслі комфортно розкрутити свій двигун."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "Use your discard effects to remove Achilles' Helmet before it can generate value.",
+          "Once the Helmet is gone, pressure Achilles and control his hand.",
+          "Be careful around Patroclus and avoid giving him unnecessary opportunities to gain value."
+        ],
+        "ua": [
+          "Використовуйте скидання, щоб прибирати Шолом Ахіллеса до того, як він почне приносити велью.",
+          "Після втрати Шолома тисніть на Ахіллеса та контролюйте його руку.",
+          "Обережно грайте навколо Патрокла і не давайте йому зайвих можливостей отримувати велью."
+        ]
+      }
+    },
+    "Beowulf": {
+      "tips": {
+        "en": [
+          "Beowulf struggles to generate enough damage and value against Krang.",
+          "Keep applying pressure while using your healing to outlast his attacks.",
+          "Do not give him time to build a strong Rage-based turn."
+        ],
+        "ua": [
+          "Беовульфу складно генерувати достатньо шкоди та велью проти Кренга.",
+          "Продовжуйте тиснути та використовуйте лікування, щоб пережити його атаки.",
+          "Не давайте йому часу підготувати сильний хід на Люті."
+        ]
+      }
+    },
+    "Donatello": {
+      "tips": {
+        "en": [
+          "Your turn-ending effects are extremely effective at disrupting Donatello's combo turns.",
+          "Use them to prevent him from chaining multiple actions together.",
+          "On Krang's map, keep Metalhead under pressure and do not allow Donatello to establish his engine."
+        ],
+        "ua": [
+          "Ваші ефекти завершення ходу надзвичайно добре ламають комбо-ходи Донателло.",
+          "Використовуйте їх, щоб не дати йому об'єднувати кілька дій в один хід.",
+          "На карті Кренга тримайте Металхеда під тиском і не давайте Донателло розкрутити свій двигун."
+        ]
+      }
+    },
+    "Michelangelo": {
+      "tips": {
+        "en": [
+          "Use turn-ending effects to interrupt Michelangelo's multi-action turns.",
+          "Do not let him freely build up his combo sequence.",
+          "Keep the pressure high while using your superior card value."
+        ],
+        "ua": [
+          "Використовуйте завершення ходу, щоб переривати багатоходові ходи Мікеланджело.",
+          "Не дозволяйте йому вільно збирати свою комбо-послідовність.",
+          "Постійно тисніть, використовуючи перевагу в цінності карт."
+        ]
+      }
+    },
+    "Leonardo": {
+      "tips": {
+        "en": [
+          "Leonardo does not have enough defense to reliably stop Krang's pressure.",
+          "Keep attacking and use your superior card value to overwhelm him.",
+          "Do not give him time to establish a comfortable defensive position."
+        ],
+        "ua": [
+          "У Леонардо недостатньо захисту, щоб стабільно зупиняти тиск Кренга.",
+          "Продовжуйте атакувати та використовуйте перевагу в цінності карт.",
+          "Не давайте йому часу зайняти комфортну оборонну позицію."
+        ]
+      }
+    },
+    "Geralt of Rivia": {
+      "tips": {
+        "en": [
+          "Outdraw Geralt and keep the pressure on him.",
+          "Use your stronger card economy to prevent him from comfortably setting up his gameplan.",
+          "Do not allow him to turn the matchup into a slow value game."
+        ],
+        "ua": [
+          "Перебирайте Герольта по картах і постійно тримайте його під тиском.",
+          "Використовуйте кращу економіку карт, щоб не дати йому комфортно розіграти свій геймплан.",
+          "Не дозволяйте йому перевести матчап у повільну гру на велью."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Be careful with Feints — they can shut down Krang's attacks because of his low printed values.",
+          "Do not rely blindly on your strongest attacks when Bigfoot can punish them with Feints.",
+          "Use your other tools and wait for the right moment to commit your attacks."
+        ],
+        "ua": [
+          "Обережно грайте проти каверз — вони можуть повністю зупиняти атаки Кренга через низькі базові значення.",
+          "Не покладайтеся сліпо на найсильніші атаки, якщо Бігфут може покарати їх каверзою.",
+          "Використовуйте інші інструменти та чекайте правильного моменту для сильних атак."
+        ]
+      }
+    }
+  }
+}

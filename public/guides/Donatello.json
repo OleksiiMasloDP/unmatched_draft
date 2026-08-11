@@ -56,6 +56,118 @@
     ]
   },
   "matchups": {
+    "Daredevil": {
+      "tips": {
+        "en": [
+          "This matchup is extremely favorable for Donatello on his own map.",
+          "Daredevil's only real chance is to keep his hand low, blind boost and constantly attack Donatello.",
+          "Do not let him play a passive game — if he cannot find enough defense, catch him with your combo and finish the game.",
+          "Donatello's many Feints that cancel Daredevil's effects make his normal gameplan very unreliable.",
+          "Daredevil also loses the deck race and the health race, so he cannot afford to play for exhaustion."
+        ],
+        "ua": [
+          "Цей матчап дуже сприятливий для Донателло на його власній мапі.",
+          "Єдиний реальний шанс Дердевіла — тримати руку малою, постійно блайндбуститися та безперервно атакувати Донателло.",
+          "Не дозволяйте йому грати пасивно — якщо він не знаходить достатньо захистів, ловіть його своїм комбо та закінчуйте гру.",
+          "Велика кількість каверз Донателло, які скасовують ефекти Дердевіла, робить його звичний геймплан дуже ненадійним.",
+          "Дердевіл також програє по колоді та по здоров'ю, тому не може дозволити собі грати на виснаження."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "The matchup is played without Donatello's map because Achilles also wants a small map.",
+          "Achilles struggles on an open map, especially once Donatello kills Patroclus.",
+          "After Patroclus dies, use your mobility to run away from Achilles and make him chase you.",
+          "Your three Feints are especially valuable against Achilles' Spears, which he can otherwise recycle.",
+          "Active Inventions give Donatello solid defenses, making the matchup difficult for Achilles."
+        ],
+        "ua": [
+          "Матчап грається без мапи Донателло, тому що Ахіллес також хоче малу мапу.",
+          "Ахіллесу складно грати на відкритій мапі, особливо після того, як Донателло вбиває Патрокла.",
+          "Після смерті Патрокла використовуйте мобільність, щоб тікати від Ахіллеса та змушувати його наздоганяти вас.",
+          "Ваші три каверзи особливо цінні проти списів Ахіллеса, які він інакше може повертати.",
+          "Активні Винаходи дають Донателло надійний захист, що робить матчап складним для Ахіллеса."
+        ]
+      }
+    },
+    "Leshen": {
+      "tips": {
+        "en": [
+          "The matchup is played on Leshen's map, and Leshen dies to Donatello's combo.",
+          "Ignore Leshen for a long time and focus on attacking the Wolves.",
+          "Use your Returns around the Wolves and pressure them with the carts.",
+          "Build four Schemes in the discard, keep a cart and a Return available, then send in Metalhead and launch the combo.",
+          "A five-attack combo is usually enough to win the game or leave Leshen dead on the following turn.",
+          "Leshen can Vanish and throw a couple of strong attacks at you, but it is usually not enough to survive the combo."
+        ],
+        "ua": [
+          "Матчап грається на мапі Лісовика, і Лісовик помирає від комбо Донателло.",
+          "Довгий час ігноруйте самого Лісовика та зосередьтеся на атаках вовків.",
+          "Використовуйте поверталки навколо вовків і тисніть на них вагончиками.",
+          "Зберіть чотири схеми у скиді, залиште вагончик і поверталку, після чого випускайте Металхеда та запускайте комбо.",
+          "Комбо з п'яти атак зазвичай достатньо, щоб виграти гру або залишити Лісовика на добивання наступного ходу.",
+          "Лісовик може використати Vanish і кинути пару сильних атак, але зазвичай цього недостатньо, щоб пережити комбо."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "This is an even matchup and essentially a damage race.",
+          "T-Rex has many combat effects, including Ignored effects and boosts.",
+          "Donatello can close distance and draw cards, so he can actively keep up with T-Rex.",
+          "The matchup is decided by who assembles their winning combo first.",
+          "Play actively and look for your combo window rather than trying to win through a slow game."
+        ],
+        "ua": [
+          "Це рівний матчап і фактично гонка по шкоді.",
+          "Тірекс має багато ефектів під час бою, зокрема ігнори та бусти.",
+          "Донателло може скорочувати дистанцію та добирати карти, тому здатен активно підтримувати темп проти Тірекса.",
+          "Матчап вирішується тим, хто першим збере свою комбо-умову перемоги.",
+          "Грайте активно та шукайте момент для комбо, а не намагайтеся виграти через повільну гру."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "This is close to an even matchup on Donatello's map.",
+          "On Strange's own map, especially Center 5 and other ranged maps, Strange has the advantage.",
+          "Use the red Invention against Wong, because Strange can use his Mists to discard the active Invention.",
+          "Ideally, kill Wong first and use Returns to bring carts back.",
+          "Then pressure Strange with carts and transition into your combo.",
+          "Strange may either blind boost heavily or maneuver away, but Metalhead is difficult for him to kill.",
+          "His healing is less effective against Donatello because Donatello's defenses are 4."
+        ],
+        "ua": [
+          "Це близький до рівного матчап на мапі Донателло.",
+          "На власній мапі Стренджа, особливо на Центрі 5 та інших дальнобійних мапах, перевага на боці Стренджа.",
+          "Грайте червоний Винахід проти Вонга, тому що Стрендж може використати Тумани та скинути активний Винахід.",
+          "В ідеалі спочатку вбийте Вонга та поверталками повертайте вагончики.",
+          "Після цього тисніть на Стренджа вагончиками та переходьте в комбо.",
+          "Стрендж або буде багато блайндбуститися, або маневрувати й тікати, але Металхеда йому вбити непросто.",
+          "Його лікування менш ефективне проти Донателло, оскільки захисти Донателло мають значення 4."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Bigfoot looks difficult because his defenses appear to be mostly 4s, but most of them are actually Feints.",
+          "Only six of his defenses are 4s, while the rest are Feints that Donatello is happy to attack into.",
+          "Do not be afraid of his Feints — even when he cancels your effect, you still deal two damage.",
+          "The goal is to exhaust his real defenses and keep attacking him with your small attacks and combo pieces."
+        ],
+        "ua": [
+          "Бігфут здається складним через те, що його захисти виглядають як переважно четвірки, але більшість із них насправді каверзи.",
+          "Лише шість його захистів мають значення 4, а решта — каверзи, в які Донателло вигідно атакувати.",
+          "Не бійтеся його каверз — навіть якщо він скасовує ваш ефект, ви все одно завдаєте дві шкоди.",
+          "Ваше завдання — виснажити його справжні захисти та продовжувати бити малими атаками й частинами свого комбо."
+        ]
+      }
+    },
     "Yennenga": {
       "tips": {
         "en": [
