@@ -1,0 +1,628 @@
+{
+  "complexity": 4,
+  "keyCards": [
+    {
+      "image": "careful_what_you_wish_for.webp"
+    },
+    {
+      "image": "sultans.webp"
+    },
+    {
+      "image": "three_wishes.webp"
+    }
+  ],
+  "style": {
+    "en": "Value / Tempo / OTK",
+    "ua": "Велью / Темпо / OTK"
+  },
+  "features": {
+    "en": [
+      "Strong base stats for a solo ranged fighter — 16 HP and move 3.",
+      "His ability lets him discard a card at the start of his turn for an extra action, entirely on his own terms — unlike similar effects on other fighters that require drawing a specific scheme first, he always chooses when to use it.",
+      "His signature scheme is an extremely flexible engine card: it grants a free action, then lets him choose between drawing 5 cards, setting every card's value to 4 for the turn (immune to boosts), or making every opponent discard 2 cards.",
+      "Genuine one-turn-kill (OTK) potential — with the right setup he can string together multiple attacks in a single turn backed by a real pool of auto-damage across his deck."
+    ],
+    "ua": [
+      "Сильні базові показники для соло-персонажа дальнього бою — 16 HP і рух 3.",
+      "Здібність дозволяє скидати карту на початку ходу заради додаткової дії повністю за власним рішенням — на відміну від подібних ефектів в інших персонажів, які потребують спершу добрати конкретну схему, тут вибір завжди ваш.",
+      "Фірмовий виверт — надзвичайно гнучка карта-двигун: дає безкоштовну дію, а потім на вибір — добрати 5 карт, встановити значення всіх карт на 4 до кінця ходу (не змінюється бустами), або змусити кожного суперника скинути по 2 карти.",
+      "Справжній потенціал one-turn-kill (OTK) — за правильного сетапу можна провести кілька атак за один хід, спираючись на реальний запас авто-урону в колоді."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "The ability's cost is real — the discarded card is entirely wasted (not used for damage, trading, or defense), so knowing which cards are safe to sacrifice in a given matchup takes real experience.",
+      "The right card to discard, or the right wish to pick, isn't always available in hand when you need it — you have to be ready to adapt rather than follow a fixed plan.",
+      "Committing to his max-draw mode effectively shuts off any patient value gameplan for the rest of that turn and commits you to racing the opponent down.",
+      "Most heroes have well over 12 HP, so his auto-damage tools alone aren't enough for an OTK — it has to be paired with actually landing real attacks, and one surviving enemy defense card can wreck the whole plan."
+    ],
+    "ua": [
+      "Ціна здібності реальна — скинута карта повністю втрачається (не йде ні в шкоду, ні в розмін, ні в захист), тож розуміння, яку карту безпечно жертвувати в конкретному матчапі, приходить лише з досвідом.",
+      "Потрібна карта на скид або потрібне бажання не завжди опиняються в руці саме тоді, коли треба — доводиться адаптуватися, а не йти за жорстким планом.",
+      "Вибір максимального добору фактично вимикає повільний велью-план на решту ходу і зобов'язує до гонки із суперником.",
+      "У більшості героїв HP значно більше 12, тож самого авто-урону не вистачить для OTK — його треба поєднувати з реальними влучними атаками, і навіть один захист, що вижив у суперника, може зламати весь план."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Usually activate your ability before playing Three Wishes — whatever mode you pick, the initiative is about to swing your way, and having the extra action already banked makes it far more effective.",
+      "If you're playing a patient value game, lean on the 'opponent discards 2' mode and kite with your move-3 range advantage instead of overcommitting.",
+      "Save the full 5-card draw mode for genuine emergencies (you're being crushed and defenses aren't landing) or a real OTK attempt — outside of that it usually isn't worth shutting off your value plan.",
+      "Before going for an OTK, actually count what damage you can realistically string together with what's left in your hand and deck — a big draw with no attacks in it accomplishes nothing.",
+      "Be careful not to over-draw — as a solo fighter you can't easily corner an opponent, so if your draw rate outpaces how fast you can spend cards, you'll burn through your deck faster than intended."
+    ],
+    "ua": [
+      "Зазвичай активуйте здібність перед розіграшем Трьох бажань — який би режим ви не обрали, ініціатива щойно перейде до вас, і заздалегідь забезпечена додаткова дія робить це набагато ефективнішим.",
+      "Якщо граєте повільну велью-гру, покладайтесь на режим 'суперник скидає 2 карти' і тікайте, користуючись перевагою в рух-3, а не форсуйте зайве.",
+      "Бережіть повний добір 5 карт на справжні екстрені ситуації (вас тиснуть, а захисти не заходять) або реальну спробу OTK — поза цим зазвичай не варто вимикати велью-план заради нього.",
+      "Перед спробою OTK реально порахуйте, яку шкоду ви можете вкласти тим, що лишилось в руці й колоді — великий добір без атак усередині нічого не дає.",
+      "Стежте, щоб не передобрати зайвого — як соло-персонаж ви не можете легко затиснути суперника, тож якщо темп добору випереджає темп розіграшу карт, колода згорить швидше, ніж треба."
+    ]
+  },
+  "matchups": {
+    "Daredevil": {
+      "tips": {
+        "en": [
+          "You're more aggressive with better card draw and discards — don't simply hand him the chance to play his Devil card."
+        ],
+        "ua": [
+          "Ви агресивніші, маєте кращий добір і скиди — не давайте йому банально можливості зіграти Диявола."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "Remove his Merry Men first — after that you have the edge in both tempo and health."
+        ],
+        "ua": [
+          "Спершу приберіть усіх його розбійників — далі у вас перевага і в темпі, і в здоров'ї."
+        ]
+      }
+    },
+    "King Arthur": {
+      "tips": {
+        "en": [
+          "He has to discard cards into boost to attack you, so discard his hand to leave him short of resources.",
+          "If needed, keep your distance so he's forced to boost just to close the gap to you as well."
+        ],
+        "ua": [
+          "Йому доводиться скидати карти на буст, щоб вас атакувати, тож скидайте йому карти з руки, щоб просто не вистачило ресурсів.",
+          "За потреби тримайте дистанцію, щоб йому доводилось бустити ще й для того, щоб до вас дійти."
+        ]
+      }
+    },
+    "William Shakespeare": {
+      "tips": {
+        "en": [
+          "You have plenty of resources to kill his actors quickly.",
+          "Watch out — he can start cycling Feints.",
+          "Use your discard effects actively.",
+          "Be careful of his combo turn, which can potentially kill you."
+        ],
+        "ua": [
+          "У вас достатньо ресурсів, щоб швидко вбити його акторів.",
+          "Будьте уважні — він може почати крутити каверзи.",
+          "Активно використовуйте скид з руки.",
+          "Обережно з його комбо-ходом — він потенційно може вас вбити."
+        ]
+      }
+    },
+    "Black Widow": {
+      "tips": {
+        "en": [
+          "She doesn't have much health, so your auto-damage helps a lot here.",
+          "Roughly even on a pure value game, but your better draw lets you press more actively."
+        ],
+        "ua": [
+          "У неї небагато здоров'я, тож ваш авто-урон тут сильно допомагає.",
+          "По чистому велью приблизно рівно, але кращий добір дозволяє вам активніше пресингувати."
+        ]
+      }
+    },
+    "Beowulf": {
+      "tips": {
+        "en": [
+          "You can simply run circles around him while discarding cards.",
+          "He has few defenses — discard either those or his strong attacks, without which he has no real damage against you."
+        ],
+        "ua": [
+          "Можна просто бігати від нього, скидаючи карти.",
+          "У нього мало захистів — скидайте або їх, або його сильні атаки, без яких у нього не буде реальної шкоди по вам."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "A more even fight on a small map, comfortable for you on medium maps, and close to an auto-win on large ones.",
+          "He hates playing on a small hand — use your discard effects actively, and your high draw also lets you press him harder to keep him there."
+        ],
+        "ua": [
+          "Більш рівний матчап на маленькій мапі, комфортний для вас на середніх, і майже автоперемога на великих.",
+          "Він не любить грати на малій руці — активно використовуйте скиди, а високий добір дозволяє ще сильніше пресингувати, щоб тримати його на малій руці."
+        ]
+      }
+    },
+    "Ms. Marvel": {
+      "tips": {
+        "en": [
+          "She mostly needs to play only her own maps — otherwise she'll struggle to finish you off."
+        ],
+        "ua": [
+          "Вона переважно грає тільки своїх мапах — інакше їй буде складно вас забити."
+        ]
+      }
+    },
+    "Invisible Man": {
+      "tips": {
+        "en": [
+          "He doesn't have the damage to finish you off — keep pressuring him."
+        ],
+        "ua": ["У нього немає шкоди, щоб вас забити — активно пресингуйте."]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": [
+          "He has few defenses, so pressure him actively.",
+          "Remove his sidekicks with your auto-damage.",
+          "It's hard for him to kill you if you keep the pressure up."
+        ],
+        "ua": [
+          "У нього мало захистів, тож активно пресингуйте.",
+          "Прибирайте його помічників авто-уроном.",
+          "Йому важко вас вбити, якщо тримати постійний тиск."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "While Patroclus is alive, Achilles has no strong damage against you — use your Feints to keep Patroclus from dying.",
+          "While Patroclus is alive, avoid attacking Achilles with your strong cards so you don't get caught by the swap.",
+          "When Patroclus dies, Achilles discards 2 cards; your wishes can discard 6 more, and Sultans another 2 if things go well — by the time he turns angry, he should have no resources left to finish you."
+        ],
+        "ua": [
+          "Поки Патрокл живий, у Ахіллеса немає сильної шкоди по вам — використовуйте каверзи, щоб не дати Патроклу померти.",
+          "Поки Патрокл живий, не атакуйте Ахіллеса сильними картами, щоб не потрапити на свап.",
+          "Коли Патрокл вмирає, Ахіллес скидає 2 карти; бажаннями ви скидаєте ще 6, а Султанами (за вдалого розкладу) — ще 2 — до моменту, коли він стане злим, у нього не лишиться ресурсів вас забити."
+        ]
+      }
+    },
+    "Spider-Man": {
+      "tips": {
+        "en": [
+          "His defenses aren't scary since your values aren't especially high.",
+          "He has no cancel effects, so your Sultans-discard always goes through — discard his strong attacks so he simply lacks the damage.",
+          "He also has high card draw that he doesn't fully control."
+        ],
+        "ua": [
+          "Його захисти не страшні, бо ваші значення не такі й великі.",
+          "У нього немає скасувань, тож скид Султанами завжди проходить — скидайте йому сильні атаки, щоб просто не вистачило шкоди.",
+          "У нього також великий добір, який він не повністю контролює."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "Always keep in mind he can combo-kill you with Jeet Kune Do.",
+          "His own draw is weak, though — you can try to combo him first.",
+          "He doesn't have that much health, and you have plenty of auto-damage.",
+          "He has Feints, but if you manage to discard his cards, it hurts his options significantly."
+        ],
+        "ua": [
+          "Завжди тримайте в голові, що він може закомбити вас Jeet Kune Do.",
+          "Проте в нього слабкий добір — можна спробувати закомбити його першим.",
+          "У нього не так багато здоров'я, а у вас достатньо авто-урону.",
+          "У нього є каверзи, але якщо вдасться скинути йому карти — це сильно б'є по його можливостях."
+        ]
+      }
+    },
+    "Hamlet": {
+      "tips": {
+        "en": [
+          "Can't withstand sustained aggression, though he can rebuild his hand quickly.",
+          "Use your move-3 to force him to boost.",
+          "He has no Feints, though he does have an end-turn effect."
+        ],
+        "ua": [
+          "Не витримує постійної агресії, хоч і може швидко пересобрати руку.",
+          "Використовуйте свій рух-3, щоб змушувати його бустити.",
+          "У нього немає каверз, хоч є ефект завершення ходу."
+        ]
+      }
+    },
+    "Oda Nobunaga": {
+      "tips": {
+        "en": [
+          "A small-map character, so look to play against him on something bigger.",
+          "His sidekicks have no Feints — hit them directly if you want an effect to land guaranteed.",
+          "You'll definitely need to remove at least one sidekick."
+        ],
+        "ua": [
+          "Персонаж маленьких мап, тож проти нього краще грати на чомусь більшому.",
+          "У його помічників немає каверз — бийте прямо в них, якщо хочете гарантованого спрацювання ефекту.",
+          "Одного помічника точно доведеться прибрати."
+        ]
+      }
+    },
+    "Titania": {
+      "tips": {
+        "en": [
+          "Play an active game — pressure her so she has no resources left to attack you with."
+        ],
+        "ua": [
+          "Грайте активно — пресингуйте її, щоб у неї не лишилось ресурсів вас атакувати."
+        ]
+      }
+    },
+    "Cloak & Dagger": {
+      "tips": {
+        "en": [
+          "Discard their whole hand and kill one of them outright as soon as you can.",
+          "Once only one is left, they won't have enough damage to kill you."
+        ],
+        "ua": [
+          "Скидайте їм всю руку і одразу вбивайте одного з них.",
+          "Коли лишиться один — шкоди вбити вас йому не вистачить."
+        ]
+      }
+    },
+    "Bullseye": {
+      "tips": {
+        "en": [
+          "He has low card draw, so pressure him actively.",
+          "You have better pressure and tempo, and he has little health.",
+          "He really dislikes your discard effects."
+        ],
+        "ua": [
+          "У нього низький добір, тож активно пресингуйте.",
+          "У вас кращий пресинг і темп, а в нього мало здоров'я.",
+          "Йому дуже не подобаються ваші скиди."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "Hard for him to run you over — you simply have too much health.",
+          "You can still pierce through him in return."
+        ],
+        "ua": [
+          "Йому важко вас переїхати — у вас просто забагато здоров'я.",
+          "При цьому ви все ще можете його пробивати."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Everything hinges on how fast you kill her Huntsman — if you can't within the first 10 cards or so, it hurts you badly and she'll simply outlast you long-term.",
+          "If you kill him quickly, run and force her to approach, attack, and discard her cards, winning the long game instead."
+        ],
+        "ua": [
+          "Все залежить від того, наскільки швидко ви вб'єте її Мисливця — якщо не встигнете приблизно за перші 10 карт, це сильно вдарить по вам, і вона просто переживе вас у довгій грі.",
+          "Якщо вб'єте його швидко — тікайте, змушуйте її підходити, атакуйте і скидайте їй карти, вигравайте вдовгу."
+        ]
+      }
+    },
+    "Bloody Mary": {
+      "tips": {
+        "en": [
+          "A tough matchup if it drags on — she wants you to attack her so she can get her third action.",
+          "Save your Feints for that third action."
+        ],
+        "ua": [
+          "Важкий матчап, якщо затягується — вона хоче, щоб ви її атакували, аби отримати третю дію.",
+          "Бережіть каверзи саме на цю третю дію."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "Depends a lot on the map — on small maps she'll finish you off, on large ones you can outrun her.",
+          "Focus more on Annie herself, since she'll pierce you regardless (she has three 5s and three schemes).",
+          "Pull the Queen of Mississippi out of her quickly by lowering her health, then look to finish the game."
+        ],
+        "ua": [
+          "Сильно залежить від мапи — на маленьких вона вас забиває, на великих ви від неї відбігаєте.",
+          "Фокусуйтеся більше на самій Енні, бо вона все одно вас пробиває (у неї три п'ятірки й три схеми).",
+          "Швидше витягніть із неї Королеву Міссісіпі, опустивши їй здоров'я, а потім намагайтесь добити."
+        ]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "Depends on whether Shuri gets to use her cards and what she pulls from them.",
+          "On a good map, even if she takes cards from you, you still have chances."
+        ],
+        "ua": [
+          "Залежить, чи встигне Шурі використати свої карти і що з них дістане.",
+          "На вдалій мапі, навіть якщо вона забере карти, шанси все ще є."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "She has a lot of damage available to kill you, though her demon effect is unlikely to actually trigger.",
+          "You can use a combination of your 1-defense against her 7-attack to draw a large hand of cards and then finish her with a combo turn of your own."
+        ],
+        "ua": [
+          "У неї багато шкоди, щоб вас забити, хоча її демон навряд чи спрацює.",
+          "Можна використати комбінацію: захист-одиничка проти її атаки на 7, щоб добрати велику руку, а потім добити її власним комбо-ходом."
+        ]
+      }
+    },
+    "Dr. Jekyll & Mr. Hyde": {
+      "tips": {
+        "en": [
+          "Hard to pierce him — expect a lot of auto-damage coming your way.",
+          "He'll be very strong on his own map.",
+          "You'll need to work hard here — correctly read his interactions and discard the specific cards he needs."
+        ],
+        "ua": [
+          "Його важко пробити — очікуйте багато авто-урону на себе.",
+          "Він буде дуже сильним на своїй мапі.",
+          "Тут доведеться постаратися — правильно вгадувати взаємодії і скидати саме ті карти, що йому потрібні."
+        ]
+      }
+    },
+    "Dr. Sattler": {
+      "tips": {
+        "en": [
+          "You need to finish her off with a combo turn.",
+          "A long discard-based game is possible in theory, but she has a lot of auto-damage in defense and strong attacks — she'll most likely just pierce through you.",
+          "Even if she goes for fatigue, she heals faster and more easily and simply has more health to survive it than you do."
+        ],
+        "ua": [
+          "Треба встигнути добити її комбо-ходом.",
+          "Довга гра через скиди теоретично можлива, але в неї багато авто-урону в захисті й сильні атаки — вона, найімовірніше, просто вас пробиває.",
+          "Навіть якщо піде на фатіг, вона лікується швидше й легше, і в неї банально більше здоров'я, щоб це пережити."
+        ]
+      }
+    },
+    "Dracula": {
+      "tips": {
+        "en": [
+          "A lot of auto-damage, discards, and a strong main attack.",
+          "Don't let him play his game — attack him actively, remove his brides with auto-damage, and discard his key cards."
+        ],
+        "ua": [
+          "Багато авто-урону, скидів і сильна головна атака.",
+          "Не давайте йому грати в свою гру — активно атакуйте, прибирайте його наречених авто-уроном і скидайте йому ключові карти."
+        ]
+      }
+    },
+    "Sinbad": {
+      "tips": {
+        "en": [
+          "If he gets to pressure you, he pierces easily.",
+          "His card draw is strong, so expect him to play aggressively against you.",
+          "Don't let him hit you multiple times in a single turn.",
+          "You'll want a good map against him."
+        ],
+        "ua": [
+          "Якщо він зможе тиснути, він пробиває легко.",
+          "У нього все добре з добором, тож він гратиме проти вас агресивно.",
+          "Не давайте йому бити вас кілька разів за хід.",
+          "Проти нього потрібна хороша мапа."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": [
+          "Attack him non-stop — draw and strike, strike, strike.",
+          "He has no free defensive escapes, so if he's standing in your zone, discard a card and hit him three times.",
+          "Sooner or later he'll run out of defenses.",
+          "If he manages to discard one or more of your wishes, that's a real problem for you — but an aggressive, non-stop playstyle doesn't give him the room to do it."
+        ],
+        "ua": [
+          "Атакуйте його без зупинки — добір і удар, удар, удар.",
+          "У нього немає безкоштовних відходів у захист, тож якщо він стоїть у вашій зоні — скидайте карту й бийте тричі.",
+          "Рано чи пізно в нього закінчаться захисти.",
+          "Якщо він скине вам одне чи кілька бажань — це біда, але агресивний формат гри просто не дає йому можливості це зробити."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "Very hard because of her huge health pool and value-oriented game.",
+          "You'll have to deal with her sidekicks too, since they discard your cards — something you really don't want.",
+          "Your only real shot is comboing her out while she has no defenses left, especially no free escapes — but that's unlikely."
+        ],
+        "ua": [
+          "Дуже важкий через її величезне здоров'я і гру на велью.",
+          "Доведеться розбиратися і з її помічниками, бо вони скидають вам карти, чого дуже не хочеться.",
+          "Єдиний реальний шанс — закомбити її, коли в неї не лишиться захистів, особливо безкоштовних відходів, але це малоймовірно."
+        ]
+      }
+    },
+    "Sun Wukong": {
+      "tips": {
+        "en": [
+          "Pressure him actively and remove his clones.",
+          "Everything depends on whether Wukong finds his defenses, and whether you manage to attack him every turn, or even multiple times per turn.",
+          "He can try to impose his own game through attacks — don't let him do that under any circumstances."
+        ],
+        "ua": [
+          "Активно пресингуйте й прибирайте клонів.",
+          "Все залежить від того, чи знаходить Вуконг свої захисти, і чи вдається вам атакувати його кожен хід, а то й кілька разів за хід.",
+          "Він може намагатися нав'язати свою гру атаками — ні в якому разі не дозволяйте йому цього."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "He has a huge amount of health, hard to kill in a single combo turn.",
+          "A long game won't work — you need to land a combo turn, but plan ahead assuming you won't finish him in just one."
+        ],
+        "ua": [
+          "У нього дуже багато здоров'я, складно вбити за один комбо-хід.",
+          "Довга гра не спрацює, потрібен комбо-хід, але плануйте наперед, розраховуючи, що за один хід ви його не заб'єте."
+        ]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "Strong attacks that will pierce you well.",
+          "You'll also have to deal with her sidekick, since it has good cards against you.",
+          "Your only real option is a combo turn, since she doesn't have that much health."
+        ],
+        "ua": [
+          "Сильні атаки, буде добре вас пробивати.",
+          "Доведеться розбиратися ще й з помічником, бо в нього хороші карти проти вас.",
+          "Реальний варіант лише комбо-хід, бо в неї не так багато здоров'я."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Attacks are too strong, and there's too much discard.",
+          "Many of your defensive cards are very risky to play against her.",
+          "You'll also need to deal with her sidekicks, and comboing her out will be very hard."
+        ],
+        "ua": [
+          "Занадто сильні атаки й забагато скидів.",
+          "Багато ваших захисних карт дуже небезпечно грати проти неї.",
+          "Також доведеться розбиратися з помічниками, а закомбити її буде дуже складно."
+        ]
+      }
+    },
+    "Harry Houdini": {
+      "tips": {
+        "en": [
+          "You need to draw very actively and pressure hard.",
+          "The problem is Houdini has free escapes into defense, strong attacks, and discards."
+        ],
+        "ua": [
+          "Потрібно дуже активно добирати й пресингувати.",
+          "Проблема в тому, що в Гудіні є безкоштовні відходи в захист, сильні атаки й скиди."
+        ]
+      }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "A lot of damage — when possible, pick a map where you can wall yourself in and stay adjacent to only one Raptor at a time."
+        ],
+        "ua": [
+          "Дуже багато шкоди — по можливості обирайте мапу, де можна закритися і бути суміжним лише з одним Раптором."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "Try to win through discards and active pressure.",
+          "The problem is she heals herself, and her strongest attacks will always land on you with their full effects."
+        ],
+        "ua": [
+          "Пробуйте вигравати за рахунок скидів і активного пресингу.",
+          "Проблема в тому, що вона лікується, а її найсильніші атаки завжди проходять по вам з усіма ефектами."
+        ]
+      }
+    },
+    "The Wayward Sisters": {
+      "tips": {
+        "en": [
+          "Attacks are too strong and there's too much auto-damage — you'll run out of health first."
+        ],
+        "ua": [
+          "Занадто сильні атаки й забагато авто-урону — здоров'я закінчиться саме у вас."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "You have a chance if he fails to find his draw cards and you pressure him actively.",
+          "Otherwise you simply won't have enough health to cover his strong attacks."
+        ],
+        "ua": [
+          "Є шанс, якщо він не знаходить карти на добір, і ви активно його пресингуєте.",
+          "Інакше вам просто не вистачить здоров'я покрити його сильні атаки."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "She beats you in a long game — try to win with a combo turn instead.",
+          "Discard her Daisy schemes.",
+          "Don't let her play calmly on a large hand."
+        ],
+        "ua": [
+          "Вона виграє у вас довгу гру — пробуйте вигравати комбо-ходом.",
+          "Скидайте їй схеми на Дейзі.",
+          "Не давайте їй спокійно грати на великій руці."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "You don't have the damage for him, even if you manage to discard his entire hand — he'll break you."
+        ],
+        "ua": [
+          "У вас немає на нього шкоди, навіть якщо вдасться скинути всю його руку — він вас зламає."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "You have a chance if he's left without defenses, you've used your combo turn, and you've put all your auto-damage into him.",
+          "Otherwise you simply won't have enough damage."
+        ],
+        "ua": [
+          "Є шанс, якщо він лишиться без захистів, ви використали комбо-хід і вклали в нього весь свій авто-урон.",
+          "Інакше шкоди просто не вистачить."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "You don't have the damage for him, even if you manage to discard his entire hand — he'll break you."
+        ],
+        "ua": [
+          "У вас немає на нього шкоди, навіть якщо вдасться скинути всю його руку — він вас зламає."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "He'll press you hard since his healing lands very easily.",
+          "A combo turn is your only hope, and even that's unlikely."
+        ],
+        "ua": [
+          "Він вас запресингує, бо його лікування проходить дуже легко.",
+          "Комбо-хід — єдина надія, і та малоймовірна."
+        ]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": [
+          "It doesn't matter how many cards you discard from her — she returns them after death.",
+          "Too many sidekicks to deal with all of them."
+        ],
+        "ua": [
+          "Неважливо, скільки карт ви їй скидаєте — вона повертає їх після смерті.",
+          "Занадто багато помічників, щоб розібратися з усіма."
+        ]
+      }
+    }
+  }
+}

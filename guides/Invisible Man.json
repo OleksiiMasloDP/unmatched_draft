@@ -1,0 +1,206 @@
+{
+  "complexity": 3,
+  "keyCards": [
+    {
+      "image": "surprise_attack.webp"
+    },
+    {
+      "image": "impossible_to_see.webp"
+    },
+    {
+      "image": "step_lightly.webp"
+    },
+    {
+      "image": "reign_of_terror.webp"
+    },
+    {
+      "image": "vanish.webp"
+    }
+  ],
+  "style": {
+    "en": "Value / Fatigue / Passive",
+    "ua": "Велью / Фатіг / Пасивна гра"
+  },
+  "features": {
+    "en": [
+      "Solid map mobility by hopping between his own fog tokens, and gains bonus defense while standing on one.",
+      "One of the biggest single auto-damage tools in the game, plus a card that heals him and effectively lets him pass a turn while removing himself from the board.",
+      "Doesn't need a great starting position — going first lets him claim fog and a defense bonus early, going second speeds up his passive/attrition plan.",
+      "A card that sets an opposing card's value straight to 0, acting as both a strong defense and a solid attack option."
+    ],
+    "ua": [
+      "Непогана мобільність — переміщується між власними жетонами туману, і отримує бонус до захисту, стоячи на них.",
+      "Один із найбільших одиночних авто-уронів у грі, плюс карта, що лікує і фактично дозволяє пропустити хід, прибравши себе з поля.",
+      "Не потребує вигідної стартової позиції — ходячи першим, він рано займає туман і бонус захисту, ходячи другим — швидше реалізує свій пасивний план на виснаження.",
+      "Карта, що обнуляє значення карти опонента — і як сильний захист, і як варіант атаки."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Poor fine maneuverability — his movement is good for covering distance, but bad for precisely closing in on an opponent.",
+      "Weak boost values across his deck.",
+      "No scheme/cancel effects at all, which loses him the game outright against a large chunk of the roster.",
+      "Very few real attack threats — outside his key auto-damage tools, his best direct attacks are only in the 4-5 range.",
+      "His opponent can move his fog tokens too, which can actively work against his positioning.",
+      "Prone to awkward hands — sometimes drawing all defense/boost cards with nothing to attack with, or the opposite.",
+      "Extremely map-dependent — his ability barely matters on small maps, and he wants a big map to hop across."
+    ],
+    "ua": [
+      "Погана точна маневреність — рух хороший для подолання відстані, але поганий для точного зближення з опонентом.",
+      "Слабкі значення бустів по всій колоді.",
+      "Взагалі немає каверз/скасувань ефектів, через що він програє великій частині ростеру просто через це.",
+      "Дуже мало реальних загроз атаки — окрім ключових авто-уронів, найкращі прямі атаки лише в районі 4-5.",
+      "Опонент теж може рухати його тумани, що може активно шкодити позиціонуванню.",
+      "Схильний до незручних рук — інколи вся рука лише захисти/бусти без чим атакувати, або навпаки.",
+      "Дуже сильно залежить від карти — на маленьких картах здібність майже марна, йому потрібна велика карта, щоб стрибати туманами."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Play a patient, passive game: sit on fog for the defense bonus, use your pass/heal tool to stall and recover HP instead of trading unnecessarily.",
+      "Save your big auto-damage and 'set value to 0' cards for when they matter most — they're your main real damage and defensive tools, since your attacks are otherwise weak.",
+      "Remember your value-nullifying card only cancels the card's base value, not separate boost or other bonus effects layered on top of it — plan around opponents who have those.",
+      "You want a large map to make your fog mobility count; on small maps expect your gameplan to be much weaker.",
+      "Because you lack cancel effects entirely, be honest with yourself about matchups where you simply can't interact with the opponent's plan — in those, lean even harder into stalling and racing on health/fatigue rather than trying to fight fairly."
+    ],
+    "ua": [
+      "Грайте терпляче й пасивно: стійте на тумані заради захисту, використовуйте карту-пас/лікування, щоб перечекати та відновити здоров'я, а не розмінюватися без потреби.",
+      "Бережіть великий авто-урон і карту обнулення значення на найважливіші моменти — це ваші головні інструменти шкоди й захисту, бо прямі атаки самі по собі слабкі.",
+      "Пам'ятайте: карта обнулення значення скасовує лише базове значення карти, а не окремі бусти чи інші ефекти зверху — враховуйте це проти персонажів з такими бонусами.",
+      "Вам потрібна велика карта, щоб мобільність туманами дала ефект; на маленьких картах план буде значно слабшим.",
+      "Оскільки каверз у вас взагалі немає, чесно оцінюйте матчапи, де ви просто не можете втрутитися в план опонента — там ще сильніше грайте на виснаження й здоров'я, а не намагайтеся битися напряму."
+    ]
+  },
+  "matchups": {
+    "Alice": {
+      "tips": {
+        "en": [
+          "She has 13 HP — work her down by 10 damage total (auto-damage counts toward this), then finish her off with your 5 (Surprise Attack)."
+        ],
+        "ua": [
+          "У неї 13 здоров'я — пронесіть загалом 10 шкоди (авто-урон теж рахується), а потім добийте своєю 5-кою (Surprise Attack)."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "Don't play her game — avoid taking her auto-damage where you can.",
+          "With +1 defense, your 4-defense cancels her deck-shuffle effect. She'll also be wary of playing her 0, since you're holding a 5 with a cancel attached.",
+          "Play carefully, react correctly to her attacks, and avoid contact with her entirely when possible.",
+          "Prefer a large map, and when positioning, avoid standing near the starting cells."
+        ],
+        "ua": [
+          "Не грайте в її гру — уникайте її авто-урону, де тільки можливо.",
+          "Маючи +1 до захисту, ваша 4-ка скасовує її ефект перемішування колоди. Вона також буде остерігатися грати свій 0, бо у вас є 5-ка зі скасуванням.",
+          "Грайте обережно, правильно реагуйте на її атаки і по можливості взагалі уникайте контакту з нею.",
+          "Надавайте перевагу великій карті, а при позиціонуванні не ставайте біля стартових комірок."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "Don't play her game — deny her the interactions she wants.",
+          "Prefer a large map.",
+          "Her defense values cap out at 3, so your 5 pierces through comfortably.",
+          "With +1 defense, she likely won't be able to shuffle cards back into her deck."
+        ],
+        "ua": [
+          "Не грайте в її гру — не давайте їй потрібних взаємодій.",
+          "Надавайте перевагу великій карті.",
+          "Її захисти не перевищують 3, тож ваша 5-ка пробиває спокійно.",
+          "З +1 до захисту вона, ймовірно, не зможе повертати карти в колоду."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "He has 13 HP — work him down by 10 damage total (auto-damage counts toward this), then finish him off with your 5 (Surprise Attack).",
+          "He's not a fatigue character and has a lot of card draw, so keep running from him.",
+          "Misty is the real problem — you'll need to make a real effort to kill her, and make sure your auto-damage lands on Luke Cage himself, not her."
+        ],
+        "ua": [
+          "У нього 13 здоров'я — пронесіть загалом 10 шкоди (авто-урон теж рахується), а потім добийте своєю 5-кою (Surprise Attack).",
+          "Він не персонаж на фатіг і має великий добір, тож продовжуйте від нього тікати.",
+          "Справжня проблема — Місті, її треба буде постаратися вбити, а весь авто-урон спрямовувати саме на Люка, а не на неї."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "Hold your auto-damage for the end of the game and play for fatigue.",
+          "It's better to kill Charlie, but keep your auto-damage aimed at Annie herself."
+        ],
+        "ua": [
+          "Бережіть авто-урон на кінець гри і грайте на виснаження.",
+          "Чарлі краще вбити, але авто-урон тримайте саме на Енні."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "The whole matchup revolves around him trying to run you over while you keep running.",
+          "This isn't a fatigue game, though — you'll need to actually kill him sooner or later.",
+          "Ghost Rider struggles to pierce you when you're at +1 defense."
+        ],
+        "ua": [
+          "Весь матчап будується на тому, що він намагається вас переїхати, а ви тікаєте.",
+          "Проте це не гра на фатіг — рано чи пізно його доведеться забити.",
+          "Гонщику важко пробити вас, коли у вас +1 до захисту."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "He has 14 HP — work him down by 10 damage total (auto-damage counts), leaving 4, then finish with your 5 plus a feint — he won't get Jeet Kune Do back that way.",
+          "Don't play his game — your main job is surviving Jeet Kune Do."
+        ],
+        "ua": [
+          "У нього 14 здоров'я — пронесіть загалом 10 шкоди (авто-урон рахується), лишається 4, і добийте 5-кою з каверзою — так він не поверне собі Jeet Kune Do.",
+          "Не грайте в його гру — головне завдання це пережити Jeet Kune Do."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": ["Only really winnable on a large map."],
+        "ua": ["Реальний шанс на перемогу є лише на великій карті."]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": ["Only really winnable on a large map."],
+        "ua": ["Реальний шанс на перемогу є лише на великій карті."]
+      }
+    },
+    "Donatello": {
+      "tips": {
+        "en": [
+          "Needs to be played on a large map — it gets noticeably harder on smaller ones.",
+          "Just keep running and try to survive, playing for fatigue."
+        ],
+        "ua": [
+          "Потрібно грати на великій карті — на меншій стає помітно складніше.",
+          "Просто тікайте й намагайтеся вижити, граючи на виснаження."
+        ]
+      }
+    },
+    "Chupacabra": {
+      "tips": {
+        "en": ["Play your classic fatigue game here."],
+        "ua": ["Грайте свою класичну гру на виснаження."]
+      }
+    },
+    "Loki": {
+      "tips": {
+        "en": ["Best played on a large map — play for fatigue."],
+        "ua": ["Найкраще грати на великій карті — грайте на виснаження."]
+      }
+    }
+  }
+}

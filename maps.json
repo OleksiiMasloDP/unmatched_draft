@@ -61,6 +61,7 @@
       "Ms. Marvel",
       "John Henry",
       "Raptors",
+      "Oda Nabunaga",
       "Moon Knight",
       "Nikola Tesla",
       "Bruce Lee"
@@ -100,7 +101,14 @@
     "name": "Baskerville Manor",
     "set": "Cobble & Fog",
     "image": "maps/baskerville_manor.webp",
-    "favoredBy": ["Tomoe Gozen", "Titania", "Jill Trent", "Golden Bat"],
+    "favoredBy": [
+      "Tomoe Gozen",
+      "Titania",
+      "Jill Trent",
+      "Ms. Marvel",
+      "Leonardo",
+      "Golden Bat"
+    ],
     "neutralTo": [
       "Dracula",
       "Dr. Sattler",
@@ -128,12 +136,10 @@
       "The Genie",
       "Philippa",
       "Rosie the Riveter",
-      "Ms. Marvel",
       "Robert Muldoon",
       "Bullseye",
       "George Washington",
       "Michelangelo",
-      "Leonardo",
       "The Wayward Sisters",
       "Pandora",
       "Loki"
@@ -526,6 +532,7 @@
       "Jill Trent",
       "Raptors",
       "Rosie the Riveter",
+      "Leonardo",
       "Pandora",
       "Yennenga",
       "Geralt of Rivia",
@@ -545,7 +552,6 @@
       "Tomoe Gozen",
       "Michelangelo",
       "The Genie",
-      "Leonardo",
       "Muhammad Ali",
       "Moon Knight",
       "Bruce Lee",
@@ -573,6 +579,7 @@
       "Tomoe Gozen",
       "Nikola Tesla",
       "Achilles",
+      "Oda Nabunaga",
       "Eredin"
     ],
     "neutralTo": [
@@ -680,7 +687,6 @@
       "Wyatt Earp",
       "Rosie the Riveter",
       "George Washington",
-      "The Wayward Sisters",
       "Raptors",
       "Little Red Riding Hood",
       "Yennenga",
@@ -692,6 +698,7 @@
     ],
     "disfavoredBy": [
       "Donatello",
+      "The Wayward Sisters",
       "Robin Hood",
       "The Genie",
       "Titania",
@@ -1052,8 +1059,10 @@
       "John Henry",
       "Annie Christmas",
       "Raptors",
+      "Oda Nabunaga",
       "Achilles",
-      "Bruce Lee"
+      "Bruce Lee",
+      "Ms. Marvel"
     ],
     "neutralTo": [
       "Little Red Riding Hood",
@@ -1082,7 +1091,6 @@
       "Bullseye",
       "Pandora",
       "Black Panther",
-      "Ms. Marvel",
       "Tomoe Gozen",
       "Golden Bat",
       "Yennenga",
@@ -1146,14 +1154,15 @@
       "Geralt of Rivia",
       "Leonardo",
       "Rosie the Riveter",
+      "Ms. Marvel",
       "Moon Knight",
       "Nikola Tesla",
-      "Eredin"
+      "Eredin",
+      "Oda Nabunaga"
     ],
     "neutralTo": [
       "Dracula",
       "The Genie",
-      "Ms. Marvel",
       "Robert Muldoon",
       "Dr. Sattler",
       "Michelangelo",
