@@ -1958,7 +1958,7 @@
     {
       "a": "Dr. Sattler",
       "b": "Leonardo",
-      "winrate_a": null
+      "winrate_a": 50
     },
     {
       "a": "Dr. Sattler",
@@ -3673,7 +3673,7 @@
     {
       "a": "The Wayward Sisters",
       "b": "Wyatt Earp",
-      "winrate_a": null
+      "winrate_a": 56
     },
     {
       "a": "The Wayward Sisters",
@@ -3714,6 +3714,71 @@
       "a": "Wyatt Earp",
       "b": "Yennenga",
       "winrate_a": 35
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Muhammad Ali",
+      "winrate_a": 40
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Loki",
+      "winrate_a": 35
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Donatello",
+      "winrate_a": 20
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Leonardo",
+      "winrate_a": 55
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Michelangelo",
+      "winrate_a": 80
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Raphael",
+      "winrate_a": 25
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Raphael",
+      "winrate_a": 35
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Pandora",
+      "winrate_a": 60
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Chupacabra",
+      "winrate_a": 80
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Blackbeard",
+      "winrate_a": 70
+    },
+    {
+      "a": "Luke Cage",
+      "b": "John Henry",
+      "winrate_a": 50
+    },
+    {
+      "a": "Luke Cage",
+      "b": "George Washington",
+      "winrate_a": 50
+    },
+    {
+      "a": "Luke Cage",
+      "b": "Rosie the Riveter",
+      "winrate_a": 55
     }
   ]
 }

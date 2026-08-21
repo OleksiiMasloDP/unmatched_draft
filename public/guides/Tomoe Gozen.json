@@ -1,0 +1,391 @@
+{
+  "complexity": 4,
+  "keyCards": [
+    {
+      "image": "witness_my_last_battle.webp"
+    },
+    {
+      "image": "piercing_shot.webp"
+    },
+    {
+      "image": "demon.webp"
+    },
+    {
+      "image": "final_stand.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Value / Hero-Hunter",
+    "ua": "Агро / Велью / Мисливець на героїв"
+  },
+  "features": {
+    "en": [
+      "A true hero-hunter — her deck is built around chasing down and killing enemy heroes, with plenty of strong defenses that block big hits, force discards, or reposition the opponent.",
+      "Can bank a large effective health pool (up to 20 with her scheme's heal) since she'll be taking a lot of hits from both the hero and any sidekicks.",
+      "Huge variety of tools gives her genuine gameplan flexibility rather than a single all-in line — tempo through card draw, big flat value, mobility, or a setup-into-big-attack combo.",
+      "Two 7-value attack cards in the deck is rare and very strong when you can land them."
+    ],
+    "ua": [
+      "Справжній мисливець на героїв — колода побудована навколо переслідування й вбивства ворожого героя, з купою сильних захистів, що блокують важкі удари, змушують до скидів або пересувають опонента.",
+      "Може накопичити великий запас здоров'я (аж до 20 із заживленням від виверту), бо отримуватиме багато ударів і від героя, і від помічників.",
+      "Величезна різноманітність інструментів дає справжню гнучкість плану на гру, а не єдину all-in лінію — темп через добір, чисте значення, мобільність або сетап під потужну атаку.",
+      "Дві карти зі значенням 7 у колоді — рідкість, і дуже сильно, коли вдається їх реалізувати."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Struggles hard against sidekicks — her pseudo-cancel effect only works on heroes, and she has few real resources to kill sidekicks outright, so opponent sidekicks reliably land hits on her.",
+      "Move 2 with no sidekick of her own means poor board control on her own.",
+      "Very positioning-dependent — she needs contained, clearly-cut map zones to actually trigger her ability, and tends to want to play on maps that favor her, which is a real limitation in tournament formats with map bans/vetoes."
+    ],
+    "ua": [
+      "Сильно страждає проти помічників — її псевдо-каверза працює лише проти героїв, і в неї мало реальних ресурсів вбивати помічників, тож вони гарантовано в неї влучають.",
+      "Рух 2 без власного помічника означає слабкий бортконтроль самотужки.",
+      "Дуже залежна від позиціонування — потрібні чітко нарізані, невеликі зони карти, щоб реально спрацьовувала здібність, і вона тяжіє до карт, які їй вигідні, що є реальним обмеженням у турнірному форматі з банами/вето карт."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Prefer maps with smaller, cleanly-cut zones and a reachable range-2 center — these let her ability trigger consistently. Avoid very large maps, oversized zones, or maps where doors/passages constantly shuffle zone membership.",
+      "Don't be afraid to spend one of your 7s on a genuinely problematic solo sidekick — losing that resource is often worth it if it lets you play the rest of the fight one-on-one against the hero.",
+      "Set up your biggest attack rather than throwing it blind — bait a weaker defense out first (with a piercing/tempo attack) before committing your best hit into a fresh hand of defenses.",
+      "Her draw/discard tool is strong but situational — often safer to play it in defense and cash in the profit on your own turn rather than force it into an attack."
+    ],
+    "ua": [
+      "Обирайте карти з невеликими, чітко нарізаними зонами й досяжним з рух-2 центром — це дозволяє стабільно тригерити здібність. Уникайте дуже великих карт, завеликих зон або карт, де двері/переходи постійно міняють належність зон.",
+      "Не шкодуйте одну сімку на дійсно проблемного соло-помічника — часто це того варте, якщо дозволяє далі грати решту бою один на один проти героя.",
+      "Сетапте найсильнішу атаку, а не кидайте наосліп — спочатку виманіть слабший захист темповою/пробивною атакою, перш ніж вкидати найкращий удар у свіжу руку захистів.",
+      "Карта на добір/скид сильна, але ситуативна — часто безпечніше зіграти її в захист і реалізувати профіт на своєму ході, ніж форсити в атаку."
+    ]
+  },
+  "matchups": {
+    "Dracula": {
+      "tips": {
+        "en": ["Favorable — he simply lacks the damage output to kill Tomoe."],
+        "ua": ["Вигідний — йому банально бракує шкоди, щоб вбити Томоє."]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "Favorable for the same reason — not enough damage output to threaten her."
+        ],
+        "ua": [
+          "Вигідний з тієї ж причини — не вистачає шкоди, щоб їй загрожувати."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "Favorable — she'll typically kill him faster than he can run her over."
+        ],
+        "ua": [
+          "Вигідний — вона зазвичай вбиває його швидше, ніж він встигає переїхати."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "A very good matchup for her — his ability can't pierce her defenses well, while she pierces his easily."
+        ],
+        "ua": [
+          "Дуже хороший матчап — його здібність погано пробиває її захисти, а вона його пробиває легко."
+        ]
+      }
+    },
+    "Daredevil": {
+      "tips": {
+        "en": ["Favorable — he can't withstand her tempo."],
+        "ua": ["Вигідний — він не витримує її темпу."]
+      }
+    },
+    "Winter Soldier": {
+      "tips": {
+        "en": ["Same story as Daredevil — can't keep up with her tempo."],
+        "ua": ["Та сама історія, що й Дердевіл — не встигає за її темпом."]
+      }
+    },
+    "Bullseye": {
+      "tips": {
+        "en": ["Favorable — he simply can't pierce her defenses."],
+        "ua": ["Вигідний — він просто не може пробити її захисти."]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "Debatable but ultimately favorable for Tomoe — her two 7s and value pressure can force him to over-boost and lose from there."
+        ],
+        "ua": [
+          "Спірний, але зрештою вигідний для Томої — її дві сімки й тиск по велью змушують його забуститись і програти."
+        ]
+      }
+    },
+    "Black Widow": {
+      "tips": {
+        "en": [
+          "Favorable — she has too much auto-damage and her 7s for him to keep up with."
+        ],
+        "ua": [
+          "Вигідний — у неї забагато авто-урону і сімок, щоб він встигав за нею."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Favorable — use her scheme's move-through-sidekick option to ignore Daisy entirely and dump everything straight into Jill."
+        ],
+        "ua": [
+          "Вигідний — використовуйте опцію виверту 'рух крізь помічника', щоб повністю ігнорувати Дейзі й кидати все напряму в Джил."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "Favorable — he likes to run away, which plays directly into her ability's punish for leaving her zone."
+        ],
+        "ua": [
+          "Вигідний — він любить тікати, а це якраз карає її здібність за вихід із зони."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "Genuinely favorable for Tomoe despite the common perception otherwise — he has to guess interactions constantly and spend coils on suboptimal cards; one coil-spending mistake and her 7 lands cleanly.",
+          "She also simply out-draws him (around 5 cards of draw available to her deck vs his roughly 3)."
+        ],
+        "ua": [
+          "Насправді вигідний для Томої, попри поширену думку про зворотнє — йому постійно доводиться вгадувати взаємодії й тратити котушки на не найкращі карти; одна помилка з котушками — і її сімка залітає чисто.",
+          "Вона також банально переганяє його по добору (близько 5 карт добору у її колоді проти приблизно 3 у нього)."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "Favorable — he lacks the damage to threaten her, so kill him quickly."
+        ],
+        "ua": [
+          "Вигідний — йому бракує шкоди, щоб їй загрожувати, тож вбивайте його швидко."
+        ]
+      }
+    },
+    "Oda Nobunaga": {
+      "tips": {
+        "en": [
+          "Considered favorable, though only played once — throw a 7 into his sidekick early and he has little left to work with."
+        ],
+        "ua": [
+          "Вважається вигідним, хоча зіграно лише раз — кидайте сімку в його помічника рано, і в нього лишається небагато ресурсів."
+        ]
+      }
+    },
+    "The Wayward Sisters": {
+      "tips": {
+        "en": [
+          "Very favorable — they simply don't have the value or damage output to threaten her."
+        ],
+        "ua": [
+          "Дуже вигідний — їм банально бракує велью й шкоди, щоб їй загрожувати."
+        ]
+      }
+    },
+    "Titania": {
+      "tips": {
+        "en": ["Favorable — she lacks value and damage output against Tomoe."],
+        "ua": ["Вигідний — їй бракує велью й шкоди проти Томої."]
+      }
+    },
+    "Hamlet": {
+      "tips": {
+        "en": [
+          "Favorable — he tends to beat himself up more than Tomoe needs to."
+        ],
+        "ua": ["Вигідний — він сам собі шкодить більше, ніж потрібно Томої."]
+      }
+    },
+    "Sinbad": {
+      "tips": {
+        "en": [
+          "Favorable — kill his sidekick quickly, and she has enough defense and damage to handle Sinbad himself."
+        ],
+        "ua": [
+          "Вигідний — швидко вбийте помічника, а на самого Сіндбада вистачає і захистів, і шкоди."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "A genuinely even matchup — arguably a slight lean toward Tomoe until the very last card, but close either way."
+        ],
+        "ua": [
+          "Справді рівний матчап — можливо, з невеликим нахилом у бік Томої аж до останньої карти, але близько в будь-якому разі."
+        ]
+      }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "Even and genuinely dangerous — they can bite hard if you're not careful."
+        ],
+        "ua": [
+          "Рівний і справді небезпечний — можуть добряче загризти, якщо не пильнувати."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "Even — kill his Merry Men quickly with her 4-value cards and he has no real damage left; let them set up their combo and he can pressure hard instead."
+        ],
+        "ua": [
+          "Рівний — швидко вбийте його розбійників картами на 4, і в нього не лишається реальної шкоди; дозволите їм розкрутити комбо — і він може сильно тиснути."
+        ]
+      }
+    },
+    "William Shakespeare": {
+      "tips": {
+        "en": [
+          "Even — both sides deal a lot of damage, so it comes down to who kills first."
+        ],
+        "ua": [
+          "Рівний — обидва завдають багато шкоди, тож вирішує, хто вб'є першим."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "Even — the race is whether Cage/Misty kill Tomoe first, or she kills Misty first; once Misty is dead, Cage alone usually lacks enough damage to finish her."
+        ],
+        "ua": [
+          "Рівний — питання, чи Кейдж/Місті вб'ють Томою першими, чи вона вб'є Місті першою; коли Місті мертва, самому Кейджу зазвичай бракує шкоди її добити."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": ["Even in theory but two well-placed 7s can put him away."],
+        "ua": ["Теоретично рівний, але дві влучні сімки можуть його вирубити."]
+      }
+    },
+    "Harry Houdini": {
+      "tips": {
+        "en": [
+          "Even, but she needs to kill Bess (his ranged sidekick with a strong 6) quickly — if Bess survives, the matchup shifts in Houdini's favor."
+        ],
+        "ua": [
+          "Рівний, але треба швидко вбити Бес (його далекобійну помічницю з сильною 6) — якщо Бес виживе, матчап зміщується на користь Гудіні."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "Roughly even, and depends heavily on how fast her sidekick Charlie dies — quickly favors Tomoe, if he survives long it favors Annie."
+        ],
+        "ua": [
+          "Приблизно рівний і сильно залежить від того, як швидко помре Чарлі — швидко це на користь Томої, довго живе — на користь Енні."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "Unfavorable — his sidekick creates a constant cycle she struggles to answer, and it grinds down her value over the game."
+        ],
+        "ua": [
+          "Невигідний — його помічник створює постійний цикл, з яким їй важко впоратись, і це виснажує її по велью."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "Unfavorable — her archers constantly do damage and reposition, and Tomoe has little way to answer that."
+        ],
+        "ua": [
+          "Невигідний — її лучники постійно завдають шкоди й пересувають, а Томоя майже нічим не може на це відповісти."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Unfavorable — expect to be constantly forced into discards over the course of the game."
+        ],
+        "ua": [
+          "Невигідний — доведеться постійно скидати карти протягом усієї гри."
+        ]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": ["Unfavorable — she simply can't reliably reach him."],
+        "ua": ["Невигідний — вона просто не може стабільно до нього дійти."]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "Considered a tough matchup requiring aggressive, well-informed play from Tomoe's side rather than her usual patient game."
+        ],
+        "ua": [
+          "Вважається важким матчапом, що вимагає від Томої агресивної, добре продуманої гри замість звичної терплячої."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Unfavorable — lots of auto-damage, random discards, and her Huntsman hits for a nasty 6."
+        ],
+        "ua": [
+          "Невигідний — багато авто-урону, випадкові скиди, а її Мисливець б'є на неприємну 6."
+        ]
+      }
+    },
+    "The Genie": {
+      "tips": {
+        "en": [
+          "Unfavorable — he can simply wait for his 7, stockpile wishes, draw up to six cards, and combo you; he also has a lot of discard tools and wins on value."
+        ],
+        "ua": [
+          "Невигідний — він може просто дочекатися своєї сімки, накопичити бажання, добрати до шести карт і закомбити вас; плюс у нього багато інструментів скиду, і він виграє по велью."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": [
+          "Unfavorable — there's very little she can do to answer his gameplan here."
+        ],
+        "ua": ["Невигідний — вона мало що може протиставити його плану на гру."]
+      }
+    },
+    "Sun Wukong": {
+      "tips": {
+        "en": ["Considered one of her worse matchups for that reason."],
+        "ua": ["Через це вважається одним із гірших для неї матчапів."]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": ["Unfavorable — there's very little Tomoe can offer here."],
+        "ua": ["Невигідний — Томоя тут мало що може запропонувати."]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": ["Unfavorable — same story, not much Tomoe can do about it."],
+        "ua": ["Невигідний — та сама історія, Томоя тут мало що вдіє."]
+      }
+    }
+  }
+}

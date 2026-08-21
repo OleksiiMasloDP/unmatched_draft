@@ -575,10 +575,10 @@ export function useDraftState() {
     if (winrate >= 80) return "HARD_COUNTER";
     else if (winrate >= 70) return "COUNTER";
     else if (winrate >= 58) return "FAVORED";
-    else if (winrate >= 46) return "NEUTRAL";
-    else if (winrate <= 25) return "HARD_WEAK";
-    else if (winrate <= 35) return "WEAK";
-    else if (winrate <= 45) return "DISFAVORED";
+    else if (winrate >= 43) return "NEUTRAL";
+    else if (winrate >= 31) return "DISFAVORED";
+    else if (winrate >= 21) return "WEAK";
+    else return "HARD_WEAK";
   }
 
   function getMapGroups(map, options = {}) {
