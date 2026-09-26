@@ -59,14 +59,12 @@
     "Daredevil": {
       "tips": {
         "en": [
-          "This matchup is extremely favorable for Donatello on his own map.",
           "Daredevil's only real chance is to keep his hand low, blind boost and constantly attack Donatello.",
           "Do not let him play a passive game — if he cannot find enough defense, catch him with your combo and finish the game.",
           "Donatello's many Feints that cancel Daredevil's effects make his normal gameplan very unreliable.",
           "Daredevil also loses the deck race and the health race, so he cannot afford to play for exhaustion."
         ],
         "ua": [
-          "Цей матчап дуже сприятливий для Донателло на його власній мапі.",
           "Єдиний реальний шанс Дердевіла — тримати руку малою, постійно блайндбуститися та безперервно атакувати Донателло.",
           "Не дозволяйте йому грати пасивно — якщо він не знаходить достатньо захистів, ловіть його своїм комбо та закінчуйте гру.",
           "Велика кількість каверз Донателло, які скасовують ефекти Дердевіла, робить його звичний геймплан дуже ненадійним.",
@@ -95,7 +93,6 @@
     "Leshen": {
       "tips": {
         "en": [
-          "The matchup is played on Leshen's map, and Leshen dies to Donatello's combo.",
           "Ignore Leshen for a long time and focus on attacking the Wolves.",
           "Use your Returns around the Wolves and pressure them with the carts.",
           "Build four Schemes in the discard, keep a cart and a Return available, then send in Metalhead and launch the combo.",
@@ -103,10 +100,9 @@
           "Leshen can Vanish and throw a couple of strong attacks at you, but it is usually not enough to survive the combo."
         ],
         "ua": [
-          "Матчап грається на мапі Лісовика, і Лісовик помирає від комбо Донателло.",
           "Довгий час ігноруйте самого Лісовика та зосередьтеся на атаках вовків.",
           "Використовуйте поверталки навколо вовків і тисніть на них вагончиками.",
-          "Зберіть чотири схеми у скиді, залиште вагончик і поверталку, після чого випускайте Металхеда та запускайте комбо.",
+          "Зберіть чотири схеми у скиді, залиште вагончик і поверталку в руці, після чого випускайте Металхеда та запускайте комбо.",
           "Комбо з п'яти атак зазвичай достатньо, щоб виграти гру або залишити Лісовика на добивання наступного ходу.",
           "Лісовик може використати Vanish і кинути пару сильних атак, але зазвичай цього недостатньо, щоб пережити комбо."
         ]
@@ -116,14 +112,12 @@
       "tips": {
         "en": [
           "This is an even matchup and essentially a damage race.",
-          "T-Rex has many combat effects, including Ignored effects and boosts.",
           "Donatello can close distance and draw cards, so he can actively keep up with T-Rex.",
           "The matchup is decided by who assembles their winning combo first.",
           "Play actively and look for your combo window rather than trying to win through a slow game."
         ],
         "ua": [
           "Це рівний матчап і фактично гонка по шкоді.",
-          "Тірекс має багато ефектів під час бою, зокрема ігнори та бусти.",
           "Донателло може скорочувати дистанцію та добирати карти, тому здатен активно підтримувати темп проти Тірекса.",
           "Матчап вирішується тим, хто першим збере свою комбо-умову перемоги.",
           "Грайте активно та шукайте момент для комбо, а не намагайтеся виграти через повільну гру."
@@ -171,6 +165,7 @@
     "Yennenga": {
       "tips": {
         "en": [
+          "Her plan is to outlast you by redirecting damage into her archers and then getting it back from them.",
           "Your main goal is to bait out all of Enenra’s defense cards with value 4 — your combo turn becomes much stronger once they are gone",
           "Avoid overcommitting into her proactive turns — she wants you to walk into her pressure",
           "Play patiently and build your combo while minimizing unnecessary damage taken",
@@ -179,6 +174,7 @@
           "Be careful around her archers — avoid giving free value by feeding them with carts without purpose"
         ],
         "ua": [
+          "Її тактика — пережити вас, віддаючи шкоду в лучників і потім повертаючи її назад.",
           "Ваше головне завдання — виманити всі захисти Єненги зі значенням 4, адже без них ваше комбо стає значно сильнішим",
           "Не переінвестуйтеся в її проактивні ходи — вона хоче, щоб ви самі заходили під її тиск",
           "Грайте терпляче, збираючи комбо і мінімізуючи зайву втрату HP",
@@ -187,6 +183,537 @@
           "Обережно з лучниками — не давайте безкоштовного велью, бездумно прокручуючи вагончики"
         ]
       }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "He'll pressure and defend actively.",
+          "Your goal is to catch him in Moon Knight form, play your carts, and spin up your own combo."
+        ],
+        "ua": [
+          "Він буде пресингувати й активно захищатись.",
+          "Ваше завдання — зловити його у формі Місячного Лицаря, грати вагончики й крутити своє комбо."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "Don't let him pick the map — he'll simply outrun you.",
+          "On a smaller map he dies to a combo, since he doesn't like being hit often."
+        ],
+        "ua": [
+          "Не давайте йому обирати мапу, інакше він просто вас забігає.",
+          "На меншій мапі він помирає за комбо, бо не любить, коли його часто б'ють."
+        ]
+      }
+    },
+    "Eredin": {
+      "tips": {
+        "en": [
+          "You can combo him out very well while his sidekicks are still alive.",
+          "Play your carts before he uses his scheme to ignore auto-damage.",
+          "If he's already used it, either run away or pressure him actively enough that he can't attack."
+        ],
+        "ua": [
+          "Поки живі його помічники, його можна відмінно закомбити.",
+          "Грайте вагончики, поки він не використав схему на ігнор авто-урону.",
+          "Якщо вже використав — або втікайте, або активно пресуйте, щоб він не міг атакувати."
+        ]
+      }
+    },
+    "John Henry": {
+      "tips": {
+        "en": [
+          "A very tight damage race — find your red invention as fast as possible.",
+          "That said, he doesn't have that many good defenses."
+        ],
+        "ua": [
+          "Дуже щільна гонка на шкоду — знайдіть своє червоне винаходження якомога швидше.",
+          "При цьому в нього не так багато хороших захистів."
+        ]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "Try to catch her mirror card with a cancel so she can't escape and heal."
+        ],
+        "ua": [
+          "Намагайтесь ловити скасуванням її карту-дзеркало, щоб вона не могла втекти й полікуватися."
+        ]
+      }
+    },
+    "Sinbad": {
+      "tips": {
+        "en": [
+          "He has a lot of free escapes, but you still need to keep hitting him — eventually he won't be able to keep up."
+        ],
+        "ua": [
+          "У нього багато безкоштовних відходів, але все одно треба бити й бити — рано чи пізно він не витримає."
+        ]
+      }
+    },
+    "King Arthur": {
+      "tips": {
+        "en": [
+          "He spends too many cards as boost into your defenses, leaving him short on damage."
+        ],
+        "ua": [
+          "Він витрачає забагато карт на буст у ваші захисти, через що йому бракує шкоди."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "He won't have enough damage for you.",
+          "Your Feint works great here, cancelling his extra effects."
+        ],
+        "ua": [
+          "Йому не вистачить шкоди по вам.",
+          "Ваша каверза чудово тут працює, скасовуючи його додаткові ефекти."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "He dies quickly since all his defenses cap out at 3.",
+          "Be careful of his 8 auto-damage, but once you have your invention in defense, his other attacks aren't nearly as scary."
+        ],
+        "ua": [
+          "Помирає швидко, бо всі його захисти максимум на 3.",
+          "Обережно з його 8 авто-урону, але коли в захисті вже є ваше винаходження, решта атак не така страшна."
+        ]
+      }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "You usually have enough defenses for their attacks.",
+          "Play your cancels back to deny them extra actions.",
+          "Pressure their sidekick and they die to a combo.",
+          "They can win a long fatigue game on a large map, though."
+        ],
+        "ua": [
+          "Зазвичай у вас вистачає захистів на їхні атаки.",
+          "Повертайте каверзи, щоб не давати їм додаткових дій.",
+          "Пресуйте помічника, і вони помирають за комбо.",
+          "Втім, на великій мапі вони можуть виграти на фатіг."
+        ]
+      }
+    },
+    "Winter Soldier": {
+      "tips": {
+        "en": [
+          "Keep him under constant pressure — he shouldn't survive a combo turn.",
+          "Remember he can heal if he wins a fight with his 3."
+        ],
+        "ua": [
+          "Тримайте його під постійним пресингом — комбо-хід він переживати не повинен.",
+          "Пам'ятайте, що він може лікуватись, якщо виграє бій своєю 3-кою."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "You can push a decent amount of auto-damage through him.",
+          "If you kill his sidekick quickly, you can even outrun him."
+        ],
+        "ua": [
+          "Можна пронести по ньому достатньо авто-урону.",
+          "Якщо швидко вбити помічника, можна навіть його забігати."
+        ]
+      }
+    },
+    "Black Widow": {
+      "tips": {
+        "en": [
+          "On her own map she can try to outrun you and win on fatigue.",
+          "Otherwise, finish her off with a combo turn."
+        ],
+        "ua": [
+          "На своїй мапі вона може спробувати забігати вас і виграти на фатіг.",
+          "В іншому разі добивайте комбо-ходом."
+        ]
+      }
+    },
+    "Bullseye": {
+      "tips": {
+        "en": [
+          "His defenses are too low — he should die to a combo turn unless he manages to run."
+        ],
+        "ua": [
+          "У нього занадто малі захисти — має помирати за комбо-хід, якщо не втече."
+        ]
+      }
+    },
+    "The Genie": {
+      "tips": {
+        "en": [
+          "Kill him faster than he kills you — Donatello has enough draw, strong attacks, and good effects that he has no answer to."
+        ],
+        "ua": [
+          "Забивайте його швидше, ніж він вас — у Донателло достатньо добору, сильних атак і хороших ефектів, проти яких він нічого не може вдіяти."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "He dislikes pressure, so give it to him.",
+          "He can discard your good cards, which is unpleasant.",
+          "Don't pick a map with items.",
+          "Don't let him sit on two coils."
+        ],
+        "ua": [
+          "Він не любить пресинг, тож дайте йому його.",
+          "Може скинути ваші хороші карти, що неприємно.",
+          "Не беріть мапу з предметами.",
+          "Не давайте йому мати дві заряджені котушки."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "This is a Metalhead-vs-Tomoe matchup — all her cards work worse against him.",
+          "If you're playing your red invention actively, don't forget to keep a Feint ready in attack too, since she can play her demon."
+        ],
+        "ua": [
+          "Це матчап Металхеда проти Томое — всі її карти працюють проти нього гірше.",
+          "Якщо активно граєте червоний винахід, не забувайте тримати каверзу і в атаці — вона може зіграти демона."
+        ]
+      }
+    },
+    "The Wayward Sisters": {
+      "tips": {
+        "en": ["They lack the damage — you'll kill them faster."],
+        "ua": ["Їм бракує шкоди — заб'єте їх швидше."]
+      }
+    },
+    "Philippa": {
+      "tips": {
+        "en": [
+          "Bring her health down to 6, play 2 carts and any attack, and she dies."
+        ],
+        "ua": [
+          "Опустіть їй здоров'я до 6, зіграйте 2 вагончики й будь-яку атаку — і вона помирає."
+        ]
+      }
+    },
+    "Chupacabra": {
+      "tips": {
+        "en": [
+          "He doesn't like being hit often, and Donatello is good at exactly that.",
+          "Despite his repeatable 3-defense, it's still only a 3"
+        ],
+        "ua": [
+          "Не любить, коли його часто б'ють, а Донателло якраз це вміє.",
+          "Попри його безкінечний захист на 3, це все ще захист на 3"
+        ]
+      }
+    },
+    "Michelangelo": {
+      "tips": {
+        "en": [
+          "He can't pierce your defense — he just runs towards you, and you run from him."
+        ],
+        "ua": [
+          "Не може пробити ваш захист — він просто бігає за вами, а ви від нього."
+        ]
+      }
+    },
+    "Wyatt Earp": {
+      "tips": {
+        "en": ["Kill his sidekick and he won't have enough damage to win."],
+        "ua": ["Вбийте його помічника, і йому не вистачить шкоди для перемоги."]
+      }
+    },
+    "Rosie the Riveter": {
+      "tips": {
+        "en": [
+          "She has no good defenses while she has 2 or fewer upgrades — catch her in that window and land a combo turn before she can cancel it."
+        ],
+        "ua": [
+          "У неї немає хороших захистів, поки в неї 2 або менше апгрейдів — ловіть її в цей момент і грайте комбо-хід, поки вона не може його скасувати."
+        ]
+      }
+    },
+    "George Washington": {
+      "tips": {
+        "en": [
+          "He can discard a scheme for a combo turn, so don't hold a scheme in hand while his sidekicks are on the board.",
+          "Remove his spies first — that strips some of his defenses and hand discards.",
+          "He has a lot of good defenses."
+        ],
+        "ua": [
+          "Він може скинути схему заради комбо-ходу, тож не тримайте схему в руці, поки на полі є його помічники.",
+          "Спершу приберіть шпигунів — це знімає частину його захистів і скидів з руки.",
+          "У нього багато хороших захистів."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "Comes down to who kills who first.",
+          "On his own map this will be problematic for you."
+        ],
+        "ua": [
+          "Все зводиться до того, хто кого швидше заб'є.",
+          "На його мапі це буде проблематично."
+        ]
+      }
+    },
+    "Dr. Sattler": {
+      "tips": {
+        "en": [
+          "A lot of unpleasant effects during combat.",
+          "Her plan is to quickly kill Metalhead and then play her healing-focused game."
+        ],
+        "ua": [
+          "Дуже багато неприємних ефектів під час бою.",
+          "Її тактика — швидко вбити Металхеда, а потім грати свою гру на лікування."
+        ]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "Everything depends on what he manages to steal — if it's your invention, it's over.",
+          "Otherwise he tries to pierce you with boosts but usually dies before that works."
+        ],
+        "ua": [
+          "Все залежить від того, що він встигне вкрасти — якщо це винаходження, це кінець.",
+          "Інакше він намагається пробити вас бустами, але зазвичай помирає раніше."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "Depends on how her box lands.",
+          "Cancel her healing and pierce her hard."
+        ],
+        "ua": [
+          "Залежить від заходу її коробки.",
+          "Скасовуйте її лікування й боляче пробивайте."
+        ]
+      }
+    },
+    "Krang": {
+      "tips": {
+        "en": [
+          "He has a lot of strong effects and healing.",
+          "He doesn't like being pressured, so play into that.",
+          "He has a lot of good defenses — bait out his strong universal cards so he plays them defensively instead of attacking, leaving him short on damage."
+        ],
+        "ua": [
+          "У нього багато сильних ефектів і лікування.",
+          "Він не любить, коли його пресують, тож грайте саме так.",
+          "У нього багато хороших захистів — виманюйте його сильні універсальні карти, щоб він грав ними в захист, а не в атаку, тоді йому не вистачить шкоди."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "The idea is to bring her down to 1-2 HP, then find a cart or auto-damage in defense so her own defense can't save her."
+        ],
+        "ua": [
+          "Ідея — опустити її до 1-2 HP, а потім знайти вагончик чи авто-урон у захисті, щоб її власний захист її не врятував."
+        ]
+      }
+    },
+    "Shredder": {
+      "tips": {
+        "en": ["A race for who lands their combo first."],
+        "ua": ["Гонка, хто швидше розіграє комбо."]
+      }
+    },
+    "Dracula": {
+      "tips": {
+        "en": [
+          "His plan is to kill Metalhead with auto-damage, then run and slowly chip away at you.",
+          "Once his health is low, he'll attack with his Wolf Form, and there's unfortunately not much you can do about it.",
+          "You need to land your combo on him in time."
+        ],
+        "ua": [
+          "Його тактика — вбити Металхеда авто-уроном, а потім бігати і потроху кусати.",
+          "Коли здоров'я стане мало, він атакує своєю Формою Вовка, і, на жаль, з цим мало що можна вдіяти.",
+          "Потрібно встигнути закомбити його вчасно."
+        ]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": [
+          "You need the right map.",
+          "He doesn't have that many defenses, so you need to combo him out.",
+          "Kill his sidekicks with your carts or with your +1 draw card to shuffle carts back in.",
+          "Use 'Shift Focus' to pull him toward you and set up a combo.",
+          "You can attack with your cancels so he can't retreat."
+        ],
+        "ua": [
+          "Потрібна правильна мапа.",
+          "У нього не так багато захистів, тож треба його закомбити.",
+          "Вбивайте помічників вагончиками або думалкою з +1, щоб замішувати вагончики назад.",
+          "Використовуйте 'Shift Focus', щоб притягнути його до себе і зробити комбо.",
+          "Можна атакувати каверзами, щоб він не міг відступити."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": ["If you get lucky, you can try to combo him out."],
+        "ua": ["Якщо повезе, можна спробувати його закомбити."]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Too many discards and too much blocking from her sidekicks.",
+          "She can kill Metalhead with her 'Double Shot' combo."
+        ],
+        "ua": [
+          "Забагато скидів і блокувань від помічників.",
+          "Металхеда вона може вбити комбо 'Double Shoot'."
+        ]
+      }
+    },
+    "Geralt of Rivia": {
+      "tips": {
+        "en": [
+          "Make sure to kill his sidekick first.",
+          "That said, his cards are generally better, so it'll still be a hard matchup."
+        ],
+        "ua": [
+          "Обов'язково вбивайте помічника першим.",
+          "Втім, у нього кращі карти, тож все одно буде складно."
+        ]
+      }
+    },
+    "Leonardo": {
+      "tips": {
+        "en": [
+          "If he uses his ability correctly and discards Donatello's cards, he simply outlasts him on fatigue."
+        ],
+        "ua": [
+          "Якщо він правильно використовує свою здібність і скидає карти Донателло, він просто переживає його на фатіг."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "It won't be too hard for her to find damage against you, especially through auto-damage.",
+          "A long game favors her, so try to kill her faster than she kills you, at full speed."
+        ],
+        "ua": [
+          "Їй буде не так складно знайти шкоду по вам, особливо через авто-урон.",
+          "Довга гра на її користь, тож намагайтесь вбити її швидше, ніж вона вас, на всіх парах."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": ["Too many defenses, too many effects."],
+        "ua": ["Забагато захистів, забагато ефектів."]
+      }
+    },
+    "Yennefer & Triss": {
+      "tips": {
+        "en": [
+          "You must pick the right map.",
+          "She doesn't have that many defenses — catch her before she discards your important cards."
+        ],
+        "ua": [
+          "Обов'язково потрібно обрати правильну мапу.",
+          "У неї не так багато захистів — зловіть її, перш ніж вона скине ваші важливі карти."
+        ]
+      }
+    },
+    "Raphael": {
+      "tips": {
+        "en": [
+          "His plan is to run from you, occasionally attack (more often through his sidekick), build up a hand of defenses/universal cards, and then land 'Unbridled Rage' — and there's not much you can do about it."
+        ],
+        "ua": [
+          "Його тактика — тікати від вас, зрідка атакувати (частіше через помічника), назбирати руку захистів/універсальних карт і зіграти 'Unbridled Rage' — і з цим мало що можна вдіяти."
+        ]
+      }
+    },
+    "Sun Wukong": {
+      "tips": {
+        "en": [
+          "Even if you manage to reach him, you won't be able to pierce through."
+        ],
+        "ua": ["Навіть якщо вдасться до нього дійти, пробити його не вийде."]
+      }
+    },
+    "Blackbeard": {
+      "tips": {
+        "en": [
+          "Hard to play against because of his discards — you need to find your red invention very quickly to take his doubloons."
+        ],
+        "ua": [
+          "Складно грати через його скиди — потрібно дуже швидко знайти червоне винаходження, щоб забирати дублони."
+        ]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": [
+          "You need to fight through her sidekicks, who won't be able to hit you thanks to your auto-damage in defense.",
+          "If you manage to kill her, make sure you're not holding a scheme for a combo, or she'll discard it."
+        ],
+        "ua": [
+          "Треба пробиватись крізь її помічників, які не зможуть вас бити завдяки вашому авто-урону в захисті.",
+          "Якщо вдасться її вбити, головне — не тримати на руці схему для комбо, бо вона її скине."
+        ]
+      }
+    },
+    "Ciri": {
+      "tips": {
+        "en": [
+          "She has strong defenses while active, especially with discards — her plan is simply to outlast you, which she usually manages easily."
+        ],
+        "ua": [
+          "У неї сильні захисти, поки вона активна, особливо зі скидами — її завдання просто пережити вас, що зазвичай легко вдається."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "Since you want to initiate combat, her ability works great against you.",
+          "You can't cancel her 9-value attack.",
+          "She can easily land her effects on Metalhead.",
+          "She discards cards in defense.",
+          "Your hope is that she runs low on defenses during your combo turn."
+        ],
+        "ua": [
+          "Оскільки ви хочете ініціювати бій, її здібність працює проти вас на ура.",
+          "Її атаку на 9 не можна скасувати.",
+          "Вона легко реалізовує свої ефекти в Металхеда.",
+          "Скидає карти в захист.",
+          "Надія лише на те, що під час вашого комбо-ходу в неї не вистачить захистів."
+        ]
+      }
+    },
+    "Harry Houdini": {
+      "tips": {
+        "en": [
+          "His cards are simply too good overall, plus controlled discards and free escapes into defense — landing a combo is extremely hard, and so is just surviving."
+        ],
+        "ua": [
+          "У нього просто занадто хороші карти загалом, плюс контрольовані скиди й безкоштовні відходи в захист — реалізувати комбо вкрай складно, як і просто вижити."
+        ]
+      }
     }
-  }
+  },
+  "maps": [7, 8, 11, 14]
 }
