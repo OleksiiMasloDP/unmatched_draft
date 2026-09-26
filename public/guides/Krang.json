@@ -238,6 +238,324 @@
           "Використовуйте інші інструменти та чекайте правильного моменту для сильних атак."
         ]
       }
+    },
+    "Raptors": {
+      "tips": {
+        "en": [
+          "Out-draw and outpace them with card draw.",
+          "Attack at full strength, try to discard their cards, and use your end-turn defense to protect yourself."
+        ],
+        "ua": [
+          "Переграйте їх темпом за рахунок добору.",
+          "Атакуйте наповну, намагайтесь скидати їм карти й захищайтесь ефектом завершення ходу."
+        ]
+      }
+    },
+    "Alice": {
+      "tips": {
+        "en": [
+          "If you know her mirror is coming, throw your strong attack.",
+          "She has fairly low health, so she can be pressured down."
+        ],
+        "ua": [
+          "Якщо знаєте, що буде дзеркало — кидайте сильну атаку.",
+          "У неї доволі мало здоров'я, її можна запресингувати."
+        ]
+      }
+    },
+    "Muhammad Ali": {
+      "tips": {
+        "en": ["Ignore him until he's in his red form, then pierce him hard."],
+        "ua": [
+          "Ігноруйте його, поки він не в червоній формі, а потім сильно пробивайте."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "A damage race — comes down to whose defenses fail to show up first."
+        ],
+        "ua": ["Гонка на шкоду — залежить, у кого раніше не прийдуть захисти."]
+      }
+    },
+    "Loki": {
+      "tips": {
+        "en": [
+          "Every interaction matters here.",
+          "Don't let him take your good cards when he plays 'Looking for Trouble'.",
+          "He has enough damage to kill you faster, so be careful."
+        ],
+        "ua": [
+          "Тут вирішує кожна взаємодія.",
+          "Не давайте йому забирати ваші хороші карти, коли він грає 'Looking for Trouble'.",
+          "Йому вистачає шкоди вбити вас швидше, тож будьте обережні."
+        ]
+      }
+    },
+    "Eredin": {
+      "tips": {
+        "en": [
+          "Early in the game he has no cancel effects — that's when you should land your key cards.",
+          "Once his sidekicks die, pressure him harder so he can't pressure you back."
+        ],
+        "ua": [
+          "На початку гри в нього немає скасувань — саме тоді треба реалізовувати ключові карти.",
+          "Коли його помічники загинуть, пресуйте його сильніше, щоб він не пресував вас."
+        ]
+      }
+    },
+    "Yennefer & Triss": {
+      "tips": {
+        "en": ["A pressure fight — whoever comes out on top."],
+        "ua": ["Гра на пресинг — хто вийде переможцем."]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": ["If he takes your good cards, it's his win."],
+        "ua": ["Якщо він забере ваші хороші карти — перемога буде за ним."]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Without her Gorgons she has no effective way to kill you, so they're priority target number one."
+        ],
+        "ua": [
+          "Без горгон у неї немає ефективного способу вас вбити, тож вони — пріоритетна ціль номер один."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "You'll be constantly chasing him, and it comes down to how quickly his cancels show up and how he uses them.",
+          "Play a pressure game."
+        ],
+        "ua": [
+          "Ви постійно за ним бігатимете, і все залежить, як швидко йому прийдуть скасування та як він їх реалізує.",
+          "Грайте на пресинг."
+        ]
+      }
+    },
+    "Leshen": {
+      "tips": {
+        "en": [
+          "Remove his dogs first.",
+          "Use your boost cards against Leshen himself — catching his 5 is even better."
+        ],
+        "ua": [
+          "Спершу приберіть собак.",
+          "Використовуйте карти з бустом проти самого Лєшого — якщо словите його 5, ще краще."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "Try to land your discard effects — most of her defenses are only 3, and she doesn't like playing on a small hand.",
+          "That said, she has every chance of tearing you apart."
+        ],
+        "ua": [
+          "Намагайтесь реалізовувати скиди — її захисти переважно на 3, і вона не любить грати на малій руці.",
+          "Втім, у неї є всі шанси вас загризти."
+        ]
+      }
+    },
+    "Sinbad": {
+      "tips": {
+        "en": [
+          "Play your 0 in defense during the first half, and your cancels in the second, so he doesn't get a strong effect from his voyages.",
+          "You want to finish him off faster than he finishes you."
+        ],
+        "ua": [
+          "У першій половині грайте 0 в захист, а каверзи — в другій, щоб він не отримав сильного ефекту від подорожей.",
+          "Хочете забити його швидше, ніж він вас."
+        ]
+      }
+    },
+    "Chupacabra": {
+      "tips": {
+        "en": [
+          "He can overwhelm you if he keeps playing into attack constantly."
+        ],
+        "ua": ["Може вас задавити, якщо постійно грає в атаку."]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "Wait until she's down to 1 HP and use your scheme to deal that last point of damage.",
+          "Don't play it without a real need."
+        ],
+        "ua": [
+          "Чекайте, поки в неї лишиться 1 HP, і використовуйте схему, щоб завдати саме цю останню одиницю шкоди.",
+          "Не грайте її без потреби."
+        ]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": [
+          "His attacks aren't strong enough.",
+          "Kill his sidekicks and discard his cards."
+        ],
+        "ua": [
+          "У нього недостатньо сильні атаки.",
+          "Вбивайте помічників і скидайте йому карти."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "Whoever gets the better luck from the randomness wins this one."
+        ],
+        "ua": ["Хто краще впорається з рандомом, той і виграє."]
+      }
+    },
+    "Winter Soldier": {
+      "tips": {
+        "en": [
+          "He plays well against you thanks to solid healing and strong attacks — he just plays his standard game of outlasting the opponent."
+        ],
+        "ua": [
+          "Добре грає проти вас завдяки непоганому лікуванню й сильним атакам — просто грає свою стандартну гру на пережити суперника."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "Everything depends on how well he lands his cancel and discard cards.",
+          "Otherwise, you should be able to finish him off faster."
+        ],
+        "ua": [
+          "Все залежить від того, наскільки добре він реалізує свої карти з відмінами й скидами.",
+          "В інших випадках ви маєте забити його швидше."
+        ]
+      }
+    },
+    "Raphael": {
+      "tips": {
+        "en": [
+          "He forces you to spend a lot of good cards in defense, which stops you from piercing him hard."
+        ],
+        "ua": [
+          "Змушує вас витрачати багато хороших карт у захисті, що не дозволяє добре його пробивати."
+        ]
+      }
+    },
+    "Ciri": {
+      "tips": {
+        "en": [
+          "Her cards are simply better — there's not much of a real path to killing her."
+        ],
+        "ua": [
+          "Її карти просто кращі — реального шляху її вбити практично немає."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "His attacks are too strong in Khonshu form, and in his defensive form he's too hard to pierce."
+        ],
+        "ua": [
+          "Занадто сильні атаки у формі Хоншу, а в захисній формі його занадто важко пробити."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "She has too much health and too strong cards — misreading her double attacks with a cancel really hurts."
+        ],
+        "ua": [
+          "У неї забагато здоров'я й занадто сильні карти — якщо не вгадати з відміною її подвійні атаки, це дуже боляче."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": ["She simply ignores you, discarding cards from your deck."],
+        "ua": ["Вона просто вас ігнорує, скидаючи карти з вашої колоди."]
+      }
+    },
+    "Blackbeard": {
+      "tips": {
+        "en": [
+          "If he discards your key cards (which is likely), he kills you easily."
+        ],
+        "ua": ["Якщо скине ваші ключові карти (що ймовірно), легко вас вб'є."]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": ["She simply outlasts you."],
+        "ua": ["Вона просто вас переживає."]
+      }
+    },
+    "Black Widow": {
+      "tips": {
+        "en": ["She simply outlasts you."],
+        "ua": ["Вона просто вас переживає."]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "If she refuses to play your game and just forces you into the aggressor role, there's not much you can do about it."
+        ],
+        "ua": [
+          "Якщо вона не грає в вашу гру і просто змушує вас агресувати, з цим мало що можна вдіяти."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Too many cancels on his side — his cards are generally better and stronger."
+        ],
+        "ua": [
+          "Забагато скасувань з його боку — його карти загалом кращі й сильніші."
+        ]
+      }
+    },
+    "Sun Wukong": {
+      "tips": {
+        "en": [
+          "Forces you to fight his clones and burn good cards on them — even if you reach him, you won't get much through."
+        ],
+        "ua": [
+          "Змушує битися з клонами й спалювати на них хороші карти — навіть якщо дістанетесь до нього, багато не пронесете."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": ["He'll simply discard your key cards and outlast you."],
+        "ua": ["Він просто скине ваші ключові карти й переживе вас."]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": [
+          "Forces you to fight through her sidekicks and burn good cards on them — even if you reach her, you won't get much through, and she comes back to life anyway."
+        ],
+        "ua": [
+          "Змушує битися з помічниками і спалювати на них хороші карти — навіть якщо дістанетесь до неї, багато не пронесете, та й вона все одно повертається до життя."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": ["Too many strong defenses that strip away your key cards."],
+        "ua": [
+          "Занадто багато сильних захистів, що знімають ваші ключові карти."
+        ]
+      }
     }
   }
 }

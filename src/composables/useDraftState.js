@@ -125,6 +125,20 @@ const sequence = computed(() => {
   }));
 });
 
+const playerBansCount = computed(
+  () =>
+    sequence.value.filter(
+      (step) => step.type === "ban" && step.player === "player",
+    ).length,
+);
+
+const opponentBansCount = computed(
+  () =>
+    sequence.value.filter(
+      (step) => step.type === "ban" && step.player === "opponent",
+    ).length,
+);
+
 const current = computed(() => sequence.value[step.value] || null);
 
 const turnColor = computed(() => {
@@ -463,7 +477,7 @@ export function useDraftState() {
       lang.value = state.lang || "en";
       sortMode.value = state.sortMode || "elo";
       firstPicker.value = state.firstPicker || "player";
-      currentFormat.value = state.currentFormat || "test_format";
+      currentFormat.value = state.currentFormat || "all_heroes";
       step.value = state.step || 0;
       player.picks = state.playerPicks || [];
       player.bans = state.playerBans || [];
@@ -702,5 +716,7 @@ export function useDraftState() {
     getAllCharacters,
     maps,
     selectedPreviewHeroIds,
+    playerBansCount,
+    opponentBansCount,
   };
 }

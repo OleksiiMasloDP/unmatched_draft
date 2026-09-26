@@ -42,12 +42,14 @@
           </select>
         </div>
 
+        <!--
         <div class="custom-select-wrapper">
           <select v-model="sortMode">
             <option value="elo">{{ t("sortDraft") }}</option>
             <option value="name">{{ t("sortName") }}</option>
           </select>
         </div>
+        -->
 
         <button
           v-if="currentStep === 'characters' && history.length > 0"
@@ -80,7 +82,7 @@
         <h6 v-if="currentStep === 'characters'">{{ t("bannedSlots") }}</h6>
         <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
           <div
-            v-for="i in 3"
+            v-for="i in playerBansCount"
             :key="i"
             class="ban-slot"
             :class="{ filled: player.bans[i - 1] }"
@@ -140,7 +142,7 @@
         <h6 v-if="currentStep === 'characters'">{{ t("bannedSlots") }}</h6>
         <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
           <div
-            v-for="i in 3"
+            v-for="i in opponentBansCount"
             :key="i"
             class="ban-slot"
             :class="{ filled: opponent.bans[i - 1] }"
@@ -254,7 +256,8 @@ const {
   undo,
   resetAll,
   togglePostBan,
-  getWinrate,
+  playerBansCount,
+  opponentBansCount,
 } = useDraftState();
 
 let bsModalInstance = null;
