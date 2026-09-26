@@ -29,7 +29,14 @@ const matchupIndex = new Map();
 function buildMatchupIndex(matchupsArr) {
   matchupIndex.clear();
   for (const m of matchupsArr || []) {
-    matchupIndex.set(`${m.a}|${m.b}`, m.winrate_a);
+    if (!m.a || !m.b) continue;
+
+    const [a, b] = [m.a, m.b].sort();
+    const key = `${a}|${b}`;
+
+    const winrateA = m.a === a ? m.winrate_a : 100 - m.winrate_a;
+
+    matchupIndex.set(key, winrateA);
   }
 }
 
