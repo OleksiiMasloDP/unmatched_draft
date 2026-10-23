@@ -300,6 +300,21 @@ body {
   box-shadow: 0 4px 15px rgba(var(--color-opponent-rgb), 0.3) !important;
 }
 
+.action-btn.btn-success {
+  background: linear-gradient(
+    135deg,
+    var(--color-proceed),
+    var(--color-proceed-dark)
+  ) !important;
+  box-shadow: 0 4px 15px rgba(var(--color-proceed-rgb), 0.3) !important;
+}
+
+.action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
 h6 {
   font-weight: 800;
   text-transform: uppercase;

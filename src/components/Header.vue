@@ -12,12 +12,16 @@
           <span></span>
         </button>
 
-        <div class="logo-wrapper" @click="navigate('main')">
+        <router-link
+          :to="{ name: 'main' }"
+          class="logo-wrapper"
+          @click="isMenuOpen = false"
+        >
           <span class="engine-title-text char-title-bold engine-title-desktop"
             >UNMATCHED</span
           >
           <span class="logo-accent">DRAFT</span>
-        </div>
+        </router-link>
       </div>
 
       <div class="header-right">
@@ -39,7 +43,11 @@
         <ul class="menu-list">
           <li class="menu-section-title">{{ t("navigation") }}</li>
           <li>
-            <button class="menu-item" @click="navigate('maps')">
+            <router-link
+              :to="{ name: 'maps' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
               <svg
                 class="menu-icon"
                 viewBox="0 0 24 24"
@@ -52,10 +60,14 @@
                 <line x1="15" y1="6" x2="15" y2="21" />
               </svg>
               <span>{{ t("heroMapGuide") }}</span>
-            </button>
+            </router-link>
           </li>
           <li>
-            <button class="menu-item" @click="navigate('matchups')">
+            <router-link
+              :to="{ name: 'matchups' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
               <svg
                 class="menu-icon"
                 viewBox="0 0 24 24"
@@ -71,10 +83,14 @@
                 <path d="M18 7L15 15H21L18 7Z" />
               </svg>
               <span>{{ t("matchupsTitle") }}</span>
-            </button>
+            </router-link>
           </li>
           <li>
-            <button class="menu-item" @click="navigate('guide')">
+            <router-link
+              :to="{ name: 'guide' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -90,7 +106,32 @@
                 <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
               </svg>
               <span>{{ t("guideTitle") }}</span>
-            </button>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{ name: 'formats' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+                <circle cx="9" cy="6" r="2" fill="currentColor" />
+                <circle cx="15" cy="12" r="2" fill="currentColor" />
+                <circle cx="8" cy="18" r="2" fill="currentColor" />
+              </svg>
+              <span>{{ t("formatsTitle") }}</span>
+            </router-link>
           </li>
         </ul>
       </nav>
@@ -118,16 +159,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:lang", "navigate"]);
+const emit = defineEmits(["update:lang"]);
 const isMenuOpen = ref(false);
 
 const changeLang = (newLang) => {
   emit("update:lang", newLang);
-};
-
-const navigate = (screenName) => {
-  isMenuOpen.value = false;
-  emit("navigate", screenName);
 };
 
 const isHeaderHidden = ref(false);
@@ -193,6 +229,8 @@ onBeforeUnmount(() => {
 }
 
 .logo-wrapper {
+  text-decoration: none;
+  color: inherit;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -268,6 +306,7 @@ onBeforeUnmount(() => {
 }
 
 .menu-item {
+  text-decoration: none;
   width: 100%;
   display: flex;
   align-items: center;
@@ -281,6 +320,10 @@ onBeforeUnmount(() => {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item.router-link-active {
+  color: #4f7cff;
 }
 
 .menu-item:hover {

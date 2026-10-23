@@ -1,3 +1,10 @@
+const ladder = [
+  { type: "pick", p1: true },
+  { type: "pick", p1: true },
+  { type: "pick", p1: false },
+  { type: "pick", p1: false },
+];
+
 const threeBans_fivePicks = [
   { type: "ban", p1: true },
   { type: "ban", p1: false },
@@ -33,6 +40,83 @@ const twoBans_fourPicks = [
   { type: "pick", p1: false },
   { type: "pick", p1: true },
 ];
+
+// Усі доступні схеми банів/піків в одному місці.
+// Щоб додати нову схему — опиши послідовність вище і додай її сюди:
+// вона автоматично зʼявиться у редакторі власних форматів.
+export const banPresets = {
+  three_bans_five_picks: {
+    name: "3 bans / 5 picks",
+    sequence: threeBans_fivePicks,
+  },
+  two_bans_four_picks: {
+    name: "2 bans / 4 picks",
+    sequence: twoBans_fourPicks,
+  },
+  ladder: {
+    name: "ladder",
+    sequence: ladder,
+  },
+};
+
+export const DEFAULT_BAN_PRESET = "ladder";
+
+// Мінімальна кількість героїв, потрібна щоб схема взагалі могла завершитись
+// (кожен бан і кожен пік — це окремий герой).
+export function getRequiredHeroCount(presetKey) {
+  const preset = banPresets[presetKey] || banPresets[DEFAULT_BAN_PRESET];
+  return preset.sequence.length;
+}
+
+// Власні формати користувача (зберігаються в localStorage окремо від драфту,
+// тому "Рестарт" їх не чіпає). У сховищі лежить лише компактний опис,
+// повний формат (з sequence) збирається тут.
+export const CUSTOM_FORMATS_STORAGE_KEY = "unmatched_draft_custom_formats_v1";
+export const CUSTOM_FORMAT_PREFIX = "custom_";
+
+export function buildCustomFormat(raw) {
+  const presetKey = banPresets[raw.banPreset]
+    ? raw.banPreset
+    : DEFAULT_BAN_PRESET;
+
+  return {
+    id: raw.id,
+    name: raw.name,
+    isCustom: true,
+    banPreset: presetKey,
+    allowedHeroIds: Array.isArray(raw.allowedHeroIds) ? raw.allowedHeroIds : [],
+    // Формати, збережені до появи вибору мап, не мають allowedMapIds => всі мапи
+    allowedMapIds:
+      Array.isArray(raw.allowedMapIds) && raw.allowedMapIds.length
+        ? raw.allowedMapIds
+        : ["all"],
+    sequence: banPresets[presetKey].sequence,
+  };
+}
+
+export function loadCustomFormats() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(CUSTOM_FORMATS_STORAGE_KEY) || "[]",
+    );
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((f) => f && f.id && f.name).map(buildCustomFormat);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+export function persistCustomFormats(list) {
+  const compact = list.map((f) => ({
+    id: f.id,
+    name: f.name,
+    banPreset: f.banPreset,
+    allowedHeroIds: f.allowedHeroIds,
+    allowedMapIds: f.allowedMapIds,
+  }));
+  localStorage.setItem(CUSTOM_FORMATS_STORAGE_KEY, JSON.stringify(compact));
+}
 
 export const formats = {
   all_heroes: {
