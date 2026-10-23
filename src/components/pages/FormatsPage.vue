@@ -1,20 +1,19 @@
 <template>
-  <div class="container py-3 py-md-4 formats-page">
-    <div class="formats-head">
-      <h4 class="fw-bold mb-0 engine-title-text">
-        {{ t("formatsCustomTitle") }}
-      </h4>
-      <router-link
-        :to="{ name: 'format-new' }"
-        class="btn btn-primary btn-sm formats-create-btn"
-      >
-        + {{ t("formatsCreate") }}
-      </router-link>
-    </div>
+  <div class="formats-page container">
+    <h1 class="page-main-title">{{ t("formatsTitle") }}</h1>
 
     <p class="engine-sub-desc engine-sub-desktop formats-note">
       {{ t("formatsStorageNote") }}
     </p>
+
+    <div class="formats-toolbar">
+      <router-link
+        :to="{ name: 'format-new' }"
+        class="btn btn-primary btn-sm action-btn"
+      >
+        + {{ t("formatsCreate") }}
+      </router-link>
+    </div>
 
     <p v-if="!customFormats.length" class="formats-empty">
       {{ t("formatsEmpty") }}
@@ -26,25 +25,26 @@
           <div class="format-name">{{ format.name }}</div>
           <div class="format-meta">
             {{ banPresets[format.banPreset].name }} ·
-            {{ format.allowedHeroIds.length }} {{ t("formatsHeroesWord") }}
+            {{ format.allowedHeroIds.length }} {{ t("formatsHeroesWord") }} ·
+            {{ mapsCount(format) }} {{ t("formatsMapsWord") }}
           </div>
         </div>
 
         <div class="format-actions">
           <button
-            class="btn btn-success btn-sm"
+            class="btn btn-success btn-sm action-btn"
             @click="applyFormat(format.id)"
           >
             {{ t("formatsUse") }}
           </button>
           <router-link
             :to="{ name: 'format-edit', params: { id: format.id } }"
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary btn-sm action-btn"
           >
             {{ t("formatsEdit") }}
           </router-link>
           <button
-            class="btn btn-danger btn-sm"
+            class="btn btn-danger btn-sm action-btn"
             :class="{ 'is-confirming': pendingDeleteId === format.id }"
             @click="onDelete(format.id)"
           >
@@ -67,8 +67,14 @@ import { useDraftState } from "../../composables/useDraftState.js";
 import { banPresets } from "../../draftFormats.js";
 
 const router = useRouter();
-const { t, customFormats, currentFormat, saveToStorage, deleteCustomFormat } =
-  useDraftState();
+const {
+  t,
+  maps,
+  customFormats,
+  currentFormat,
+  saveToStorage,
+  deleteCustomFormat,
+} = useDraftState();
 
 // Видалення у два кліки: перший змінює підпис кнопки, другий підтверджує
 const pendingDeleteId = ref(null);
@@ -87,28 +93,30 @@ function applyFormat(id) {
   saveToStorage();
   router.push({ name: "main" });
 }
+
+function mapsCount(format) {
+  return format.allowedMapIds.includes("all")
+    ? maps.value.length
+    : format.allowedMapIds.length;
+}
 </script>
 
 <style scoped>
 .formats-page {
-  max-width: 820px;
-}
-
-.formats-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-
-.formats-create-btn {
-  font-weight: 700;
+  padding: 2rem 1rem;
 }
 
 .formats-note {
   margin-bottom: 16px;
+}
+
+.formats-toolbar {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.formats-toolbar .action-btn {
+  flex: 0 0 auto;
 }
 
 .formats-empty {
@@ -129,10 +137,10 @@ function applyFormat(id) {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 14px 16px;
-  background: var(--bg-card);
+  padding: 16px;
+  background: rgba(var(--bg-slate-rgb), 0.8);
   border: 1px solid var(--border-medium);
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .format-name {
@@ -153,12 +161,14 @@ function applyFormat(id) {
   flex-wrap: wrap;
 }
 
-.format-actions .btn {
-  font-weight: 700;
+.action-btn.is-confirming {
+  outline: 2px solid rgba(var(--color-danger-rgb), 0.6);
+  outline-offset: 2px;
 }
 
-.btn.is-confirming {
-  background: var(--color-danger-dark);
-  border-color: var(--color-danger-dark);
+@media (max-width: 640px) {
+  .format-actions {
+    width: 100%;
+  }
 }
 </style>

@@ -99,7 +99,6 @@ export const translations = {
     matchupNoCharactersFound: "No available matchups found.",
 
     formatsTitle: "Draft Formats",
-    formatsCustomTitle: "My formats",
     formatsEmpty: "You have no custom formats yet.",
     formatsStorageNote:
       "Custom formats are stored in this browser and are not cleared by Restart.",
@@ -109,6 +108,7 @@ export const translations = {
     formatsDeleteConfirm: "Confirm delete",
     formatsUse: "Use in draft",
     formatsHeroesWord: "heroes",
+    formatsMapsWord: "maps",
     formatEditorNew: "New format",
     formatEditorEdit: "Edit format",
     formatNameLabel: "Format name",
@@ -123,6 +123,17 @@ export const translations = {
     formatSave: "Save format",
     formatBack: "Back to formats",
     formatNotFound: "Format not found.",
+    formatStepHeroes: "Step 1 · Heroes",
+    formatStepMaps: "Step 2 · Maps",
+    formatNext: "Next: maps",
+    formatBackStep: "Back",
+    formatMapsLabel: "Maps in the pool",
+    formatNeedMaps: "Select at least one map",
+    formatLeaveTitle: "Unsaved changes",
+    formatLeaveDesc:
+      "If you leave this page, everything you entered for this format (name, heroes, maps) will be lost and removed from memory. Leave anyway?",
+    formatLeaveStay: "Stay",
+    formatLeaveConfirm: "Leave and discard",
   },
   ua: {
     navigation: "Навігація",
@@ -224,7 +235,6 @@ export const translations = {
     matchupNoCharactersFound: "Немає доступних матчапів.",
 
     formatsTitle: "Формати драфту",
-    formatsCustomTitle: "Мої формати",
     formatsEmpty: "У вас ще немає власних форматів.",
     formatsStorageNote:
       "Власні формати зберігаються в цьому браузері та не видаляються кнопкою «Рестарт».",
@@ -234,6 +244,7 @@ export const translations = {
     formatsDeleteConfirm: "Підтвердити видалення",
     formatsUse: "Використати у драфті",
     formatsHeroesWord: "героїв",
+    formatsMapsWord: "мап",
     formatEditorNew: "Новий формат",
     formatEditorEdit: "Редагування формату",
     formatNameLabel: "Назва формату",
@@ -248,5 +259,16 @@ export const translations = {
     formatSave: "Зберегти формат",
     formatBack: "До форматів",
     formatNotFound: "Формат не знайдено.",
+    formatStepHeroes: "Крок 1 · Герої",
+    formatStepMaps: "Крок 2 · Мапи",
+    formatNext: "Далі: мапи",
+    formatBackStep: "Назад",
+    formatMapsLabel: "Мапи у пулі",
+    formatNeedMaps: "Оберіть щонайменше одну мапу",
+    formatLeaveTitle: "Незбережені зміни",
+    formatLeaveDesc:
+      "Якщо ви залишите цю сторінку, усе, що ви ввели для цього формату (назва, герої, мапи), буде втрачено та видалено з памʼяті. Все одно піти?",
+    formatLeaveStay: "Залишитись",
+    formatLeaveConfirm: "Піти та скасувати",
   },
 };

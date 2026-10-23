@@ -1,3 +1,10 @@
+const ladder = [
+  { type: "pick", p1: true },
+  { type: "pick", p1: true },
+  { type: "pick", p1: false },
+  { type: "pick", p1: false },
+];
+
 const threeBans_fivePicks = [
   { type: "ban", p1: true },
   { type: "ban", p1: false },
@@ -46,9 +53,13 @@ export const banPresets = {
     name: "2 bans / 4 picks",
     sequence: twoBans_fourPicks,
   },
+  ladder: {
+    name: "ladder",
+    sequence: ladder,
+  },
 };
 
-export const DEFAULT_BAN_PRESET = "three_bans_five_picks";
+export const DEFAULT_BAN_PRESET = "ladder";
 
 // Мінімальна кількість героїв, потрібна щоб схема взагалі могла завершитись
 // (кожен бан і кожен пік — це окремий герой).
@@ -74,7 +85,11 @@ export function buildCustomFormat(raw) {
     isCustom: true,
     banPreset: presetKey,
     allowedHeroIds: Array.isArray(raw.allowedHeroIds) ? raw.allowedHeroIds : [],
-    allowedMapIds: ["all"],
+    // Формати, збережені до появи вибору мап, не мають allowedMapIds => всі мапи
+    allowedMapIds:
+      Array.isArray(raw.allowedMapIds) && raw.allowedMapIds.length
+        ? raw.allowedMapIds
+        : ["all"],
     sequence: banPresets[presetKey].sequence,
   };
 }
@@ -98,6 +113,7 @@ export function persistCustomFormats(list) {
     name: f.name,
     banPreset: f.banPreset,
     allowedHeroIds: f.allowedHeroIds,
+    allowedMapIds: f.allowedMapIds,
   }));
   localStorage.setItem(CUSTOM_FORMATS_STORAGE_KEY, JSON.stringify(compact));
 }

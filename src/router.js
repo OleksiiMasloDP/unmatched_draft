@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import DraftPage from "./components/pages/DraftPage.vue";
 import HeroMapGuide from "./components/pages/HeroMapGuide.vue";
 import MatchupExplorer from "./components/pages/MatchupExplorer.vue";
@@ -6,9 +6,11 @@ import CharacterGuide from "./components/pages/CharacterGuide.vue";
 import FormatsPage from "./components/pages/FormatsPage.vue";
 import FormatEditor from "./components/pages/FormatEditor.vue";
 
-// Hash-режим (/#/maps) свідомо: сайт живе на GitHub Pages, де немає fallback
-// на index.html для глибоких посилань, а відносні шляхи до images/*.webp та
-// *.json ламаються на вкладених URL у history-режимі.
+// Чисті URL без "#" (/maps, /formats/new). Працює разом з:
+//  - <base href="%BASE_URL%"> в index.html (відносні шляхи до images/*.webp та
+//    *.json не ламаються на вкладених маршрутах);
+//  - 404.html, який збирається разом з проєктом (див. vite.config.js), бо
+//    GitHub Pages не вміє віддавати index.html для глибоких посилань.
 export const routes = [
   { path: "/", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
@@ -26,7 +28,7 @@ export const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior: () => ({ top: 0 }),
 });
