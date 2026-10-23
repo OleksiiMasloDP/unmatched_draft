@@ -1,13 +1,29 @@
 import { ref, computed, watch, reactive } from "vue";
 import { translations } from "../i18n.js";
-import { formats } from "../draftFormats.js";
+import {
+  formats,
+  CUSTOM_FORMAT_PREFIX,
+  buildCustomFormat,
+  loadCustomFormats,
+  persistCustomFormats,
+} from "../draftFormats.js";
 
 const lang = ref("en");
 const search = ref("");
 const sortMode = ref("elo");
 const firstPicker = ref("player");
 const currentFormat = ref("summer_of_legends_2026");
-const availableFormats = ref(formats);
+const DEFAULT_FORMAT = "all_heroes";
+
+// Власні формати користувача (localStorage, окремий ключ — "Рестарт" їх не чіпає)
+const customFormats = ref(loadCustomFormats());
+
+// Вбудовані + власні формати в одному об'єкті { ключ: конфіг }
+const availableFormats = computed(() => {
+  const merged = { ...formats };
+  for (const f of customFormats.value) merged[f.id] = f;
+  return merged;
+});
 const showInfoPopover = ref(false);
 
 const player = reactive({ color: "#4f7cff", bans: [], picks: [] });
@@ -372,7 +388,7 @@ const filteredMaps = computed(() => {
 
   // 1. ФІЛЬТРАЦІЯ ЗА ФОРМАТОМ ТУРНІРУ
   // Припускаємо, що currentFormatKey.value зберігає рядок-ключ (наприклад, 'summer_of_legends_2026')
-  const activeFormat = formats[currentFormat.value];
+  const activeFormat = availableFormats.value[currentFormat.value];
 
   if (activeFormat && activeFormat.allowedMapIds) {
     const allowedIds = activeFormat.allowedMapIds;
@@ -484,7 +500,9 @@ export function useDraftState() {
       lang.value = state.lang || "en";
       sortMode.value = state.sortMode || "elo";
       firstPicker.value = state.firstPicker || "player";
-      currentFormat.value = state.currentFormat || "all_heroes";
+      currentFormat.value = availableFormats.value[state.currentFormat]
+        ? state.currentFormat
+        : DEFAULT_FORMAT;
       step.value = state.step || 0;
       player.picks = state.playerPicks || [];
       player.bans = state.playerBans || [];
@@ -576,6 +594,37 @@ export function useDraftState() {
       }))
       .filter((map) => map.matchupDiff > 0)
       .sort((a, b) => b.matchupDiff - a.matchupDiff);
+  }
+
+  // Створює новий власний формат або оновлює існуючий (якщо передано id).
+  // Повертає id збереженого формату.
+  function saveCustomFormat(data) {
+    const id = data.id || `${CUSTOM_FORMAT_PREFIX}${Date.now().toString(36)}`;
+    const format = buildCustomFormat({ ...data, id });
+
+    const idx = customFormats.value.findIndex((f) => f.id === id);
+    if (idx === -1) customFormats.value.push(format);
+    else customFormats.value[idx] = format;
+
+    persistCustomFormats(customFormats.value);
+    return id;
+  }
+
+  function getCustomFormat(id) {
+    return customFormats.value.find((f) => f.id === id) || null;
+  }
+
+  function deleteCustomFormat(id) {
+    customFormats.value = customFormats.value.filter((f) => f.id !== id);
+    persistCustomFormats(customFormats.value);
+
+    // Якщо видалили формат, у якому зараз іде драфт — його пул героїв і схема
+    // зникли, тому повертаємось до формату за замовчуванням з чистим драфтом.
+    if (currentFormat.value === id) {
+      resetAll();
+      currentFormat.value = DEFAULT_FORMAT;
+      saveToStorage();
+    }
   }
 
   function selectMap(mapId) {
@@ -683,6 +732,10 @@ export function useDraftState() {
     firstPicker,
     currentFormat,
     availableFormats,
+    customFormats,
+    saveCustomFormat,
+    getCustomFormat,
+    deleteCustomFormat,
     showInfoPopover,
     player,
     opponent,

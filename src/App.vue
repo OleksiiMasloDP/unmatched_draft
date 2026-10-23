@@ -3,15 +3,10 @@
     <div class="preloader-spinner"></div>
   </div>
   <div v-else class="app-wrapper">
-    <Header
-      :lang="lang"
-      :t="t"
-      @update:lang="lang = $event"
-      @navigate="currentScreen = $event"
-    />
+    <Header :lang="lang" :t="t" @update:lang="lang = $event" />
 
     <main class="content">
-      <component :is="screens[currentScreen]" />
+      <router-view />
     </main>
 
     <ScrollToTop />
@@ -19,39 +14,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, nextTick } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
-import HeroMapGuide from "./components/pages/HeroMapGuide.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
-import DraftPage from "./components/pages/DraftPage.vue";
-import MatchupExplorer from "./components/pages/MatchupExplorer.vue";
-import CharacterGuide from "./components/pages/CharacterGuide.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
-
-const screens = {
-  main: DraftPage,
-  maps: HeroMapGuide,
-  matchups: MatchupExplorer,
-  guide: CharacterGuide,
-};
-
-const currentScreen = ref(localStorage.getItem("active_screen") || "main");
-watch(
-  currentScreen,
-  (newScreen) => {
-    localStorage.setItem("active_screen", newScreen);
-    if (typeof window.gtag === "function") {
-      window.gtag("config", "G-6BTH35KNGC", {
-        page_title: `Screen: ${newScreen}`,
-        page_path: `/${newScreen}`,
-      });
-    }
-  },
-  { immediate: true },
-);
 
 let bsModalInstance = null;
 const isAppReady = ref(false);
