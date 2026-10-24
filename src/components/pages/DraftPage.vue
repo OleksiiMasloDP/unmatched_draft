@@ -5,7 +5,7 @@
       text-key="charDisclaimerText"
       storage-key="disclaimer_characters_dismissed"
     />
-    <div class="top-wrap" :class="{ 'sticky-active': current }">
+    <div class="top-wrap" :class="{ 'sticky-active': isPicking }">
       <div
         class="turn-banner"
         :style="{
@@ -35,7 +35,7 @@
           </select>
         </div>
 
-        <div class="custom-select-wrapper">
+        <div v-if="!isSimultaneous" class="custom-select-wrapper">
           <select v-model="firstPicker" @change="saveToStorage">
             <option value="player">{{ t("userFirst") }}</option>
             <option value="opponent">{{ t("opponentFirst") }}</option>
@@ -70,7 +70,7 @@
     <div class="row g-3 gy-md-4 gx-lg-5 main-draft-row">
       <div
         class="order-player"
-        :class="current ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
+        :class="isPicking ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
       >
         <div
           class="team-title-banner"
@@ -79,8 +79,8 @@
           {{ t("teamYou") }}
         </div>
 
-        <h6 v-if="currentStep === 'characters'">{{ t("bannedSlots") }}</h6>
-        <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
+        <h6 v-if="showBans">{{ t("bannedSlots") }}</h6>
+        <div v-if="showBans" class="slot-box mb-3 mb-md-4">
           <div
             v-for="i in playerBansCount"
             :key="i"
@@ -94,14 +94,14 @@
 
         <h6>{{ t("activeLineup") }}</h6>
         <div class="slot-box">
-          <template v-for="char in player.picks" :key="char.id">
+          <template v-for="char in displayPlayerPicks" :key="char.id">
             <div
               v-if="
                 currentStep === 'characters' || !postBans.player.has(char.id)
               "
               class="pick-card player-card"
               :class="{
-                'clickable-post-draft': !current,
+                'clickable-post-draft': canPostBan,
                 'post-banned': postBans.player.has(char.id),
               }"
               @click="togglePostBan('player', char.id)"
@@ -111,7 +111,7 @@
                 <div class="char-title-bold">{{ char.name }}</div>
                 <MatchupList
                   :char-name="char.name"
-                  :opponent-picks="opponent.picks"
+                  :opponent-picks="displayOpponentPicks"
                   :ignored-ids="postBans.opponent"
                 />
               </div>
@@ -122,15 +122,18 @@
 
       <div
         class="order-pool"
-        :class="current ? 'col-12 col-lg-8' : 'col-12 col-lg-6'"
+        :class="isPicking ? 'col-12 col-lg-8' : 'col-12 col-lg-6'"
       >
-        <CharacterDraft v-if="currentStep === 'characters'" />
+        <CharacterDraft
+          v-if="currentStep === 'characters' && !isSimultaneous"
+        />
+        <LadderDraft v-else-if="currentStep === 'characters'" />
         <MapSelect v-else-if="currentStep === 'maps'" draftMode />
       </div>
 
       <div
         class="col-lg-2 order-opponent"
-        :class="current ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
+        :class="isPicking ? 'col-12 col-lg-2' : 'col-12 col-lg-3'"
       >
         <div
           class="team-title-banner"
@@ -139,8 +142,8 @@
           {{ t("teamOpponent") }}
         </div>
 
-        <h6 v-if="currentStep === 'characters'">{{ t("bannedSlots") }}</h6>
-        <div v-if="currentStep === 'characters'" class="slot-box mb-3 mb-md-4">
+        <h6 v-if="showBans">{{ t("bannedSlots") }}</h6>
+        <div v-if="showBans" class="slot-box mb-3 mb-md-4">
           <div
             v-for="i in opponentBansCount"
             :key="i"
@@ -155,7 +158,10 @@
 
         <h6>{{ t("activeLineup") }}</h6>
         <div class="slot-box">
-          <template v-for="enemyChar in opponent.picks" :key="enemyChar.id">
+          <template
+            v-for="enemyChar in displayOpponentPicks"
+            :key="enemyChar.id"
+          >
             <div
               v-if="
                 currentStep === 'characters' ||
@@ -163,7 +169,7 @@
               "
               class="pick-card opponent-card"
               :class="{
-                'clickable-post-draft': !current,
+                'clickable-post-draft': canPostBan,
                 'post-banned': postBans.opponent.has(enemyChar.id),
               }"
               @click="togglePostBan('opponent', enemyChar.id)"
@@ -173,7 +179,7 @@
                 <div class="char-title-bold">{{ enemyChar.name }}</div>
                 <MatchupList
                   :char-name="enemyChar.name"
-                  :opponent-picks="player.picks"
+                  :opponent-picks="displayPlayerPicks"
                   :ignored-ids="postBans.player"
                 />
               </div>
@@ -230,9 +236,10 @@
 </template>
 
 <script setup>
-import { onMounted, nextTick } from "vue";
+import { computed, onMounted, nextTick } from "vue";
 import { useDraftState } from "../../composables/useDraftState.js";
 import CharacterDraft from "../CharacterDraft.vue";
+import LadderDraft from "../LadderDraft.vue";
 import MapSelect from "../MapSelect.vue";
 import Disclaimer from "../Disclaimer.vue";
 import MatchupList from "../MatchupList.vue";
@@ -258,7 +265,23 @@ const {
   togglePostBan,
   playerBansCount,
   opponentBansCount,
+  isSimultaneous,
+  displayPlayerPicks,
+  displayOpponentPicks,
+  canPostBan,
 } = useDraftState();
+
+// Йде вибір героїв: покроково (є поточний хід) або у ladder на кроці героїв
+const isPicking = computed(
+  () =>
+    Boolean(current.value) ||
+    (isSimultaneous.value && currentStep.value === "characters"),
+);
+
+// Слоти банів є лише в покроковому форматі
+const showBans = computed(
+  () => currentStep.value === "characters" && !isSimultaneous.value,
+);
 
 let bsModalInstance = null;
 

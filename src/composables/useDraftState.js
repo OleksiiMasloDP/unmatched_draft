@@ -2,6 +2,8 @@ import { ref, computed, watch, reactive } from "vue";
 import { translations } from "../i18n.js";
 import {
   formats,
+  MODE_TURNS,
+  MODE_SIMULTANEOUS,
   CUSTOM_FORMAT_PREFIX,
   buildCustomFormat,
   loadCustomFormats,
@@ -37,6 +39,11 @@ const currentStep = ref("characters");
 const selectedMapId = ref(null);
 
 const postBans = ref({ player: new Set(), opponent: new Set() });
+
+// Режим simultaneous (ladder): обидва гравці обирають по одному герою одночасно.
+// Вибір живе окремо від player.picks/opponent.picks і потрапляє туди лише
+// при переході до карт, щоб крок карт працював без змін.
+const ladderChoice = reactive({ player: null, opponent: null });
 
 // Індекс матчапів у новому "плоскому" форматі: кожна пара зберігається один раз.
 // Ключ — "ІмʼяA|ІмʼяB" в алфавітному порядку, значення — winrate персонажа A проти B.
@@ -164,7 +171,50 @@ const opponentBansCount = computed(
 
 const current = computed(() => sequence.value[step.value] || null);
 
+const formatMode = computed(
+  () => availableFormats.value[currentFormat.value]?.mode ?? MODE_TURNS,
+);
+const isSimultaneous = computed(() => formatMode.value === MODE_SIMULTANEOUS);
+
+// Герої, дозволені форматом (без урахування банів/пошуку)
+const formatPool = computed(() => {
+  const config = availableFormats.value[currentFormat.value];
+  if (!config) return [];
+  return characters.value.filter((c) =>
+    isIdAllowedGlobal(c.id, config.allowedHeroIds),
+  );
+});
+
+// empty | waiting (обрано лише одного) | mirror (однакові) | ready (різні)
+const ladderStatus = computed(() => {
+  const { player: mine, opponent: theirs } = ladderChoice;
+  if (!mine && !theirs) return "empty";
+  if (!mine || !theirs) return "waiting";
+  return mine.id === theirs.id ? "mirror" : "ready";
+});
+
+// Що показувати в колонках гравців: у ladder на кроці героїв це поточний
+// вибір раунду, в інших випадках — звичайні піки
+const displayPlayerPicks = computed(() =>
+  isSimultaneous.value && currentStep.value === "characters"
+    ? [ladderChoice.player].filter(Boolean)
+    : player.picks,
+);
+const displayOpponentPicks = computed(() =>
+  isSimultaneous.value && currentStep.value === "characters"
+    ? [ladderChoice.opponent].filter(Boolean)
+    : opponent.picks,
+);
+
+// Пост-бани мають сенс лише в покроковому форматі
+const canPostBan = computed(() => !current.value && !isSimultaneous.value);
+
 const turnColor = computed(() => {
+  if (isSimultaneous.value && currentStep.value === "characters") {
+    if (ladderStatus.value === "mirror") return "#ef4444";
+    if (ladderStatus.value === "ready") return "#10b981";
+    return player.color;
+  }
   if (currentStep.value === "maps" || !current.value) return "#10b981";
   return current.value.player === "player" ? player.color : opponent.color;
 });
@@ -446,6 +496,8 @@ watch([lang, sortMode, currentStep, selectedMapId], () => {
     history: history.value,
     postBansPlayer: Array.from(postBans.value.player),
     postBansOpponent: Array.from(postBans.value.opponent),
+    ladderPlayer: ladderChoice.player,
+    ladderOpponent: ladderChoice.opponent,
     currentStep: currentStep.value,
     selectedMapId: selectedMapId.value,
   };
@@ -486,6 +538,8 @@ export function useDraftState() {
       history: history.value,
       postBansPlayer: Array.from(postBans.value.player),
       postBansOpponent: Array.from(postBans.value.opponent),
+      ladderPlayer: ladderChoice.player,
+      ladderOpponent: ladderChoice.opponent,
       currentStep: currentStep.value,
       selectedMapId: selectedMapId.value,
     };
@@ -511,6 +565,8 @@ export function useDraftState() {
       history.value = state.history || [];
       postBans.value.player = new Set(state.postBansPlayer || []);
       postBans.value.opponent = new Set(state.postBansOpponent || []);
+      ladderChoice.player = state.ladderPlayer || null;
+      ladderChoice.opponent = state.ladderOpponent || null;
       currentStep.value = state.currentStep || "characters";
       selectedMapId.value = state.selectedMapId || null;
     } catch (e) {
@@ -527,6 +583,8 @@ export function useDraftState() {
     step.value = 0;
     postBans.value.player.clear();
     postBans.value.opponent.clear();
+    ladderChoice.player = null;
+    ladderChoice.opponent = null;
     showInfoPopover.value = false;
     currentStep.value = "characters";
     selectedMapId.value = null;
@@ -566,7 +624,7 @@ export function useDraftState() {
   }
 
   function togglePostBan(side, id) {
-    if (current.value) return;
+    if (!canPostBan.value) return;
     const set = postBans.value[side];
     if (set.has(id)) set.delete(id);
     else if (set.size < 2) set.add(id);
@@ -625,6 +683,78 @@ export function useDraftState() {
       currentFormat.value = DEFAULT_FORMAT;
       saveToStorage();
     }
+  }
+
+  // --- Ladder (simultaneous) -------------------------------------------------
+
+  // Вибір героя гравцем або суперником. Повторний клік по своєму герою знімає
+  // вибір; суперника задаємо через список, тому для нього повтор нічого не знімає.
+  function setLadderChoice(side, char) {
+    if (!isSimultaneous.value || !char) return;
+    const toggleOff = side === "player" && ladderChoice.player?.id === char.id;
+    ladderChoice[side] = toggleOff ? null : char;
+    saveToStorage();
+  }
+
+  function clearLadderChoice(side) {
+    ladderChoice[side] = null;
+    saveToStorage();
+  }
+
+  // Скидання раунду (зеркало або помилковий вибір)
+  function clearLadderChoices() {
+    ladderChoice.player = null;
+    ladderChoice.opponent = null;
+    saveToStorage();
+  }
+
+  // Різні герої => граємо: фіксуємо їх як піки й переходимо до карт
+  function proceedLadderToMaps() {
+    if (ladderStatus.value !== "ready") return false;
+    player.picks = [ladderChoice.player];
+    opponent.picks = [ladderChoice.opponent];
+    postBans.value.player.clear();
+    postBans.value.opponent.clear();
+    saveToStorage();
+    return true;
+  }
+
+  // Статистика героя проти всього пулу формату. Дзеркало не враховуємо
+  // (воно скидається), невідомі матчапи рахуємо як 50% і лічимо окремо.
+  function getLadderStats(char) {
+    let known = 0;
+    let unknown = 0;
+    let sum = 0;
+    let worst = null;
+    let best = null;
+
+    for (const enemy of formatPool.value) {
+      if (enemy.id === char.id) continue;
+
+      const winrate = getWinrate(char.name, enemy.name);
+      if (winrate === null) {
+        unknown++;
+        continue;
+      }
+
+      known++;
+      sum += winrate;
+      if (!worst || winrate < worst.winrate) {
+        worst = { name: enemy.name, winrate };
+      }
+      if (!best || winrate > best.winrate) {
+        best = { name: enemy.name, winrate };
+      }
+    }
+
+    const total = known + unknown;
+    return {
+      average: total ? Math.round((sum + unknown * 50) / total) : 50,
+      worst,
+      best,
+      known,
+      unknown,
+    };
   }
 
   function selectMap(mapId) {
@@ -711,6 +841,10 @@ export function useDraftState() {
       return t("phaseMapSelection");
     }
 
+    if (isSimultaneous.value) {
+      return t(`ladderStatus_${ladderStatus.value}`);
+    }
+
     if (!current.value) {
       return t("matrixReady");
     }
@@ -733,6 +867,18 @@ export function useDraftState() {
     currentFormat,
     availableFormats,
     customFormats,
+    isSimultaneous,
+    formatPool,
+    ladderChoice,
+    ladderStatus,
+    displayPlayerPicks,
+    displayOpponentPicks,
+    canPostBan,
+    setLadderChoice,
+    clearLadderChoice,
+    clearLadderChoices,
+    proceedLadderToMaps,
+    getLadderStats,
     saveCustomFormat,
     getCustomFormat,
     deleteCustomFormat,

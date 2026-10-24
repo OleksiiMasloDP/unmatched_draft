@@ -1,10 +1,3 @@
-const ladder = [
-  { type: "pick", p1: true },
-  { type: "pick", p1: true },
-  { type: "pick", p1: false },
-  { type: "pick", p1: false },
-];
-
 const threeBans_fivePicks = [
   { type: "ban", p1: true },
   { type: "ban", p1: false },
@@ -53,11 +46,23 @@ export const banPresets = {
     name: "2 bans / 4 picks",
     sequence: twoBans_fourPicks,
   },
+  // Ladder: без банів і черговості. Обидва гравці вибирають одного героя
+  // одночасно: однакові — скидаються, різні — граємо. Тому sequence порожній,
+  // а замість нього працює mode "simultaneous" (див. useDraftState).
   ladder: {
-    name: "ladder",
-    sequence: ladder,
+    name: "Ladder",
+    mode: "simultaneous",
+    minHeroes: 2,
+    sequence: [],
   },
 };
+
+export const MODE_TURNS = "turns";
+export const MODE_SIMULTANEOUS = "simultaneous";
+
+export function getPresetMode(presetKey) {
+  return banPresets[presetKey]?.mode || MODE_TURNS;
+}
 
 export const DEFAULT_BAN_PRESET = "ladder";
 
@@ -65,7 +70,7 @@ export const DEFAULT_BAN_PRESET = "ladder";
 // (кожен бан і кожен пік — це окремий герой).
 export function getRequiredHeroCount(presetKey) {
   const preset = banPresets[presetKey] || banPresets[DEFAULT_BAN_PRESET];
-  return preset.sequence.length;
+  return preset.minHeroes ?? preset.sequence.length;
 }
 
 // Власні формати користувача (зберігаються в localStorage окремо від драфту,
@@ -84,6 +89,7 @@ export function buildCustomFormat(raw) {
     name: raw.name,
     isCustom: true,
     banPreset: presetKey,
+    mode: getPresetMode(presetKey),
     allowedHeroIds: Array.isArray(raw.allowedHeroIds) ? raw.allowedHeroIds : [],
     // Формати, збережені до появи вибору мап, не мають allowedMapIds => всі мапи
     allowedMapIds:
