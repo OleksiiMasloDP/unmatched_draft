@@ -150,8 +150,11 @@
         <CharacterDraft
           v-if="currentStep === 'characters' && !isSimultaneous"
         />
-        <LadderDraft v-else-if="currentStep === 'characters'" />
-        <MapSelect v-else-if="currentStep === 'maps'" draftMode />
+        <template v-else>
+          <LadderStrategy v-if="showLadderStrategy" />
+          <LadderDraft v-if="currentStep === 'characters'" />
+          <MapSelect v-else-if="currentStep === 'maps'" draftMode />
+        </template>
       </div>
 
       <div
@@ -298,6 +301,7 @@ import { useDraftState } from "../../composables/useDraftState.js";
 import CharacterDraft from "../CharacterDraft.vue";
 import LadderDraft from "../LadderDraft.vue";
 import LadderHeroInfo from "../LadderHeroInfo.vue";
+import LadderStrategy from "../LadderStrategy.vue";
 import CharacterSlot from "../CharacterSlot.vue";
 import CharPickerModal from "../CharPickerModal.vue";
 import MapSelect from "../MapSelect.vue";
@@ -331,12 +335,21 @@ const {
   canPostBan,
   formatPool,
   ladderChoice,
+  ladderStatus,
   ladderSort,
   ladderEmptyOpponentSlots,
   addLadderOpponent,
   removeLadderChoice,
   getWinrate,
 } = useDraftState();
+
+// Блок аналітики зі стратегією: коли героїв обрано і далі на кроці мап
+const showLadderStrategy = computed(
+  () =>
+    isSimultaneous.value &&
+    ((currentStep.value === "characters" && ladderStatus.value === "ready") ||
+      currentStep.value === "maps"),
+);
 
 // Йде вибір героїв: покроково (є поточний хід) або у ladder на кроці героїв
 const isPicking = computed(

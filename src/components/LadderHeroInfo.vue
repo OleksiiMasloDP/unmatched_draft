@@ -17,10 +17,6 @@
       </span>
     </div>
 
-    <div v-if="stats.unknown" class="ladder-stat-row is-dim">
-      {{ t("ladderUnknown") }}: {{ stats.unknown }}
-    </div>
-
     <button
       type="button"
       class="ladder-toggle"
@@ -64,8 +60,8 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  // Унікальний ключ відкритого списку ("pool:12", "player:12"...):
-  // одночасно відкритий лише один на всю сторінку
+  // Унікальний ключ списку ("pool:12", "player:12"...): у кожної кнопки
+  // свій незалежний стан
   expandKey: {
     type: String,
     required: true,
@@ -84,14 +80,16 @@ const props = defineProps({
 const {
   t,
   formatPool,
-  ladderExpandedKey,
+  ladderExpandedKeys,
   toggleLadderExpanded,
   getLadderStats,
   getWinrate,
 } = useDraftState();
 
 const stats = computed(() => getLadderStats(props.char));
-const isOpen = computed(() => ladderExpandedKey.value === props.expandKey);
+const isOpen = computed(() =>
+  ladderExpandedKeys.value.includes(props.expandKey),
+);
 
 // Виділені (вже обрані суперником) зверху, далі найгірші матчапи
 const targets = computed(() =>
@@ -139,11 +137,6 @@ function worstTone(winrate) {
   flex: 0 0 auto;
   color: var(--text-white);
   font-weight: 800;
-}
-
-.ladder-stat-row.is-dim {
-  color: var(--text-dim);
-  font-style: italic;
 }
 
 /* Той самий вигляд, що й заголовок блоку "Filter by heroes" на сторінці мап */

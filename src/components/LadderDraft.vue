@@ -1,14 +1,5 @@
 <template>
   <div class="ladder">
-    <div v-if="ladderStatus === 'mirror'" class="ladder-actions">
-      <button
-        class="btn btn-primary btn-sm action-btn"
-        @click="resolveLadderMirror"
-      >
-        {{ t("ladderRepick") }}
-      </button>
-    </div>
-
     <div v-if="ladderStatus === 'ready'" class="proceed-maps-btn-wrap">
       <button class="btn-proceed-maps" @click="proceedToMapsEvent">
         {{ t("toMapsLabel") }}
@@ -84,7 +75,6 @@ const {
   ladderMirrorIds,
   ladderSort,
   toggleLadderPlayer,
-  resolveLadderMirror,
   proceedLadderToMaps,
   proceedToMaps,
   getLadderStats,
@@ -143,13 +133,6 @@ function proceedToMapsEvent() {
 </script>
 
 <style scoped>
-.ladder-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
 .ladder-card {
   min-height: 0;
 }
