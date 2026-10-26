@@ -487,6 +487,42 @@ h6 {
   object-fit: cover;
 }
 
+/* Порожній слот ladder на десктопі = картка героя: квадратна картинка
+   (aspect-ratio діє на content-box) + блок з іменем і статистикою.
+   Висота блоку поділена порівну зверху й знизу, щоб "+" був по центру картки */
+.pick-slot {
+  --pick-name-h: 142px;
+  box-sizing: content-box !important;
+  width: auto !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: calc(var(--pick-name-h) / 2) 0;
+}
+
+/* Кнопка зняття героя з вибору (ladder) */
+.ladder-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(var(--bg-dark-rgb), 0.85);
+  color: var(--text-light);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ladder-remove:hover {
+  background: var(--color-danger);
+}
+
 .pick-name {
   position: relative;
   width: 100%;
@@ -1067,13 +1103,23 @@ input[type="checkbox"]:checked::after {
     gap: 12px !important;
   }
 
-  .pick-card {
+  .pick-card,
+  .pick-slot {
     width: calc(50% - 6px) !important;
     flex: 0 0 calc(50% - 6px) !important;
   }
 
   .pick-card img {
     height: 180px !important;
+  }
+
+  /* Порожній слот ladder = картка героя: картинка 180px + блок з іменем */
+  .pick-slot {
+    --pick-name-h: 142px;
+    box-sizing: border-box !important;
+    height: calc(180px + var(--pick-name-h)) !important;
+    aspect-ratio: auto !important;
+    padding: 0;
   }
 
   @media (max-width: 769px) {
@@ -1083,7 +1129,8 @@ input[type="checkbox"]:checked::after {
   }
 
   @media (max-width: 599px) {
-    .pick-card {
+    .pick-card,
+    .pick-slot {
       width: 100% !important;
       flex: 0 0 100% !important;
     }

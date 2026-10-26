@@ -40,10 +40,16 @@ const selectedMapId = ref(null);
 
 const postBans = ref({ player: new Set(), opponent: new Set() });
 
-// Режим simultaneous (ladder): обидва гравці обирають по одному герою одночасно.
+// Режим simultaneous (ladder): обидва гравці одночасно обирають по двох героїв.
 // Вибір живе окремо від player.picks/opponent.picks і потрапляє туди лише
 // при переході до карт, щоб крок карт працював без змін.
-const ladderChoice = reactive({ player: null, opponent: null });
+const LADDER_PICKS = 2;
+const ladderChoice = reactive({ player: [], opponent: [] });
+const ladderSort = ref("average");
+
+// Який список матчапів зараз розгорнутий. Ключ на кшталт "pool:12" або
+// "player:12": одночасно відкритий лише один список на всю сторінку.
+const ladderExpandedKey = ref(null);
 
 // Індекс матчапів у новому "плоскому" форматі: кожна пара зберігається один раз.
 // Ключ — "ІмʼяA|ІмʼяB" в алфавітному порядку, значення — winrate персонажа A проти B.
@@ -85,6 +91,12 @@ const selectedPreviewHeroIds = ref([]);
 // Функція для очищення або скидання вибору (опціонально)
 function clearPreviewHeroes() {
   selectedPreviewHeroIds.value = [];
+}
+
+// У старих збереженнях ladder вибір був одним героєм (обʼєкт або null)
+function normalizeLadderPicks(saved) {
+  if (Array.isArray(saved)) return saved.slice(0, LADDER_PICKS);
+  return saved ? [saved] : [];
 }
 
 const activePlayerPicks = computed(() =>
@@ -185,24 +197,37 @@ const formatPool = computed(() => {
   );
 });
 
-// empty | waiting (обрано лише одного) | mirror (однакові) | ready (різні)
+// Герої, яких обрали обидві сторони одночасно (вони скидаються)
+const ladderMirrorIds = computed(() => {
+  const theirs = new Set(ladderChoice.opponent.map((c) => c.id));
+  return ladderChoice.player.filter((c) => theirs.has(c.id)).map((c) => c.id);
+});
+
+// empty | waiting (не всі обрані) | mirror (є однакові герої) | ready
 const ladderStatus = computed(() => {
   const { player: mine, opponent: theirs } = ladderChoice;
-  if (!mine && !theirs) return "empty";
-  if (!mine || !theirs) return "waiting";
-  return mine.id === theirs.id ? "mirror" : "ready";
+  if (!mine.length && !theirs.length) return "empty";
+  if (ladderMirrorIds.value.length) return "mirror";
+  if (mine.length < LADDER_PICKS || theirs.length < LADDER_PICKS) {
+    return "waiting";
+  }
+  return "ready";
 });
+
+const ladderEmptyOpponentSlots = computed(() =>
+  Math.max(0, LADDER_PICKS - ladderChoice.opponent.length),
+);
 
 // Що показувати в колонках гравців: у ladder на кроці героїв це поточний
 // вибір раунду, в інших випадках — звичайні піки
 const displayPlayerPicks = computed(() =>
   isSimultaneous.value && currentStep.value === "characters"
-    ? [ladderChoice.player].filter(Boolean)
+    ? ladderChoice.player
     : player.picks,
 );
 const displayOpponentPicks = computed(() =>
   isSimultaneous.value && currentStep.value === "characters"
-    ? [ladderChoice.opponent].filter(Boolean)
+    ? ladderChoice.opponent
     : opponent.picks,
 );
 
@@ -565,8 +590,8 @@ export function useDraftState() {
       history.value = state.history || [];
       postBans.value.player = new Set(state.postBansPlayer || []);
       postBans.value.opponent = new Set(state.postBansOpponent || []);
-      ladderChoice.player = state.ladderPlayer || null;
-      ladderChoice.opponent = state.ladderOpponent || null;
+      ladderChoice.player = normalizeLadderPicks(state.ladderPlayer);
+      ladderChoice.opponent = normalizeLadderPicks(state.ladderOpponent);
       currentStep.value = state.currentStep || "characters";
       selectedMapId.value = state.selectedMapId || null;
     } catch (e) {
@@ -583,8 +608,9 @@ export function useDraftState() {
     step.value = 0;
     postBans.value.player.clear();
     postBans.value.opponent.clear();
-    ladderChoice.player = null;
-    ladderChoice.opponent = null;
+    ladderChoice.player = [];
+    ladderChoice.opponent = [];
+    ladderExpandedKey.value = null;
     showInfoPopover.value = false;
     currentStep.value = "characters";
     selectedMapId.value = null;
@@ -687,32 +713,80 @@ export function useDraftState() {
 
   // --- Ladder (simultaneous) -------------------------------------------------
 
-  // Вибір героя гравцем або суперником. Повторний клік по своєму герою знімає
-  // вибір; суперника задаємо через список, тому для нього повтор нічого не знімає.
-  function setLadderChoice(side, char) {
+  // Герой гравця: клік по карточці обирає, повторний клік знімає.
+  // Більше за LADDER_PICKS обрати не можна.
+  function toggleLadderPlayer(char) {
     if (!isSimultaneous.value || !char) return;
-    const toggleOff = side === "player" && ladderChoice.player?.id === char.id;
-    ladderChoice[side] = toggleOff ? null : char;
+    const list = ladderChoice.player;
+    const idx = list.findIndex((c) => c.id === char.id);
+    if (idx !== -1) list.splice(idx, 1);
+    else if (list.length < LADDER_PICKS) list.push(char);
     saveToStorage();
   }
 
-  function clearLadderChoice(side) {
-    ladderChoice[side] = null;
+  // Герой опонента: додаємо через слоти з плюсиком
+  function addLadderOpponent(char) {
+    if (!isSimultaneous.value || !char) return;
+    const list = ladderChoice.opponent;
+    if (list.length >= LADDER_PICKS || list.some((c) => c.id === char.id)) {
+      return;
+    }
+    list.push(char);
     saveToStorage();
   }
 
-  // Скидання раунду (зеркало або помилковий вибір)
-  function clearLadderChoices() {
-    ladderChoice.player = null;
-    ladderChoice.opponent = null;
+  function removeLadderChoice(side, charId) {
+    const list = ladderChoice[side];
+    const idx = list.findIndex((c) => c.id === charId);
+    if (idx === -1) return;
+    list.splice(idx, 1);
     saveToStorage();
   }
 
-  // Різні герої => граємо: фіксуємо їх як піки й переходимо до карт
+  // Однакових героїв скидаємо в обох гравців, решта вибору лишається
+  function resolveLadderMirror() {
+    const mirror = new Set(ladderMirrorIds.value);
+    ladderChoice.player = ladderChoice.player.filter((c) => !mirror.has(c.id));
+    ladderChoice.opponent = ladderChoice.opponent.filter(
+      (c) => !mirror.has(c.id),
+    );
+    saveToStorage();
+  }
+
+  // Розгорнути/згорнути список матчапів; відкриття одного закриває інший
+  function toggleLadderExpanded(key) {
+    ladderExpandedKey.value = ladderExpandedKey.value === key ? null : key;
+  }
+
+  // "Загроза" для ladder: герой, який у середньому бʼє вже обраних мною героїв
+  // (>= 53%). Та сама логіка, що й getThreatData у звичайному драфті, але
+  // рахується від ladderChoice.player і не діє на тих, кого я вже обрав.
+  function getLadderThreat(char) {
+    const data = { isThreat: false, targets: [] };
+    const mine = ladderChoice.player;
+    if (!mine.length || mine.some((c) => c.id === char.id)) return data;
+
+    let total = 0;
+    let count = 0;
+    for (const myChar of mine) {
+      const winrate = getWinrate(char.name, myChar.name);
+      if (winrate === null) continue;
+
+      total += winrate;
+      count++;
+      if (winrate >= 53) data.targets.push({ name: myChar.name, winrate });
+    }
+
+    data.isThreat = count > 0 && total / count >= 53;
+    data.targets.sort((a, b) => b.winrate - a.winrate);
+    return data;
+  }
+
+  // Усі герої обрані й не збігаються => фіксуємо їх як піки й переходимо до карт
   function proceedLadderToMaps() {
     if (ladderStatus.value !== "ready") return false;
-    player.picks = [ladderChoice.player];
-    opponent.picks = [ladderChoice.opponent];
+    player.picks = [...ladderChoice.player];
+    opponent.picks = [...ladderChoice.opponent];
     postBans.value.player.clear();
     postBans.value.opponent.clear();
     saveToStorage();
@@ -871,14 +945,21 @@ export function useDraftState() {
     formatPool,
     ladderChoice,
     ladderStatus,
+    ladderMirrorIds,
+    ladderEmptyOpponentSlots,
+    ladderSort,
+    ladderExpandedKey,
     displayPlayerPicks,
     displayOpponentPicks,
     canPostBan,
-    setLadderChoice,
-    clearLadderChoice,
-    clearLadderChoices,
+    toggleLadderPlayer,
+    addLadderOpponent,
+    removeLadderChoice,
+    resolveLadderMirror,
+    toggleLadderExpanded,
     proceedLadderToMaps,
     getLadderStats,
+    getLadderThreat,
     saveCustomFormat,
     getCustomFormat,
     deleteCustomFormat,

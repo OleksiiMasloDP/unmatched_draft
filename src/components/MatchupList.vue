@@ -3,11 +3,13 @@
     v-if="items && items.length"
     class="mu-list"
     :class="{ 'is-threat': isThreat }"
+    :style="{ '--mu-hl-rgb': highlightRgb }"
   >
     <div
       v-for="enemy in items"
       :key="enemy.id || enemy.name"
       class="mu-item-row"
+      :class="{ 'is-highlight': isHighlighted(enemy) }"
     >
       <span>vs {{ enemy.name }}</span>
       <span :class="isThreat ? 'text-danger fw-bold' : 'mu-percent-accent'">
@@ -38,9 +40,22 @@ const props = defineProps({
     type: Object,
     default: () => new Set(),
   },
+  // Рядки проти цих героїв (за id) виділяємо, напр. тих, кого вже обрав суперник
+  highlightIds: {
+    type: Array,
+    default: () => [],
+  },
+  highlightRgb: {
+    type: String,
+    default: "255, 79, 109",
+  },
 });
 
 const { getWinrate } = useDraftState();
+
+function isHighlighted(enemy) {
+  return Boolean(enemy.id) && props.highlightIds.includes(enemy.id);
+}
 
 const items = computed(() => {
   if (!props.opponentPicks) return [];
@@ -87,6 +102,19 @@ function getTargetWinrate(enemy) {
 
 .mu-list:not(.is-threat) .mu-item-row:not(:last-child) {
   border-bottom: 1px solid rgba(var(--color-player-rgb), 0.15);
+}
+
+.mu-item-row.is-highlight {
+  margin: 0 -6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  background: rgba(var(--mu-hl-rgb), 0.22);
+  box-shadow: inset 3px 0 0 rgba(var(--mu-hl-rgb), 0.95);
+}
+
+.mu-item-row.is-highlight span:first-child {
+  color: var(--text-white);
+  font-weight: 800;
 }
 
 .mu-list.is-threat {

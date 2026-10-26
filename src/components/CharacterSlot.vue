@@ -1,7 +1,7 @@
 <template>
   <div
     class="vs-slot"
-    :class="{ 'is-filled': character }"
+    :class="{ 'is-filled': character, 'is-block': block }"
     @click="emit('pick')"
   >
     <template v-if="character">
@@ -40,6 +40,11 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  // На всю ширину контейнера (як картка обраного героя в колонці драфту)
+  block: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["pick", "clear"]);
@@ -61,6 +66,13 @@ const emit = defineEmits(["pick", "clear"]);
   position: relative;
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vs-slot.is-block {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1.3;
+  border-radius: 16px;
 }
 
 .vs-slot:hover {

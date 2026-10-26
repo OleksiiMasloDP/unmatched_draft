@@ -41,6 +41,13 @@
             <option value="opponent">{{ t("opponentFirst") }}</option>
           </select>
         </div>
+        <div v-else-if="isLadderPicking" class="custom-select-wrapper">
+          <select v-model="ladderSort">
+            <option value="average">{{ t("ladderSortAverage") }}</option>
+            <option value="worst">{{ t("ladderSortWorst") }}</option>
+            <option value="name">{{ t("ladderSortName") }}</option>
+          </select>
+        </div>
 
         <!--
         <div class="custom-select-wrapper">
@@ -106,10 +113,26 @@
               }"
               @click="togglePostBan('player', char.id)"
             >
+              <button
+                v-if="isLadderPicking"
+                type="button"
+                class="ladder-remove"
+                @click.stop="removeLadderChoice('player', char.id)"
+              >
+                ✕
+              </button>
               <img :src="char.image" />
               <div class="pick-name">
                 <div class="char-title-bold">{{ char.name }}</div>
+                <LadderHeroInfo
+                  v-if="isLadderPicking"
+                  :char="char"
+                  :expand-key="'player:' + char.id"
+                  :highlight-ids="ladderOpponentIds"
+                  highlight-rgb="255, 79, 109"
+                />
                 <MatchupList
+                  v-else
                   :char-name="char.name"
                   :opponent-picks="displayOpponentPicks"
                   :ignored-ids="postBans.opponent"
@@ -174,10 +197,26 @@
               }"
               @click="togglePostBan('opponent', enemyChar.id)"
             >
+              <button
+                v-if="isLadderPicking"
+                type="button"
+                class="ladder-remove"
+                @click.stop="removeLadderChoice('opponent', enemyChar.id)"
+              >
+                ✕
+              </button>
               <img :src="enemyChar.image" />
               <div class="pick-name">
                 <div class="char-title-bold">{{ enemyChar.name }}</div>
+                <LadderHeroInfo
+                  v-if="isLadderPicking"
+                  :char="enemyChar"
+                  :expand-key="'opponent:' + enemyChar.id"
+                  :highlight-ids="ladderPlayerIds"
+                  highlight-rgb="79, 124, 255"
+                />
                 <MatchupList
+                  v-else
                   :char-name="enemyChar.name"
                   :opponent-picks="displayPlayerPicks"
                   :ignored-ids="postBans.player"
@@ -185,9 +224,27 @@
               </div>
             </div>
           </template>
+
+          <template v-if="isLadderPicking">
+            <CharacterSlot
+              v-for="n in ladderEmptyOpponentSlots"
+              :key="'opponent-slot-' + n"
+              block
+              class="pick-slot"
+              :label="t('ladderAddOpponent')"
+              @pick="opponentPickerOpen = true"
+            />
+          </template>
         </div>
       </div>
     </div>
+
+    <CharPickerModal
+      v-if="opponentPickerOpen"
+      :characters-list="opponentPickerList"
+      @close="opponentPickerOpen = false"
+      @select="onOpponentSelect"
+    />
   </div>
 
   <div
@@ -236,10 +293,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, nextTick } from "vue";
+import { computed, ref, onMounted, nextTick } from "vue";
 import { useDraftState } from "../../composables/useDraftState.js";
 import CharacterDraft from "../CharacterDraft.vue";
 import LadderDraft from "../LadderDraft.vue";
+import LadderHeroInfo from "../LadderHeroInfo.vue";
+import CharacterSlot from "../CharacterSlot.vue";
+import CharPickerModal from "../CharPickerModal.vue";
 import MapSelect from "../MapSelect.vue";
 import Disclaimer from "../Disclaimer.vue";
 import MatchupList from "../MatchupList.vue";
@@ -269,6 +329,13 @@ const {
   displayPlayerPicks,
   displayOpponentPicks,
   canPostBan,
+  formatPool,
+  ladderChoice,
+  ladderSort,
+  ladderEmptyOpponentSlots,
+  addLadderOpponent,
+  removeLadderChoice,
+  getWinrate,
 } = useDraftState();
 
 // Йде вибір героїв: покроково (є поточний хід) або у ladder на кроці героїв
@@ -277,6 +344,44 @@ const isPicking = computed(
     Boolean(current.value) ||
     (isSimultaneous.value && currentStep.value === "characters"),
 );
+
+// Ladder на кроці вибору героїв (немає банів, обидві сторони обирають одночасно)
+const isLadderPicking = computed(
+  () => isSimultaneous.value && currentStep.value === "characters",
+);
+
+// Кого вже обрала кожна сторона: за цим виділяємо рядки в списках матчапів
+const ladderPlayerIds = computed(() => ladderChoice.player.map((c) => c.id));
+const ladderOpponentIds = computed(() =>
+  ladderChoice.opponent.map((c) => c.id),
+);
+
+// Вибір героя опонента: у списку показуємо середній вінрейт наших обраних
+// героїв проти кандидата, а вже обраних опонентом героїв прибираємо
+const opponentPickerOpen = ref(false);
+
+const opponentPickerList = computed(() => {
+  const taken = new Set(ladderChoice.opponent.map((c) => c.id));
+  const mine = ladderChoice.player;
+
+  return formatPool.value
+    .filter((char) => !taken.has(char.id))
+    .map((char) => {
+      if (!mine.length) return char;
+      const rates = mine
+        .map((m) => getWinrate(m.name, char.name))
+        .filter((rate) => rate !== null);
+      const refWinrate = rates.length
+        ? Math.round(rates.reduce((sum, r) => sum + r, 0) / rates.length)
+        : null;
+      return { ...char, refWinrate };
+    });
+});
+
+function onOpponentSelect(char) {
+  addLadderOpponent(char);
+  opponentPickerOpen.value = false;
+}
 
 // Слоти банів є лише в покроковому форматі
 const showBans = computed(

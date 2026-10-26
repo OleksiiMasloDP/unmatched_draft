@@ -1,56 +1,18 @@
 <template>
   <div class="ladder">
-    <div class="ladder-intro">
-      <h4 class="fw-bold mb-1 engine-title-text engine-title-desktop">
-        {{ t("ladderPoolTitle") }}
-      </h4>
-      <p class="engine-sub-desc engine-sub-desktop mb-3">
-        {{ t("ladderPoolDesc") }}
-      </p>
-
-      <div class="ladder-actions">
-        <button
-          class="btn btn-primary btn-sm action-btn"
-          @click="opponentPickerOpen = true"
-        >
-          {{
-            ladderChoice.opponent
-              ? t("ladderChangeOpponent")
-              : t("ladderChooseOpponent")
-          }}
-        </button>
-
-        <button
-          v-if="ladderStatus === 'mirror'"
-          class="btn btn-danger btn-sm action-btn"
-          @click="clearLadderChoices"
-        >
-          {{ t("ladderRepick") }}
-        </button>
-        <button
-          v-else-if="ladderStatus !== 'empty'"
-          class="btn btn-danger btn-sm action-btn"
-          @click="clearLadderChoices"
-        >
-          {{ t("ladderClear") }}
-        </button>
-      </div>
-
-      <div v-if="ladderStatus === 'ready'" class="proceed-maps-btn-wrap">
-        <button class="btn-proceed-maps" @click="proceedToMapsEvent">
-          {{ t("toMapsLabel") }}
-        </button>
-      </div>
+    <div v-if="ladderStatus === 'mirror'" class="ladder-actions">
+      <button
+        class="btn btn-primary btn-sm action-btn"
+        @click="resolveLadderMirror"
+      >
+        {{ t("ladderRepick") }}
+      </button>
     </div>
 
-    <div class="controls-row ladder-controls">
-      <div class="custom-select-wrapper">
-        <select v-model="sortKey">
-          <option value="average">{{ t("ladderSortAverage") }}</option>
-          <option value="worst">{{ t("ladderSortWorst") }}</option>
-          <option value="name">{{ t("ladderSortName") }}</option>
-        </select>
-      </div>
+    <div v-if="ladderStatus === 'ready'" class="proceed-maps-btn-wrap">
+      <button class="btn-proceed-maps" @click="proceedToMapsEvent">
+        {{ t("toMapsLabel") }}
+      </button>
     </div>
 
     <div class="row g-2 g-md-3">
@@ -62,10 +24,12 @@
         <div
           class="character ladder-card"
           :class="{
-            'is-mine': ladderChoice.player?.id === row.char.id,
-            'is-theirs': ladderChoice.opponent?.id === row.char.id,
+            'is-mine': isMine(row.char.id),
+            'is-theirs': isTheirs(row.char.id),
+            'is-mirror': ladderMirrorIds.includes(row.char.id),
+            'threat-card': threatById.get(row.char.id).isThreat,
           }"
-          @click="setLadderChoice('player', row.char)"
+          @click="toggleLadderPlayer(row.char)"
         >
           <img :src="row.char.image" :alt="row.char.name" />
 
@@ -77,67 +41,39 @@
             {{ row.stats.average }}%
           </div>
 
+          <div v-if="threatById.get(row.char.id).isThreat" class="threat-badge">
+            ⚠️ {{ t("ghostThreat") }}
+          </div>
+
           <div class="char-name">
             <div class="char-title">{{ row.char.name }}</div>
 
-            <div class="ladder-stat-row">
-              <span>{{ t("ladderAverage") }}</span>
-              <span class="ladder-stat-value">{{ row.stats.average }}%</span>
-            </div>
-
-            <div v-if="row.stats.worst" class="ladder-stat-row">
-              <span class="ladder-stat-label" :title="row.stats.worst.name">
-                {{ t("ladderWorst") }}: {{ row.stats.worst.name }}
-              </span>
-              <span
-                class="ladder-stat-value"
-                :class="'text-' + worstTone(row.stats.worst.winrate)"
-              >
-                {{ row.stats.worst.winrate }}%
-              </span>
-            </div>
-
-            <div v-if="row.stats.unknown" class="ladder-stat-row is-dim">
-              {{ t("ladderUnknown") }}: {{ row.stats.unknown }}
-            </div>
-
-            <button
-              type="button"
-              class="ladder-toggle"
-              @click.stop="toggleExpanded(row.char.id)"
-            >
-              {{
-                expandedId === row.char.id
-                  ? t("ladderHideMatchups")
-                  : t("ladderShowMatchups")
-              }}
-            </button>
-
             <MatchupList
-              v-if="expandedId === row.char.id"
+              v-if="threatById.get(row.char.id).isThreat"
               :char-name="row.char.name"
-              :opponent-picks="matchupTargets(row.char)"
+              :opponent-picks="threatById.get(row.char.id).targets"
+              :is-threat="true"
+            />
+
+            <LadderHeroInfo
+              :char="row.char"
+              :expand-key="'pool:' + row.char.id"
+              :highlight-ids="opponentIds"
+              :highlight-rgb="OPPONENT_RGB"
             />
           </div>
         </div>
       </div>
     </div>
-
-    <CharPickerModal
-      v-if="opponentPickerOpen"
-      :characters-list="opponentPickerList"
-      @close="opponentPickerOpen = false"
-      @select="onOpponentSelect"
-    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { trackProceedToMaps } from "@/utils/gaAnalytics";
-import CharPickerModal from "./CharPickerModal.vue";
 import MatchupList from "./MatchupList.vue";
+import LadderHeroInfo from "./LadderHeroInfo.vue";
 
 const {
   t,
@@ -145,22 +81,33 @@ const {
   formatPool,
   ladderChoice,
   ladderStatus,
-  setLadderChoice,
-  clearLadderChoices,
+  ladderMirrorIds,
+  ladderSort,
+  toggleLadderPlayer,
+  resolveLadderMirror,
   proceedLadderToMaps,
   proceedToMaps,
   getLadderStats,
-  getWinrate,
+  getLadderThreat,
   getPercentClass,
 } = useDraftState();
 
-const sortKey = ref("average");
-const expandedId = ref(null);
-const opponentPickerOpen = ref(false);
+// Колір підсвітки героїв, яких уже обрав суперник
+const OPPONENT_RGB = "255, 79, 109";
+
+const isMine = (id) => ladderChoice.player.some((c) => c.id === id);
+const isTheirs = (id) => ladderChoice.opponent.some((c) => c.id === id);
+const opponentIds = computed(() => ladderChoice.opponent.map((c) => c.id));
 
 // Статистика рахується один раз на зміну пулу, а не при кожному кліку/пошуку
 const rows = computed(() =>
   formatPool.value.map((char) => ({ char, stats: getLadderStats(char) })),
+);
+
+// "Загроза" залежить від моїх обраних героїв, тому перераховується при їх зміні
+const threatById = computed(
+  () =>
+    new Map(rows.value.map((row) => [row.char.id, getLadderThreat(row.char)])),
 );
 
 const shownRows = computed(() => {
@@ -169,12 +116,12 @@ const shownRows = computed(() => {
     ? rows.value.filter((row) => row.char.name.toLowerCase().includes(q))
     : [...rows.value];
 
-  if (sortKey.value === "name") {
+  if (ladderSort.value === "name") {
     return list.sort((a, b) => a.char.name.localeCompare(b.char.name));
   }
 
   // Герої без жодного відомого матчапу (worst === null) йдуть у кінець
-  if (sortKey.value === "worst") {
+  if (ladderSort.value === "worst") {
     const worstOf = (row) => row.stats.worst?.winrate ?? -1;
     return list.sort(
       (a, b) => worstOf(b) - worstOf(a) || b.stats.average - a.stats.average,
@@ -188,38 +135,6 @@ const shownRows = computed(() => {
   );
 });
 
-// Для списку матчапів: найгірші зверху
-function matchupTargets(char) {
-  return formatPool.value
-    .filter((enemy) => enemy.id !== char.id)
-    .sort(
-      (a, b) =>
-        (getWinrate(char.name, a.name) ?? 101) -
-        (getWinrate(char.name, b.name) ?? 101),
-    );
-}
-
-// У списку вибору суперника показуємо вінрейт нашого героя проти кожного
-const opponentPickerList = computed(() => {
-  const mine = ladderChoice.player;
-  return formatPool.value.map((char) =>
-    mine ? { ...char, refWinrate: getWinrate(mine.name, char.name) } : char,
-  );
-});
-
-function onOpponentSelect(char) {
-  setLadderChoice("opponent", char);
-  opponentPickerOpen.value = false;
-}
-
-function toggleExpanded(charId) {
-  expandedId.value = expandedId.value === charId ? null : charId;
-}
-
-function worstTone(winrate) {
-  return winrate < 43 ? "danger" : "warning";
-}
-
 function proceedToMapsEvent() {
   if (!proceedLadderToMaps()) return;
   trackProceedToMaps();
@@ -228,17 +143,10 @@ function proceedToMapsEvent() {
 </script>
 
 <style scoped>
-.ladder-intro {
-  margin-bottom: 16px;
-}
-
 .ladder-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.ladder-controls {
   margin-bottom: 12px;
 }
 
@@ -256,51 +164,31 @@ function proceedToMapsEvent() {
   box-shadow: 0 0 16px rgba(var(--color-opponent-rgb), 0.5);
 }
 
-.ladder-card.is-mine.is-theirs {
+.ladder-card.is-mirror {
   border-color: var(--color-danger) !important;
   box-shadow: 0 0 16px rgba(var(--color-danger-rgb), 0.55);
 }
 
-.ladder-stat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-muted);
-  font-size: 11.5px;
+/* Така сама "загроза", як у звичайному драфті (CharacterDraft.vue) */
+.ladder-card.threat-card:not(.is-mine):not(.is-theirs):not(.is-mirror) {
+  border: 1px solid rgba(var(--color-opponent-rgb), 0.6) !important;
+  box-shadow: 0 0 10px rgba(var(--color-opponent-rgb), 0.25);
+  background: rgba(var(--color-opponent-rgb), 0.03);
 }
 
-.ladder-stat-label {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ladder-stat-value {
-  flex: 0 0 auto;
-  color: var(--text-white);
-  font-weight: 800;
-}
-
-.ladder-stat-row.is-dim {
-  color: var(--text-dim);
-  font-style: italic;
-}
-
-.ladder-toggle {
-  margin-top: 4px;
-  padding: 4px 0;
-  background: transparent;
-  border: none;
-  color: var(--color-player);
-  font-size: 11px;
+.threat-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.75rem;
   font-weight: 700;
-  text-align: left;
-  cursor: pointer;
-}
-
-.ladder-toggle:hover {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(var(--color-danger-rgb), 0.9);
+  backdrop-filter: blur(4px);
   color: var(--text-white);
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>
