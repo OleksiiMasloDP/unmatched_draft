@@ -340,7 +340,6 @@ const {
   addLadderOpponent,
   removeLadderChoice,
   onFormatChange,
-  getWinrate,
 } = useDraftState();
 
 const isPicking = computed(
@@ -362,20 +361,7 @@ const opponentPickerOpen = ref(false);
 
 const opponentPickerList = computed(() => {
   const taken = new Set(ladderChoice.opponent.map((c) => c.id));
-  const mine = ladderChoice.player;
-
-  return formatPool.value
-    .filter((char) => !taken.has(char.id))
-    .map((char) => {
-      if (!mine.length) return char;
-      const rates = mine
-        .map((m) => getWinrate(m.name, char.name))
-        .filter((rate) => rate !== null);
-      const refWinrate = rates.length
-        ? Math.round(rates.reduce((sum, r) => sum + r, 0) / rates.length)
-        : null;
-      return { ...char, refWinrate };
-    });
+  return formatPool.value.filter((char) => !taken.has(char.id));
 });
 
 function onOpponentSelect(char) {
