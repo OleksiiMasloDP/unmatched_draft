@@ -40,7 +40,6 @@ defineProps({
     type: Boolean,
     default: false,
   },
-  // На всю ширину контейнера (як картка обраного героя в колонці драфту)
   block: {
     type: Boolean,
     default: false,

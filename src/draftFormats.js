@@ -46,9 +46,6 @@ export const banPresets = {
     name: "2 bans / 4 picks",
     sequence: twoBans_fourPicks,
   },
-  // Ladder: без банів і черговості. Обидва гравці вибирають одного героя
-  // одночасно: однакові — скидаються, різні — граємо. Тому sequence порожній,
-  // а замість нього працює mode "simultaneous" (див. useDraftState).
   ladder: {
     name: "Ladder",
     mode: "simultaneous",

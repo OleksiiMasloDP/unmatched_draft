@@ -24,7 +24,7 @@
         />
 
         <div class="custom-select-wrapper">
-          <select v-model="currentFormat" @change="saveToStorage">
+          <select v-model="currentFormat" @change="onFormatChange">
             <option
               v-for="(fData, fKey) in availableFormats"
               :key="fKey"
@@ -114,7 +114,7 @@
               @click="togglePostBan('player', char.id)"
             >
               <button
-                v-if="isLadderPicking"
+                v-if="isSimultaneous"
                 type="button"
                 class="ladder-remove"
                 @click.stop="removeLadderChoice('player', char.id)"
@@ -151,7 +151,7 @@
           v-if="currentStep === 'characters' && !isSimultaneous"
         />
         <template v-else>
-          <LadderStrategy v-if="showLadderStrategy" />
+          <LadderStrategy v-if="currentStep === 'maps'" />
           <LadderDraft v-if="currentStep === 'characters'" />
           <MapSelect v-else-if="currentStep === 'maps'" draftMode />
         </template>
@@ -201,7 +201,7 @@
               @click="togglePostBan('opponent', enemyChar.id)"
             >
               <button
-                v-if="isLadderPicking"
+                v-if="isSimultaneous"
                 type="button"
                 class="ladder-remove"
                 @click.stop="removeLadderChoice('opponent', enemyChar.id)"
@@ -335,42 +335,29 @@ const {
   canPostBan,
   formatPool,
   ladderChoice,
-  ladderStatus,
   ladderSort,
   ladderEmptyOpponentSlots,
   addLadderOpponent,
   removeLadderChoice,
+  onFormatChange,
   getWinrate,
 } = useDraftState();
 
-// Блок аналітики зі стратегією: коли героїв обрано і далі на кроці мап
-const showLadderStrategy = computed(
-  () =>
-    isSimultaneous.value &&
-    ((currentStep.value === "characters" && ladderStatus.value === "ready") ||
-      currentStep.value === "maps"),
-);
-
-// Йде вибір героїв: покроково (є поточний хід) або у ladder на кроці героїв
 const isPicking = computed(
   () =>
     Boolean(current.value) ||
     (isSimultaneous.value && currentStep.value === "characters"),
 );
 
-// Ladder на кроці вибору героїв (немає банів, обидві сторони обирають одночасно)
 const isLadderPicking = computed(
   () => isSimultaneous.value && currentStep.value === "characters",
 );
 
-// Кого вже обрала кожна сторона: за цим виділяємо рядки в списках матчапів
 const ladderPlayerIds = computed(() => ladderChoice.player.map((c) => c.id));
 const ladderOpponentIds = computed(() =>
   ladderChoice.opponent.map((c) => c.id),
 );
 
-// Вибір героя опонента: у списку показуємо середній вінрейт наших обраних
-// героїв проти кандидата, а вже обраних опонентом героїв прибираємо
 const opponentPickerOpen = ref(false);
 
 const opponentPickerList = computed(() => {
@@ -396,7 +383,6 @@ function onOpponentSelect(char) {
   opponentPickerOpen.value = false;
 }
 
-// Слоти банів є лише в покроковому форматі
 const showBans = computed(
   () => currentStep.value === "characters" && !isSimultaneous.value,
 );

@@ -487,9 +487,6 @@ h6 {
   object-fit: cover;
 }
 
-/* Порожній слот ladder на десктопі = картка героя: квадратна картинка
-   (aspect-ratio діє на content-box) + блок з іменем і статистикою.
-   Висота блоку поділена порівну зверху й знизу, щоб "+" був по центру картки */
 .pick-slot {
   --pick-name-h: 142px;
   box-sizing: content-box !important;
@@ -499,7 +496,6 @@ h6 {
   padding: calc(var(--pick-name-h) / 2) 0;
 }
 
-/* Кнопка зняття героя з вибору (ladder) */
 .ladder-remove {
   position: absolute;
   top: 8px;
@@ -582,7 +578,7 @@ h6 {
 .result-card {
   position: relative;
   background: var(--bg-card);
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   padding: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   border: 1px solid var(--border-medium);
@@ -615,19 +611,41 @@ h6 {
 }
 
 .info-trigger-btn {
-  background: var(--border-light);
-  border: 1px solid var(--border-strong);
-  color: var(--color-info);
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  background: rgba(var(--bg-slate-rgb), 0.8);
+  border: 1px solid var(--border-medium);
+  color: var(--text-dim);
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  user-select: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
-.info-trigger-btn:hover {
-  background: rgba(var(--color-info-rgb), 0.2);
-  color: var(--text-white);
+.info-trigger-btn::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+.info-trigger-btn:hover,
+.info-trigger-btn.is-open {
+  background: var(--bg-slate-hover);
+  border-color: rgba(var(--color-info-rgb), 0.6);
+  color: var(--color-info);
 }
 
 .rec-box {
@@ -1113,7 +1131,6 @@ input[type="checkbox"]:checked::after {
     height: 180px !important;
   }
 
-  /* Порожній слот ladder = картка героя: картинка 180px + блок з іменем */
   .pick-slot {
     --pick-name-h: 142px;
     box-sizing: border-box !important;

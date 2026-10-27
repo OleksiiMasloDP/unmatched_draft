@@ -151,6 +151,8 @@ export const translations = {
     ladderStrategyDesc:
       "Assumes the opponent can play either of their heroes. The map adds a small estimated bonus or penalty on top of the matchup win rate.",
     ladderRecommended: "Recommended",
+    ladderVsEach: "Against each opponent hero",
+    ladderOtherHeroes: "Other options",
     ladderPlayOn: "Play {hero} on {map}",
     ladderAvgChance: "Average chance",
     ladderWorstCase: "Worst case",
@@ -312,6 +314,8 @@ export const translations = {
     ladderStrategyDesc:
       "Враховано, що суперник може зіграти будь-яким зі своїх героїв. Мапа додає до вінрейту матчапу невеликий орієнтовний бонус або штраф.",
     ladderRecommended: "Рекомендовано",
+    ladderVsEach: "Проти кожного героя суперника",
+    ladderOtherHeroes: "Інші варіанти",
     ladderPlayOn: "Грайте {hero} на мапі {map}",
     ladderAvgChance: "Середній шанс",
     ladderWorstCase: "Найгірший випадок",

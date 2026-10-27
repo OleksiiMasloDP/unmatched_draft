@@ -1,5 +1,6 @@
 import { ref, computed, watch, reactive } from "vue";
 import { translations } from "../i18n.js";
+import { trackProceedToMaps } from "../utils/gaAnalytics";
 import {
   formats,
   MODE_TURNS,
@@ -40,21 +41,13 @@ const selectedMapId = ref(null);
 
 const postBans = ref({ player: new Set(), opponent: new Set() });
 
-// Режим simultaneous (ladder): обидва гравці одночасно обирають по двох героїв.
-// Вибір живе окремо від player.picks/opponent.picks і потрапляє туди лише
-// при переході до карт, щоб крок карт працював без змін.
 const LADDER_PICKS = 2;
 const ladderChoice = reactive({ player: [], opponent: [] });
 const ladderSort = ref("average");
 
-// Які списки матчапів розгорнуті. Ключ на кшталт "pool:12" або "player:12":
-// кожна кнопка відкриває й закриває лише свій список.
 const ladderExpandedKeys = ref([]);
+const ladderExcludedIds = ref([]);
 
-// Орієнтовний вплив мапи на шанс перемоги (у відсоткових пунктах) за кожну
-// "одиницю" переваги: улюблена мапа героя проти нейтральної = +1, проти
-// небажаної = +2. У даних є лише favoredBy/disfavoredBy без відсотків, тому це
-// евристика, яку за потреби можна підкрутити.
 const LADDER_MAP_EFFECT = 5;
 
 // Індекс матчапів у новому "плоскому" форматі: кожна пара зберігається один раз.
@@ -99,7 +92,6 @@ function clearPreviewHeroes() {
   selectedPreviewHeroIds.value = [];
 }
 
-// У старих збереженнях ladder вибір був одним героєм (обʼєкт або null)
 function normalizeLadderPicks(saved) {
   if (Array.isArray(saved)) return saved.slice(0, LADDER_PICKS);
   return saved ? [saved] : [];
@@ -194,16 +186,16 @@ const formatMode = computed(
 );
 const isSimultaneous = computed(() => formatMode.value === MODE_SIMULTANEOUS);
 
-// Герої, дозволені форматом (без урахування банів/пошуку)
 const formatPool = computed(() => {
   const config = availableFormats.value[currentFormat.value];
   if (!config) return [];
-  return characters.value.filter((c) =>
-    isIdAllowedGlobal(c.id, config.allowedHeroIds),
+  return characters.value.filter(
+    (c) =>
+      isIdAllowedGlobal(c.id, config.allowedHeroIds) &&
+      !(isSimultaneous.value && ladderExcludedIds.value.includes(c.id)),
   );
 });
 
-// Мапи, дозволені форматом (без урахування пошуку)
 const formatMaps = computed(() => {
   const config = availableFormats.value[currentFormat.value];
   if (!config) return [];
@@ -212,13 +204,11 @@ const formatMaps = computed(() => {
   return maps.value.filter((map) => allowed.includes(map.id));
 });
 
-// Герої, яких обрали обидві сторони одночасно (вони скидаються)
 const ladderMirrorIds = computed(() => {
   const theirs = new Set(ladderChoice.opponent.map((c) => c.id));
   return ladderChoice.player.filter((c) => theirs.has(c.id)).map((c) => c.id);
 });
 
-// empty | waiting (не всі обрані) | mirror (є однакові герої) | ready
 const ladderStatus = computed(() => {
   const { player: mine, opponent: theirs } = ladderChoice;
   if (!mine.length && !theirs.length) return "empty";
@@ -233,15 +223,12 @@ const ladderEmptyOpponentSlots = computed(() =>
   Math.max(0, LADDER_PICKS - ladderChoice.opponent.length),
 );
 
-// 1 — герой улюблений на мапі, -1 — небажаний, 0 — нейтральний
 function mapMark(map, charName) {
   if ((map.favoredBy || []).includes(charName)) return 1;
   if ((map.disfavoredBy || []).includes(charName)) return -1;
   return 0;
 }
 
-// Шанс героя mine проти героя theirs на мапі: базовий матчап (50, якщо даних
-// немає) плюс поправка за мапу
 function getLadderChance(mine, theirs, map) {
   const matchup = getWinrate(mine.name, theirs.name) ?? 50;
   const mapDelta =
@@ -250,15 +237,6 @@ function getLadderChance(mine, theirs, map) {
   return { matchup, mapDelta, chance };
 }
 
-// Загальні шанси команд: усі пари героїв, без урахування мапи
-const ladderWinrate = computed(() => {
-  const pWin = calculateTeamWinrate(ladderChoice.player, ladderChoice.opponent);
-  return { player: pWin, opponent: 100 - pWin };
-});
-
-// Стратегія: суперник може зіграти будь-яким зі своїх героїв, тому для кожного
-// мого героя на кожній мапі беремо середній і найгірший шанс проти обох.
-// Рекомендація — герой із кращим середнім на своїй найкращій мапі.
 const ladderStrategy = computed(() => {
   const mine = ladderChoice.player;
   const theirs = ladderChoice.opponent;
@@ -302,8 +280,6 @@ const ladderStrategy = computed(() => {
   return { options, recommended: options[0] };
 });
 
-// Що показувати в колонках гравців: у ladder на кроці героїв це поточний
-// вибір раунду, в інших випадках — звичайні піки
 const displayPlayerPicks = computed(() =>
   isSimultaneous.value && currentStep.value === "characters"
     ? ladderChoice.player
@@ -315,7 +291,6 @@ const displayOpponentPicks = computed(() =>
     : opponent.picks,
 );
 
-// Пост-бани мають сенс лише в покроковому форматі
 const canPostBan = computed(() => !current.value && !isSimultaneous.value);
 
 const turnColor = computed(() => {
@@ -591,6 +566,23 @@ const filteredMaps = computed(() => {
   return list;
 });
 
+watch([ladderStatus, currentStep, isSimultaneous], () => {
+  if (
+    !isSimultaneous.value ||
+    currentStep.value !== "characters" ||
+    ladderStatus.value !== "ready"
+  ) {
+    return;
+  }
+  player.picks = [...ladderChoice.player];
+  opponent.picks = [...ladderChoice.opponent];
+  postBans.value.player.clear();
+  postBans.value.opponent.clear();
+  search.value = "";
+  trackProceedToMaps();
+  currentStep.value = "maps";
+});
+
 watch([lang, sortMode, currentStep, selectedMapId], () => {
   const state = {
     lang: lang.value,
@@ -607,6 +599,7 @@ watch([lang, sortMode, currentStep, selectedMapId], () => {
     postBansOpponent: Array.from(postBans.value.opponent),
     ladderPlayer: ladderChoice.player,
     ladderOpponent: ladderChoice.opponent,
+    ladderExcluded: ladderExcludedIds.value,
     currentStep: currentStep.value,
     selectedMapId: selectedMapId.value,
   };
@@ -649,6 +642,7 @@ export function useDraftState() {
       postBansOpponent: Array.from(postBans.value.opponent),
       ladderPlayer: ladderChoice.player,
       ladderOpponent: ladderChoice.opponent,
+      ladderExcluded: ladderExcludedIds.value,
       currentStep: currentStep.value,
       selectedMapId: selectedMapId.value,
     };
@@ -676,6 +670,7 @@ export function useDraftState() {
       postBans.value.opponent = new Set(state.postBansOpponent || []);
       ladderChoice.player = normalizeLadderPicks(state.ladderPlayer);
       ladderChoice.opponent = normalizeLadderPicks(state.ladderOpponent);
+      ladderExcludedIds.value = state.ladderExcluded || [];
       currentStep.value = state.currentStep || "characters";
       selectedMapId.value = state.selectedMapId || null;
     } catch (e) {
@@ -695,6 +690,7 @@ export function useDraftState() {
     ladderChoice.player = [];
     ladderChoice.opponent = [];
     ladderExpandedKeys.value = [];
+    ladderExcludedIds.value = [];
     showInfoPopover.value = false;
     currentStep.value = "characters";
     selectedMapId.value = null;
@@ -795,10 +791,6 @@ export function useDraftState() {
     }
   }
 
-  // --- Ladder (simultaneous) -------------------------------------------------
-
-  // Герой гравця: клік по карточці обирає, повторний клік знімає.
-  // Більше за LADDER_PICKS обрати не можна.
   function toggleLadderPlayer(char) {
     if (!isSimultaneous.value || !char) return;
     const list = ladderChoice.player;
@@ -808,7 +800,6 @@ export function useDraftState() {
     saveToStorage();
   }
 
-  // Герой опонента: додаємо через слоти з плюсиком
   function addLadderOpponent(char) {
     if (!isSimultaneous.value || !char) return;
     const list = ladderChoice.opponent;
@@ -819,19 +810,48 @@ export function useDraftState() {
     saveToStorage();
   }
 
+  function backToLadderHeroes() {
+    if (currentStep.value !== "maps") return;
+    player.picks = [];
+    opponent.picks = [];
+    postBans.value.player.clear();
+    postBans.value.opponent.clear();
+    selectedMapId.value = null;
+    currentStep.value = "characters";
+  }
+
   function removeLadderChoice(side, charId) {
     const list = ladderChoice[side];
     const idx = list.findIndex((c) => c.id === charId);
     if (idx === -1) return;
     list.splice(idx, 1);
-    // Прибраний герой більше не має відкритого списку в колонці
     ladderExpandedKeys.value = ladderExpandedKeys.value.filter(
       (key) => key !== `${side}:${charId}`,
     );
+    backToLadderHeroes();
     saveToStorage();
   }
 
-  // Розгорнути/згорнути список матчапів лише в однієї картки
+  function onFormatChange() {
+    resetAll();
+    saveToStorage();
+  }
+
+  function excludeLadderHero(charId) {
+    if (!isSimultaneous.value || ladderExcludedIds.value.includes(charId)) {
+      return;
+    }
+    ladderExcludedIds.value = [...ladderExcludedIds.value, charId];
+    for (const side of ["player", "opponent"]) {
+      ladderChoice[side] = ladderChoice[side].filter((c) => c.id !== charId);
+    }
+    ladderExpandedKeys.value = ladderExpandedKeys.value.filter(
+      (key) => !key.endsWith(`:${charId}`),
+    );
+    backToLadderHeroes();
+    saveToStorage();
+  }
+
   function toggleLadderExpanded(key) {
     const keys = ladderExpandedKeys.value;
     ladderExpandedKeys.value = keys.includes(key)
@@ -839,9 +859,6 @@ export function useDraftState() {
       : [...keys, key];
   }
 
-  // "Загроза" для ladder: герой, який у середньому бʼє вже обраних мною героїв
-  // (>= 53%). Та сама логіка, що й getThreatData у звичайному драфті, але
-  // рахується від ladderChoice.player і не діє на тих, кого я вже обрав.
   function getLadderThreat(char) {
     const data = { isThreat: false, targets: [] };
     const mine = ladderChoice.player;
@@ -863,19 +880,6 @@ export function useDraftState() {
     return data;
   }
 
-  // Усі герої обрані й не збігаються => фіксуємо їх як піки й переходимо до карт
-  function proceedLadderToMaps() {
-    if (ladderStatus.value !== "ready") return false;
-    player.picks = [...ladderChoice.player];
-    opponent.picks = [...ladderChoice.opponent];
-    postBans.value.player.clear();
-    postBans.value.opponent.clear();
-    saveToStorage();
-    return true;
-  }
-
-  // Статистика героя проти всього пулу формату. Дзеркало не враховуємо
-  // (воно скидається), матчапи без даних у середньому рахуємо як 50%.
   function getLadderStats(char) {
     let sum = 0;
     let total = 0;
@@ -1018,7 +1022,6 @@ export function useDraftState() {
     ladderEmptyOpponentSlots,
     ladderSort,
     ladderExpandedKeys,
-    ladderWinrate,
     ladderStrategy,
     displayPlayerPicks,
     displayOpponentPicks,
@@ -1027,7 +1030,8 @@ export function useDraftState() {
     addLadderOpponent,
     removeLadderChoice,
     toggleLadderExpanded,
-    proceedLadderToMaps,
+    excludeLadderHero,
+    onFormatChange,
     getLadderStats,
     getLadderThreat,
     saveCustomFormat,

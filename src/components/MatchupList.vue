@@ -40,7 +40,6 @@ const props = defineProps({
     type: Object,
     default: () => new Set(),
   },
-  // Рядки проти цих героїв (за id) виділяємо, напр. тих, кого вже обрав суперник
   highlightIds: {
     type: Array,
     default: () => [],

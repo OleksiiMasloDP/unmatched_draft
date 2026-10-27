@@ -1,11 +1,5 @@
 <template>
   <div class="ladder">
-    <div v-if="ladderStatus === 'ready'" class="proceed-maps-btn-wrap">
-      <button class="btn-proceed-maps" @click="proceedToMapsEvent">
-        {{ t("toMapsLabel") }}
-      </button>
-    </div>
-
     <div class="row g-2 g-md-3">
       <div
         v-for="row in shownRows"
@@ -22,6 +16,14 @@
           }"
           @click="toggleLadderPlayer(row.char)"
         >
+          <button
+            type="button"
+            class="ladder-remove"
+            @click.stop="excludeLadderHero(row.char.id)"
+          >
+            ✕
+          </button>
+
           <img :src="row.char.image" :alt="row.char.name" />
 
           <div
@@ -62,7 +64,6 @@
 <script setup>
 import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
-import { trackProceedToMaps } from "@/utils/gaAnalytics";
 import MatchupList from "./MatchupList.vue";
 import LadderHeroInfo from "./LadderHeroInfo.vue";
 
@@ -71,30 +72,25 @@ const {
   search,
   formatPool,
   ladderChoice,
-  ladderStatus,
   ladderMirrorIds,
   ladderSort,
   toggleLadderPlayer,
-  proceedLadderToMaps,
-  proceedToMaps,
+  excludeLadderHero,
   getLadderStats,
   getLadderThreat,
   getPercentClass,
 } = useDraftState();
 
-// Колір підсвітки героїв, яких уже обрав суперник
 const OPPONENT_RGB = "255, 79, 109";
 
 const isMine = (id) => ladderChoice.player.some((c) => c.id === id);
 const isTheirs = (id) => ladderChoice.opponent.some((c) => c.id === id);
 const opponentIds = computed(() => ladderChoice.opponent.map((c) => c.id));
 
-// Статистика рахується один раз на зміну пулу, а не при кожному кліку/пошуку
 const rows = computed(() =>
   formatPool.value.map((char) => ({ char, stats: getLadderStats(char) })),
 );
 
-// "Загроза" залежить від моїх обраних героїв, тому перераховується при їх зміні
 const threatById = computed(
   () =>
     new Map(rows.value.map((row) => [row.char.id, getLadderThreat(row.char)])),
@@ -110,7 +106,6 @@ const shownRows = computed(() => {
     return list.sort((a, b) => a.char.name.localeCompare(b.char.name));
   }
 
-  // Герої без жодного відомого матчапу (worst === null) йдуть у кінець
   if (ladderSort.value === "worst") {
     const worstOf = (row) => row.stats.worst?.winrate ?? -1;
     return list.sort(
@@ -124,12 +119,6 @@ const shownRows = computed(() => {
       a.char.name.localeCompare(b.char.name),
   );
 });
-
-function proceedToMapsEvent() {
-  if (!proceedLadderToMaps()) return;
-  trackProceedToMaps();
-  proceedToMaps();
-}
 </script>
 
 <style scoped>
@@ -152,7 +141,6 @@ function proceedToMapsEvent() {
   box-shadow: 0 0 16px rgba(var(--color-danger-rgb), 0.55);
 }
 
-/* Така сама "загроза", як у звичайному драфті (CharacterDraft.vue) */
 .ladder-card.threat-card:not(.is-mine):not(.is-theirs):not(.is-mirror) {
   border: 1px solid rgba(var(--color-opponent-rgb), 0.6) !important;
   box-shadow: 0 0 10px rgba(var(--color-opponent-rgb), 0.25);
@@ -162,7 +150,7 @@ function proceedToMapsEvent() {
 .threat-badge {
   position: absolute;
   top: 8px;
-  right: 8px;
+  right: 40px;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 2px 6px;

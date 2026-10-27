@@ -1,80 +1,89 @@
 <template>
   <div v-if="ladderStrategy" class="ladder-strategy">
     <div class="result-card">
-      <h4 class="fw-bold mb-1 engine-title-text engine-title-desktop">
-        {{ t("engineTitle") }}
-      </h4>
-      <p class="engine-sub-desc engine-sub-desktop strategy-desc">
-        {{ t("engineDesc") }}
-      </p>
+      <div
+        class="d-flex align-items-center justify-content-between engine-outer-mb"
+      >
+        <h4 class="fw-bold mb-0 engine-title-text">
+          {{ t("engineTitle") }}
+        </h4>
+        <button
+          type="button"
+          class="info-trigger-btn"
+          :class="{ 'is-open': showInfo }"
+          @click="showInfo = !showInfo"
+        >
+          {{ t("infoLabel") }}
+        </button>
+      </div>
 
-      <div class="rec-box strategy-box">
-        <div class="strategy-kicker">
-          {{ t("ladderStrategyTitle") }} · {{ t("ladderRecommended") }}
+      <p class="engine-sub-desc engine-inner-mb">{{ t("engineDesc") }}</p>
+
+      <div v-if="showInfo" class="custom-info-popover engine-inner-mb">
+        💡 {{ t("ladderStrategyDesc") }}
+      </div>
+
+      <section class="strategy-section is-recommended">
+        <div class="strategy-label">{{ t("ladderRecommended") }}</div>
+
+        <div class="strategy-pick">
+          <img
+            class="strategy-pick-img"
+            :src="recommended.hero.image"
+            :alt="recommended.hero.name"
+          />
+          <p class="strategy-pick-text" v-html="playHtml"></p>
         </div>
 
-        <div class="rec-flex-container">
-          <div class="rec-images-container">
-            <div
-              class="rec-hero-card"
-              :style="{ borderColor: player.color }"
-              :title="recommended.hero.name"
-            >
-              <img :src="recommended.hero.image" :alt="recommended.hero.name" />
-            </div>
-          </div>
-          <p class="rec-text" v-html="playHtml"></p>
-        </div>
-
-        <div class="strategy-numbers">
-          <div class="strategy-number">
-            <span class="strategy-number-label">{{
-              t("ladderAvgChance")
-            }}</span>
-            <span
-              class="strategy-number-value"
-              :class="'tone-' + getPercentClass(recommended.best.average)"
-            >
+        <div class="strategy-stats">
+          <div
+            class="strategy-stat"
+            :class="'tone-' + getPercentClass(recommended.best.average)"
+          >
+            <span class="strategy-stat-label">{{ t("ladderAvgChance") }}</span>
+            <span class="strategy-stat-value">
               {{ recommended.best.average }}%
             </span>
           </div>
-          <div class="strategy-number">
-            <span class="strategy-number-label">{{
-              t("ladderWorstCase")
-            }}</span>
-            <span
-              class="strategy-number-value"
-              :class="'tone-' + getPercentClass(recommended.best.worst)"
-            >
+          <div
+            class="strategy-stat"
+            :class="'tone-' + getPercentClass(recommended.best.worst)"
+          >
+            <span class="strategy-stat-label">{{ t("ladderWorstCase") }}</span>
+            <span class="strategy-stat-value">
               {{ recommended.best.worst }}%
             </span>
           </div>
         </div>
+      </section>
 
-        <div class="strategy-versus">
-          <div
-            v-for="row in recommended.best.versus"
-            :key="row.enemy.id"
-            class="strategy-versus-row"
-          >
-            <span class="strategy-versus-name">vs {{ row.enemy.name }}</span>
-            <span class="strategy-versus-detail">
+      <section class="strategy-section">
+        <div class="strategy-label">{{ t("ladderVsEach") }}</div>
+        <div
+          v-for="row in recommended.best.versus"
+          :key="row.enemy.id"
+          class="strategy-row"
+        >
+          <img :src="row.enemy.image" :alt="row.enemy.name" />
+          <div class="strategy-row-info">
+            <div class="strategy-row-name">{{ row.enemy.name }}</div>
+            <div class="strategy-row-detail">
               {{ t("ladderMatchupWord") }} {{ row.matchup }}%
               <template v-if="row.mapDelta">
                 · {{ t("ladderMapWord") }} {{ formatDelta(row.mapDelta) }}
               </template>
-            </span>
-            <span
-              class="strategy-versus-chance"
-              :class="'tone-' + getPercentClass(row.chance)"
-            >
-              {{ row.chance }}%
-            </span>
+            </div>
           </div>
+          <span
+            class="strategy-pill"
+            :class="'tone-' + getPercentClass(row.chance)"
+          >
+            {{ row.chance }}%
+          </span>
         </div>
 
         <div v-if="otherMaps.length" class="strategy-maps">
-          <span class="strategy-maps-label">{{ t("ladderOtherMaps") }}:</span>
+          <span class="strategy-maps-label">{{ t("ladderOtherMaps") }}</span>
           <span v-for="item in otherMaps" :key="item.map.id" class="map-chip">
             {{ item.map.name }}
             <b :class="'tone-' + getPercentClass(item.average)">
@@ -82,66 +91,43 @@
             </b>
           </span>
         </div>
-      </div>
+      </section>
 
-      <div v-if="alternatives.length" class="strategy-alts">
+      <section v-if="alternatives.length" class="strategy-section">
+        <div class="strategy-label">{{ t("ladderOtherHeroes") }}</div>
         <div
           v-for="option in alternatives"
           :key="option.hero.id"
-          class="alt-row"
+          class="strategy-row"
         >
           <img :src="option.hero.image" :alt="option.hero.name" />
-          <div class="alt-info">
-            <div class="alt-name">{{ option.hero.name }}</div>
-            <div class="alt-detail">
-              {{ t("ladderBestMap") }}: {{ option.best.map.name }}
+          <div class="strategy-row-info">
+            <div class="strategy-row-name">{{ option.hero.name }}</div>
+            <div class="strategy-row-detail">
+              {{ t("ladderBestMap") }}: {{ option.best.map.name }} ·
+              {{ t("ladderWorstCase") }} {{ option.best.worst }}%
             </div>
           </div>
-          <div class="alt-numbers">
-            <span :class="'tone-' + getPercentClass(option.best.average)">
-              {{ option.best.average }}%
-            </span>
-            <span class="alt-worst">
-              {{ t("ladderWorstCase") }} {{ option.best.worst }}%
-            </span>
-          </div>
+          <span
+            class="strategy-pill"
+            :class="'tone-' + getPercentClass(option.best.average)"
+          >
+            {{ option.best.average }}%
+          </span>
         </div>
-      </div>
-
-      <p class="strategy-hint">{{ t("ladderStrategyDesc") }}</p>
-    </div>
-
-    <div class="dynamic-bars-container">
-      <div
-        class="team-bar"
-        :style="{
-          width: ladderWinrate.player + '%',
-          backgroundColor: player.color,
-        }"
-      >
-        {{ t("teamYou") }}: {{ ladderWinrate.player }}%
-      </div>
-      <div
-        class="team-bar"
-        :style="{
-          width: ladderWinrate.opponent + '%',
-          backgroundColor: opponent.color,
-        }"
-      >
-        {{ t("teamOpponent") }}: {{ ladderWinrate.opponent }}%
-      </div>
+      </section>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 
-// Блок "Predictive Analytics Engine" для ladder: загальні шанси команд
-// і стратегія — яким героєм грати та на якій мапі.
 const { t, player, opponent, ladderStrategy, ladderWinrate, getPercentClass } =
   useDraftState();
+
+const showInfo = ref(false);
 
 const recommended = computed(() => ladderStrategy.value.recommended);
 const alternatives = computed(() => ladderStrategy.value.options.slice(1));
@@ -175,114 +161,170 @@ function formatDelta(delta) {
   margin-bottom: 16px;
 }
 
-.strategy-desc {
-  margin-bottom: 12px;
+.engine-outer-mb {
+  margin-bottom: 4px;
 }
 
-.strategy-box {
+.engine-inner-mb {
+  margin-bottom: 8px;
+}
+
+.strategy-section {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(var(--bg-dark-rgb), 0.6);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.strategy-section.is-recommended {
+  border-color: rgba(var(--color-proceed-rgb), 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(var(--color-proceed-rgb), 0.08),
+    rgba(var(--bg-dark-rgb), 0.6)
+  );
+}
+
+.strategy-label {
+  margin-bottom: 10px;
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.is-recommended .strategy-label {
+  color: var(--color-proceed);
+}
+
+.strategy-pick {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 12px;
 }
 
-.strategy-kicker {
-  color: var(--text-dim);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.strategy-pick-img {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid var(--color-player);
 }
 
-.rec-text {
+.strategy-pick-text {
+  margin: 0;
+  color: var(--text-main);
   font-size: 14px;
 }
 
-.strategy-numbers {
+.strategy-stats {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  margin-top: 12px;
 }
 
-.strategy-number {
-  flex: 1 1 140px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(var(--bg-slate-rgb), 0.8);
-  border: 1px solid var(--border-medium);
-  border-radius: 10px;
-}
-
-.strategy-number-label {
-  color: var(--text-dim);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.strategy-number-value {
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.strategy-versus {
+.strategy-stat {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stat-color);
+  background: rgba(var(--bg-dark-rgb), 0.55);
 }
 
-.strategy-versus-row {
+.strategy-stat-label {
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.strategy-stat-value {
+  color: var(--stat-color);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.strategy-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
-  padding: 5px 0;
-  font-size: 12.5px;
+  padding: 6px 0;
 }
 
-.strategy-versus-row:not(:last-child) {
-  border-bottom: 1px solid rgba(var(--color-player-rgb), 0.15);
+.strategy-row:not(:last-of-type) {
+  border-bottom: 1px solid var(--border-light);
 }
 
-.strategy-versus-name {
+.strategy-row img {
   flex: 0 0 auto;
-  color: var(--text-light);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.strategy-row-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.strategy-row-name {
+  color: var(--text-white);
+  font-size: 13px;
   font-weight: 700;
 }
 
-.strategy-versus-detail {
-  flex: 1 1 auto;
-  min-width: 0;
+.strategy-row-detail {
   color: var(--text-dim);
   font-size: 11.5px;
 }
 
-.strategy-versus-chance {
+.strategy-pill {
   flex: 0 0 auto;
+  min-width: 52px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 13px;
   font-weight: 800;
+  color: var(--stat-color);
+  background: rgba(var(--bg-dark-rgb), 0.7);
+  border: 1px solid var(--stat-color);
 }
 
 .strategy-maps {
   display: flex;
   align-items: center;
-  gap: 6px;
   flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
 }
 
 .strategy-maps-label {
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .map-chip {
   padding: 3px 10px;
+  border-radius: 999px;
   background: rgba(var(--bg-slate-rgb), 0.8);
   border: 1px solid var(--border-medium);
-  border-radius: 999px;
   color: var(--text-light);
   font-size: 12px;
   font-weight: 600;
@@ -291,83 +333,22 @@ function formatDelta(delta) {
 .map-chip b {
   margin-left: 4px;
   font-weight: 800;
-}
-
-.strategy-alts {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.alt-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  background: rgba(var(--bg-slate-rgb), 0.6);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-}
-
-.alt-row img {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.alt-info {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.alt-name {
-  color: var(--text-light);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.alt-detail {
-  color: var(--text-dim);
-  font-size: 11.5px;
-}
-
-.alt-numbers {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-weight: 800;
-}
-
-.alt-worst {
-  color: var(--text-dim);
-  font-size: 10.5px;
-  font-weight: 600;
-}
-
-.strategy-hint {
-  margin: 12px 0 0;
-  color: var(--text-dim);
-  font-size: 11.5px;
-  line-height: 1.4;
+  color: var(--stat-color);
 }
 
 .tone-green {
-  color: var(--color-success-light);
+  --stat-color: var(--color-success-light);
 }
 
 .tone-yellow {
-  color: var(--color-warning);
+  --stat-color: var(--color-warning);
 }
 
 .tone-orange {
-  color: var(--color-orange-light);
+  --stat-color: var(--color-orange-light);
 }
 
 .tone-red {
-  color: var(--color-danger);
+  --stat-color: var(--color-danger);
 }
 </style>

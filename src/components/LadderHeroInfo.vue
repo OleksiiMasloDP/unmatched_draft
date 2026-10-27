@@ -53,20 +53,15 @@ import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import MatchupList from "./MatchupList.vue";
 
-// Статистика героя проти всього пулу формату + розгортний список матчапів.
-// Один і той самий блок показуємо в пулі та в колонках "Choosen heroes".
 const props = defineProps({
   char: {
     type: Object,
     required: true,
   },
-  // Унікальний ключ списку ("pool:12", "player:12"...): у кожної кнопки
-  // свій незалежний стан
   expandKey: {
     type: String,
     required: true,
   },
-  // Герої, яких виділяємо в списку (вже обрані іншою стороною)
   highlightIds: {
     type: Array,
     default: () => [],
@@ -91,7 +86,6 @@ const isOpen = computed(() =>
   ladderExpandedKeys.value.includes(props.expandKey),
 );
 
-// Виділені (вже обрані суперником) зверху, далі найгірші матчапи
 const targets = computed(() =>
   formatPool.value
     .filter((enemy) => enemy.id !== props.char.id)
@@ -139,7 +133,6 @@ function worstTone(winrate) {
   font-weight: 800;
 }
 
-/* Той самий вигляд, що й заголовок блоку "Filter by heroes" на сторінці мап */
 .ladder-toggle {
   width: 100%;
   margin-top: 8px;

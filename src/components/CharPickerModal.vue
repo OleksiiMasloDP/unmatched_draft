@@ -21,7 +21,6 @@
         >
           <img :src="char.image" :alt="char.name" loading="lazy" />
 
-          <!-- Если передан refWinrate (для страницы матчапов) -->
           <span
             v-if="char.refWinrate !== undefined"
             class="stat-badge"

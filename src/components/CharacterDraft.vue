@@ -14,7 +14,7 @@
           class="info-trigger-btn"
           @click="showInfoPopover = !showInfoPopover"
         >
-          [ℹ] {{ t("infoLabel") }}
+          {{ t("infoLabel") }}
         </button>
       </div>
 
@@ -131,7 +131,7 @@
           class="info-trigger-btn"
           @click="showInfoPopover = !showInfoPopover"
         >
-          [ℹ] {{ t("infoLabel") }}
+          {{ t("infoLabel") }}
         </button>
       </div>
 
