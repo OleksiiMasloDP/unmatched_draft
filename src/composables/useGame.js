@@ -1,17 +1,15 @@
-import { reactive } from "vue";
-import { tRexPaddock } from "../gameMaps.js";
+import { reactive, computed } from "vue";
+import { gameMaps, getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { cardEffects } from "../gameEffects.js";
+import { useOnline } from "./useOnline.js";
 
 const HAND_LIMIT = 7;
 const START_HAND = 5;
 const ACTIONS_PER_TURN = 2;
 const EXHAUSTION_DAMAGE = 2;
 
-const map = tRexPaddock;
-const spaceById = new Map(map.spaces.map((space) => [space.id, space]));
-
-function computeDistances() {
+function computeDistances(map, spaceById) {
   const result = new Map();
   for (const start of map.spaces) {
     const distances = new Map([[start.id, 0]]);
@@ -30,24 +28,45 @@ function computeDistances() {
   return result;
 }
 
-const distances = computeDistances();
+const mapCache = new Map();
 
-export const gameMap = map;
+function mapData(id) {
+  const map = getMap(id);
+  if (!mapCache.has(map.id)) {
+    const spaceById = new Map(map.spaces.map((space) => [space.id, space]));
+    mapCache.set(map.id, {
+      map,
+      spaceById,
+      distances: computeDistances(map, spaceById),
+    });
+  }
+  return mapCache.get(map.id);
+}
+
+let active = mapData(gameMaps[0].id);
+
+function useMapId(id) {
+  active = mapData(id);
+}
 
 const game = reactive({
   phase: "setup",
+  mapId: gameMaps[0].id,
   players: { p1: null, p2: null },
   turn: "p1",
   actions: 0,
   turnStart: null,
   redRoomIgnored: { p1: false, p2: false },
   viewer: "p1",
+  lobby: { p1: null, p2: null },
   prompt: null,
   log: [],
   winner: null,
 });
 
 let flow = null;
+let lobbyDecks = { p1: null, p2: null };
+const net = useOnline();
 
 const other = (player) => (player === "p1" ? "p2" : "p1");
 const pl = (player) => game.players[player];
@@ -69,7 +88,7 @@ function log(key, params = {}) {
 }
 
 function distance(a, b) {
-  return distances.get(spaceOf(a)).get(spaceOf(b));
+  return active.distances.get(spaceOf(a)).get(spaceOf(b));
 }
 
 function adjacent(a, b) {
@@ -77,12 +96,14 @@ function adjacent(a, b) {
 }
 
 function shared(a, b) {
-  const zonesB = spaceById.get(spaceOf(b)).zones;
-  return spaceById.get(spaceOf(a)).zones.some((zone) => zonesB.includes(zone));
+  const zonesB = active.spaceById.get(spaceOf(b)).zones;
+  return active.spaceById
+    .get(spaceOf(a))
+    .zones.some((zone) => zonesB.includes(zone));
 }
 
 function zoneCount(player) {
-  return spaceById.get(spaceOf(player)).zones.length;
+  return active.spaceById.get(spaceOf(player)).zones.length;
 }
 
 function reach(player, steps) {
@@ -93,7 +114,7 @@ function reach(player, steps) {
   while (queue.length) {
     const current = queue.shift();
     if (seen.get(current) >= steps) continue;
-    for (const next of spaceById.get(current).links) {
+    for (const next of active.spaceById.get(current).links) {
       if (next === blocked || seen.has(next)) continue;
       seen.set(next, seen.get(current) + 1);
       queue.push(next);
@@ -103,9 +124,9 @@ function reach(player, steps) {
 }
 
 function zoneSpaces(player) {
-  const zones = spaceById.get(spaceOf(player)).zones;
+  const zones = active.spaceById.get(spaceOf(player)).zones;
   const blocked = spaceOf(other(player));
-  return map.spaces
+  return active.map.spaces
     .filter(
       (space) =>
         space.id !== blocked &&
@@ -215,6 +236,7 @@ const askSpace = (player, title, options) => ({
   player,
   title,
   options,
+  boostOptions: [],
 });
 const askCards = (player, title, options, { min = 1, max = 1, skip } = {}) => ({
   kind: "cards",
@@ -322,23 +344,20 @@ function* maneuver(me) {
   if (game.phase !== "play") return true;
 
   let steps = hero(me).move;
-  const target = pl(me);
-  if (target.hand.length) {
-    const ids = yield askCards(me, "promptBoostMove", [...target.hand], {
-      min: 0,
-      max: 1,
-      skip: "gameSkipBoost",
-    });
-    if (ids.length) {
-      const card = discardFromHand(me, ids[0]);
-      steps += card.boost;
+  let boosted = false;
+  for (;;) {
+    const options = reach(me, steps);
+    if (!options.length) break;
+    const prompt = askSpace(me, "promptMoveSpace", options);
+    prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
+    const answer = yield prompt;
+    if (answer && typeof answer === "object") {
+      steps += discardFromHand(me, answer.boost).boost;
+      boosted = true;
+      continue;
     }
-  }
-
-  const options = reach(me, steps);
-  if (options.length) {
-    const space = yield askSpace(me, "promptMoveSpace", options);
-    if (space) place(me, space);
+    if (answer) place(me, answer);
+    break;
   }
   return true;
 }
@@ -527,13 +546,14 @@ function startGame(deckA, deckB) {
       deckName: deck.name,
       hp: data.hp,
       maxHp: data.hp,
-      space: map.starts[player],
+      space: active.map.starts[player],
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],
     };
   };
 
+  useMapId(game.mapId);
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
   game.turn = "p1";
@@ -544,42 +564,174 @@ function startGame(deckA, deckB) {
   game.phase = "play";
   log("logStart");
   run(startTurn());
+  syncOut();
 }
 
 function resetGame() {
   flow = null;
+  lobbyDecks = { p1: null, p2: null };
+  game.lobby = { p1: null, p2: null };
   game.phase = "setup";
   game.players = { p1: null, p2: null };
   game.prompt = null;
   game.winner = null;
   game.log = [];
+  syncOut();
+}
+
+function viewFor(seat) {
+  const foe = other(seat);
+  const copy = JSON.parse(JSON.stringify(game));
+  for (const player of ["p1", "p2"]) {
+    if (copy.players[player]) {
+      copy.players[player].deck = copy.players[player].deck.map(() => "?");
+    }
+  }
+  if (copy.players[foe]) {
+    copy.players[foe].hand = copy.players[foe].hand.map(() => "?");
+  }
+  if (copy.prompt && copy.prompt.player === foe) {
+    copy.prompt = {
+      kind: copy.prompt.kind,
+      player: foe,
+      title: copy.prompt.title,
+      skip: copy.prompt.skip,
+      options: [],
+      boostOptions: [],
+      choices: [],
+      min: 0,
+      max: 0,
+    };
+  }
+  return copy;
+}
+
+function syncOut() {
+  if (net.isHost.value) net.send("game:view", viewFor("p2"));
+}
+
+function validAnswer(prompt, answer) {
+  if (prompt.kind === "space") {
+    if (answer && typeof answer === "object") {
+      return prompt.boostOptions.includes(answer.boost);
+    }
+    return answer === null || prompt.options.includes(answer);
+  }
+  if (prompt.kind === "cards") {
+    return (
+      Array.isArray(answer) &&
+      answer.length >= prompt.min &&
+      answer.length <= prompt.max &&
+      new Set(answer).size === answer.length &&
+      answer.every((id) => prompt.options.includes(id))
+    );
+  }
+  if (prompt.kind === "confirm") return typeof answer === "boolean";
+  if (prompt.kind === "choice") {
+    return prompt.choices.some((choice) => choice.value === answer);
+  }
+  return true;
+}
+
+function seatFor() {
+  return net.isHost.value ? "p1" : null;
+}
+
+function blocked() {
+  return net.online.value && net.mySeat.value !== game.turn;
+}
+
+function applyAnswer(answer, seat) {
+  const prompt = game.prompt;
+  if (!prompt || game.phase !== "play") return;
+  if (prompt.player && seat && seat !== prompt.player) return;
+  if (!validAnswer(prompt, answer)) return;
+  advance(answer);
+  syncOut();
+}
+
+function applyAction(type, seat) {
+  if (game.phase !== "play" || (seat && seat !== game.turn)) return;
+  if (type === "maneuver" && canAct()) run(maneuver(game.turn));
+  else if (type === "scheme" && canAct()) run(scheme(game.turn));
+  else if (type === "attack" && canAct() && inRange(game.turn)) {
+    run(attack(game.turn));
+  }
+  syncOut();
+}
+
+function send(command) {
+  net.send("game:cmd", command);
 }
 
 function answerPrompt(answer) {
-  if (!game.prompt || game.phase !== "play") return;
-  advance(answer);
+  if (net.isGuest.value) {
+    send({ type: "answer", answer: answer === undefined ? null : answer });
+    return;
+  }
+  applyAnswer(answer, seatFor());
 }
 
-function doManeuver() {
-  if (canAct()) run(maneuver(game.turn));
+function doAction(type) {
+  if (net.isGuest.value) send({ type });
+  else applyAction(type, seatFor());
 }
 
-function doScheme() {
-  if (canAct()) run(scheme(game.turn));
+const doManeuver = () => doAction("maneuver");
+const doScheme = () => doAction("scheme");
+const doAttack = () => doAction("attack");
+
+function validDeck(deck) {
+  return (
+    deck &&
+    typeof deck.name === "string" &&
+    getHero(deck.heroId) &&
+    Array.isArray(deck.cardIds) &&
+    deck.cardIds.length >= START_HAND &&
+    deck.cardIds.length <= 100 &&
+    deck.cardIds.every((id) => typeof id === "string" && getCard(id))
+  );
 }
 
-function doAttack() {
-  if (canAct() && inRange(game.turn)) run(attack(game.turn));
+function setLobbyDeck(player, deck) {
+  if (game.phase !== "setup" || !validDeck(deck)) return;
+  lobbyDecks[player] = {
+    name: deck.name,
+    heroId: deck.heroId,
+    cardIds: [...deck.cardIds],
+  };
+  game.lobby[player] = { name: deck.name, heroId: deck.heroId };
+  syncOut();
 }
 
-function doEndTurn() {
-  if (game.phase === "play" && !game.prompt && !flow) run(endTurn());
+function chooseDeck(deck) {
+  if (net.isGuest.value) {
+    send({
+      type: "deck",
+      deck: { name: deck.name, heroId: deck.heroId, cardIds: deck.cardIds },
+    });
+    return;
+  }
+  setLobbyDeck("p1", deck);
+}
+
+function setMap(id) {
+  if (game.phase !== "setup" || net.isGuest.value) return;
+  if (!gameMaps.some((item) => item.id === id)) return;
+  game.mapId = id;
+  useMapId(id);
+  syncOut();
+}
+
+function startOnlineGame() {
+  if (!net.isHost.value || game.phase !== "setup") return;
+  if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
+  startGame(lobbyDecks.p1, lobbyDecks.p2);
 }
 
 function availableActions() {
-  if (game.phase !== "play") {
-    return { maneuver: false, scheme: false, attack: false, end: false };
-  }
+  const none = { maneuver: false, scheme: false, attack: false };
+  if (game.phase !== "play" || blocked()) return none;
   const me = game.turn;
   const idle = !game.prompt && !flow;
   const hand = pl(me).hand.map(getCard);
@@ -591,21 +743,49 @@ function availableActions() {
       game.actions > 0 &&
       inRange(me) &&
       hand.some((card) => !isScheme(card)),
-    end: idle,
   };
 }
+
+net.on("game:view", (view) => {
+  if (!net.isGuest.value) return;
+  Object.assign(game, view);
+  useMapId(view.mapId);
+});
+
+net.on("game:cmd", (message) => {
+  if (!net.isHost.value || !message) return;
+  if (message.type === "answer") applyAnswer(message.answer, "p2");
+  else if (message.type === "deck") setLobbyDeck("p2", message.deck);
+  else applyAction(message.type, "p2");
+});
+
+net.on("game:sync", () => syncOut());
+
+net.onEvent("connected", ({ role }) => {
+  if (role === "host") resetGame();
+  else net.send("game:sync");
+});
+
+net.onEvent("closed", ({ role }) => {
+  if (role === "guest") resetGame();
+});
+
+if (net.isGuest.value) net.send("game:sync");
 
 export function useGame() {
   return {
     game,
-    map,
+    map: computed(() => getMap(game.mapId)),
+    maps: gameMaps,
+    setMap,
     startGame,
+    startOnlineGame,
+    chooseDeck,
     resetGame,
     answerPrompt,
     doManeuver,
     doScheme,
     doAttack,
-    doEndTurn,
     availableActions,
     heroOf: (player) => (pl(player) ? hero(player) : null),
     other,

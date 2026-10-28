@@ -1,61 +1,128 @@
 <template>
   <div class="game-page container">
-    <div class="game-title-row">
-      <h1 class="page-main-title">{{ t("gameTitle") }}</h1>
-      <span class="game-beta">{{ t("packBeta") }}</span>
-    </div>
+    <template v-if="game.phase === 'setup'">
+      <div class="game-title-row">
+        <h1 class="page-main-title">{{ t("gameTitle") }}</h1>
+        <span class="game-beta">{{ t("packBeta") }}</span>
+      </div>
 
-    <div class="game-note">{{ t("gameTestNote") }}</div>
+      <div class="game-note">{{ t("gameTestNote") }}</div>
+    </template>
+
+    <OnlinePanel
+      v-if="game.phase === 'setup' || netState.status === 'closed'"
+    />
 
     <template v-if="game.phase === 'setup'">
       <div class="game-setup">
-        <div class="game-setup-map">
-          {{ t("gameMapLabel") }}: {{ map.name }}
-        </div>
-
-        <div v-for="player in players" :key="player" class="game-setup-row">
-          <label :for="'deck-' + player">
-            {{ playerLabel(player) }}
-          </label>
-          <div class="custom-select-wrapper">
-            <select :id="'deck-' + player" v-model="selected[player]">
-              <option v-for="deck in allDecks" :key="deck.id" :value="deck.id">
-                {{ deckTitle(deck) }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn btn-success btn-sm action-btn" @click="onStart">
-          {{ t("gameStart") }}
-        </button>
-      </div>
-
-      <h2 class="game-subtitle">{{ t("gameDecksTitle") }}</h2>
-      <p v-if="!savedDecks.length" class="game-empty">
-        {{ t("gameNoSaved") }}
-        <router-link :to="{ name: 'pack-draft' }">
-          {{ t("packDraftTitle") }}
-        </router-link>
-      </p>
-      <div v-else class="deck-list">
-        <div v-for="deck in savedDecks" :key="deck.id" class="deck-card">
-          <div class="deck-info">
-            <div class="deck-name">{{ deck.name }}</div>
-            <div class="deck-meta">{{ deckMeta(deck) }}</div>
-          </div>
+        <h2 class="game-subtitle">{{ t("gameMapLabel") }}</h2>
+        <div class="map-tiles">
           <button
-            class="btn btn-danger btn-sm action-btn"
-            :class="{ 'is-confirming': pendingDeleteId === deck.id }"
-            @click="onDelete(deck.id)"
+            v-for="item in maps"
+            :key="item.id"
+            type="button"
+            class="map-tile"
+            :class="{ 'is-selected': game.mapId === item.id }"
+            :disabled="isGuest"
+            @click="setMap(item.id)"
           >
-            {{
-              pendingDeleteId === deck.id
-                ? t("formatsDeleteConfirm")
-                : t("formatsDelete")
-            }}
+            <img :src="item.image" :alt="item.name" />
+            <span>{{ item.name }}</span>
           </button>
         </div>
+
+        <div
+          v-for="player in setupPlayers"
+          :key="player"
+          class="game-setup-row"
+        >
+          <h2 class="game-subtitle">
+            {{ playerLabel(player) }} · {{ t("gameDeckLabel") }}
+          </h2>
+          <div class="deck-tiles">
+            <div
+              v-for="deck in allDecks"
+              :key="deck.id"
+              class="deck-tile"
+              :class="{ 'is-selected': selected[player] === deck.id }"
+              role="button"
+              tabindex="0"
+              :data-deck="deck.id"
+              @click="selected[player] = deck.id"
+              @keyup.enter="selected[player] = deck.id"
+            >
+              <img
+                v-if="getHero(deck.heroId).image"
+                :src="getHero(deck.heroId).image"
+                :alt="getHero(deck.heroId).name"
+              />
+              <div class="deck-tile-info">
+                <div class="deck-name">
+                  {{ deck.name }}
+                  <span v-if="deck.isTest" class="deck-test">
+                    {{ t("gameTestDeck") }}
+                  </span>
+                </div>
+                <div class="deck-meta">{{ deckMeta(deck) }}</div>
+              </div>
+              <button
+                v-if="!deck.isTest"
+                type="button"
+                class="btn btn-danger btn-sm deck-delete"
+                :class="{ 'is-confirming': pendingDeleteId === deck.id }"
+                @click.stop="onDelete(deck.id)"
+              >
+                {{
+                  pendingDeleteId === deck.id ? t("formatsDeleteConfirm") : "×"
+                }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p v-if="!savedDecks.length" class="game-empty">
+          {{ t("gameNoSaved") }}
+          <router-link :to="{ name: 'pack-draft' }">
+            {{ t("packDraftTitle") }}
+          </router-link>
+        </p>
+
+        <template v-if="online">
+          <button
+            class="btn btn-primary btn-sm action-btn"
+            @click="onChooseDeck"
+          >
+            {{
+              game.lobby[mySeat]
+                ? t("onlineChangeDeck")
+                : t("onlineConfirmDeck")
+            }}
+          </button>
+          <div v-for="player in players" :key="player" class="game-lobby-line">
+            {{ playerLabel(player) }}:
+            {{
+              game.lobby[player]
+                ? `${t("onlineDeckReady")} · ${game.lobby[player].name} (${getHero(game.lobby[player].heroId).name})`
+                : t("onlineNotReady")
+            }}
+          </div>
+          <button
+            v-if="isHost"
+            class="btn btn-success btn-sm action-btn"
+            :disabled="!game.lobby.p1 || !game.lobby.p2"
+            @click="startOnlineGame"
+          >
+            {{ t("gameStart") }}
+          </button>
+          <p v-else class="game-prompt-line">{{ t("onlineWaitHost") }}</p>
+        </template>
+        <button
+          v-else
+          class="btn btn-success btn-sm action-btn game-start"
+          @click="onStart"
+        >
+          {{ t("gameStart") }}
+        </button>
       </div>
     </template>
 
@@ -73,8 +140,19 @@
         </template>
       </div>
 
+      <p v-if="waitingOpponent" class="game-prompt-line">
+        {{ t("onlineWaitMove") }}
+      </p>
+
       <p v-if="spacePrompt" class="game-prompt-line">
         {{ promptTitle(spacePrompt) }}
+        <button
+          v-if="spacePrompt.boostOptions && spacePrompt.boostOptions.length"
+          class="btn btn-sm btn-warning game-boost"
+          @click="boostOpen = true"
+        >
+          {{ t("gameBoost") }}
+        </button>
         <button class="btn btn-sm game-skip" @click="answerPrompt(null)">
           {{ t("gameSkip") }}
         </button>
@@ -91,14 +169,14 @@
 
           <div class="game-actions">
             <button
-              class="btn btn-primary btn-sm action-btn"
+              class="btn btn-success btn-sm action-btn"
               :disabled="!available.maneuver"
               @click="doManeuver"
             >
               {{ t("gameManeuver") }}
             </button>
             <button
-              class="btn btn-primary btn-sm action-btn"
+              class="btn btn-warning btn-sm action-btn"
               :disabled="!available.scheme"
               @click="doScheme"
             >
@@ -110,13 +188,6 @@
               @click="doAttack"
             >
               {{ t("gameAttack") }}
-            </button>
-            <button
-              class="btn btn-success btn-sm action-btn"
-              :disabled="!available.end"
-              @click="doEndTurn"
-            >
-              {{ t("gameEndTurn") }}
             </button>
           </div>
         </div>
@@ -197,9 +268,40 @@
       </div>
 
       <div class="game-actions">
-        <button class="btn btn-danger btn-sm action-btn" @click="onNewGame">
+        <button
+          v-if="!isGuest"
+          class="btn btn-danger btn-sm action-btn"
+          @click="onNewGame"
+        >
           {{ t("gameNewGame") }}
         </button>
+        <button
+          v-if="netState.role"
+          class="btn btn-sm action-btn game-leave"
+          @click="leaveRoom"
+        >
+          {{ t("onlineLeave") }}
+        </button>
+      </div>
+
+      <div v-if="boostOpen && spacePrompt && !needsPass" class="game-modal">
+        <div class="game-modal-box">
+          <h3 class="game-modal-title">{{ promptTitle(boostPrompt) }}</h3>
+          <div class="row g-2">
+            <div
+              v-for="card in boostCards"
+              :key="card.id"
+              class="col-6 col-md-4"
+            >
+              <PackCard :card="card" clickable @select="onBoost" />
+            </div>
+          </div>
+          <div class="game-modal-actions">
+            <button class="btn btn-sm action-btn" @click="boostOpen = false">
+              {{ t("gameCancel") }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-if="blockingPrompt && !needsPass" class="game-modal">
@@ -335,22 +437,36 @@ import { useSavedDecks } from "../../composables/useSavedDecks";
 import { getCard, getHero, testDecks } from "../../gameDecks";
 import GameBoard from "../GameBoard.vue";
 import PackCard from "../PackCard.vue";
+import OnlinePanel from "../OnlinePanel.vue";
+import { useOnline } from "../../composables/useOnline";
 
 const { t, lang } = useDraftState();
 const {
   game,
   map,
+  maps,
+  setMap,
   startGame,
+  startOnlineGame,
+  chooseDeck,
   resetGame,
   answerPrompt,
   doManeuver,
   doScheme,
   doAttack,
-  doEndTurn,
   availableActions,
   heroOf,
 } = useGame();
 const { savedDecks, deleteDeck } = useSavedDecks();
+const {
+  net: netState,
+  online,
+  mySeat,
+  isHost,
+  isGuest,
+  leave: leaveRoom,
+} = useOnline();
+const boostOpen = ref(false);
 
 const players = ["p1", "p2"];
 const allDecks = computed(() => [...testDecks, ...savedDecks.value]);
@@ -367,34 +483,46 @@ const playerLabel = (player) =>
 const replacePlayer = (key, player) =>
   t(key).replace("{player}", playerLabel(player));
 
-const deckTitle = (deck) =>
-  `${deck.isTest ? t("gameTestDeck") + " · " : ""}${deck.name} (${getHero(deck.heroId).name})`;
-
 const deckMeta = (deck) =>
   t("gameDeckMeta")
     .replace("{hero}", getHero(deck.heroId).name)
     .replace("{n}", deck.cardIds.length);
 
+const setupPlayers = computed(() => (online.value ? [mySeat.value] : players));
+
+const mine = (prompt) =>
+  !online.value || prompt.player === null || prompt.player === mySeat.value;
+
 const spacePrompt = computed(() =>
-  game.prompt?.kind === "space" ? game.prompt : null,
+  game.prompt?.kind === "space" && mine(game.prompt) ? game.prompt : null,
 );
 
 const blockingPrompt = computed(() =>
-  game.prompt && game.prompt.kind !== "space" ? game.prompt : null,
+  game.prompt && game.prompt.kind !== "space" && mine(game.prompt)
+    ? game.prompt
+    : null,
 );
+
+const waitingOpponent = computed(() => {
+  if (!online.value || game.phase !== "play") return false;
+  const owner = game.prompt ? game.prompt.player : game.turn;
+  return owner !== null && owner !== mySeat.value;
+});
 
 const passTarget = computed(() => game.prompt?.player ?? game.turn);
 
 const needsPass = computed(() => {
-  if (game.phase !== "play") return false;
+  if (online.value || game.phase !== "play") return false;
   const owner = game.prompt ? game.prompt.player : game.turn;
   return owner !== null && owner !== game.viewer;
 });
 
-const viewer = computed(() => game.viewer);
+const viewer = computed(() => (online.value ? mySeat.value : game.viewer));
 
 const handCards = computed(() =>
-  game.players[game.viewer] ? game.players[game.viewer].hand.map(getCard) : [],
+  game.players[viewer.value]
+    ? game.players[viewer.value].hand.map(getCard).filter(Boolean)
+    : [],
 );
 
 const promptCards = computed(() =>
@@ -409,12 +537,26 @@ watch(
   () => game.prompt,
   () => {
     selection.value = [];
+    boostOpen.value = false;
   },
 );
 
 function promptTitle(prompt) {
   const title = t(prompt.title);
   return prompt.player ? `${playerLabel(prompt.player)}: ${title}` : title;
+}
+
+const boostPrompt = { title: "promptBoostMove", player: null };
+
+const boostCards = computed(() =>
+  spacePrompt.value?.boostOptions
+    ? spacePrompt.value.boostOptions.map(getCard).filter(Boolean)
+    : [],
+);
+
+function onBoost(cardId) {
+  boostOpen.value = false;
+  answerPrompt({ boost: cardId });
 }
 
 function toggleSelection(cardId) {
@@ -455,6 +597,13 @@ function formatLog(entry) {
 function onStart() {
   const find = (id) => allDecks.value.find((deck) => deck.id === id);
   startGame(find(selected.value.p1), find(selected.value.p2));
+}
+
+function onChooseDeck() {
+  const deck = allDecks.value.find(
+    (item) => item.id === selected.value[mySeat.value],
+  );
+  if (deck) chooseDeck(deck);
 }
 
 function onNewGame() {
@@ -616,6 +765,95 @@ function onDelete(id) {
 
 .game-banner.is-done {
   background: var(--color-proceed);
+}
+
+.map-tiles,
+.deck-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.map-tile {
+  width: 180px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 2px solid var(--border-light);
+  background: rgba(var(--bg-slate-rgb), 0.8);
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.map-tile img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.map-tile.is-selected,
+.deck-tile.is-selected {
+  border-color: var(--color-proceed);
+  background: rgba(var(--color-proceed-rgb), 0.12);
+}
+
+.map-tile:disabled {
+  cursor: default;
+}
+
+.deck-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 260px;
+  padding: 8px 40px 8px 8px;
+  border-radius: 10px;
+  border: 2px solid var(--border-light);
+  background: rgba(var(--bg-slate-rgb), 0.8);
+  cursor: pointer;
+}
+
+.deck-tile img {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.deck-tile-info {
+  min-width: 0;
+}
+
+.deck-test {
+  margin-left: 4px;
+  color: var(--color-info);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.deck-delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 0 8px;
+  line-height: 1.4;
+}
+
+.game-start {
+  margin-top: 16px;
+}
+
+.game-lobby-line {
+  color: var(--text-muted);
+  font-size: 13px;
 }
 
 .game-prompt-line {

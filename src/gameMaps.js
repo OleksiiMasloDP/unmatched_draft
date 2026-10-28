@@ -68,30 +68,212 @@ const LINKS = [
   ["B6", "B5"],
 ];
 
-function build() {
-  const spaces = SPACES.map(([id, x, y, zones]) => ({
-    id,
+export function makeMap({
+  id,
+  name,
+  image,
+  width,
+  height,
+  radius,
+  spaces,
+  links,
+  starts,
+}) {
+  const list = spaces.map(([spaceId, x, y, zones]) => ({
+    id: spaceId,
     x,
     y,
     zones,
     links: [],
   }));
-  const byId = new Map(spaces.map((space) => [space.id, space]));
-  for (const [a, b] of LINKS) {
+  const byId = new Map(list.map((space) => [space.id, space]));
+  for (const [a, b] of links) {
     byId.get(a).links.push(b);
     byId.get(b).links.push(a);
   }
-
-  return {
-    id: "t-rex-paddock",
-    name: "T. Rex Paddock",
-    image: "maps/trex_paddock.webp",
-    width: 1337,
-    height: 742,
-    radius: 64,
-    spaces,
-    starts: { p1: "L1", p2: "B3" },
-  };
+  return { id, name, image, width, height, radius, spaces: list, starts };
 }
 
-export const tRexPaddock = build();
+export const tRexPaddock = makeMap({
+  id: "t-rex-paddock",
+  name: "T. Rex Paddock",
+  image: "maps/trex_paddock.webp",
+  width: 1337,
+  height: 742,
+  radius: 64,
+  spaces: SPACES,
+  links: LINKS,
+  starts: { p1: "L1", p2: "B3" },
+});
+
+const SHERWOOD_SPACES = [
+  ["S1", 445, 80, ["red"]],
+  ["S2", 595, 78, ["red", "stone"]],
+  ["S3", 750, 78, ["red", "dark"]],
+  ["S4", 902, 80, ["red", "dark"]],
+  ["S5", 1068, 78, ["red", "cream", "dark"]],
+  ["S6", 1001, 206, ["dark"]],
+  ["S7", 1162, 204, ["dark", "cream"]],
+  ["S8", 1231, 340, ["dark", "cream"]],
+  ["S9", 1212, 492, ["yellow", "cream"]],
+  ["S10", 1142, 640, ["yellow", "cream"]],
+  ["S11", 653, 205, ["stone"]],
+  ["S12", 770, 290, ["stone"]],
+  ["S13", 905, 347, ["stone"]],
+  ["S14", 780, 445, ["stone", "wood", "yellow"]],
+  ["S15", 917, 487, ["stone", "wood", "yellow"]],
+  ["S16", 1062, 513, ["yellow"]],
+  ["S17", 292, 148, ["lawn", "red"]],
+  ["S18", 222, 270, ["lawn", "wood"]],
+  ["S19", 350, 345, ["wood"]],
+  ["S20", 490, 390, ["wood"]],
+  ["S21", 637, 410, ["wood", "yellow"]],
+  ["S22", 112, 375, ["lawn"]],
+  ["S23", 105, 515, ["lawn"]],
+  ["S24", 215, 613, ["lawn"]],
+  ["S25", 362, 642, ["lawn", "yellow"]],
+  ["S26", 510, 667, ["yellow"]],
+  ["S27", 672, 668, ["yellow"]],
+  ["S28", 827, 665, ["yellow"]],
+  ["S29", 980, 655, ["yellow"]],
+  ["S30", 598, 543, ["yellow"]],
+];
+
+const SHERWOOD_LINKS = [
+  ["S17", "S1"],
+  ["S1", "S2"],
+  ["S2", "S3"],
+  ["S3", "S4"],
+  ["S4", "S5"],
+  ["S4", "S6"],
+  ["S5", "S6"],
+  ["S5", "S7"],
+  ["S6", "S7"],
+  ["S7", "S8"],
+  ["S8", "S9"],
+  ["S9", "S10"],
+  ["S9", "S16"],
+  ["S16", "S10"],
+  ["S16", "S15"],
+  ["S16", "S29"],
+  ["S10", "S29"],
+  ["S29", "S28"],
+  ["S28", "S27"],
+  ["S27", "S26"],
+  ["S26", "S25"],
+  ["S25", "S24"],
+  ["S24", "S23"],
+  ["S23", "S22"],
+  ["S22", "S18"],
+  ["S18", "S17"],
+  ["S18", "S19"],
+  ["S19", "S20"],
+  ["S20", "S21"],
+  ["S21", "S14"],
+  ["S21", "S30"],
+  ["S30", "S26"],
+  ["S30", "S27"],
+  ["S14", "S15"],
+  ["S14", "S12"],
+  ["S15", "S13"],
+  ["S12", "S13"],
+  ["S12", "S11"],
+  ["S11", "S2"],
+];
+
+export const sherwoodForest = makeMap({
+  id: "sherwood-forest",
+  name: "Sherwood Forest",
+  image: "maps/sherwood_forest.webp",
+  width: 1337,
+  height: 742,
+  radius: 64,
+  spaces: SHERWOOD_SPACES,
+  links: SHERWOOD_LINKS,
+  starts: { p1: "S11", p2: "S18" },
+});
+
+const SOHO_SPACES = [
+  ["H1", 97, 82, ["blue"]],
+  ["H2", 250, 82, ["blue"]],
+  ["H3", 403, 82, ["blue"]],
+  ["H4", 565, 78, ["blue", "navy"]],
+  ["H5", 745, 75, ["navy"]],
+  ["H6", 902, 70, ["navy"]],
+  ["H7", 1085, 70, ["navy", "pink"]],
+  ["H8", 1258, 75, ["navy", "pink"]],
+  ["H9", 83, 330, ["grey"]],
+  ["H10", 295, 300, ["blue", "grey"]],
+  ["H11", 495, 298, ["blue", "grey"]],
+  ["H12", 658, 335, ["grey"]],
+  ["H13", 832, 298, ["navy", "grey"]],
+  ["H14", 1003, 368, ["navy", "grey", "pink"]],
+  ["H15", 1200, 322, ["pink"]],
+  ["H16", 1260, 455, ["pink"]],
+  ["H17", 833, 438, ["navy", "yellow"]],
+  ["H18", 1095, 485, ["pink", "yellow"]],
+  ["H19", 1257, 603, ["pink"]],
+  ["H20", 273, 490, ["green"]],
+  ["H21", 446, 462, ["green"]],
+  ["H22", 95, 622, ["red"]],
+  ["H23", 625, 648, ["red"]],
+  ["H24", 947, 645, ["yellow"]],
+  ["H25", 243, 745, ["green", "red"]],
+  ["H26", 468, 745, ["green", "red"]],
+  ["H27", 745, 748, ["yellow", "red"]],
+  ["H28", 1028, 765, ["yellow", "red"]],
+  ["H29", 1210, 762, ["yellow"]],
+];
+
+const SOHO_LINKS = [
+  ["H1", "H2"],
+  ["H2", "H3"],
+  ["H3", "H4"],
+  ["H4", "H5"],
+  ["H5", "H6"],
+  ["H6", "H7"],
+  ["H7", "H8"],
+  ["H1", "H9"],
+  ["H4", "H11"],
+  ["H6", "H13"],
+  ["H8", "H15"],
+  ["H9", "H10"],
+  ["H10", "H11"],
+  ["H11", "H12"],
+  ["H12", "H13"],
+  ["H13", "H14"],
+  ["H14", "H15"],
+  ["H15", "H16"],
+  ["H16", "H19"],
+  ["H9", "H22"],
+  ["H12", "H23"],
+  ["H20", "H21"],
+  ["H21", "H17"],
+  ["H17", "H18"],
+  ["H18", "H19"],
+  ["H22", "H20"],
+  ["H22", "H25"],
+  ["H25", "H26"],
+  ["H26", "H23"],
+  ["H23", "H27"],
+  ["H27", "H28"],
+  ["H28", "H29"],
+  ["H24", "H28"],
+  ["H29", "H19"],
+];
+
+export const soho = makeMap({
+  id: "soho",
+  name: "Soho",
+  image: "maps/soho.webp",
+  width: 1337,
+  height: 866,
+  radius: 62,
+  spaces: SOHO_SPACES,
+  links: SOHO_LINKS,
+  starts: { p1: "H3", p2: "H15" },
+});
+
+export const gameMaps = [tRexPaddock, sherwoodForest, soho];
+export const getMap = (id) =>
+  gameMaps.find((item) => item.id === id) || gameMaps[0];

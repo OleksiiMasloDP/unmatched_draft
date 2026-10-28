@@ -24,6 +24,21 @@
       />
     </g>
 
+    <defs>
+      <clipPath
+        v-for="player in ['p1', 'p2']"
+        :id="`token-${player}`"
+        :key="player"
+      >
+        <circle
+          v-if="players[player]"
+          :cx="byId.get(players[player].space).x"
+          :cy="byId.get(players[player].space).y"
+          r="38"
+        />
+      </clipPath>
+    </defs>
+
     <g v-for="player in ['p1', 'p2']" :key="player">
       <g v-if="players[player]" class="board-hero" :class="'is-' + player">
         <circle
@@ -39,6 +54,17 @@
         >
           {{ initials(players[player].heroId) }}
         </text>
+        <image
+          v-if="heroImage(players[player].heroId)"
+          :href="heroImage(players[player].heroId)"
+          :x="byId.get(players[player].space).x - 38"
+          :y="byId.get(players[player].space).y - 38"
+          width="76"
+          height="76"
+          preserveAspectRatio="xMidYMin slice"
+          :clip-path="`url(#token-${player})`"
+          @error="failedImages[players[player].heroId] = true"
+        />
         <g
           :transform="`translate(${byId.get(players[player].space).x + 30}, ${byId.get(players[player].space).y + 34})`"
         >
@@ -53,7 +79,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import { getHero } from "../gameDecks";
 
 const props = defineProps({
@@ -90,7 +116,10 @@ const fillFor = (space) =>
     ? `url(#zone-${space.zones.join("-")})`
     : props.map.zoneColors[space.zones[0]];
 
-const heroImage = (heroId) => getHero(heroId)?.image || null;
+const failedImages = reactive({});
+
+const heroImage = (heroId) =>
+  failedImages[heroId] ? null : getHero(heroId)?.image || null;
 
 const initials = (heroId) =>
   getHero(heroId)

@@ -1,4 +1,5 @@
-import { reactive, computed } from "vue";
+import { reactive, computed, ref } from "vue";
+import { useOnline } from "./useOnline.js";
 import {
   PACK_DRAFT_CONFIG,
   packDraftHeroes,
@@ -41,7 +42,6 @@ function createState() {
     turn: "p1",
     stage: "keep",
     discardsLeft: 0,
-    pending: null,
     kept: { p1: [], p2: [] },
     discarded: [],
     decks: { p1: [], p2: [] },
@@ -82,13 +82,39 @@ function load() {
 }
 
 const state = reactive(load());
+const pending = ref(null);
+const net = useOnline();
+
+function viewFor(seat) {
+  const reveal =
+    state.phase === "draft" && state.turn === seat ? state.holding[seat] : -1;
+  return {
+    ...JSON.parse(JSON.stringify(state)),
+    packs: state.packs.map((pack, index) =>
+      index === reveal ? [...pack] : pack.map(() => "?"),
+    ),
+    leftover:
+      state.phase === "done"
+        ? [...state.leftover]
+        : state.leftover.map(() => "?"),
+  };
+}
 
 function save() {
+  if (net.isGuest.value) return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
     return;
   }
+  if (net.isHost.value) net.send("draft:view", viewFor("p2"));
+}
+
+function actor() {
+  if (state.phase === "heroes") return state.heroes.p1 ? "p2" : "p1";
+  if (state.phase === "draft") return state.turn;
+  if (state.phase === "deck") return state.deckPlayer;
+  return null;
 }
 
 function otherPlayer(player) {
@@ -118,7 +144,7 @@ function startDeckPhase() {
 
 function advance() {
   state.stage = "keep";
-  state.pending = null;
+  pending.value = null;
   state.discardsLeft = 0;
 
   for (let guard = 0; guard < 4; guard++) {
@@ -151,12 +177,124 @@ function finishTurn() {
   advance();
 }
 
+function applyHero(heroId, seat) {
+  if (state.phase !== "heroes" || (seat && seat !== actor())) return;
+  const taken = Object.values(state.heroes);
+  if (
+    !packDraftHeroes.some(
+      (hero) => hero.id === heroId && !taken.includes(hero.id),
+    )
+  )
+    return;
+  state.heroes[actor()] = heroId;
+  if (state.heroes.p1 && state.heroes.p2) {
+    state.phase = "draft";
+    advance();
+  }
+  save();
+}
+
+function applyCard(cardId, seat) {
+  if (state.phase !== "draft" || (seat && seat !== state.turn)) return;
+  const pack = state.packs[state.holding[state.turn]];
+  const index = pack.indexOf(cardId);
+  if (index === -1) return;
+  pack.splice(index, 1);
+  pending.value = null;
+
+  if (state.stage === "keep") {
+    state.kept[state.turn].push(cardId);
+    state.discardsLeft = Math.min(
+      PACK_DRAFT_CONFIG.discardPerTurn,
+      pack.length,
+    );
+    if (state.discardsLeft > 0) {
+      state.stage = "discard";
+      save();
+      return;
+    }
+    finishTurn();
+    save();
+    return;
+  }
+
+  state.discarded.push(cardId);
+  state.discardsLeft -= 1;
+  if (state.discardsLeft <= 0) finishTurn();
+  save();
+}
+
+function applyToggle(cardId, seat) {
+  if (state.phase !== "deck" || (seat && seat !== state.deckPlayer)) return;
+  const index = state.deckSelection.indexOf(cardId);
+  if (index !== -1) {
+    state.deckSelection.splice(index, 1);
+  } else if (
+    state.kept[state.deckPlayer].includes(cardId) &&
+    state.deckSelection.length < PACK_DRAFT_CONFIG.deckSize
+  ) {
+    state.deckSelection.push(cardId);
+  }
+  save();
+}
+
+function applyDeck(seat) {
+  if (state.phase !== "deck" || (seat && seat !== state.deckPlayer)) return;
+  if (state.deckSelection.length !== PACK_DRAFT_CONFIG.deckSize) return;
+  state.decks[state.deckPlayer] = [...state.deckSelection];
+  startDeckPhase();
+  save();
+}
+
+function applyView(view) {
+  Object.assign(state, view);
+  const pack = state.packs[state.holding[state.turn]] || [];
+  if (pending.value && !pack.includes(pending.value)) pending.value = null;
+}
+
+net.on("draft:view", (view) => {
+  if (net.isGuest.value) applyView(view);
+});
+
+net.on("draft:cmd", (message) => {
+  if (!net.isHost.value || !message) return;
+  if (message.type === "hero") applyHero(message.id, "p2");
+  else if (message.type === "card") applyCard(message.id, "p2");
+  else if (message.type === "toggle") applyToggle(message.id, "p2");
+  else if (message.type === "deck") applyDeck("p2");
+});
+
+net.on("draft:sync", () => {
+  if (net.isHost.value) net.send("draft:view", viewFor("p2"));
+});
+
+net.onEvent("connected", ({ role }) => {
+  if (role === "host") {
+    Object.assign(state, createState());
+    pending.value = null;
+    save();
+  } else {
+    net.send("draft:sync");
+  }
+});
+
+net.onEvent("closed", ({ role }) => {
+  if (role === "guest") {
+    Object.assign(state, load());
+    pending.value = null;
+  }
+});
+
+if (net.isGuest.value) net.send("draft:sync");
+
 export function usePackDraft() {
   const config = PACK_DRAFT_CONFIG;
 
   const currentPack = computed(() =>
     state.phase === "draft"
-      ? state.packs[state.holding[state.turn]].map((id) => cardById.get(id))
+      ? state.packs[state.holding[state.turn]]
+          .map((id) => cardById.get(id))
+          .filter(Boolean)
       : [],
   );
 
@@ -213,74 +351,55 @@ export function usePackDraft() {
   }));
 
   const pendingCard = computed(() =>
-    state.pending ? cardById.get(state.pending) : null,
+    pending.value ? cardById.get(pending.value) : null,
   );
 
-  function pickHero(heroId) {
-    if (state.phase !== "heroes") return;
-    if (!availableHeroes.value.some((hero) => hero.id === heroId)) return;
-    state.heroes[pickerPlayer.value] = heroId;
-    if (state.heroes.p1 && state.heroes.p2) {
-      state.phase = "draft";
-      advance();
+  const mySeat = computed(() => net.mySeat.value);
+  const canAct = computed(
+    () => !net.online.value || net.mySeat.value === actor(),
+  );
+  const viewSeat = computed(() => net.mySeat.value || state.turn);
+
+  function command(type, payload) {
+    if (net.isGuest.value) {
+      net.send("draft:cmd", { type, ...payload });
+      return;
     }
-    save();
+    const seat = net.isHost.value ? "p1" : null;
+    if (type === "hero") applyHero(payload.id, seat);
+    else if (type === "card") applyCard(payload.id, seat);
+    else if (type === "toggle") applyToggle(payload.id, seat);
+    else if (type === "deck") applyDeck(seat);
+  }
+
+  function pickHero(heroId) {
+    if (canAct.value) command("hero", { id: heroId });
   }
 
   function selectCard(cardId) {
-    if (state.phase !== "draft") return;
-    state.pending = state.pending === cardId ? null : cardId;
+    if (state.phase !== "draft" || !canAct.value) return;
+    pending.value = pending.value === cardId ? null : cardId;
   }
 
   function confirmCard() {
-    if (state.phase !== "draft" || !state.pending) return;
-    const pack = state.packs[state.holding[state.turn]];
-    const index = pack.indexOf(state.pending);
-    if (index === -1) return;
-    pack.splice(index, 1);
-
-    if (state.stage === "keep") {
-      state.kept[state.turn].push(state.pending);
-      state.discardsLeft = Math.min(config.discardPerTurn, pack.length);
-      state.pending = null;
-      if (state.discardsLeft > 0) {
-        state.stage = "discard";
-        save();
-        return;
-      }
-      finishTurn();
-      save();
-      return;
-    }
-
-    state.discarded.push(state.pending);
-    state.discardsLeft -= 1;
-    state.pending = null;
-    if (state.discardsLeft <= 0) finishTurn();
-    save();
+    if (!pending.value || !canAct.value) return;
+    const id = pending.value;
+    pending.value = null;
+    command("card", { id });
   }
 
   function toggleDeckCard(cardId) {
-    if (state.phase !== "deck") return;
-    const index = state.deckSelection.indexOf(cardId);
-    if (index !== -1) {
-      state.deckSelection.splice(index, 1);
-    } else if (state.deckSelection.length < config.deckSize) {
-      state.deckSelection.push(cardId);
-    }
-    save();
+    if (canAct.value) command("toggle", { id: cardId });
   }
 
   function confirmDeck() {
-    if (state.phase !== "deck") return;
-    if (state.deckSelection.length !== config.deckSize) return;
-    state.decks[state.deckPlayer] = [...state.deckSelection];
-    startDeckPhase();
-    save();
+    if (canAct.value) command("deck", {});
   }
 
   function restart() {
+    if (net.isGuest.value) return;
     Object.assign(state, createState());
+    pending.value = null;
     save();
   }
 
@@ -305,7 +424,11 @@ export function usePackDraft() {
     availableHeroes,
     playerHeroes,
     packRound,
+    pending,
     pendingCard,
+    mySeat,
+    canAct,
+    viewSeat,
     pickHero,
     selectCard,
     confirmCard,

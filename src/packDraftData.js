@@ -12,9 +12,6 @@ export const PACK_DRAFT_CONFIG = {
   deckSize: 30,
 };
 
-const IMAGE_BASE =
-  "https://yptpnirqgfmxphjvsdjz.supabase.co/storage/v1/object/public/heroes/avatars/";
-
 export const packDraftHeroes = [
   {
     id: "ms-marvel",
@@ -22,7 +19,7 @@ export const packDraftHeroes = [
     hp: 14,
     move: 2,
     attack: "melee",
-    image: IMAGE_BASE + "M61_bBineukElgyyqqSFu.webp",
+    image: "images/ms_marvel.webp",
     passive: {
       name: "Stretchy",
       text: {
@@ -39,7 +36,7 @@ export const packDraftHeroes = [
     hp: 15,
     move: 3,
     attack: "melee",
-    image: IMAGE_BASE + "u4Gps771423IMcUDwGtmU.webp",
+    image: "images/spiderman.webp",
     passive: {
       name: "Spidey-Sense",
       text: {
@@ -56,7 +53,7 @@ export const packDraftHeroes = [
     hp: 14,
     move: 2,
     attack: "range",
-    image: IMAGE_BASE + "-DwDeg2R2JA3DQDeTlT1K.webp",
+    image: "images/tomoe.webp",
     passive: {
       name: "Attack of Opportunity",
       text: {
@@ -73,7 +70,7 @@ export const packDraftHeroes = [
     hp: 15,
     move: 2,
     attack: "range",
-    image: IMAGE_BASE + "d0g6G1igwbxZ5sgU4M7Kn.webp",
+    image: "images/winter_soldier.webp",
     passive: {
       name: "Brainwashed",
       text: {

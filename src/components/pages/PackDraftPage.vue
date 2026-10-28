@@ -18,7 +18,9 @@
       </ol>
     </details>
 
-    <div class="pack-toolbar">
+    <OnlinePanel />
+
+    <div v-if="!isGuest" class="pack-toolbar">
       <button
         class="btn btn-danger btn-sm action-btn"
         :class="{ 'is-confirming': confirmingRestart }"
@@ -32,6 +34,7 @@
       <div class="pack-banner" :class="'is-' + pickerPlayer">
         {{ replacePlayer("packPickHero", pickerPlayer) }}
       </div>
+      <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
       <div class="row g-3">
         <div
           v-for="hero in heroes"
@@ -41,7 +44,7 @@
           <PackHeroCard
             :hero="hero"
             :owner="heroOwner(hero.id)"
-            :clickable="!heroOwner(hero.id)"
+            :clickable="!heroOwner(hero.id) && canAct"
             @select="pickHero"
           />
         </div>
@@ -71,11 +74,12 @@
         </span>
       </div>
 
-      <p class="pack-hint">
+      <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
+      <p v-else class="pack-hint">
         {{ t(state.stage === "keep" ? "packKeepHint" : "packDiscardHint") }}
       </p>
 
-      <div class="row g-2 g-md-3">
+      <div v-if="canAct" class="row g-2 g-md-3">
         <div
           v-for="card in currentPack"
           :key="card.id"
@@ -83,7 +87,7 @@
         >
           <PackCard
             :card="card"
-            :selected="state.pending === card.id"
+            :selected="pending === card.id"
             :dead="isDeadCard(card, state.turn)"
             clickable
             @select="selectCard"
@@ -91,11 +95,11 @@
         </div>
       </div>
 
-      <div class="pack-actions">
+      <div v-if="canAct" class="pack-actions">
         <button
           class="btn action-btn"
           :class="state.stage === 'keep' ? 'btn-success' : 'btn-danger'"
-          :disabled="!state.pending"
+          :disabled="!pending"
           @click="confirmCard"
         >
           {{ t(state.stage === "keep" ? "packKeepBtn" : "packDiscardBtn") }}
@@ -104,18 +108,18 @@
 
       <details class="pack-details">
         <summary>
-          {{ t("packYourKept") }} ({{ keptCards[state.turn].length }})
+          {{ t("packYourKept") }} ({{ keptCards[viewSeat].length }})
         </summary>
-        <p v-if="!keptCards[state.turn].length" class="pack-empty">
+        <p v-if="!keptCards[viewSeat].length" class="pack-empty">
           {{ t("packEmptyList") }}
         </p>
         <div v-else class="row g-2">
           <div
-            v-for="card in keptCards[state.turn]"
+            v-for="card in keptCards[viewSeat]"
             :key="card.id"
             class="col-6 col-md-4 col-lg-3"
           >
-            <PackCard :card="card" :dead="isDeadCard(card, state.turn)" />
+            <PackCard :card="card" :dead="isDeadCard(card, viewSeat)" />
           </div>
         </div>
       </details>
@@ -143,17 +147,18 @@
       <div class="pack-banner" :class="'is-' + state.deckPlayer">
         {{ replacePlayer("packDeckTitle", state.deckPlayer) }}
       </div>
-      <p class="pack-hint">
+      <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
+      <p v-else class="pack-hint">
         {{ t("packDeckHint").replace("{n}", config.deckSize) }}
       </p>
-      <div class="pack-status">
+      <div v-if="canAct" class="pack-status">
         <span>
           {{ t("packDeckCount") }}: {{ state.deckSelection.length }} /
           {{ config.deckSize }}
         </span>
       </div>
 
-      <div class="row g-2 g-md-3">
+      <div v-if="canAct" class="row g-2 g-md-3">
         <div
           v-for="card in deckPoolCards"
           :key="card.id"
@@ -169,7 +174,7 @@
         </div>
       </div>
 
-      <div class="pack-actions">
+      <div v-if="canAct" class="pack-actions">
         <button
           class="btn btn-success action-btn"
           :disabled="state.deckSelection.length !== config.deckSize"
@@ -189,7 +194,7 @@
             <h3>{{ t(player === "p1" ? "packPlayer1" : "packPlayer2") }}</h3>
             <PackHeroCard :hero="playerHeroes[player]" />
 
-            <div class="pack-save">
+            <div v-if="canSave(player)" class="pack-save">
               <template v-if="savedFlags[player]">
                 <span class="pack-saved">{{ t("packDeckSaved") }}</span>
                 <router-link
@@ -260,7 +265,7 @@
         </div>
       </details>
 
-      <div class="pack-actions">
+      <div v-if="!isGuest" class="pack-actions">
         <button class="btn btn-primary action-btn" @click="restart">
           {{ t("packNewDraft") }}
         </button>
@@ -275,6 +280,8 @@ import { useDraftState } from "../../composables/useDraftState";
 import { usePackDraft } from "../../composables/usePackDraft";
 import PackCard from "../PackCard.vue";
 import PackHeroCard from "../PackHeroCard.vue";
+import OnlinePanel from "../OnlinePanel.vue";
+import { useOnline } from "../../composables/useOnline";
 import { useSavedDecks } from "../../composables/useSavedDecks";
 
 const { t } = useDraftState();
@@ -290,6 +297,9 @@ const {
   deckPoolCards,
   pickerPlayer,
   playerHeroes,
+  pending,
+  canAct,
+  viewSeat,
   packRound,
   pickHero,
   selectCard,
@@ -300,7 +310,9 @@ const {
   isDeadCard,
 } = usePackDraft();
 
+const { isGuest, online, mySeat } = useOnline();
 const { saveDeck } = useSavedDecks();
+const canSave = (player) => !online.value || mySeat.value === player;
 const players = ["p1", "p2"];
 const deckNames = reactive({ p1: "", p2: "" });
 const savedFlags = reactive({ p1: false, p2: false });
