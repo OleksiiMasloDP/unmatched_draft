@@ -83,6 +83,44 @@ export const packDraftHeroes = [
   },
 ];
 
+const CARD_IMAGES = {
+  "ms-marvel": [
+    "big_wind_up",
+    "easy_peasy",
+    "embiggen",
+    "fangirl",
+    "feint",
+    "friends_and_family",
+    "gyro_and_fries",
+    "im_not_touching_you",
+    "momentous_shift",
+    "shrink_shrink_shrink",
+    "slingshot",
+  ],
+  "winter-soldier": [
+    "a_boy_named_bucky",
+    "bionic_arm",
+    "born_in_the_barracks",
+    "complete_the_mission",
+    "feint",
+    "manipulation",
+    "marksman",
+    "programmed_to_kill",
+    "reflex_memories",
+    "reprogram",
+    "wily_fighting",
+    "without_remorse",
+  ],
+};
+
+const squash = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+function cardImage(hero, name) {
+  const files = CARD_IMAGES[hero.id] || [];
+  const file = files.find((item) => squash(item) === squash(name));
+  return file ? encodeURI(`images/cards/${hero.name}/${file}.webp`) : null;
+}
+
 function slug(value) {
   return value
     .toLowerCase()
@@ -103,7 +141,7 @@ function expandDeck(hero) {
       value,
       boost,
       text: { en, ua },
-      image: null,
+      image: cardImage(hero, name),
     })),
   );
 }

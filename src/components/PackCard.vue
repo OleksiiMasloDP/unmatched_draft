@@ -2,17 +2,26 @@
   <div
     class="pack-card"
     :class="{
+      'is-image': showImage,
       'is-selected': selected,
       'is-dead': dead,
       'is-clickable': clickable,
     }"
     @click="clickable && emit('select', card.id)"
   >
-    <div v-if="card.image" class="pack-card-image">
-      <img :src="card.image" :alt="card.name" loading="lazy" />
+    <div v-if="showImage" class="pack-card-image">
+      <img
+        :src="card.image"
+        :alt="card.name"
+        loading="lazy"
+        @error="imageFailed = true"
+      />
+      <div v-if="dead" class="pack-card-dead-badge">
+        {{ t("packDeadCard") }}
+      </div>
     </div>
 
-    <div class="pack-card-body">
+    <div v-if="!showImage" class="pack-card-body">
       <div class="pack-card-owner">{{ ownerLabel }}</div>
       <div class="pack-card-name">{{ card.name }}</div>
 
@@ -36,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { packDraftHeroes } from "../packDraftData";
 
@@ -60,6 +69,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["select"]);
+
+const imageFailed = ref(false);
+const showImage = computed(
+  () => Boolean(props.card.image) && !imageFailed.value,
+);
 
 const { t, lang } = useDraftState();
 
@@ -109,11 +123,34 @@ const text = computed(
   opacity: 0.55;
 }
 
+.pack-card.is-image {
+  min-height: 0;
+  background: transparent;
+  border-radius: 10px;
+}
+
+.pack-card-image {
+  position: relative;
+}
+
 .pack-card-image img {
   display: block;
   width: 100%;
-  aspect-ratio: 5 / 7;
+  aspect-ratio: 398 / 556;
   object-fit: cover;
+}
+
+.pack-card-dead-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(var(--bg-dark-rgb), 0.85);
+  color: var(--color-danger);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .pack-card-body {

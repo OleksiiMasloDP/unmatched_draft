@@ -261,7 +261,7 @@
         <div
           v-for="card in handCards"
           :key="card.id"
-          class="col-6 col-md-4 col-lg-3"
+          class="col-4 col-md-3 col-lg-2"
         >
           <PackCard :card="card" />
         </div>
@@ -291,7 +291,7 @@
             <div
               v-for="card in boostCards"
               :key="card.id"
-              class="col-6 col-md-4"
+              class="col-6 col-md-3"
             >
               <PackCard :card="card" clickable @select="onBoost" />
             </div>
@@ -313,7 +313,7 @@
               <div
                 v-for="card in promptCards"
                 :key="card.id"
-                class="col-6 col-md-4"
+                class="col-6 col-md-3"
               >
                 <PackCard
                   :card="card"
