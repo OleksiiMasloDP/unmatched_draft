@@ -5,6 +5,8 @@ import MatchupExplorer from "./components/pages/MatchupExplorer.vue";
 import CharacterGuide from "./components/pages/CharacterGuide.vue";
 import FormatsPage from "./components/pages/FormatsPage.vue";
 import FormatEditor from "./components/pages/FormatEditor.vue";
+import PackDraftPage from "./components/pages/PackDraftPage.vue";
+import GamePage from "./components/pages/GamePage.vue";
 
 // Чисті URL без "#" (/maps, /formats/new). Працює разом з:
 //  - <base href="%BASE_URL%"> в index.html (відносні шляхи до images/*.webp та
@@ -24,6 +26,8 @@ export const routes = [
     component: FormatEditor,
     props: true,
   },
+  { path: "/pack-draft", name: "pack-draft", component: PackDraftPage },
+  { path: "/game", name: "game", component: GamePage },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 
