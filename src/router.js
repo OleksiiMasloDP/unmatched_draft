@@ -8,11 +8,6 @@ import FormatEditor from "./components/pages/FormatEditor.vue";
 import PackDraftPage from "./components/pages/PackDraftPage.vue";
 import GamePage from "./components/pages/GamePage.vue";
 
-// Чисті URL без "#" (/maps, /formats/new). Працює разом з:
-//  - <base href="%BASE_URL%"> в index.html (відносні шляхи до images/*.webp та
-//    *.json не ламаються на вкладених маршрутах);
-//  - 404.html, який збирається разом з проєктом (див. vite.config.js), бо
-//    GitHub Pages не вміє віддавати index.html для глибоких посилань.
 export const routes = [
   { path: "/", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
@@ -26,8 +21,13 @@ export const routes = [
     component: FormatEditor,
     props: true,
   },
-  { path: "/pack-draft", name: "pack-draft", component: PackDraftPage },
-  { path: "/game", name: "game", component: GamePage },
+  {
+    path: "/pack-draft",
+    name: "pack-draft",
+    component: PackDraftPage,
+    meta: { beta: true },
+  },
+  { path: "/game", name: "game", component: GamePage, meta: { beta: true } },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 
