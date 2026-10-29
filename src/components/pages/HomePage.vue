@@ -196,7 +196,59 @@
     </section>
 
     <footer class="home-footer">
-      <p>{{ L.footer }}</p>
+      <div class="foot-line" aria-hidden="true"></div>
+      <div class="foot-inner">
+        <div class="foot-brand">
+          <div class="foot-logo">
+            <span>UNMATCHED</span>
+            <span class="foot-logo-accent">DRAFT</span>
+          </div>
+          <p>{{ L.foot.brand }}</p>
+          <button type="button" class="foot-bug" @click="openFeedback()">
+            🐞 {{ L.foot.report }}
+          </button>
+        </div>
+
+        <nav class="foot-col">
+          <h4>{{ L.foot.tools }}</h4>
+          <router-link
+            v-for="f in toolLinks"
+            :key="f.route"
+            :to="{ name: f.route }"
+          >
+            {{ L.features[f.key].title }}
+          </router-link>
+        </nav>
+
+        <nav class="foot-col">
+          <h4>{{ L.foot.beta }}</h4>
+          <router-link
+            v-for="f in betaLinks"
+            :key="f.route"
+            :to="{ name: f.route }"
+          >
+            🔒 {{ L.features[f.key].title }}
+          </router-link>
+        </nav>
+
+        <nav class="foot-col">
+          <h4>{{ L.foot.project }}</h4>
+          <a :href="FEEDBACK.githubRepo" target="_blank" rel="noopener">
+            GitHub
+          </a>
+          <button type="button" class="foot-link" @click="openFeedback()">
+            {{ L.foot.report }}
+          </button>
+          <button type="button" class="foot-link" @click="scrollTop">
+            ↑ {{ L.foot.top }}
+          </button>
+        </nav>
+      </div>
+
+      <div class="foot-bottom">
+        <p>{{ L.footer }}</p>
+        <p>© {{ year }} Unmatched Draft</p>
+      </div>
     </footer>
   </div>
 </template>
@@ -213,6 +265,8 @@ import {
 } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { banPresets } from "../../draftFormats.js";
+import { useFeedback } from "../../composables/useFeedback";
+import { FEEDBACK } from "../../feedbackConfig";
 
 const { lang, characters, maps } = useDraftState();
 
@@ -290,6 +344,15 @@ const dict = {
     betaTitle: "Pack Draft and Game are in closed beta",
     betaText:
       "These two sections are available to testers only. If the author gave you a password, open either of them and enter it once — the browser will remember it. Everything else on the site is open to everyone.",
+    foot: {
+      brand:
+        "Draft simulator and toolbox for the Unmatched board game: ban/pick, formats, maps, matchups, guides and a playable beta.",
+      tools: "Tools",
+      beta: "Closed beta",
+      project: "Project",
+      report: "Report a bug / feedback",
+      top: "Back to top",
+    },
     footer:
       "Fan-made tool for the Unmatched board game. Not affiliated with the game's publishers.",
   },
@@ -365,6 +428,15 @@ const dict = {
     betaTitle: "Pack Draft і Гра — закрита бета",
     betaText:
       "Ці два розділи доступні лише тестерам. Якщо автор дав вам пароль, відкрийте будь-який із них і введіть його один раз — браузер запам'ятає. Решта сайту відкрита для всіх.",
+    foot: {
+      brand:
+        "Драфт-симулятор і набір інструментів для настільної гри Unmatched: бан/пік, формати, мапи, матчапи, гайди та гра в бета-версії.",
+      tools: "Інструменти",
+      beta: "Закрита бета",
+      project: "Проєкт",
+      report: "Повідомити про баг / фідбек",
+      top: "Нагору",
+    },
     footer:
       "Фанатський інструмент для настільної гри Unmatched. Не пов'язаний з видавцями гри.",
   },
@@ -387,6 +459,12 @@ const features = [
   },
   { key: "game", route: "game", icon: "🎮", art: "hero", beta: true },
 ];
+
+const { openFeedback } = useFeedback();
+const year = new Date().getFullYear();
+const toolLinks = features.filter((f) => !f.beta);
+const betaLinks = features.filter((f) => f.beta);
+const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
 const abs = (path) => new URL(path, document.baseURI).href;
 
@@ -1289,19 +1367,134 @@ onBeforeUnmount(() => {
   color: var(--text-muted, #cbd5e1);
 }
 .home-footer {
-  padding: 36px 16px 48px;
-  text-align: center;
+  position: relative;
+  margin-top: 64px;
+  color: var(--text-muted, #cbd5e1);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(var(--bg-dark-rgb, 15, 23, 42), 0.9) 40%
+  );
+}
+.foot-line {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-player, #4f7cff),
+    #c084fc,
+    var(--color-opponent, #ff4f6d),
+    #c084fc,
+    var(--color-player, #4f7cff)
+  );
+  background-size: 200% 100%;
+  animation: home-shimmer 8s linear infinite;
+}
+.foot-inner {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 28px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 16px 28px;
+}
+.foot-logo {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-main, #f8fafc);
+}
+.foot-logo-accent {
+  background: linear-gradient(
+    90deg,
+    var(--color-player, #4f7cff),
+    var(--color-opponent, #ff4f6d)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.foot-brand p {
+  max-width: 320px;
+  margin: 0 0 14px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.foot-bug {
+  padding: 8px 14px;
   font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-light, #f1f5f9);
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.8);
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.15));
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.foot-bug:hover {
+  border-color: var(--color-warning, #facc15);
+  transform: translateY(-2px);
+}
+.foot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.foot-col h4 {
+  margin: 0 0 4px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-dim, #94a3b8);
 }
-.home-footer p {
-  margin: 0 0 6px;
-}
-.home-footer a {
+.foot-col a,
+.foot-link {
+  padding: 0;
+  font-size: 0.9rem;
+  text-align: left;
+  text-decoration: none;
   color: var(--text-muted, #cbd5e1);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+.foot-col a:hover,
+.foot-link:hover {
+  color: var(--color-player, #4f7cff);
+  transform: translateX(3px);
+}
+.foot-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px 16px 36px;
+  font-size: 0.8rem;
+  color: var(--text-dim, #94a3b8);
+  border-top: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
+}
+.foot-bottom p {
+  margin: 0;
 }
 
 @media (max-width: 720px) {
+  .foot-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .foot-brand {
+    grid-column: 1 / -1;
+  }
   .home-steps {
     grid-template-columns: 1fr;
   }
@@ -1331,6 +1524,7 @@ onBeforeUnmount(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .home-track,
+  .foot-line,
   .home-title-accent,
   .home-slide,
   .demo-slot.active,

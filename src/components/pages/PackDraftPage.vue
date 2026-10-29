@@ -1,39 +1,59 @@
 <template>
   <div class="pack-page container">
-    <div class="pack-title-row">
-      <h1 class="page-main-title">{{ t("packDraftTitle") }}</h1>
-      <span class="pack-beta">{{ t("packBeta") }}</span>
-    </div>
+    <template v-if="!started">
+      <div class="pack-title-row">
+        <h1 class="page-main-title">{{ t("packDraftTitle") }}</h1>
+        <span class="pack-beta">{{ t("packBeta") }}</span>
+      </div>
 
-    <p class="engine-sub-desc engine-sub-desktop pack-intro">
-      {{ t("packIntro") }}
-    </p>
+      <p class="engine-sub-desc engine-sub-desktop pack-intro">
+        {{ t("packIntro") }}
+      </p>
 
-    <div class="pack-note">{{ t("packBetaNote") }}</div>
+      <div class="pack-note">{{ t("packBetaNote") }}</div>
 
-    <details class="pack-rules">
-      <summary>{{ t("packRulesTitle") }}</summary>
-      <ol>
-        <li v-for="n in 5" :key="n">{{ t("packRule" + n) }}</li>
-      </ol>
-    </details>
+      <details class="pack-rules">
+        <summary>{{ t("packRulesTitle") }}</summary>
+        <ol>
+          <li v-for="n in 5" :key="n">{{ t("packRule" + n) }}</li>
+        </ol>
+      </details>
 
-    <OnlinePanel />
+      <OnlinePanel />
+    </template>
 
-    <div v-if="!isGuest" class="pack-toolbar">
+    <div class="pack-topbar">
+      <div class="pack-banner" :class="banner.cls">
+        {{ banner.text }}
+        <span v-if="banner.hero" class="pack-banner-hero">
+          · {{ banner.hero }}
+        </span>
+      </div>
       <button
+        v-if="!isGuest"
         class="btn btn-danger btn-sm action-btn"
         :class="{ 'is-confirming': confirmingRestart }"
         @click="onRestart"
       >
         {{ confirmingRestart ? t("packRestartConfirm") : t("packRestart") }}
       </button>
+      <button
+        v-if="netState.role"
+        class="btn btn-sm btn-outline-secondary action-btn"
+        @click="leaveRoom"
+      >
+        {{ t("onlineLeave") }}
+      </button>
+      <button
+        class="btn btn-sm btn-outline-secondary action-btn"
+        :title="lang === 'ua' ? 'Повідомити про баг' : 'Report a bug'"
+        @click="openFeedback({ section: 'pack-draft' })"
+      >
+        🐞
+      </button>
     </div>
 
     <template v-if="state.phase === 'heroes'">
-      <div class="pack-banner" :class="'is-' + pickerPlayer">
-        {{ replacePlayer("packPickHero", pickerPlayer) }}
-      </div>
       <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
       <div class="row g-3">
         <div
@@ -52,13 +72,6 @@
     </template>
 
     <template v-else-if="state.phase === 'draft'">
-      <div class="pack-banner" :class="'is-' + state.turn">
-        {{ replacePlayer("packTurnOf", state.turn) }}
-        <span v-if="playerHeroes[state.turn]" class="pack-banner-hero">
-          · {{ playerHeroes[state.turn].name }}
-        </span>
-      </div>
-
       <div class="row g-3">
         <div class="col-12 col-xl-9">
           <div class="pack-stats">
@@ -253,9 +266,6 @@
     </template>
 
     <template v-else-if="state.phase === 'deck'">
-      <div class="pack-banner" :class="'is-' + state.deckPlayer">
-        {{ replacePlayer("packDeckTitle", state.deckPlayer) }}
-      </div>
       <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
       <p v-else class="pack-hint">
         {{ t("packDeckHint").replace("{n}", config.deckSize) }}
@@ -295,7 +305,6 @@
     </template>
 
     <template v-else>
-      <div class="pack-banner is-done">{{ t("packDoneTitle") }}</div>
 
       <div class="row g-3">
         <div v-for="player in players" :key="player" class="col-12 col-lg-6">
@@ -415,6 +424,7 @@ import PackHeroCard from "../PackHeroCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
 import { useSavedDecks } from "../../composables/useSavedDecks";
+import { useFeedback } from "../../composables/useFeedback";
 
 const { t, lang } = useDraftState();
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -445,7 +455,8 @@ const {
   isDeadCard,
 } = usePackDraft();
 
-const { isGuest, online, mySeat } = useOnline();
+const { isGuest, online, mySeat, net: netState, leave: leaveRoom } = useOnline();
+const { openFeedback } = useFeedback();
 const menuId = ref(null);
 const sideTab = ref("heroes");
 const otherSeat = computed(() => (viewSeat.value === "p1" ? "p2" : "p1"));
@@ -517,6 +528,37 @@ function onSaveDeck(player) {
   });
   savedFlags[player] = true;
 }
+// Вступ (заголовок, правила, режим гри) показуємо лише до початку драфту.
+const started = computed(
+  () => state.phase !== "heroes" || Boolean(state.heroes.p1),
+);
+
+// Одна рядкова плашка: чий зараз хід / що робити.
+const banner = computed(() => {
+  if (state.phase === "heroes") {
+    return {
+      cls: "is-" + pickerPlayer.value,
+      text: replacePlayer("packPickHero", pickerPlayer.value),
+      hero: "",
+    };
+  }
+  if (state.phase === "draft") {
+    return {
+      cls: "is-" + state.turn,
+      text: replacePlayer("packTurnOf", state.turn),
+      hero: playerHeroes.value[state.turn]?.name || "",
+    };
+  }
+  if (state.phase === "deck") {
+    return {
+      cls: "is-" + state.deckPlayer,
+      text: replacePlayer("packDeckTitle", state.deckPlayer),
+      hero: "",
+    };
+  }
+  return { cls: "is-done", text: t("packDoneTitle"), hero: "" };
+});
+
 const confirmingRestart = ref(false);
 let confirmTimer = null;
 
@@ -651,6 +693,37 @@ function onRestart() {
 
 .pack-banner-hero {
   letter-spacing: 1px;
+}
+
+.pack-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pack-topbar .pack-banner {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 9px 14px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+}
+
+.pack-topbar .action-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 575px) {
+  .pack-topbar {
+    flex-wrap: wrap;
+  }
+
+  .pack-topbar .pack-banner {
+    flex-basis: 100%;
+  }
 }
 
 .pack-status {

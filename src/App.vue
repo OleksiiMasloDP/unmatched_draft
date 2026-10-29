@@ -15,6 +15,7 @@
     </main>
 
     <ScrollToTop />
+    <FeedbackModal />
   </div>
 </template>
 
@@ -24,6 +25,7 @@ import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
 import BetaGate from "./components/BetaGate.vue";
+import FeedbackModal from "./components/FeedbackModal.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();

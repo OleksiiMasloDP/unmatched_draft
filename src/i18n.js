@@ -375,7 +375,7 @@ export const translations = {
     navigation: "Навігація",
     searchPlaceholder: "Пошук по імені...",
     searchMapPlaceholder: "Пошук по імені мапи",
-    userFirst: "Ви перші гравець",
+    userFirst: "Ви перший гравець",
     opponentFirst: "Опонент перший",
     sortDraft: "Сортування за: Рейтингом піку (%)",
     sortName: "Сортування за: Ім'ям",

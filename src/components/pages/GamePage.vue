@@ -1,5 +1,5 @@
 <template>
-  <div class="game-page container">
+  <div class="game-page container" :class="{ 'is-play': game.phase !== 'setup' }">
     <template v-if="game.phase === 'setup'">
       <div class="game-title-row">
         <h1 class="page-main-title">{{ t("gameTitle") }}</h1>
@@ -135,9 +135,9 @@
     </template>
 
     <template v-else>
-      <div class="game-bar">
-        <div
-          class="game-banner"
+      <div class="game-topbar">
+        <span
+          class="game-turnchip"
           :class="game.phase === 'over' ? 'is-done' : 'is-' + game.turn"
         >
           <template v-if="game.phase === 'over'">
@@ -147,76 +147,8 @@
             {{ replacePlayer("gameTurnOf", game.turn) }} ·
             {{ t("gameActionsLeft").replace("{n}", game.actions) }}
           </template>
-        </div>
-
-        <div class="game-actions">
-          <button
-            class="btn btn-success btn-sm action-btn"
-            :disabled="!available.maneuver"
-            @click="doManeuver"
-          >
-            <ActionIcon name="maneuver" />{{ t("gameManeuver") }}
-          </button>
-          <button
-            class="btn btn-sm action-btn game-boost"
-            :class="{ 'is-on': boostOpen }"
-            :disabled="!canBoost"
-            @click="boostOpen = !boostOpen"
-          >
-            <ActionIcon name="boost" />{{ t("gameBoost") }}
-          </button>
-          <button
-            class="btn btn-warning btn-sm action-btn"
-            :disabled="!available.scheme"
-            @click="doScheme"
-          >
-            <ActionIcon name="scheme" />{{ t("gameScheme") }}
-          </button>
-          <button
-            class="btn btn-danger btn-sm action-btn"
-            :disabled="!available.attack"
-            @click="doAttack"
-          >
-            <ActionIcon name="attack" />{{ t("gameAttack") }}
-          </button>
-          <button
-            v-if="spacePrompt"
-            class="btn btn-sm action-btn game-skip"
-            @click="answerPrompt(null)"
-          >
-            <ActionIcon name="skip" />{{ t("gameSkip") }}
-          </button>
-        </div>
+        </span>
       </div>
-
-      <p v-if="waitingOpponent" class="game-prompt-line">
-        {{ t("onlineWaitMove") }}
-      </p>
-      <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
-        {{ t("promptBoostMove") }}
-        <button
-          class="btn btn-sm btn-outline-light action-btn"
-          @click="boostOpen = false"
-        >
-          {{ t("gameCancel") }}
-        </button>
-      </p>
-      <p v-else-if="spacePrompt" class="game-prompt-line">
-        {{ promptTitle(spacePrompt) }}
-      </p>
-      <p v-else-if="handPrompt" class="game-prompt-line">
-        {{ promptTitle(handPrompt) }}
-        <button
-          class="btn btn-success btn-sm action-btn"
-          :disabled="selection.length < handPrompt.min"
-          @click="confirmCards"
-        >
-          {{ selection.length ? t("gameConfirm") : t(handPrompt.skip) }}
-          <template v-if="handPrompt.max > 1">
-            ({{ selection.length }}/{{ handPrompt.max }})
-          </template>
-        </button>
-      </p>
 
       <div class="game-layout">
         <div
@@ -226,7 +158,10 @@
           :class="[
             'is-' + player,
             'slot-' + player,
-            { 'is-active': game.turn === player },
+            {
+              'is-active': game.phase !== 'over' && game.turn === player,
+              'is-idle': game.phase !== 'over' && game.turn !== player,
+            },
           ]"
         >
           <img
@@ -287,13 +222,18 @@
         </div>
 
         <div class="game-center">
-          <GameBoard
-            :map="map"
-            :players="game.players"
-            :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
-            :fx="game.fx"
-            @select="answerPrompt"
-          />
+          <div
+            class="game-board-wrap"
+            :style="{ '--ratio': map.width / map.height }"
+          >
+            <GameBoard
+              :map="map"
+              :players="game.players"
+              :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+              :fx="game.fx"
+              @select="answerPrompt"
+            />
+          </div>
 
           <div class="game-log" :class="{ 'is-open': logOpen }">
             <button
@@ -317,26 +257,14 @@
         </div>
       </div>
 
-      <h2 class="game-subtitle">
-        {{ t("gameYourHand") }} · {{ playerTag(viewer) }}
-      </h2>
-      <div class="row g-2 game-hand">
-        <div
-          v-for="card in handCards"
-          :key="card.id"
-          class="col-4 col-md-3 col-lg-2"
-          :class="{ 'is-dim': handMode && !pickable(card.id) }"
-        >
-          <PackCard
-            :card="card"
-            :clickable="Boolean(handMode) && pickable(card.id)"
-            :selected="selection.includes(card.id)"
-            @select="onHandSelect"
-          />
-        </div>
-      </div>
-
       <div class="game-footer">
+        <button
+          type="button"
+          class="btn btn-sm game-bug"
+          @click="openFeedback({ section: 'game' })"
+        >
+          🐞 {{ lang === "ua" ? "Баг?" : "Report a bug" }}
+        </button>
         <button
           v-if="game.phase === 'play'"
           class="btn btn-sm game-surrender is-danger"
@@ -358,6 +286,95 @@
         >
           {{ t("onlineLeave") }}
         </button>
+      </div>
+
+      <div class="game-dock">
+        <div class="game-dock-row">
+          <div class="game-hand-label">
+            {{ t("gameYourHand") }} · {{ playerTag(viewer) }}
+          </div>
+          <div class="game-actions">
+            <button
+              class="btn btn-success btn-sm action-btn"
+              :disabled="!available.maneuver"
+              @click="doManeuver"
+            >
+              <ActionIcon name="maneuver" />{{ t("gameManeuver") }}
+            </button>
+            <button
+              class="btn btn-sm action-btn game-boost"
+              :class="{ 'is-on': boostOpen }"
+              :disabled="!canBoost"
+              @click="boostOpen = !boostOpen"
+            >
+              <ActionIcon name="boost" />{{ t("gameBoost") }}
+            </button>
+            <button
+              class="btn btn-warning btn-sm action-btn"
+              :disabled="!available.scheme"
+              @click="doScheme"
+            >
+              <ActionIcon name="scheme" />{{ t("gameScheme") }}
+            </button>
+            <button
+              class="btn btn-danger btn-sm action-btn"
+              :disabled="!available.attack"
+              @click="doAttack"
+            >
+              <ActionIcon name="attack" />{{ t("gameAttack") }}
+            </button>
+            <button
+              v-if="spacePrompt"
+              class="btn btn-sm action-btn game-skip"
+              @click="answerPrompt(null)"
+            >
+              <ActionIcon name="skip" />{{ t("gameSkip") }}
+            </button>
+          </div>
+        </div>
+        <p v-if="waitingOpponent" class="game-prompt-line">
+          {{ t("onlineWaitMove") }}
+        </p>
+        <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
+          {{ t("promptBoostMove") }}
+          <button
+            class="btn btn-sm btn-outline-light action-btn"
+            @click="boostOpen = false"
+          >
+            {{ t("gameCancel") }}
+          </button>
+        </p>
+        <p v-else-if="spacePrompt" class="game-prompt-line">
+          {{ promptTitle(spacePrompt) }}
+        </p>
+        <p v-else-if="handPrompt" class="game-prompt-line">
+          {{ promptTitle(handPrompt) }}
+          <button
+            class="btn btn-success btn-sm action-btn"
+            :disabled="selection.length < handPrompt.min"
+            @click="confirmCards"
+          >
+            {{ selection.length ? t("gameConfirm") : t(handPrompt.skip) }}
+            <template v-if="handPrompt.max > 1">
+              ({{ selection.length }}/{{ handPrompt.max }})
+            </template>
+          </button>
+        </p>
+        <div class="game-hand game-hand-strip">
+          <div
+            v-for="card in handCards"
+            :key="card.id"
+            class="hand-item"
+            :class="{ 'is-dim': handMode && !pickable(card.id) }"
+          >
+            <PackCard
+              :card="card"
+              :clickable="Boolean(handMode) && pickable(card.id)"
+              :selected="selection.includes(card.id)"
+              @select="onHandSelect"
+            />
+          </div>
+        </div>
       </div>
 
       <div v-if="modalPrompt && !needsPass" class="game-modal">
@@ -533,8 +550,10 @@ import GameBoard from "../GameBoard.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
+import { useFeedback } from "../../composables/useFeedback";
 
 const { t, lang } = useDraftState();
+const { openFeedback } = useFeedback();
 const {
   game,
   map,
@@ -1659,5 +1678,177 @@ function onDelete(id) {
 .toast-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+/* ---------- екран гри: компактна розкладка ---------- */
+.game-page.is-play {
+  --dock-h: 260px;
+  --board-max-h: max(300px, calc(100dvh - 60px - 98px - var(--dock-h)));
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 60px);
+  padding-top: 0.75rem;
+  padding-bottom: 0;
+}
+
+.game-topbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.game-turnchip {
+  padding: 3px 14px;
+  border-radius: 999px;
+  color: var(--text-white);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 10px var(--border-strong);
+}
+
+.game-turnchip.is-p1 {
+  background: var(--color-player);
+}
+
+.game-turnchip.is-p2 {
+  background: var(--color-opponent);
+}
+
+.game-turnchip.is-done {
+  background: var(--color-proceed);
+}
+
+.game-board-wrap {
+  width: min(100%, calc(var(--board-max-h) * var(--ratio, 1.4)));
+  margin: 0 auto;
+}
+
+/* активний герой збільшений і яскравий, неактивний - менший і приглушений */
+.game-layout .game-player {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    filter 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.game-layout .game-player.is-active {
+  z-index: 2;
+  transform: scale(1.06);
+}
+
+.game-layout .game-player.is-active.is-p1 {
+  box-shadow: 0 0 26px rgba(var(--color-player-rgb), 0.65);
+}
+
+.game-layout .game-player.is-active.is-p2 {
+  box-shadow: 0 0 26px rgba(var(--color-opponent-rgb), 0.65);
+}
+
+.game-layout .game-player.is-idle {
+  transform: scale(0.93);
+  opacity: 0.5;
+  filter: grayscale(0.55) brightness(0.7);
+}
+
+.game-footer {
+  align-items: center;
+  margin: 10px 0 12px;
+}
+
+.game-bug {
+  margin-right: auto;
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.game-bug:hover {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* нижня панель: кнопки дій, підказка і рука завжди в полі зору */
+.game-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  margin: auto -1rem 0;
+  padding: 8px 1rem 10px;
+  background: rgba(var(--bg-dark-rgb), 0.94);
+  border-top: 1px solid var(--border-medium);
+  backdrop-filter: blur(10px);
+}
+
+.game-dock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-bottom: 6px;
+}
+
+.game-hand-label {
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.game-dock .game-actions {
+  margin: 0;
+  gap: 8px;
+}
+
+.game-dock .game-prompt-line {
+  gap: 8px 12px;
+  margin: 0 0 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.game-hand-strip {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hand-item {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 124px;
+  transform-origin: bottom center;
+  transition: transform 0.18s ease;
+}
+
+/* на десктопі карта в руці збільшується при наведенні, щоб її можна було прочитати */
+@media (hover: hover) and (min-width: 992px) {
+  .hand-item:hover {
+    z-index: 40;
+    transform: scale(1.85);
+  }
+}
+
+@media (max-width: 991px) {
+  .game-page.is-play {
+    --dock-h: 230px;
+  }
+
+  .game-hand-strip {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .hand-item {
+    flex: 0 0 88px;
+  }
 }
 </style>
