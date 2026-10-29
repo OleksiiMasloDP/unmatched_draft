@@ -5,14 +5,13 @@ import MatchupExplorer from "./components/pages/MatchupExplorer.vue";
 import CharacterGuide from "./components/pages/CharacterGuide.vue";
 import FormatsPage from "./components/pages/FormatsPage.vue";
 import FormatEditor from "./components/pages/FormatEditor.vue";
+import PackDraftPage from "./components/pages/PackDraftPage.vue";
+import GamePage from "./components/pages/GamePage.vue";
+import HomePage from "./components/pages/HomePage.vue";
 
-// Чисті URL без "#" (/maps, /formats/new). Працює разом з:
-//  - <base href="%BASE_URL%"> в index.html (відносні шляхи до images/*.webp та
-//    *.json не ламаються на вкладених маршрутах);
-//  - 404.html, який збирається разом з проєктом (див. vite.config.js), бо
-//    GitHub Pages не вміє віддавати index.html для глибоких посилань.
 export const routes = [
-  { path: "/", name: "main", component: DraftPage },
+  { path: "/", name: "home", component: HomePage },
+  { path: "/draft", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
   { path: "/matchups", name: "matchups", component: MatchupExplorer },
   { path: "/guide", name: "guide", component: CharacterGuide },
@@ -24,6 +23,13 @@ export const routes = [
     component: FormatEditor,
     props: true,
   },
+  {
+    path: "/pack-draft",
+    name: "pack-draft",
+    component: PackDraftPage,
+    meta: { beta: true },
+  },
+  { path: "/game", name: "game", component: GamePage, meta: { beta: true } },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 

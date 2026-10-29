@@ -6,7 +6,12 @@
     <Header :lang="lang" :t="t" @update:lang="lang = $event" />
 
     <main class="content">
-      <router-view />
+      <router-view v-slot="{ Component, route }">
+        <BetaGate v-if="route.meta.beta">
+          <component :is="Component" />
+        </BetaGate>
+        <component :is="Component" v-else />
+      </router-view>
     </main>
 
     <ScrollToTop />
@@ -18,6 +23,7 @@ import { onMounted, ref, nextTick } from "vue";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
+import BetaGate from "./components/BetaGate.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();

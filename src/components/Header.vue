@@ -13,7 +13,7 @@
         </button>
 
         <router-link
-          :to="{ name: 'main' }"
+          :to="{ name: 'home' }"
           class="logo-wrapper"
           @click="isMenuOpen = false"
         >
@@ -42,6 +42,27 @@
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
           <li class="menu-section-title">{{ t("navigation") }}</li>
+          <li>
+            <router-link
+              :to="{ name: 'main' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14.5 4 20 9.5 9.5 20 4 14.5z" />
+                <line x1="12" y1="7" x2="17" y2="12" />
+              </svg>
+              <span>{{ lang === "ua" ? "Драфт" : "Draft" }}</span>
+            </router-link>
+          </li>
           <li>
             <router-link
               :to="{ name: 'maps' }"
@@ -131,6 +152,52 @@
                 <circle cx="8" cy="18" r="2" fill="currentColor" />
               </svg>
               <span>{{ t("formatsTitle") }}</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{ name: 'pack-draft' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="7" y="3" width="13" height="16" rx="2" />
+                <path d="M4 7v12a2 2 0 0 0 2 2h10" />
+              </svg>
+              <span>{{ t("packDraftTitle") }}</span>
+              <span class="menu-beta">{{ t("packBeta") }}</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{ name: 'game' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14.5 17.5 3 6V3h3l11.5 11.5" />
+                <path d="m13 19 6-6" />
+                <path d="m16 16 4 4" />
+                <path d="m19 21 2-2" />
+              </svg>
+              <span>{{ t("gameTitle") }}</span>
+              <span class="menu-beta">{{ t("packBeta") }}</span>
             </router-link>
           </li>
         </ul>
@@ -303,6 +370,17 @@ onBeforeUnmount(() => {
   letter-spacing: 1.5px;
   color: #64748b;
   padding: 4px 16px 8px;
+}
+
+.menu-beta {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--color-info-rgb), 0.5);
+  color: var(--color-info);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .menu-item {

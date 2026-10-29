@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist",
+    "beta:pass": "node scripts/beta-password.mjs"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/OleksiiMasloDP/unmatched_draft#readme",
   "description": "",
   "dependencies": {
+    "peerjs": "^1.5.4",
     "vue": "^3.5.38",
     "vue-router": "^4.6.4"
   },
