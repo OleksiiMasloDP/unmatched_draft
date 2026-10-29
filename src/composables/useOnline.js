@@ -1,4 +1,4 @@
-import { reactive, computed } from "vue";
+import { reactive, computed, ref } from "vue";
 
 const ROOM_PREFIX = "unmatched-draft-";
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -11,6 +11,27 @@ const net = reactive({
   code: "",
   error: "",
 });
+
+const MODE_KEY = "unmatched_play_mode";
+
+function loadMode() {
+  try {
+    return localStorage.getItem(MODE_KEY) === "online" ? "online" : "local";
+  } catch {
+    return "local";
+  }
+}
+
+const mode = ref(loadMode());
+
+function setMode(next) {
+  mode.value = next;
+  try {
+    localStorage.setItem(MODE_KEY, next);
+  } catch {
+    return;
+  }
+}
 
 const messageListeners = new Map();
 const eventListeners = { connected: new Set(), closed: new Set() };
@@ -282,6 +303,8 @@ function onEvent(event, listener) {
 export function useOnline() {
   return {
     net,
+    mode,
+    setMode,
     online,
     isHost: computed(() => online.value && net.role === "host"),
     isGuest: computed(() => online.value && net.role === "guest"),

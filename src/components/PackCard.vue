@@ -2,6 +2,8 @@
   <div
     class="pack-card"
     :class="{
+      'is-keep': mark === 'keep',
+      'is-discard': mark === 'discard',
       'is-image': showImage,
       'is-selected': selected,
       'is-dead': dead,
@@ -9,6 +11,15 @@
     }"
     @click="clickable && emit('select', card.id)"
   >
+    <div v-if="selected" class="pack-card-flag is-selected">✔</div>
+    <div v-if="mark === 'keep'" class="pack-card-flag is-keep">
+      {{ t("packMarkKeep") }}
+    </div>
+    <div v-if="mark === 'discard'" class="pack-card-flag is-discard">
+      {{ t("packMarkDiscard") }}
+    </div>
+    <div v-if="mark === 'discard'" class="pack-card-cross">✕</div>
+    <slot name="overlay" />
     <div v-if="showImage" class="pack-card-image">
       <img
         :src="card.image"
@@ -66,6 +77,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  mark: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits(["select"]);
@@ -114,9 +129,71 @@ const text = computed(
   box-shadow: 0 0 18px rgba(var(--color-player-rgb), 0.35);
 }
 
+.pack-card {
+  position: relative;
+}
+
 .pack-card.is-selected {
   border-color: var(--color-proceed);
-  box-shadow: 0 0 18px rgba(var(--color-proceed-rgb), 0.5);
+  box-shadow:
+    0 0 0 3px var(--color-proceed),
+    0 0 22px rgba(var(--color-proceed-rgb), 0.7);
+  transform: translateY(-4px);
+}
+
+.pack-card.is-keep {
+  border-color: var(--color-success-light);
+  box-shadow:
+    0 0 0 3px var(--color-success-light),
+    0 0 22px rgba(var(--color-proceed-rgb), 0.7);
+  transform: translateY(-4px);
+}
+
+.pack-card.is-discard {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger);
+}
+
+.pack-card.is-discard .pack-card-image img,
+.pack-card.is-discard .pack-card-body {
+  filter: grayscale(0.8) brightness(0.55);
+}
+
+.pack-card-flag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.pack-card-flag.is-selected,
+.pack-card-flag.is-keep {
+  background: var(--color-success);
+}
+
+.pack-card-flag.is-discard {
+  background: var(--color-danger);
+}
+
+.pack-card-cross {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-danger);
+  font-size: 64px;
+  font-weight: 900;
+  text-shadow: 0 0 12px #000;
+  pointer-events: none;
 }
 
 .pack-card.is-dead {

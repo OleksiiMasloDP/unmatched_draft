@@ -44,12 +44,16 @@
               v-for="deck in allDecks"
               :key="deck.id"
               class="deck-tile"
-              :class="{ 'is-selected': selected[player] === deck.id }"
+              :class="{
+                'is-selected': selected[player] === deck.id,
+                'is-disabled': takenBy(player, deck),
+              }"
               role="button"
               tabindex="0"
               :data-deck="deck.id"
-              @click="selected[player] = deck.id"
-              @keyup.enter="selected[player] = deck.id"
+              :title="takenBy(player, deck) ? t('gameHeroTaken') : ''"
+              @click="pickDeck(player, deck)"
+              @keyup.enter="pickDeck(player, deck)"
             >
               <img
                 v-if="getHero(deck.heroId).image"
@@ -127,184 +131,231 @@
     </template>
 
     <template v-else>
-      <div
-        class="game-banner"
-        :class="game.phase === 'over' ? 'is-done' : 'is-' + game.turn"
-      >
-        <template v-if="game.phase === 'over'">
-          {{ replacePlayer("gameWinner", game.winner) }}
-        </template>
-        <template v-else>
-          {{ replacePlayer("gameTurnOf", game.turn) }} ·
-          {{ t("gameActionsLeft").replace("{n}", game.actions) }}
-        </template>
+      <div class="game-bar">
+        <div
+          class="game-banner"
+          :class="game.phase === 'over' ? 'is-done' : 'is-' + game.turn"
+        >
+          <template v-if="game.phase === 'over'">
+            {{ replacePlayer("gameWinner", game.winner) }}
+          </template>
+          <template v-else>
+            {{ replacePlayer("gameTurnOf", game.turn) }} ·
+            {{ t("gameActionsLeft").replace("{n}", game.actions) }}
+          </template>
+        </div>
+
+        <div class="game-actions">
+          <button
+            class="btn btn-success btn-sm action-btn"
+            :disabled="!available.maneuver"
+            @click="doManeuver"
+          >
+            {{ t("gameManeuver") }}
+          </button>
+          <button
+            class="btn btn-sm action-btn game-boost"
+            :class="{ 'is-on': boostOpen }"
+            :disabled="!canBoost"
+            @click="boostOpen = !boostOpen"
+          >
+            {{ t("gameBoost") }}
+          </button>
+          <button
+            class="btn btn-warning btn-sm action-btn"
+            :disabled="!available.scheme"
+            @click="doScheme"
+          >
+            {{ t("gameScheme") }}
+          </button>
+          <button
+            class="btn btn-danger btn-sm action-btn"
+            :disabled="!available.attack"
+            @click="doAttack"
+          >
+            {{ t("gameAttack") }}
+          </button>
+          <button
+            v-if="spacePrompt"
+            class="btn btn-sm action-btn game-skip"
+            @click="answerPrompt(null)"
+          >
+            {{ t("gameSkip") }}
+          </button>
+        </div>
       </div>
 
       <p v-if="waitingOpponent" class="game-prompt-line">
         {{ t("onlineWaitMove") }}
       </p>
-
-      <p v-if="spacePrompt" class="game-prompt-line">
-        {{ promptTitle(spacePrompt) }}
+      <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
+        {{ t("promptBoostMove") }}
         <button
-          v-if="spacePrompt.boostOptions && spacePrompt.boostOptions.length"
-          class="btn btn-sm btn-warning game-boost"
-          @click="boostOpen = true"
+          class="btn btn-sm btn-outline-light action-btn"
+          @click="boostOpen = false"
         >
-          {{ t("gameBoost") }}
+          {{ t("gameCancel") }}
         </button>
-        <button class="btn btn-sm game-skip" @click="answerPrompt(null)">
-          {{ t("gameSkip") }}
+      </p>
+      <p v-else-if="spacePrompt" class="game-prompt-line">
+        {{ promptTitle(spacePrompt) }}
+      </p>
+      <p v-else-if="handPrompt" class="game-prompt-line">
+        {{ promptTitle(handPrompt) }}
+        <button
+          class="btn btn-success btn-sm action-btn"
+          :disabled="selection.length < handPrompt.min"
+          @click="confirmCards"
+        >
+          {{ selection.length ? t("gameConfirm") : t(handPrompt.skip) }}
+          <template v-if="handPrompt.max > 1">
+            ({{ selection.length }}/{{ handPrompt.max }})
+          </template>
         </button>
       </p>
 
-      <div class="row g-3">
-        <div class="col-12 col-lg-8">
-          <GameBoard
-            :map="map"
-            :players="game.players"
-            :options="spacePrompt ? spacePrompt.options : []"
-            @select="answerPrompt"
+      <div class="game-layout">
+        <div
+          v-for="player in players"
+          :key="player"
+          class="game-player"
+          :class="[
+            'is-' + player,
+            'slot-' + player,
+            { 'is-active': game.turn === player },
+          ]"
+        >
+          <img
+            v-if="heroOf(player).image"
+            class="game-player-avatar"
+            :src="heroOf(player).image"
+            :alt="heroOf(player).name"
           />
-
-          <div class="game-actions">
-            <button
-              class="btn btn-success btn-sm action-btn"
-              :disabled="!available.maneuver"
-              @click="doManeuver"
-            >
-              {{ t("gameManeuver") }}
-            </button>
-            <button
-              class="btn btn-warning btn-sm action-btn"
-              :disabled="!available.scheme"
-              @click="doScheme"
-            >
-              {{ t("gameScheme") }}
-            </button>
-            <button
-              class="btn btn-danger btn-sm action-btn"
-              :disabled="!available.attack"
-              @click="doAttack"
-            >
-              {{ t("gameAttack") }}
-            </button>
+          <div class="game-player-name">{{ playerTag(player) }}</div>
+          <div class="game-player-hero">{{ heroOf(player).name }}</div>
+          <div class="game-player-hp">
+            <span class="game-hp-icon">❤</span>
+            <span class="game-hp-value">{{ game.players[player].hp }}</span>
+            <span class="game-hp-max">/ {{ game.players[player].maxHp }}</span>
           </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div
-            v-for="player in players"
-            :key="player"
-            class="game-player"
-            :class="'is-' + player"
-          >
-            <div class="game-player-head">
-              <span class="game-player-name">{{ playerLabel(player) }}</span>
-              <span class="game-player-hero">
-                {{ heroOf(player).name }}
+          <div class="game-hp">
+            <div
+              class="game-hp-fill"
+              :style="{
+                width:
+                  (game.players[player].hp / game.players[player].maxHp) * 100 +
+                  '%',
+              }"
+            ></div>
+          </div>
+          <div class="game-counters">
+            <div class="game-counter" :title="t('gameHand')">
+              <span class="game-counter-icon">🖐</span>
+              <span class="game-counter-value">
+                {{ game.players[player].hand.length }}
               </span>
+              <span class="game-counter-label">{{ t("gameHand") }}</span>
             </div>
-            <div class="game-hp">
-              <div
-                class="game-hp-fill"
-                :style="{
-                  width:
-                    (game.players[player].hp / game.players[player].maxHp) *
-                      100 +
-                    '%',
-                }"
-              ></div>
+            <div class="game-counter" :title="t('gameDeck')">
+              <span class="game-counter-icon">📚</span>
+              <span class="game-counter-value">
+                {{ game.players[player].deck.length }}
+              </span>
+              <span class="game-counter-label">{{ t("gameDeck") }}</span>
             </div>
-            <div class="game-player-stats">
-              <span>
-                {{ t("gameHp") }} {{ game.players[player].hp }}/{{
-                  game.players[player].maxHp
-                }}
+            <div class="game-counter" :title="t('gameDiscard')">
+              <span class="game-counter-icon">🗑</span>
+              <span class="game-counter-value">
+                {{ game.players[player].discard.length }}
               </span>
-              <span>
-                {{ t("gameHand") }} {{ game.players[player].hand.length }}
-              </span>
-              <span>
-                {{ t("gameDeck") }} {{ game.players[player].deck.length }}
-              </span>
-              <span>
-                {{ t("gameDiscard") }} {{ game.players[player].discard.length }}
-              </span>
+              <span class="game-counter-label">{{ t("gameDiscard") }}</span>
             </div>
-            <div class="game-player-passive">
-              {{ heroOf(player).passive.name }}:
+          </div>
+          <details class="game-player-passive">
+            <summary>{{ heroOf(player).passive.name }}</summary>
+            <p>
               {{
                 heroOf(player).passive.text[lang] ||
                 heroOf(player).passive.text.en
               }}
-            </div>
-          </div>
+            </p>
+          </details>
+        </div>
 
-          <div class="game-log">
-            <div class="game-log-title">{{ t("gameLog") }}</div>
-            <div
-              v-for="(entry, index) in recentLog"
-              :key="index"
-              class="game-log-line"
+        <div class="game-center">
+          <GameBoard
+            :map="map"
+            :players="game.players"
+            :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+            @select="answerPrompt"
+          />
+
+          <div class="game-log" :class="{ 'is-open': logOpen }">
+            <button
+              type="button"
+              class="game-log-toggle"
+              @click="logOpen = !logOpen"
             >
-              {{ formatLog(entry) }}
+              <span>{{ t("gameLog") }} ({{ game.log.length }})</span>
+              <span>{{ logOpen ? "▴" : "▾" }}</span>
+            </button>
+            <div v-if="logOpen" class="game-log-body">
+              <div
+                v-for="(entry, index) in recentLog"
+                :key="index"
+                class="game-log-line"
+              >
+                {{ formatLog(entry) }}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <h2 class="game-subtitle">
-        {{ t("gameYourHand") }} · {{ playerLabel(viewer) }}
+        {{ t("gameYourHand") }} · {{ playerTag(viewer) }}
       </h2>
-      <div class="row g-2 g-md-3">
+      <div class="row g-2 game-hand">
         <div
           v-for="card in handCards"
           :key="card.id"
           class="col-4 col-md-3 col-lg-2"
+          :class="{ 'is-dim': handMode && !pickable(card.id) }"
         >
-          <PackCard :card="card" />
+          <PackCard
+            :card="card"
+            :clickable="Boolean(handMode) && pickable(card.id)"
+            :selected="selection.includes(card.id)"
+            @select="onHandSelect"
+          />
         </div>
       </div>
 
-      <div class="game-actions">
+      <div class="game-footer">
         <button
-          v-if="!isGuest"
-          class="btn btn-danger btn-sm action-btn"
+          v-if="game.phase === 'play'"
+          class="btn btn-outline-danger btn-sm game-surrender"
+          @click="surrenderOpen = true"
+        >
+          {{ t("gameSurrender") }}
+        </button>
+        <button
+          v-else-if="!isGuest"
+          class="btn btn-sm btn-primary game-surrender"
           @click="onNewGame"
         >
           {{ t("gameNewGame") }}
         </button>
         <button
           v-if="netState.role"
-          class="btn btn-sm action-btn game-leave"
+          class="btn btn-sm game-leave"
           @click="leaveRoom"
         >
           {{ t("onlineLeave") }}
         </button>
       </div>
 
-      <div v-if="boostOpen && spacePrompt && !needsPass" class="game-modal">
-        <div class="game-modal-box">
-          <h3 class="game-modal-title">{{ promptTitle(boostPrompt) }}</h3>
-          <div class="row g-2">
-            <div
-              v-for="card in boostCards"
-              :key="card.id"
-              class="col-6 col-md-3"
-            >
-              <PackCard :card="card" clickable @select="onBoost" />
-            </div>
-          </div>
-          <div class="game-modal-actions">
-            <button class="btn btn-sm action-btn" @click="boostOpen = false">
-              {{ t("gameCancel") }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="blockingPrompt && !needsPass" class="game-modal">
+      <div v-if="modalPrompt && !needsPass" class="game-modal">
         <div class="game-modal-box">
           <h3 class="game-modal-title">{{ promptTitle(blockingPrompt) }}</h3>
 
@@ -414,6 +465,26 @@
         </div>
       </div>
 
+      <div v-if="surrenderOpen" class="game-modal">
+        <div class="game-modal-box game-confirm-box">
+          <h3 class="game-modal-title">{{ t("gameSurrenderAsk") }}</h3>
+          <div class="game-modal-actions">
+            <button
+              class="btn btn-danger btn-sm action-btn"
+              @click="onSurrender"
+            >
+              {{ t("gameSurrenderYes") }}
+            </button>
+            <button
+              class="btn btn-sm action-btn"
+              @click="surrenderOpen = false"
+            >
+              {{ t("gameCancel") }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div v-if="needsPass" class="game-pass">
         <div class="game-pass-box">
           <h3>{{ replacePlayer("gamePassTitle", passTarget) }}</h3>
@@ -454,6 +525,7 @@ const {
   doManeuver,
   doScheme,
   doAttack,
+  surrender,
   availableActions,
   heroOf,
 } = useGame();
@@ -467,6 +539,8 @@ const {
   leave: leaveRoom,
 } = useOnline();
 const boostOpen = ref(false);
+const logOpen = ref(false);
+const surrenderOpen = ref(false);
 
 const players = ["p1", "p2"];
 const allDecks = computed(() => [...testDecks, ...savedDecks.value]);
@@ -476,6 +550,10 @@ const pendingDeleteId = ref(null);
 let deleteTimer = null;
 
 const available = computed(() => availableActions());
+
+const canBoost = computed(() =>
+  Boolean(spacePrompt.value?.boostOptions?.length),
+);
 
 const playerLabel = (player) =>
   t(player === "p1" ? "packPlayer1" : "packPlayer2");
@@ -502,6 +580,41 @@ const blockingPrompt = computed(() =>
     ? game.prompt
     : null,
 );
+
+const handIds = computed(() => handCards.value.map((card) => card.id));
+
+const handPrompt = computed(() => {
+  const prompt = blockingPrompt.value;
+  if (!prompt || prompt.kind !== "cards" || needsPass.value) return null;
+  return prompt.options.every((id) => handIds.value.includes(id))
+    ? prompt
+    : null;
+});
+
+const modalPrompt = computed(() =>
+  blockingPrompt.value === handPrompt.value ? null : blockingPrompt.value,
+);
+
+const handMode = computed(() => {
+  if (handPrompt.value) return "prompt";
+  if (boostOpen.value && canBoost.value) return "boost";
+  return null;
+});
+
+function pickable(cardId) {
+  if (handMode.value === "prompt") {
+    return handPrompt.value.options.includes(cardId);
+  }
+  if (handMode.value === "boost") {
+    return spacePrompt.value.boostOptions.includes(cardId);
+  }
+  return false;
+}
+
+function onHandSelect(cardId) {
+  if (handMode.value === "boost") onBoost(cardId);
+  else if (handMode.value === "prompt") toggleSelection(cardId);
+}
 
 const waitingOpponent = computed(() => {
   if (!online.value || game.phase !== "play") return false;
@@ -594,16 +707,48 @@ function formatLog(entry) {
   return text;
 }
 
+const findDeck = (id) => allDecks.value.find((deck) => deck.id === id);
+const opponentOf = (player) => (player === "p1" ? "p2" : "p1");
+
+const takenBy = (player, deck) =>
+  online.value && game.lobby[opponentOf(player)]?.heroId === deck.heroId;
+
+function ensureUnique(keep) {
+  if (online.value) return;
+  const other = opponentOf(keep);
+  const mine = findDeck(selected.value[keep]);
+  const theirs = findDeck(selected.value[other]);
+  if (mine && theirs && mine.heroId === theirs.heroId) {
+    const alt = allDecks.value.find((deck) => deck.heroId !== mine.heroId);
+    if (alt) selected.value[other] = alt.id;
+  }
+}
+
+function pickDeck(player, deck) {
+  if (takenBy(player, deck)) return;
+  selected.value[player] = deck.id;
+  ensureUnique(player);
+}
+
 function onStart() {
-  const find = (id) => allDecks.value.find((deck) => deck.id === id);
-  startGame(find(selected.value.p1), find(selected.value.p2));
+  ensureUnique("p1");
+  startGame(findDeck(selected.value.p1), findDeck(selected.value.p2));
 }
 
 function onChooseDeck() {
   const deck = allDecks.value.find(
     (item) => item.id === selected.value[mySeat.value],
   );
-  if (deck) chooseDeck(deck);
+  if (deck && !takenBy(mySeat.value, deck)) chooseDeck(deck);
+}
+
+const playerTag = (player) =>
+  playerLabel(player) +
+  (online.value && mySeat.value === player ? ` · ${t("packYou")}` : "");
+
+function onSurrender() {
+  surrenderOpen.value = false;
+  surrender(viewer.value);
 }
 
 function onNewGame() {
@@ -625,6 +770,7 @@ function onDelete(id) {
       selected.value[player] = testDecks[0].id;
     }
   }
+  ensureUnique("p1");
 }
 </script>
 
@@ -904,11 +1050,44 @@ function onDelete(id) {
   border-color: rgba(var(--color-opponent-rgb), 0.7);
 }
 
+.game-player {
+  position: relative;
+}
+
+.game-player.is-active {
+  box-shadow: 0 0 16px rgba(var(--color-proceed-rgb), 0.45);
+}
+
 .game-player-head {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.game-player-avatar {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 3px solid var(--border-medium);
+  object-fit: cover;
+  object-position: top;
+}
+
+.game-player.is-p1 .game-player-avatar {
+  border-color: rgba(var(--color-player-rgb), 0.9);
+}
+
+.game-player.is-p2 .game-player-avatar {
+  border-color: rgba(var(--color-opponent-rgb), 0.9);
+}
+
+.game-player-who {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .game-player-name {
@@ -921,12 +1100,36 @@ function onDelete(id) {
 
 .game-player-hero {
   color: var(--text-white);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
 }
 
+.game-player-hp {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--color-danger);
+}
+
+.game-hp-icon {
+  font-size: 18px;
+}
+
+.game-hp-value {
+  color: var(--text-white);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.game-hp-max {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .game-hp {
-  height: 8px;
+  height: 10px;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(var(--bg-dark-rgb), 0.9);
@@ -938,39 +1141,87 @@ function onDelete(id) {
   transition: width 0.3s ease;
 }
 
-.game-player-stats {
+.game-counters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.game-counter {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 8px;
-  color: var(--text-light);
-  font-size: 12px;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 4px;
+  border-radius: 10px;
+  background: rgba(var(--bg-dark-rgb), 0.6);
+  border: 1px solid var(--border-light);
+}
+
+.game-counter-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.game-counter-value {
+  color: var(--text-white);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.game-counter-label {
+  color: var(--text-dim);
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .game-player-passive {
-  margin-top: 8px;
+  margin-top: 10px;
   color: var(--text-dim);
   font-size: 11.5px;
   line-height: 1.4;
 }
 
+.game-boost {
+  background: transparent;
+  border: 2px solid var(--color-warning);
+  color: var(--color-warning);
+  font-weight: 800;
+}
+
+.game-boost:not(:disabled):hover {
+  background: var(--color-warning);
+  color: #1a1a1a;
+}
+
 .game-log {
-  max-height: 260px;
-  overflow-y: auto;
-  padding: 12px 14px;
+  overflow: hidden;
   background: rgba(var(--bg-dark-rgb), 0.6);
   border: 1px solid var(--border-light);
   border-radius: 12px;
 }
 
-.game-log-title {
-  margin-bottom: 6px;
+.game-log-toggle {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
   color: var(--text-dim);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.game-log-body {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0 14px 12px;
 }
 
 .game-log-line {
@@ -1062,5 +1313,157 @@ function onDelete(id) {
   color: var(--color-warning);
   font-size: 14px;
   font-weight: 800;
+}
+
+.game-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.game-bar .game-banner {
+  flex: 1 1 260px;
+  margin: 0;
+  padding: 10px 14px;
+}
+
+.game-bar .game-actions {
+  flex: 0 1 auto;
+  margin: 0;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) 160px;
+  gap: 12px;
+  align-items: start;
+}
+
+.game-layout .slot-p1 {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.game-layout .slot-p2 {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.game-center {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.game-center .game-log {
+  margin-top: 10px;
+}
+
+@media (max-width: 991px) {
+  .game-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .game-layout .slot-p1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .game-layout .slot-p2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .game-center {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.game-layout .game-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.game-layout .game-player-avatar {
+  width: 76px;
+  height: 76px;
+}
+
+.game-layout .game-player-hp {
+  justify-content: center;
+}
+
+.game-layout .game-hp {
+  width: 100%;
+}
+
+.game-layout .game-counters {
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 6px;
+}
+
+.game-layout .game-counter {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 10px;
+}
+
+.game-layout .game-counter-value {
+  font-size: 18px;
+}
+
+.game-layout .game-counter-label {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.game-player-passive summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.game-player-passive p {
+  margin: 6px 0 0;
+  text-align: left;
+}
+
+.game-hand .is-dim {
+  opacity: 0.4;
+}
+
+.game-boost.is-on,
+.game-boost.is-on:disabled {
+  opacity: 1;
+  background: var(--color-warning) !important;
+  border-color: var(--color-warning) !important;
+  color: #1a1a1a !important;
+}
+
+.game-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.deck-tile.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.game-confirm-box {
+  max-width: 420px;
+  text-align: center;
 }
 </style>

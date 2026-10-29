@@ -82,7 +82,7 @@ function load() {
 }
 
 const state = reactive(load());
-const pending = ref(null);
+const marks = ref({ keep: null, discard: [] });
 const net = useOnline();
 
 function viewFor(seat) {
@@ -144,7 +144,7 @@ function startDeckPhase() {
 
 function advance() {
   state.stage = "keep";
-  pending.value = null;
+  marks.value = { keep: null, discard: [] };
   state.discardsLeft = 0;
 
   for (let guard = 0; guard < 4; guard++) {
@@ -194,33 +194,32 @@ function applyHero(heroId, seat) {
   save();
 }
 
-function applyCard(cardId, seat) {
+function discardNeeded() {
+  if (state.phase !== "draft") return 0;
+  const pack = state.packs[state.holding[state.turn]] || [];
+  return Math.max(
+    0,
+    Math.min(PACK_DRAFT_CONFIG.discardPerTurn, pack.length - 1),
+  );
+}
+
+function applyTurn(keepId, discardIds, seat) {
   if (state.phase !== "draft" || (seat && seat !== state.turn)) return;
   const pack = state.packs[state.holding[state.turn]];
-  const index = pack.indexOf(cardId);
-  if (index === -1) return;
-  pack.splice(index, 1);
-  pending.value = null;
-
-  if (state.stage === "keep") {
-    state.kept[state.turn].push(cardId);
-    state.discardsLeft = Math.min(
-      PACK_DRAFT_CONFIG.discardPerTurn,
-      pack.length,
-    );
-    if (state.discardsLeft > 0) {
-      state.stage = "discard";
-      save();
-      return;
-    }
-    finishTurn();
-    save();
+  const ids = Array.isArray(discardIds) ? discardIds : [];
+  if (
+    !pack.includes(keepId) ||
+    ids.length !== discardNeeded() ||
+    new Set(ids).size !== ids.length ||
+    ids.some((id) => id === keepId || !pack.includes(id))
+  ) {
     return;
   }
-
-  state.discarded.push(cardId);
-  state.discardsLeft -= 1;
-  if (state.discardsLeft <= 0) finishTurn();
+  for (const id of [keepId, ...ids]) pack.splice(pack.indexOf(id), 1);
+  state.kept[state.turn].push(keepId);
+  state.discarded.push(...ids);
+  marks.value = { keep: null, discard: [] };
+  finishTurn();
   save();
 }
 
@@ -249,7 +248,13 @@ function applyDeck(seat) {
 function applyView(view) {
   Object.assign(state, view);
   const pack = state.packs[state.holding[state.turn]] || [];
-  if (pending.value && !pack.includes(pending.value)) pending.value = null;
+  const { keep, discard } = marks.value;
+  if (
+    (keep && !pack.includes(keep)) ||
+    discard.some((id) => !pack.includes(id))
+  ) {
+    marks.value = { keep: null, discard: [] };
+  }
 }
 
 net.on("draft:view", (view) => {
@@ -259,7 +264,8 @@ net.on("draft:view", (view) => {
 net.on("draft:cmd", (message) => {
   if (!net.isHost.value || !message) return;
   if (message.type === "hero") applyHero(message.id, "p2");
-  else if (message.type === "card") applyCard(message.id, "p2");
+  else if (message.type === "turn")
+    applyTurn(message.keep, message.discard, "p2");
   else if (message.type === "toggle") applyToggle(message.id, "p2");
   else if (message.type === "deck") applyDeck("p2");
 });
@@ -271,7 +277,7 @@ net.on("draft:sync", () => {
 net.onEvent("connected", ({ role }) => {
   if (role === "host") {
     Object.assign(state, createState());
-    pending.value = null;
+    marks.value = { keep: null, discard: [] };
     save();
   } else {
     net.send("draft:sync");
@@ -281,7 +287,7 @@ net.onEvent("connected", ({ role }) => {
 net.onEvent("closed", ({ role }) => {
   if (role === "guest") {
     Object.assign(state, load());
-    pending.value = null;
+    marks.value = { keep: null, discard: [] };
   }
 });
 
@@ -350,8 +356,10 @@ export function usePackDraft() {
     total: pairsTotal(),
   }));
 
-  const pendingCard = computed(() =>
-    pending.value ? cardById.get(pending.value) : null,
+  const needed = computed(() => discardNeeded());
+  const turnReady = computed(
+    () =>
+      Boolean(marks.value.keep) && marks.value.discard.length === needed.value,
   );
 
   const mySeat = computed(() => net.mySeat.value);
@@ -367,7 +375,7 @@ export function usePackDraft() {
     }
     const seat = net.isHost.value ? "p1" : null;
     if (type === "hero") applyHero(payload.id, seat);
-    else if (type === "card") applyCard(payload.id, seat);
+    else if (type === "turn") applyTurn(payload.keep, payload.discard, seat);
     else if (type === "toggle") applyToggle(payload.id, seat);
     else if (type === "deck") applyDeck(seat);
   }
@@ -376,16 +384,25 @@ export function usePackDraft() {
     if (canAct.value) command("hero", { id: heroId });
   }
 
-  function selectCard(cardId) {
+  function setMark(cardId, mode) {
     if (state.phase !== "draft" || !canAct.value) return;
-    pending.value = pending.value === cardId ? null : cardId;
+    const next = {
+      keep: marks.value.keep === cardId ? null : marks.value.keep,
+      discard: marks.value.discard.filter((id) => id !== cardId),
+    };
+    if (mode === "keep") next.keep = cardId;
+    if (mode === "discard") {
+      next.discard.push(cardId);
+      while (next.discard.length > needed.value) next.discard.shift();
+    }
+    marks.value = next;
   }
 
-  function confirmCard() {
-    if (!pending.value || !canAct.value) return;
-    const id = pending.value;
-    pending.value = null;
-    command("card", { id });
+  function confirmTurn() {
+    if (!turnReady.value || !canAct.value) return;
+    const { keep, discard } = marks.value;
+    marks.value = { keep: null, discard: [] };
+    command("turn", { keep, discard: [...discard] });
   }
 
   function toggleDeckCard(cardId) {
@@ -399,7 +416,7 @@ export function usePackDraft() {
   function restart() {
     if (net.isGuest.value) return;
     Object.assign(state, createState());
-    pending.value = null;
+    marks.value = { keep: null, discard: [] };
     save();
   }
 
@@ -424,14 +441,15 @@ export function usePackDraft() {
     availableHeroes,
     playerHeroes,
     packRound,
-    pending,
-    pendingCard,
+    marks,
+    needed,
+    turnReady,
     mySeat,
     canAct,
     viewSeat,
     pickHero,
-    selectCard,
-    confirmCard,
+    setMark,
+    confirmTurn,
     toggleDeckCard,
     confirmDeck,
     restart,

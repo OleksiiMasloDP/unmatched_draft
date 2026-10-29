@@ -84,41 +84,94 @@ export const packDraftHeroes = [
 ];
 
 const CARD_IMAGES = {
-  "ms-marvel": [
-    "big_wind_up",
-    "easy_peasy",
-    "embiggen",
-    "fangirl",
-    "feint",
-    "friends_and_family",
-    "gyro_and_fries",
-    "im_not_touching_you",
-    "momentous_shift",
-    "shrink_shrink_shrink",
-    "slingshot",
-  ],
-  "winter-soldier": [
-    "a_boy_named_bucky",
-    "bionic_arm",
-    "born_in_the_barracks",
-    "complete_the_mission",
-    "feint",
-    "manipulation",
-    "marksman",
-    "programmed_to_kill",
-    "reflex_memories",
-    "reprogram",
-    "wily_fighting",
-    "without_remorse",
-  ],
+  "ms-marvel": {
+    dir: "Ms. Marvel",
+    files: {
+      big_wind_up: "attack",
+      easy_peasy: "versatile",
+      embiggen: "versatile",
+      fangirl: "attack",
+      feint: "versatile",
+      friends_and_family: "scheme",
+      gyro_and_fries: "scheme",
+      im_not_touching_you: "attack",
+      momentous_shift: "versatile",
+      shrink_shrink_shrink: "versatile",
+      slingshot: "defense",
+    },
+  },
+  "spider-man": {
+    dir: "Spiderman",
+    files: {
+      counter_attack: "defense",
+      disarming_shot: "attack",
+      friendly_neighborhood_spider_man: "scheme",
+      momentous_shift: "versatile",
+      right_in_the_face: "versatile",
+      snark: "versatile",
+      spider_sense_tingling: "versatile",
+      swinging_kick: "attack",
+      thwip: "attack",
+      wall_crawler: "versatile",
+      web_shooters: "defense",
+      with_great_power: "scheme",
+    },
+  },
+  "tomoe-gozen": {
+    dir: "Tomoe Gozen",
+    files: {
+      a_warriors_way: "attack",
+      a_worthy_opponent: "versatile",
+      deeds_of_valor: "defense",
+      demon: "versatile",
+      fearsome_strength: "attack",
+      final_stand: "scheme",
+      five_against_thousands: "attack",
+      flash_of_steel: "versatile",
+      lord_kisos_final_stand: "scheme",
+      piercing_shot: "attack",
+      refuse_to_retreat: "defense",
+      skirmish: "versatile",
+      witness_my_last_battle: "attack",
+    },
+  },
+  "winter-soldier": {
+    dir: "Winter Soldier",
+    files: {
+      a_boy_named_bucky: "scheme",
+      bionic_arm: "attack",
+      born_in_the_barracks: "versatile",
+      complete_the_mission: "defense",
+      feint: "versatile",
+      manipulation: "scheme",
+      marksman: "attack",
+      programmed_to_kill: "attack",
+      reflex_memories: "versatile",
+      reprogram: "versatile",
+      wily_fighting: "versatile",
+      without_remorse: "attack",
+    },
+  },
+};
+
+const CARD_IMAGE_ALIASES = {
+  "tomoe-gozen": { "confront any demon or god": "demon" },
 };
 
 const squash = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 function cardImage(hero, name) {
-  const files = CARD_IMAGES[hero.id] || [];
-  const file = files.find((item) => squash(item) === squash(name));
-  return file ? encodeURI(`images/cards/${hero.name}/${file}.webp`) : null;
+  const entry = CARD_IMAGES[hero.id];
+  if (!entry) return null;
+  const alias = CARD_IMAGE_ALIASES[hero.id]?.[name.toLowerCase()];
+  const file = Object.keys(entry.files).find(
+    (item) => item === alias || squash(item) === squash(name),
+  );
+  if (!file) return null;
+  return {
+    image: encodeURI(`images/cards/${entry.dir}/${file}.webp`),
+    type: entry.files[file],
+  };
 }
 
 function slug(value) {
@@ -129,21 +182,22 @@ function slug(value) {
 }
 
 function expandDeck(hero) {
-  return hero.cards.flatMap(([quantity, name, value, boost, en, ua]) =>
-    Array.from({ length: quantity }, (_, index) => ({
+  return hero.cards.flatMap(([quantity, name, value, boost, en, ua]) => {
+    const art = cardImage(hero, name);
+    return Array.from({ length: quantity }, (_, index) => ({
       id: `${hero.id}-${slug(name)}-${index + 1}`,
       key: slug(name),
       heroId: hero.id,
       kind: "hero",
       sidekick: null,
       name,
-      type: value === null ? "scheme" : null,
+      type: value === null ? "scheme" : art?.type || null,
       value,
       boost,
       text: { en, ua },
-      image: cardImage(hero, name),
-    })),
-  );
+      image: art?.image || null,
+    }));
+  });
 }
 
 export function buildAllCards() {

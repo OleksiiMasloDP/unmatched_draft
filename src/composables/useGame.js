@@ -289,6 +289,8 @@ const api = {
 };
 
 const isScheme = (card) => card.value === null;
+const canAttackWith = (card) => !isScheme(card) && card.type !== "defense";
+const canDefendWith = (card) => !isScheme(card) && card.type !== "attack";
 
 function context(player, card, combat = null) {
   return { g: api, me: player, foe: other(player), card, combat };
@@ -385,7 +387,7 @@ function* attack(me) {
   const foe = other(me);
   if (!inRange(me)) return false;
 
-  const options = pl(me).hand.filter((id) => !isScheme(getCard(id)));
+  const options = pl(me).hand.filter((id) => canAttackWith(getCard(id)));
   if (!options.length) return false;
   const attackIds = yield askCards(me, "promptAttackCard", options, {
     min: 0,
@@ -400,7 +402,9 @@ function* attack(me) {
   log("logAttack", { player: me });
 
   let defenseCard = null;
-  const defenseOptions = pl(foe).hand.filter((id) => !isScheme(getCard(id)));
+  const defenseOptions = pl(foe).hand.filter((id) =>
+    canDefendWith(getCard(id)),
+  );
   if (defenseOptions.length) {
     const defenseIds = yield askCards(
       foe,
@@ -538,6 +542,7 @@ const canAct = () =>
   game.phase === "play" && !game.prompt && !flow && game.actions > 0;
 
 function startGame(deckA, deckB) {
+  if (deckA.heroId === deckB.heroId) return;
   const setup = (deck, player) => {
     const data = getHero(deck.heroId);
     const shuffled = shuffle(deck.cardIds);
@@ -650,6 +655,18 @@ function applyAnswer(answer, seat) {
   syncOut();
 }
 
+function applySurrender(player) {
+  if (game.phase !== "play" || !player) return;
+  log("logSurrender", { player });
+  setOver(other(player));
+  syncOut();
+}
+
+function surrender(player) {
+  if (net.isGuest.value) send({ type: "surrender" });
+  else applySurrender(net.isHost.value ? "p1" : player);
+}
+
 function applyAction(type, seat) {
   if (game.phase !== "play" || (seat && seat !== game.turn)) return;
   if (type === "maneuver" && canAct()) run(maneuver(game.turn));
@@ -695,6 +712,7 @@ function validDeck(deck) {
 
 function setLobbyDeck(player, deck) {
   if (game.phase !== "setup" || !validDeck(deck)) return;
+  if (game.lobby[other(player)]?.heroId === deck.heroId) return;
   lobbyDecks[player] = {
     name: deck.name,
     heroId: deck.heroId,
@@ -726,6 +744,7 @@ function setMap(id) {
 function startOnlineGame() {
   if (!net.isHost.value || game.phase !== "setup") return;
   if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
+  if (lobbyDecks.p1.heroId === lobbyDecks.p2.heroId) return;
   startGame(lobbyDecks.p1, lobbyDecks.p2);
 }
 
@@ -738,11 +757,7 @@ function availableActions() {
   return {
     maneuver: idle && game.actions > 0,
     scheme: idle && game.actions > 0 && hand.some(isScheme),
-    attack:
-      idle &&
-      game.actions > 0 &&
-      inRange(me) &&
-      hand.some((card) => !isScheme(card)),
+    attack: idle && game.actions > 0 && inRange(me) && hand.some(canAttackWith),
   };
 }
 
@@ -756,6 +771,7 @@ net.on("game:cmd", (message) => {
   if (!net.isHost.value || !message) return;
   if (message.type === "answer") applyAnswer(message.answer, "p2");
   else if (message.type === "deck") setLobbyDeck("p2", message.deck);
+  else if (message.type === "surrender") applySurrender("p2");
   else applyAction(message.type, "p2");
 });
 
@@ -786,6 +802,7 @@ export function useGame() {
     doManeuver,
     doScheme,
     doAttack,
+    surrender,
     availableActions,
     heroOf: (player) => (pl(player) ? hero(player) : null),
     other,
