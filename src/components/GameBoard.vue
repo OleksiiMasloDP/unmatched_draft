@@ -40,7 +40,11 @@
     </defs>
 
     <g v-for="player in ['p1', 'p2']" :key="player">
-      <g v-if="players[player]" class="board-hero" :class="'is-' + player">
+      <g
+        v-if="players[player]"
+        class="board-hero"
+        :class="['is-' + player, { 'is-hit': hit[player] }]"
+      >
         <circle
           :cx="byId.get(players[player].space).x"
           :cy="byId.get(players[player].space).y"
@@ -75,11 +79,21 @@
         </g>
       </g>
     </g>
+
+    <g
+      v-for="item in floats"
+      :key="item.id"
+      class="board-float"
+      :class="'is-' + item.type"
+      :transform="`translate(${item.x}, ${item.y})`"
+    >
+      <text class="board-float-text" text-anchor="middle">{{ item.text }}</text>
+    </g>
   </svg>
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { getHero } from "../gameDecks";
 
 const props = defineProps({
@@ -92,6 +106,10 @@ const props = defineProps({
     required: true,
   },
   options: {
+    type: Array,
+    default: () => [],
+  },
+  fx: {
     type: Array,
     default: () => [],
   },
@@ -115,6 +133,44 @@ const fillFor = (space) =>
   space.zones.length > 1
     ? `url(#zone-${space.zones.join("-")})`
     : props.map.zoneColors[space.zones[0]];
+
+const floats = ref([]);
+const hit = reactive({ p1: false, p2: false });
+let lastFx = Math.max(0, ...props.fx.map((item) => item.id));
+const timers = [];
+
+watch(
+  () => props.fx.map((item) => item.id).join(","),
+  () => {
+    const fresh = props.fx.filter((item) => item.id > lastFx);
+    lastFx = Math.max(lastFx, ...props.fx.map((item) => item.id));
+    fresh.forEach((item, index) => {
+      if (item.type !== "damage" && item.type !== "heal") return;
+      const unit = props.players[item.player];
+      const space = unit && byId.value.get(unit.space);
+      if (!space) return;
+      const entry = {
+        id: item.id,
+        type: item.type,
+        x: space.x,
+        y: space.y - 48 - index * 30,
+        text: (item.type === "damage" ? "-" : "+") + item.n,
+      };
+      floats.value = [...floats.value, entry];
+      if (item.type === "damage") {
+        hit[item.player] = true;
+        timers.push(setTimeout(() => (hit[item.player] = false), 600));
+      }
+      timers.push(
+        setTimeout(() => {
+          floats.value = floats.value.filter((x) => x.id !== entry.id);
+        }, 1500),
+      );
+    });
+  },
+);
+
+onBeforeUnmount(() => timers.forEach(clearTimeout));
 
 const failedImages = reactive({});
 
@@ -174,6 +230,69 @@ const initials = (heroId) =>
 
 .board-hero.is-p2 > circle {
   fill: var(--color-opponent);
+}
+
+.board-hero.is-hit {
+  animation: board-shake 0.5s ease;
+}
+
+.board-hero.is-hit > circle {
+  stroke: #ff3b3b;
+}
+
+@keyframes board-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+  }
+  40% {
+    transform: translateX(8px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.board-float {
+  pointer-events: none;
+}
+
+.board-float-text {
+  font-size: 46px;
+  font-weight: 900;
+  stroke: #000;
+  stroke-width: 6px;
+  paint-order: stroke;
+  animation: board-rise 1.5s ease-out forwards;
+}
+
+.board-float.is-damage .board-float-text {
+  fill: #ff5252;
+}
+
+.board-float.is-heal .board-float-text {
+  fill: #4cd964;
+}
+
+@keyframes board-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(1);
+  }
 }
 
 .hero-initials {

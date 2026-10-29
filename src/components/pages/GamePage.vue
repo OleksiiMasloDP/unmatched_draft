@@ -6,6 +6,10 @@
         <span class="game-beta">{{ t("packBeta") }}</span>
       </div>
 
+      <div v-if="game.notice" class="game-notice">
+        {{ replacePlayer(game.notice.key, game.notice.player) }}
+      </div>
+
       <div class="game-note">{{ t("gameTestNote") }}</div>
     </template>
 
@@ -151,7 +155,7 @@
             :disabled="!available.maneuver"
             @click="doManeuver"
           >
-            {{ t("gameManeuver") }}
+            <ActionIcon name="maneuver" />{{ t("gameManeuver") }}
           </button>
           <button
             class="btn btn-sm action-btn game-boost"
@@ -159,28 +163,28 @@
             :disabled="!canBoost"
             @click="boostOpen = !boostOpen"
           >
-            {{ t("gameBoost") }}
+            <ActionIcon name="boost" />{{ t("gameBoost") }}
           </button>
           <button
             class="btn btn-warning btn-sm action-btn"
             :disabled="!available.scheme"
             @click="doScheme"
           >
-            {{ t("gameScheme") }}
+            <ActionIcon name="scheme" />{{ t("gameScheme") }}
           </button>
           <button
             class="btn btn-danger btn-sm action-btn"
             :disabled="!available.attack"
             @click="doAttack"
           >
-            {{ t("gameAttack") }}
+            <ActionIcon name="attack" />{{ t("gameAttack") }}
           </button>
           <button
             v-if="spacePrompt"
             class="btn btn-sm action-btn game-skip"
             @click="answerPrompt(null)"
           >
-            {{ t("gameSkip") }}
+            <ActionIcon name="skip" />{{ t("gameSkip") }}
           </button>
         </div>
       </div>
@@ -287,6 +291,7 @@
             :map="map"
             :players="game.players"
             :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+            :fx="game.fx"
             @select="answerPrompt"
           />
 
@@ -334,10 +339,10 @@
       <div class="game-footer">
         <button
           v-if="game.phase === 'play'"
-          class="btn btn-outline-danger btn-sm game-surrender"
+          class="btn btn-sm game-surrender is-danger"
           @click="surrenderOpen = true"
         >
-          {{ t("gameSurrender") }}
+          <ActionIcon name="flag" />{{ t("gameSurrender") }}
         </button>
         <button
           v-else-if="!isGuest"
@@ -476,7 +481,7 @@
               {{ t("gameSurrenderYes") }}
             </button>
             <button
-              class="btn btn-sm action-btn"
+              class="btn btn-sm action-btn game-cancel"
               @click="surrenderOpen = false"
             >
               {{ t("gameCancel") }}
@@ -484,6 +489,23 @@
           </div>
         </div>
       </div>
+
+      <TransitionGroup name="toast" tag="div" class="game-toasts">
+        <div
+          v-for="toast in toasts"
+          :key="toast.id"
+          class="game-toast"
+          :class="['is-' + toast.type, 'side-' + toast.player]"
+        >
+          <img
+            v-if="toast.image"
+            class="game-toast-card"
+            :src="toast.image"
+            :alt="toast.card"
+          />
+          <span class="game-toast-text">{{ toast.text }}</span>
+        </div>
+      </TransitionGroup>
 
       <div v-if="needsPass" class="game-pass">
         <div class="game-pass-box">
@@ -501,11 +523,12 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useSavedDecks } from "../../composables/useSavedDecks";
 import { getCard, getHero, testDecks } from "../../gameDecks";
+import ActionIcon from "../ActionIcon.vue";
 import GameBoard from "../GameBoard.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
@@ -554,6 +577,73 @@ const available = computed(() => availableActions());
 const canBoost = computed(() =>
   Boolean(spacePrompt.value?.boostOptions?.length),
 );
+
+const toasts = ref([]);
+let lastFx = Math.max(0, ...game.fx.map((item) => item.id));
+const toastTimers = [];
+
+function toastFor(item) {
+  const who = playerLabel(item.player);
+  if (item.type === "damage") {
+    return {
+      text: t(item.src ? "fxDamageSrc" : "fxDamage")
+        .replace("{player}", who)
+        .replace("{n}", item.n)
+        .replace("{card}", item.src || ""),
+    };
+  }
+  if (item.type === "heal") {
+    return {
+      text: t("fxHeal").replace("{player}", who).replace("{n}", item.n),
+    };
+  }
+  if (item.type === "draw") {
+    return {
+      text: t("fxDraw").replace("{player}", who).replace("{n}", item.n),
+    };
+  }
+  const card = getCard(item.cardId);
+  if (!card) return null;
+  return {
+    text: t("fxDiscard").replace("{player}", who).replace("{card}", card.name),
+    image: card.image,
+    card: card.name,
+  };
+}
+
+watch(
+  () => game.fx.map((item) => item.id).join(","),
+  () => {
+    const fresh = game.fx.filter((item) => item.id > lastFx);
+    lastFx = Math.max(lastFx, ...game.fx.map((item) => item.id));
+    for (const item of fresh) {
+      const toast = toastFor(item);
+      if (!toast) continue;
+      const entry = {
+        id: item.id,
+        type: item.type,
+        player: item.player,
+        ...toast,
+      };
+      toasts.value = [...toasts.value, entry].slice(-5);
+      toastTimers.push(
+        setTimeout(() => {
+          toasts.value = toasts.value.filter((x) => x.id !== entry.id);
+        }, 3200),
+      );
+    }
+  },
+);
+
+watch(
+  () => game.phase,
+  () => {
+    lastFx = Math.max(0, ...game.fx.map((item) => item.id));
+    toasts.value = [];
+  },
+);
+
+onBeforeUnmount(() => toastTimers.forEach(clearTimeout));
 
 const playerLabel = (player) =>
   t(player === "p1" ? "packPlayer1" : "packPlayer2");
@@ -748,6 +838,8 @@ const playerTag = (player) =>
 
 function onSurrender() {
   surrenderOpen.value = false;
+  boostOpen.value = false;
+  selection.value = [];
   surrender(viewer.value);
 }
 
@@ -1186,15 +1278,55 @@ function onDelete(id) {
 }
 
 .game-boost {
-  background: transparent;
-  border: 2px solid var(--color-warning);
-  color: var(--color-warning);
+  background: linear-gradient(180deg, #ffb347, #f08c00);
+  border: 2px solid #ffd27a;
+  color: #1a1a1a;
   font-weight: 800;
+  box-shadow: 0 0 10px rgba(255, 170, 40, 0.45);
 }
 
 .game-boost:not(:disabled):hover {
-  background: var(--color-warning);
+  filter: brightness(1.12);
+}
+
+.game-boost:disabled {
+  box-shadow: none;
+  filter: grayscale(0.6);
+}
+
+.game-surrender.is-danger {
+  background: #c62828;
+  border: 2px solid #ff8a80;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(255, 80, 80, 0.35);
+}
+
+.game-surrender.is-danger:hover {
+  background: #e53935;
+  color: #fff;
+}
+
+.game-cancel {
+  background: var(--bg-slate-hover);
+  border: 2px solid var(--text-light);
+  color: var(--text-white);
+  font-weight: 700;
+}
+
+.game-cancel:hover {
+  background: var(--text-light);
   color: #1a1a1a;
+}
+
+.game-notice {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ff8a80;
+  background: rgba(198, 40, 40, 0.25);
+  color: var(--text-white);
+  font-weight: 700;
 }
 
 .game-log {
@@ -1465,5 +1597,67 @@ function onDelete(id) {
 .game-confirm-box {
   max-width: 420px;
   text-align: center;
+}
+
+.game-toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(320px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.game-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-left: 5px solid var(--text-light);
+  background: rgba(var(--bg-dark-rgb), 0.95);
+  color: var(--text-white);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.game-toast.is-damage {
+  border-left-color: #ff5252;
+}
+
+.game-toast.is-heal {
+  border-left-color: #4cd964;
+}
+
+.game-toast.is-draw {
+  border-left-color: #4aa8ff;
+}
+
+.game-toast.is-discard {
+  border-left-color: #ffb347;
+}
+
+.game-toast-card {
+  width: 44px;
+  border-radius: 4px;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.35s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(40px) scale(0.9);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>

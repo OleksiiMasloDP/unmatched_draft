@@ -13,6 +13,13 @@ function cancelOpponentCard(c) {
   c.g.log("logCancel", { card: targetCard.name });
 }
 
+function* placeInZone(c) {
+  const options = c.g.zoneSpaces(c.me);
+  if (!options.length) return;
+  const space = yield c.g.askSpace(c.me, "promptPlaceZone", options);
+  if (space) c.g.place(c.me, space);
+}
+
 export const cardEffects = {
   "big-wind-up": {
     canBoost: noSharedZones,
@@ -195,6 +202,213 @@ export const cardEffects = {
   "born-in-the-barracks": {
     *after(c) {
       if (c.combat.won[c.me]) c.g.heal(c.me, 2);
+    },
+  },
+
+  "friendly-neighborhood-spider-man": {
+    *scheme(c) {
+      c.g.heal(c.me, 3);
+      yield* placeInZone(c);
+    },
+  },
+
+  "counter-attack": {
+    *after(c) {
+      if (c.combat.values[c.foe] >= 4) c.g.damage(c.foe, 2);
+    },
+  },
+
+  "disarming-shot": {
+    *after(c) {
+      const dealt = c.combat.taken[c.foe];
+      if (dealt > 0) c.g.draw(c.me, dealt);
+    },
+  },
+
+  "web-shooters": {
+    damageCap: () => 2,
+  },
+
+  "right-in-the-face": {
+    *immediate(c) {
+      c.g.blockDraw(c.foe);
+    },
+  },
+
+  "spider-sense-tingling": {
+    *after(c) {
+      if (c.combat.values[c.foe] >= 4) c.g.draw(c.me, 2);
+    },
+  },
+
+  "swinging-kick": {
+    *after(c) {
+      const dealt = c.combat.taken[c.foe];
+      if (dealt <= 0) return;
+      const options = c.g.reach(c.foe, dealt);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
+      if (space) c.g.place(c.foe, space);
+    },
+  },
+
+  thwip: {
+    *after(c) {
+      if (c.combat.won[c.me]) yield* placeInZone(c);
+    },
+  },
+
+  "wall-crawler": {
+    *after(c) {
+      yield* placeInZone(c);
+    },
+  },
+
+  "with-great-power": {
+    *scheme(c) {
+      c.g.addAttackBonus(c.me, 1);
+      c.g.draw(c.me, 1);
+      c.g.gainAction(1);
+    },
+  },
+
+  snark: {
+    *after(c) {
+      if (c.g.adjacent(c.me, c.foe)) c.g.draw(c.me, 1);
+    },
+  },
+
+  "fearsome-strength": {
+    *immediate(c) {
+      if (!c.g.adjacent(c.me, c.foe)) return;
+      const ok = yield c.g.askConfirm(c.me, "promptSwap");
+      if (ok) c.g.swapPlaces();
+    },
+    *after(c) {
+      if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
+    },
+  },
+
+  "witness-my-last-battle": {
+    canAttack: (c) => c.g.adjacent(c.me, c.foe),
+    *after(c) {
+      c.g.endTurnNow();
+    },
+  },
+
+  "five-against-thousands": {
+    *after(c) {
+      if (!c.g.adjacent(c.me, c.foe) || !c.g.handSize(c.me)) return;
+      const ok = yield c.g.askConfirm(c.me, "promptFiveAgainst");
+      if (!ok) return;
+      const ids = yield c.g.askCards(
+        c.me,
+        "promptDiscardOne",
+        c.g.handOf(c.me),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.me, ids[0]);
+      c.combat.returnToHand[c.me] = true;
+    },
+  },
+
+  "a-warrior-s-way": {
+    *after(c) {
+      const options = c.g.reach(c.foe, 3);
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
+        if (space) c.g.place(c.foe, space);
+      }
+      const near = c.g.adjacentSpaces(c.me);
+      if (near.length) {
+        const space = yield c.g.askSpace(c.me, "promptPlaceAdjacent", near);
+        if (space) c.g.place(c.me, space);
+      }
+    },
+  },
+
+  "piercing-shot": {
+    *after(c) {
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "confront-any-demon-or-god": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+      if (c.combat.won[c.foe] && c.g.handSize(c.foe)) {
+        const ids = yield c.g.askCards(
+          c.me,
+          "promptConfrontPick",
+          c.g.handOf(c.foe),
+          { min: 1, max: 1 },
+        );
+        c.g.discardFromHand(c.foe, ids[0]);
+      }
+    },
+  },
+
+  "a-worthy-opponent": {
+    value: () => 5,
+  },
+
+  "flash-of-steel": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    *after(c) {
+      if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
+    },
+  },
+
+  skirmish: {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const who = yield c.g.askChoice(c.me, "promptSkirmishWho", [
+        { value: "me", label: "gameSkirmishMe" },
+        { value: "foe", label: "gameSkirmishFoe" },
+      ]);
+      const target = who === "me" ? c.me : c.foe;
+      const options = c.g.reach(target, 2);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
+      if (space) c.g.place(target, space);
+    },
+  },
+
+  "refuse-to-retreat": {
+    *immediate(c) {
+      c.g.pin(c.me);
+    },
+    *after(c) {
+      if (!c.g.adjacent(c.me, c.foe) || !c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.foe,
+        "promptDiscardOne",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "deeds-of-valor": {
+    damageCap: () => 2,
+  },
+
+  "lord-kiso-s-final-stand": {
+    *scheme(c) {
+      const options = c.g.reach(c.me, 3);
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptMoveSpace", options);
+        if (space) c.g.place(c.me, space);
+      }
+      const choice = yield c.g.askChoice(c.me, "promptKisoChoice", [
+        { value: "heal", label: "gameKisoHeal" },
+        { value: "action", label: "gameKisoAction" },
+      ]);
+      if (choice === "heal") c.g.heal(c.me, 2);
+      else c.g.gainAction(1);
     },
   },
 };

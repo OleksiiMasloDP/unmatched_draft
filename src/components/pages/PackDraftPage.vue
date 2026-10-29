@@ -301,7 +301,37 @@
         <div v-for="player in players" :key="player" class="col-12 col-lg-6">
           <div class="pack-summary" :class="'is-' + player">
             <h3>{{ t(player === "p1" ? "packPlayer1" : "packPlayer2") }}</h3>
-            <PackHeroCard :hero="playerHeroes[player]" />
+            <div class="pack-mini-hero">
+              <img
+                v-if="playerHeroes[player].image"
+                :src="playerHeroes[player].image"
+                :alt="playerHeroes[player].name"
+              />
+              <div class="pack-mini-hero-info">
+                <div class="pack-mini-hero-name">
+                  {{ playerHeroes[player].name }}
+                </div>
+                <div class="pack-mini-hero-stats">
+                  {{ t("packHp") }} {{ playerHeroes[player].hp }} ·
+                  {{ t("packMove") }} {{ playerHeroes[player].move }} ·
+                  {{
+                    t("packAttack" + capitalize(playerHeroes[player].attack))
+                  }}
+                </div>
+                <details class="pack-mini-hero-passive">
+                  <summary>
+                    {{ t("packPassive") }}:
+                    {{ playerHeroes[player].passive.name }}
+                  </summary>
+                  <p>
+                    {{
+                      playerHeroes[player].passive.text[lang] ||
+                      playerHeroes[player].passive.text.en
+                    }}
+                  </p>
+                </details>
+              </div>
+            </div>
 
             <div v-if="canSave(player)" class="pack-save">
               <template v-if="savedFlags[player]">
@@ -331,28 +361,25 @@
             <div class="pack-summary-title">
               {{ t("packDeckSize").replace("{n}", deckCards[player].length) }}
             </div>
-            <div class="row g-2">
-              <div
+            <div class="pack-thumbs">
+              <PackCard
                 v-for="card in deckCards[player]"
                 :key="card.id"
-                class="col-6 col-md-4"
-              >
-                <PackCard :card="card" :dead="isDeadCard(card, player)" />
-              </div>
+                :card="card"
+                :dead="isDeadCard(card, player)"
+              />
             </div>
 
             <details v-if="setAsideCards[player].length" class="pack-details">
               <summary>
                 {{ t("packSetAside") }} ({{ setAsideCards[player].length }})
               </summary>
-              <div class="row g-2">
-                <div
+              <div class="pack-thumbs">
+                <PackCard
                   v-for="card in setAsideCards[player]"
                   :key="card.id"
-                  class="col-6 col-md-4"
-                >
-                  <PackCard :card="card" />
-                </div>
+                  :card="card"
+                />
               </div>
             </details>
           </div>
@@ -363,12 +390,8 @@
         <summary>
           {{ t("packDiscardPile") }} ({{ discardedCards.length }})
         </summary>
-        <div class="row g-2">
-          <div
-            v-for="card in discardedCards"
-            :key="card.id"
-            class="col-6 col-md-4 col-lg-3"
-          >
+        <div class="pack-thumbs">
+          <div v-for="card in discardedCards" :key="card.id">
             <PackCard :card="card" />
           </div>
         </div>
@@ -394,6 +417,7 @@ import { useOnline } from "../../composables/useOnline";
 import { useSavedDecks } from "../../composables/useSavedDecks";
 
 const { t, lang } = useDraftState();
+const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const {
   state,
   config,
@@ -705,6 +729,50 @@ function onRestart() {
   font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.pack-mini-hero {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pack-mini-hero img {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 50%;
+  border: 2px solid var(--border-medium);
+}
+
+.pack-mini-hero-name {
+  color: var(--text-white);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.pack-mini-hero-stats {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.pack-mini-hero-passive {
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+.pack-mini-hero-passive p {
+  margin: 4px 0 0;
+}
+
+.pack-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 6px;
 }
 
 .pack-summary-title {

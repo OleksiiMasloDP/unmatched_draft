@@ -1,6 +1,6 @@
 import { reactive, computed, ref } from "vue";
 
-const ROOM_PREFIX = "unmatched-draft-";
+import { RELAY_URL } from "../relayConfig";
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const JOIN_TIMEOUT = 15000;
 
@@ -126,61 +126,69 @@ function broadcastTransport(role, code, handlers) {
   };
 }
 
-async function peerTransport(role, code, handlers) {
-  const { Peer } = await import("peerjs");
-  let connection = null;
-  let timeoutTimer = null;
-  const peer = role === "host" ? new Peer(ROOM_PREFIX + code) : new Peer();
+async function relayTransport(role, code, handlers) {
+  if (!RELAY_URL) throw new Error("relay-not-configured");
+  const base = RELAY_URL.replace(/\/+$/, "");
+  const socket = new WebSocket(`${base}/room/${code}?role=${role}`);
+  let pingTimer = null;
+  let closed = false;
+  let opened = false;
 
-  const attach = (next) => {
-    connection = next;
-    next.on("open", () => {
-      clearTimeout(timeoutTimer);
-      handlers.onOpen();
-    });
-    next.on("data", (data) => handlers.onMessage(data));
-    next.on("close", () => handlers.onClose());
-    next.on("error", (error) => handlers.onError(error.type || String(error)));
+  const timeoutTimer = setTimeout(() => {
+    if (!opened) handlers.onError("server-timeout");
+  }, JOIN_TIMEOUT);
+
+  socket.onopen = () => {
+    pingTimer = setInterval(() => {
+      if (socket.readyState === 1) socket.send('{"t":"ping"}');
+    }, 20000);
   };
 
-  peer.on("error", (error) => handlers.onError(error.type || String(error)));
+  socket.onmessage = (event) => {
+    let data;
+    try {
+      data = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+    if (data.t === "ready") {
+      clearTimeout(timeoutTimer);
+      handlers.onReady();
+    } else if (data.t === "open") {
+      opened = true;
+      clearTimeout(timeoutTimer);
+      handlers.onOpen();
+    } else if (data.t === "msg") {
+      handlers.onMessage(data.d);
+    } else if (data.t === "error") {
+      clearTimeout(timeoutTimer);
+      handlers.onError(data.e);
+    } else if (data.t === "closed") {
+      handlers.onClose();
+    }
+  };
 
-  if (role === "host") {
-    peer.on("open", () => handlers.onReady());
-    peer.on("connection", (next) => {
-      if (connection) {
-        next.on("open", () => next.close());
-        return;
-      }
-      attach(next);
-    });
-  } else {
-    peer.on("open", () => {
-      attach(
-        peer.connect(ROOM_PREFIX + code, {
-          reliable: true,
-          serialization: "json",
-        }),
-      );
-    });
-    timeoutTimer = setTimeout(
-      () => handlers.onError("peer-unavailable"),
-      JOIN_TIMEOUT,
-    );
-  }
+  socket.onerror = () => {
+    clearTimeout(timeoutTimer);
+    if (!closed) handlers.onError("server-timeout");
+  };
+
+  socket.onclose = () => {
+    clearInterval(pingTimer);
+    if (!closed && opened) handlers.onClose();
+  };
 
   return {
     send: (message) => {
-      if (connection && connection.open) connection.send(message);
+      if (socket.readyState === 1) {
+        socket.send(JSON.stringify({ t: "msg", d: message }));
+      }
     },
     close: () => {
+      closed = true;
       clearTimeout(timeoutTimer);
-      try {
-        if (connection) connection.close();
-      } catch {
-        connection = null;
-      }
-      peer.destroy();
+      clearInterval(pingTimer);
+      socket.close();
     },
   };
 }
@@ -245,7 +253,7 @@ async function start(role, code) {
   try {
     transport = useBroadcastTransport()
       ? broadcastTransport(role, code, handlers)
-      : await peerTransport(role, code, handlers);
+      : await relayTransport(role, code, handlers);
   } catch (error) {
     if (mine === session) {
       net.status = "error";

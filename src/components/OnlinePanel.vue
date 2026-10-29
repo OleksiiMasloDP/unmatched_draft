@@ -100,6 +100,8 @@ const copied = ref(false);
 
 const errorText = computed(() => {
   if (net.error === "peer-unavailable") return t("onlineErrorNotFound");
+  if (net.error === "relay-not-configured") return t("onlineErrorConfig");
+  if (net.error === "server-timeout") return t("onlineErrorServer");
   if (net.error === "room-full") return t("onlineErrorFull");
   return net.error;
 });

@@ -61,12 +61,35 @@ const game = reactive({
   lobby: { p1: null, p2: null },
   prompt: null,
   log: [],
+  fx: [],
+  notice: null,
+  fxSeq: 0,
   winner: null,
 });
 
 let flow = null;
 let lobbyDecks = { p1: null, p2: null };
 const net = useOnline();
+
+const turnFlags = {
+  noDraw: { p1: false, p2: false },
+  attackBonus: { p1: 0, p2: 0 },
+  pinned: { p1: false, p2: false },
+};
+
+function resetTurnFlags() {
+  turnFlags.noDraw = { p1: false, p2: false };
+  turnFlags.attackBonus = { p1: 0, p2: 0 };
+  turnFlags.pinned = { p1: false, p2: false };
+}
+
+let activeCard = null;
+
+function fx(type, player, extra = {}) {
+  game.fxSeq += 1;
+  game.fx.push({ id: game.fxSeq, type, player, ...extra });
+  if (game.fx.length > 40) game.fx.shift();
+}
 
 const other = (player) => (player === "p1" ? "p2" : "p1");
 const pl = (player) => game.players[player];
@@ -107,6 +130,7 @@ function zoneCount(player) {
 }
 
 function reach(player, steps) {
+  if (turnFlags.pinned[player]) return [];
   const start = spaceOf(player);
   const blocked = spaceOf(other(player));
   const seen = new Map([[start, 0]]);
@@ -157,6 +181,7 @@ function damage(player, amount) {
   const target = pl(player);
   target.hp = Math.max(0, target.hp - amount);
   log("logDamage", { player, n: amount });
+  fx("damage", player, { n: amount, src: activeCard });
   if (target.hp === 0) setOver(other(player));
 }
 
@@ -165,10 +190,15 @@ function heal(player, amount) {
   const healed = Math.min(amount, target.maxHp - target.hp);
   target.hp += healed;
   log("logHeal", { player, n: healed });
+  if (healed > 0) fx("heal", player, { n: healed });
 }
 
 function draw(player, count) {
   const target = pl(player);
+  if (turnFlags.noDraw[player] && count > 0) {
+    log("logNoDraw", { player });
+    return;
+  }
   let drawn = 0;
   for (let i = 0; i < count && game.phase === "play"; i++) {
     if (target.deck.length) {
@@ -179,7 +209,10 @@ function draw(player, count) {
       damage(player, EXHAUSTION_DAMAGE);
     }
   }
-  if (drawn) log("logDraw", { player, n: drawn });
+  if (drawn) {
+    log("logDraw", { player, n: drawn });
+    fx("draw", player, { n: drawn });
+  }
 }
 
 function drawUntil(player, size) {
@@ -199,6 +232,7 @@ function discardFromHand(player, cardId) {
   target.hand.splice(index, 1);
   target.discard.push(cardId);
   log("logDiscard", { player, card: getCard(cardId).name });
+  fx("discard", player, { cardId });
   return getCard(cardId);
 }
 
@@ -219,6 +253,20 @@ function shuffleIntoDeck(player, cardIds) {
 function place(player, spaceId) {
   pl(player).space = spaceId;
   log("logMove", { player, space: spaceId });
+}
+
+function swapPlaces() {
+  const a = pl("p1").space;
+  pl("p1").space = pl("p2").space;
+  pl("p2").space = a;
+  log("logSwap");
+}
+
+function adjacentSpaces(player) {
+  const blocked = spaceOf(other(player));
+  return active.spaceById
+    .get(spaceOf(other(player)))
+    .links.filter((id) => id !== blocked);
 }
 
 function spendAction() {
@@ -277,6 +325,20 @@ const api = {
   askSpace,
   askCards,
   askChoice,
+  swapPlaces,
+  adjacentSpaces,
+  blockDraw: (player) => {
+    turnFlags.noDraw[player] = true;
+  },
+  addAttackBonus: (player, n) => {
+    turnFlags.attackBonus[player] += n;
+  },
+  pin: (player) => {
+    turnFlags.pinned[player] = true;
+  },
+  endTurnNow: () => {
+    game.actions = 0;
+  },
   handSize: (player) => pl(player).hand.length,
   handOf: (player) => [...pl(player).hand],
   discardOf: (player) => [...pl(player).discard],
@@ -290,6 +352,9 @@ const api = {
 
 const isScheme = (card) => card.value === null;
 const canAttackWith = (card) => !isScheme(card) && card.type !== "defense";
+const attackPlayable = (player, card) =>
+  canAttackWith(card) &&
+  (cardEffects[card.key]?.canAttack?.(context(player, card)) ?? true);
 const canDefendWith = (card) => !isScheme(card) && card.type !== "attack";
 
 function context(player, card, combat = null) {
@@ -306,11 +371,14 @@ function* runEffect(player, card, phase, combat) {
   }
   const handler = effect[phase];
   if (!handler) return;
+  activeCard = card.name;
   yield* handler(context(player, card, combat));
+  activeCard = null;
 }
 
 function* startTurn() {
   const me = game.turn;
+  resetTurnFlags();
   game.actions = ACTIONS_PER_TURN;
   game.turnStart = spaceOf(me);
   game.redRoomIgnored[me] = false;
@@ -387,7 +455,7 @@ function* attack(me) {
   const foe = other(me);
   if (!inRange(me)) return false;
 
-  const options = pl(me).hand.filter((id) => canAttackWith(getCard(id)));
+  const options = pl(me).hand.filter((id) => attackPlayable(me, getCard(id)));
   if (!options.length) return false;
   const attackIds = yield askCards(me, "promptAttackCard", options, {
     min: 0,
@@ -406,16 +474,15 @@ function* attack(me) {
     canDefendWith(getCard(id)),
   );
   if (defenseOptions.length) {
-    const defenseIds = yield askCards(
-      foe,
-      "promptDefenseCard",
-      defenseOptions,
-      {
-        min: 0,
-        max: 1,
-        skip: "gameNoDefense",
-      },
-    );
+    const defensePrompt = askCards(foe, "promptDefenseCard", defenseOptions, {
+      min: 0,
+      max: 1,
+      skip: "gameNoDefense",
+    });
+    if (hero(foe).id === "spider-man") {
+      defensePrompt.hint = { key: "promptSpideySense", n: attackCard.value };
+    }
+    const defenseIds = yield defensePrompt;
     if (defenseIds.length) {
       defenseCard = getCard(defenseIds[0]);
       pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
@@ -430,6 +497,7 @@ function* attack(me) {
     taken: { p1: 0, p2: 0 },
     won: { p1: false, p2: false },
     values: { p1: 0, p2: 0 },
+    returnToHand: { p1: false, p2: false },
   };
 
   const players = [me, foe];
@@ -471,10 +539,16 @@ function* attack(me) {
     }
     combat.values[player] = value + boosts[player];
   }
+  combat.values[me] += turnFlags.attackBonus[me];
 
-  const dealt = Math.max(0, combat.values[me] - combat.values[foe]);
+  const raw = Math.max(0, combat.values[me] - combat.values[foe]);
+  let dealt = raw;
+  const capEffect = defenseCard && cardEffects[defenseCard.key]?.damageCap;
+  if (capEffect && !combat.canceled[foe]) {
+    dealt = Math.min(dealt, capEffect(context(foe, defenseCard, combat)));
+  }
   combat.taken[foe] = dealt;
-  combat.won[me] = dealt > 0;
+  combat.won[me] = raw > 0;
   combat.won[foe] = combat.values[foe] > combat.values[me];
   log("logCombat", {
     attacker: me,
@@ -509,8 +583,13 @@ function* attack(me) {
     }
   }
 
-  pl(me).discard.push(attackCard.id);
-  if (defenseCard) pl(foe).discard.push(defenseCard.id);
+  const finish = (player, card) => {
+    if (!card) return;
+    if (combat.returnToHand[player]) pl(player).hand.push(card.id);
+    else pl(player).discard.push(card.id);
+  };
+  finish(me, attackCard);
+  finish(foe, defenseCard);
   return true;
 }
 
@@ -542,6 +621,7 @@ const canAct = () =>
   game.phase === "play" && !game.prompt && !flow && game.actions > 0;
 
 function startGame(deckA, deckB) {
+  game.notice = null;
   if (deckA.heroId === deckB.heroId) return;
   const setup = (deck, player) => {
     const data = getHero(deck.heroId);
@@ -572,8 +652,9 @@ function startGame(deckA, deckB) {
   syncOut();
 }
 
-function resetGame() {
+function resetGame(clearNotice = true) {
   flow = null;
+  if (clearNotice) game.notice = null;
   lobbyDecks = { p1: null, p2: null };
   game.lobby = { p1: null, p2: null };
   game.phase = "setup";
@@ -657,8 +738,9 @@ function applyAnswer(answer, seat) {
 
 function applySurrender(player) {
   if (game.phase !== "play" || !player) return;
-  log("logSurrender", { player });
-  setOver(other(player));
+  resetGame(false);
+  game.notice = { id: game.fxSeq + 1, key: "logSurrender", player };
+  game.fxSeq += 1;
   syncOut();
 }
 
@@ -742,6 +824,7 @@ function setMap(id) {
 }
 
 function startOnlineGame() {
+  game.notice = null;
   if (!net.isHost.value || game.phase !== "setup") return;
   if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
   if (lobbyDecks.p1.heroId === lobbyDecks.p2.heroId) return;
@@ -757,7 +840,11 @@ function availableActions() {
   return {
     maneuver: idle && game.actions > 0,
     scheme: idle && game.actions > 0 && hand.some(isScheme),
-    attack: idle && game.actions > 0 && inRange(me) && hand.some(canAttackWith),
+    attack:
+      idle &&
+      game.actions > 0 &&
+      inRange(me) &&
+      hand.some((card) => attackPlayable(me, card)),
   };
 }
 
