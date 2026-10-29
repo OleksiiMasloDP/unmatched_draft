@@ -13,7 +13,7 @@
         </button>
 
         <router-link
-          :to="{ name: 'main' }"
+          :to="{ name: 'home' }"
           class="logo-wrapper"
           @click="isMenuOpen = false"
         >
@@ -42,6 +42,27 @@
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
           <li class="menu-section-title">{{ t("navigation") }}</li>
+          <li>
+            <router-link
+              :to="{ name: 'main' }"
+              class="menu-item"
+              @click="isMenuOpen = false"
+            >
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14.5 4 20 9.5 9.5 20 4 14.5z" />
+                <line x1="12" y1="7" x2="17" y2="12" />
+              </svg>
+              <span>{{ lang === "ua" ? "Драфт" : "Draft" }}</span>
+            </router-link>
+          </li>
           <li>
             <router-link
               :to="{ name: 'maps' }"

@@ -7,9 +7,11 @@ import FormatsPage from "./components/pages/FormatsPage.vue";
 import FormatEditor from "./components/pages/FormatEditor.vue";
 import PackDraftPage from "./components/pages/PackDraftPage.vue";
 import GamePage from "./components/pages/GamePage.vue";
+import HomePage from "./components/pages/HomePage.vue";
 
 export const routes = [
-  { path: "/", name: "main", component: DraftPage },
+  { path: "/", name: "home", component: HomePage },
+  { path: "/draft", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
   { path: "/matchups", name: "matchups", component: MatchupExplorer },
   { path: "/guide", name: "guide", component: CharacterGuide },
