@@ -537,21 +537,33 @@
         class="game-modal"
         @click.self="discardView = null"
       >
-        <div class="game-modal-box">
+        <div class="game-modal-box is-discard">
           <h3 class="game-modal-title">
             {{ replacePlayer("gameDiscardOf", discardView) }}
-            ({{ discardCards.length }})
+            ({{ discardCount }})
           </h3>
-          <p v-if="!discardCards.length" class="game-hint-empty">
+          <p v-if="!discardGroups.length" class="game-hint-empty">
             {{ t("gameDiscardEmpty") }}
           </p>
-          <div v-else class="row g-2">
+          <div v-else class="discard-grid">
             <div
-              v-for="card in discardCards"
-              :key="card.id"
-              class="col-4 col-md-3 col-lg-2"
+              v-for="group in discardGroups"
+              :key="group.key"
+              class="discard-stack"
+              :style="{ '--n': group.cards.length }"
+              :title="group.cards[0].name"
             >
-              <PackCard :card="card" />
+              <div
+                v-for="(card, index) in group.cards"
+                :key="card.id"
+                class="discard-stack-card"
+                :style="{ '--i': index }"
+              >
+                <PackCard :card="card" />
+              </div>
+              <span v-if="group.cards.length > 1" class="discard-count">
+                ×{{ group.cards.length }}
+              </span>
             </div>
           </div>
           <div class="game-modal-actions">
@@ -1013,6 +1025,18 @@ const discardCards = computed(() =>
         .filter(Boolean)
     : [],
 );
+const discardCount = computed(() => discardCards.value.length);
+
+// Однакові карти складаємо стопкою: одразу видно, скільки копій уже в скиді.
+const discardGroups = computed(() => {
+  const groups = new Map();
+  for (const card of discardCards.value) {
+    const key = `${card.heroId}:${card.key}`;
+    if (!groups.has(key)) groups.set(key, { key, cards: [] });
+    groups.get(key).cards.push(card);
+  }
+  return [...groups.values()].sort((a, b) => b.cards.length - a.cards.length);
+});
 
 watch(
   () => game.phase,
@@ -2221,5 +2245,62 @@ function onDelete(id) {
   margin: 0;
   color: var(--text-muted);
   font-size: 14px;
+}
+
+/* перегляд скиду: великі карти, однакові складені стопкою */
+.game-modal-box.is-discard {
+  max-width: min(1180px, 96vw);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.discard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 22px 16px;
+  padding: 6px 6px 18px;
+}
+
+.discard-stack {
+  --offset-x: 16px;
+  --offset-y: 12px;
+  position: relative;
+  display: grid;
+  width: 100%;
+  max-width: 230px;
+  padding-right: calc((var(--n) - 1) * var(--offset-x));
+  padding-bottom: calc((var(--n) - 1) * var(--offset-y));
+}
+
+.discard-stack-card {
+  grid-area: 1 / 1;
+  width: 100%;
+  transform: translate(
+    calc(var(--i) * var(--offset-x)),
+    calc(var(--i) * var(--offset-y))
+  );
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.discard-count {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 5;
+  min-width: 34px;
+  padding: 3px 9px;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--color-warning);
+  color: #111827;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 575px) {
+  .discard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
 }
 </style>

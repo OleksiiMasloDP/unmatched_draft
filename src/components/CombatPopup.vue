@@ -1,7 +1,13 @@
 <template>
   <div class="combat-wrap">
     <button v-if="!open" type="button" class="combat-pill" @click="open = true">
-      ⚔ {{ t("combatShow") }}
+      <svg class="combat-eye" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"
+        />
+        <circle cx="12" cy="12" r="3.2" />
+      </svg>
+      {{ t("combatShow") }}
     </button>
 
     <div v-else class="combat">
@@ -15,7 +21,12 @@
           :aria-label="t('combatHide')"
           @click="open = false"
         >
-          ✕
+          <svg class="combat-eye" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"
+            />
+            <circle cx="12" cy="12" r="3.2" />
+          </svg>
         </button>
       </div>
 
@@ -138,7 +149,11 @@ function cardFor(side) {
   return id ? getCard(id) : null;
 }
 
-const coverFor = (side) => coverImage(props.players[side.player].heroId);
+// Обкладинка залежить від карти (з якого героя вона), а не від героя гравця.
+const coverFor = (side) =>
+  coverImage(
+    props.combat.covers?.[side.player] || props.players[side.player].heroId,
+  );
 
 const isPending = (side) =>
   side.role === "defender" && props.combat.defense === "pending";
@@ -184,17 +199,48 @@ const stageText = computed(() => {
 }
 
 .combat-pill {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 auto;
-  padding: 5px 14px;
-  border: 1px solid var(--border-strong);
+  padding: 11px 24px;
+  border: 2px solid var(--color-warning);
   border-radius: 999px;
-  background: rgba(var(--bg-dark-rgb), 0.92);
-  color: var(--text-light);
-  font-size: 12px;
+  background: rgba(var(--bg-dark-rgb), 0.95);
+  color: var(--text-white);
+  font-size: 15px;
   font-weight: 800;
   cursor: pointer;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(6px);
+  animation: combat-pill-pulse 1.8s ease-in-out infinite;
+}
+
+.combat-pill:hover {
+  background: var(--color-warning);
+  color: #111827;
+}
+
+.combat-pill .combat-eye {
+  width: 22px;
+  height: 22px;
+}
+
+.combat-eye {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes combat-pill-pulse {
+  50% {
+    box-shadow: 0 8px 28px rgba(250, 204, 21, 0.45);
+  }
 }
 
 .combat {
@@ -229,7 +275,10 @@ const stageText = computed(() => {
 }
 
 .combat-hide {
-  padding: 2px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
   border: 1px solid var(--border-medium);
   border-radius: 8px;
   background: transparent;

@@ -537,6 +537,7 @@ function* attack(me) {
     stage: "defense",
     defense: "pending",
     cardIds: { [me]: attackCard.id, [foe]: null },
+    covers: { [me]: attackCard.heroId, [foe]: null },
     revealed: { p1: null, p2: null, [me]: faceUp ? attackCard.id : null },
     announcedValue: hero(foe).id === "spider-man" ? attackCard.value : null,
     boost: { p1: false, p2: false },
@@ -563,6 +564,7 @@ function* attack(me) {
   }
   game.combat.defense = defenseCard ? "card" : "none";
   game.combat.cardIds[foe] = defenseCard ? defenseCard.id : null;
+  game.combat.covers[foe] = defenseCard ? defenseCard.heroId : null;
   game.combat.stage = "immediate";
 
   const combat = {
