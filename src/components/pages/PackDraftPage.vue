@@ -87,6 +87,12 @@
               <span class="pack-stat-value">{{ currentPackSize }}</span>
             </div>
             <div class="pack-stat">
+              <span class="pack-stat-label">{{ t("packStatPicks") }}</span>
+              <span class="pack-stat-value">
+                {{ pickMark("p1") }} <small>{{ pickMark("p2") }}</small>
+              </span>
+            </div>
+            <div class="pack-stat">
               <span class="pack-stat-label">{{ t("packStatKept") }}</span>
               <span class="pack-stat-value">
                 {{ state.kept[viewSeat].length }}
@@ -95,7 +101,12 @@
             </div>
           </div>
 
-          <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
+          <p v-if="waitingOpponent" class="pack-hint is-waiting">
+            {{ t("packWaitOpponent") }}
+          </p>
+          <p v-else-if="!canAct" class="pack-hint">
+            {{ t("onlineWaitMove") }}
+          </p>
           <p v-else class="pack-hint">
             {{
               needed > 0
@@ -113,7 +124,7 @@
               <PackCard
                 :card="card"
                 :mark="markOf(card.id)"
-                :dead="isDeadCard(card, state.turn)"
+                :dead="isDeadCard(card, viewSeat)"
                 clickable
                 @select="toggleMenu"
               >
@@ -227,7 +238,7 @@
             </div>
 
             <div v-else-if="sideTab === 'kept'" class="pack-side-body">
-              <div v-for="player in players" :key="player">
+              <div v-for="player in [viewSeat]" :key="player">
                 <div class="pack-side-title">
                   {{ playerTag(player) }} ({{ keptCards[player].length }})
                 </div>
@@ -412,6 +423,15 @@
         </button>
       </div>
     </template>
+
+    <div v-if="passFor && state.phase === 'draft'" class="pack-pass">
+      <div class="pack-pass-box">
+        <h3>{{ replacePlayer("packPassTitle", passFor) }}</h3>
+        <button class="btn btn-success action-btn" @click="ackPass">
+          {{ replacePlayer("packPassBtn", passFor) }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -444,6 +464,9 @@ const {
   needed,
   turnReady,
   canAct,
+  waitingOpponent,
+  passFor,
+  ackPass,
   viewSeat,
   packRound,
   pickHero,
@@ -461,14 +484,16 @@ const menuId = ref(null);
 const sideTab = ref("heroes");
 const otherSeat = computed(() => (viewSeat.value === "p1" ? "p2" : "p1"));
 const currentPackSize = computed(
-  () => (state.packs[state.holding[state.turn]] || []).length,
+  () => (state.packs[state.holding[viewSeat.value]] || []).length,
 );
+const pickMark = (player) =>
+  `${player === "p1" ? "1" : "2"}${state.picks[player] ? "✔" : "…"}`;
 const sideTabs = computed(() => [
   { id: "heroes", label: "packTabHeroes", count: null },
   {
     id: "kept",
     label: "packTabKept",
-    count: state.kept.p1.length + state.kept.p2.length,
+    count: state.kept[viewSeat.value].length,
   },
   { id: "discard", label: "packTabDiscard", count: state.discarded.length },
 ]);
@@ -490,7 +515,13 @@ function chooseMark(cardId, mode) {
 }
 
 watch(
-  () => [state.turn, state.holding.p1, state.holding.p2, state.phase],
+  () => [
+    state.picks.p1,
+    state.picks.p2,
+    state.holding.p1,
+    state.holding.p2,
+    state.phase,
+  ],
   () => {
     menuId.value = null;
   },
@@ -544,9 +575,15 @@ const banner = computed(() => {
   }
   if (state.phase === "draft") {
     return {
-      cls: "is-" + state.turn,
-      text: replacePlayer("packTurnOf", state.turn),
-      hero: playerHeroes.value[state.turn]?.name || "",
+      cls: waitingOpponent.value ? "is-wait" : "is-" + viewSeat.value,
+      text: waitingOpponent.value
+        ? t("packWaitOpponent")
+        : online.value
+          ? t("packYourPick")
+          : replacePlayer("packTurnOf", viewSeat.value),
+      hero: waitingOpponent.value
+        ? ""
+        : playerHeroes.value[viewSeat.value]?.name || "",
     };
   }
   if (state.phase === "deck") {
@@ -689,6 +726,44 @@ function onRestart() {
 
 .pack-banner.is-done {
   background: var(--color-proceed);
+}
+
+.pack-banner.is-wait {
+  background: var(--bg-slate);
+  border: 1px dashed var(--color-warning);
+  color: var(--color-warning);
+}
+
+.pack-hint.is-waiting {
+  color: var(--color-warning);
+  font-weight: 700;
+}
+
+.pack-pass {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(var(--bg-dark-rgb), 0.97);
+}
+
+.pack-pass-box {
+  max-width: 420px;
+  padding: 28px 24px;
+  text-align: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  background: var(--bg-slate);
+}
+
+.pack-pass-box h3 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-white);
 }
 
 .pack-banner-hero {

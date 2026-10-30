@@ -1,5 +1,5 @@
 <template>
-  <div class="game-page container" :class="{ 'is-play': game.phase !== 'setup' }">
+  <div class="game-page container">
     <template v-if="game.phase === 'setup'">
       <div class="game-title-row">
         <h1 class="page-main-title">{{ t("gameTitle") }}</h1>
@@ -135,9 +135,9 @@
     </template>
 
     <template v-else>
-      <div class="game-topbar">
-        <span
-          class="game-turnchip"
+      <div class="game-bar">
+        <div
+          class="game-banner"
           :class="game.phase === 'over' ? 'is-done' : 'is-' + game.turn"
         >
           <template v-if="game.phase === 'over'">
@@ -147,8 +147,86 @@
             {{ replacePlayer("gameTurnOf", game.turn) }} ·
             {{ t("gameActionsLeft").replace("{n}", game.actions) }}
           </template>
-        </span>
+        </div>
+
+        <div class="game-actions">
+          <button
+            class="btn btn-success btn-sm action-btn"
+            :disabled="!available.maneuver"
+            @click="doManeuver"
+          >
+            <ActionIcon name="maneuver" />{{ t("gameManeuver") }}
+          </button>
+          <button
+            class="btn btn-sm action-btn game-boost"
+            :class="{ 'is-on': boostOpen }"
+            :disabled="!canBoost"
+            @click="boostOpen = !boostOpen"
+          >
+            <ActionIcon name="boost" />{{ t("gameBoost") }}
+          </button>
+          <button
+            class="btn btn-warning btn-sm action-btn"
+            :disabled="!available.scheme"
+            @click="doScheme"
+          >
+            <ActionIcon name="scheme" />{{ t("gameScheme") }}
+          </button>
+          <button
+            class="btn btn-danger btn-sm action-btn"
+            :disabled="!available.attack"
+            @click="doAttack"
+          >
+            <ActionIcon name="attack" />{{ t("gameAttack") }}
+          </button>
+          <button
+            v-if="spacePrompt"
+            class="btn btn-sm action-btn game-skip"
+            @click="answerPrompt(null)"
+          >
+            <ActionIcon name="skip" />{{ t("gameSkip") }}
+          </button>
+        </div>
       </div>
+
+      <p v-if="waitingOpponent" class="game-prompt-line">
+        {{ t("onlineWaitMove") }}
+      </p>
+      <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
+        {{ t("promptBoostMove") }}
+        <button
+          class="btn btn-sm btn-outline-light action-btn"
+          @click="boostOpen = false"
+        >
+          {{ t("gameCancel") }}
+        </button>
+      </p>
+      <p v-else-if="spacePrompt" class="game-prompt-line">
+        {{ promptTitle(spacePrompt) }}
+        <button
+          v-if="spacePrompt.undo"
+          class="btn btn-sm btn-outline-light action-btn"
+          @click="doUndo"
+        >
+          ↶ {{ t("gameUndo") }}
+        </button>
+      </p>
+      <p v-else-if="handPrompt" class="game-prompt-line">
+        {{ promptTitle(handPrompt) }}
+        <span v-if="handPrompt.hint" class="game-hint">
+          {{ t(handPrompt.hint.key).replace("{n}", handPrompt.hint.n) }}
+        </span>
+        <button
+          class="btn btn-success btn-sm action-btn"
+          :disabled="selection.length < handPrompt.min"
+          @click="confirmCards"
+        >
+          {{ selection.length ? t("gameConfirm") : t(handPrompt.skip) }}
+          <template v-if="handPrompt.max > 1">
+            ({{ selection.length }}/{{ handPrompt.max }})
+          </template>
+        </button>
+      </p>
 
       <div class="game-layout">
         <div
@@ -222,18 +300,20 @@
         </div>
 
         <div class="game-center">
-          <div
-            class="game-board-wrap"
-            :style="{ '--ratio': map.width / map.height }"
-          >
-            <GameBoard
-              :map="map"
-              :players="game.players"
-              :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
-              :fx="game.fx"
-              @select="answerPrompt"
-            />
-          </div>
+          <CombatPopup
+            v-if="showCombat"
+            :combat="game.combat"
+            :players="game.players"
+            :viewer="viewer"
+            :preview="blockPreview"
+          />
+          <GameBoard
+            :map="map"
+            :players="game.players"
+            :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+            :fx="game.fx"
+            @select="answerPrompt"
+          />
 
           <div class="game-log" :class="{ 'is-open': logOpen }">
             <button
@@ -257,14 +337,26 @@
         </div>
       </div>
 
-      <div class="game-footer">
-        <button
-          type="button"
-          class="btn btn-sm game-bug"
-          @click="openFeedback({ section: 'game' })"
+      <h2 class="game-subtitle">
+        {{ t("gameYourHand") }} · {{ playerTag(viewer) }}
+      </h2>
+      <div class="row g-2 game-hand">
+        <div
+          v-for="card in handCards"
+          :key="card.id"
+          class="col-4 col-md-3 col-lg-2"
+          :class="{ 'is-dim': handMode && !pickable(card.id) }"
         >
-          🐞 {{ lang === "ua" ? "Баг?" : "Report a bug" }}
-        </button>
+          <PackCard
+            :card="card"
+            :clickable="Boolean(handMode) && pickable(card.id)"
+            :selected="selection.includes(card.id)"
+            @select="onHandSelect"
+          />
+        </div>
+      </div>
+
+      <div class="game-footer">
         <button
           v-if="game.phase === 'play'"
           class="btn btn-sm game-surrender is-danger"
@@ -286,95 +378,6 @@
         >
           {{ t("onlineLeave") }}
         </button>
-      </div>
-
-      <div class="game-dock">
-        <div class="game-dock-row">
-          <div class="game-hand-label">
-            {{ t("gameYourHand") }} · {{ playerTag(viewer) }}
-          </div>
-          <div class="game-actions">
-            <button
-              class="btn btn-success btn-sm action-btn"
-              :disabled="!available.maneuver"
-              @click="doManeuver"
-            >
-              <ActionIcon name="maneuver" />{{ t("gameManeuver") }}
-            </button>
-            <button
-              class="btn btn-sm action-btn game-boost"
-              :class="{ 'is-on': boostOpen }"
-              :disabled="!canBoost"
-              @click="boostOpen = !boostOpen"
-            >
-              <ActionIcon name="boost" />{{ t("gameBoost") }}
-            </button>
-            <button
-              class="btn btn-warning btn-sm action-btn"
-              :disabled="!available.scheme"
-              @click="doScheme"
-            >
-              <ActionIcon name="scheme" />{{ t("gameScheme") }}
-            </button>
-            <button
-              class="btn btn-danger btn-sm action-btn"
-              :disabled="!available.attack"
-              @click="doAttack"
-            >
-              <ActionIcon name="attack" />{{ t("gameAttack") }}
-            </button>
-            <button
-              v-if="spacePrompt"
-              class="btn btn-sm action-btn game-skip"
-              @click="answerPrompt(null)"
-            >
-              <ActionIcon name="skip" />{{ t("gameSkip") }}
-            </button>
-          </div>
-        </div>
-        <p v-if="waitingOpponent" class="game-prompt-line">
-          {{ t("onlineWaitMove") }}
-        </p>
-        <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
-          {{ t("promptBoostMove") }}
-          <button
-            class="btn btn-sm btn-outline-light action-btn"
-            @click="boostOpen = false"
-          >
-            {{ t("gameCancel") }}
-          </button>
-        </p>
-        <p v-else-if="spacePrompt" class="game-prompt-line">
-          {{ promptTitle(spacePrompt) }}
-        </p>
-        <p v-else-if="handPrompt" class="game-prompt-line">
-          {{ promptTitle(handPrompt) }}
-          <button
-            class="btn btn-success btn-sm action-btn"
-            :disabled="selection.length < handPrompt.min"
-            @click="confirmCards"
-          >
-            {{ selection.length ? t("gameConfirm") : t(handPrompt.skip) }}
-            <template v-if="handPrompt.max > 1">
-              ({{ selection.length }}/{{ handPrompt.max }})
-            </template>
-          </button>
-        </p>
-        <div class="game-hand game-hand-strip">
-          <div
-            v-for="card in handCards"
-            :key="card.id"
-            class="hand-item"
-            :class="{ 'is-dim': handMode && !pickable(card.id) }"
-          >
-            <PackCard
-              :card="card"
-              :clickable="Boolean(handMode) && pickable(card.id)"
-              :selected="selection.includes(card.id)"
-              @select="onHandSelect"
-            />
-          </div>
-        </div>
       </div>
 
       <div v-if="modalPrompt && !needsPass" class="game-modal">
@@ -507,6 +510,37 @@
         </div>
       </div>
 
+      <div
+        v-if="announceOpen && game.announce && announceCard"
+        class="game-announce"
+        :class="'side-' + game.announce.player"
+      >
+        <button
+          type="button"
+          class="game-announce-close"
+          :aria-label="t('combatHide')"
+          @click="announceOpen = false"
+        >
+          ✕
+        </button>
+        <div class="game-announce-title">
+          {{ replacePlayer("schemePlayed", game.announce.player) }}
+        </div>
+        <img
+          v-if="announceCard.image"
+          class="game-announce-card"
+          :src="announceCard.image"
+          :alt="announceCard.name"
+        />
+        <div class="game-announce-name">{{ announceCard.name }}</div>
+        <ul v-if="game.announce.picks.length" class="game-announce-picks">
+          <li v-for="(pick, index) in game.announce.picks" :key="index">
+            <span class="game-announce-label">{{ t("schemeChoice") }}:</span>
+            {{ pickText(pick) }}
+          </li>
+        </ul>
+      </div>
+
       <TransitionGroup name="toast" tag="div" class="game-toasts">
         <div
           v-for="toast in toasts"
@@ -546,14 +580,13 @@ import { useGame } from "../../composables/useGame";
 import { useSavedDecks } from "../../composables/useSavedDecks";
 import { getCard, getHero, testDecks } from "../../gameDecks";
 import ActionIcon from "../ActionIcon.vue";
+import CombatPopup from "../CombatPopup.vue";
 import GameBoard from "../GameBoard.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
-import { useFeedback } from "../../composables/useFeedback";
 
 const { t, lang } = useDraftState();
-const { openFeedback } = useFeedback();
 const {
   game,
   map,
@@ -567,6 +600,7 @@ const {
   doManeuver,
   doScheme,
   doAttack,
+  doUndo,
   surrender,
   availableActions,
   heroOf,
@@ -662,7 +696,10 @@ watch(
   },
 );
 
-onBeforeUnmount(() => toastTimers.forEach(clearTimeout));
+onBeforeUnmount(() => {
+  toastTimers.forEach(clearTimeout);
+  clearTimeout(announceTimer);
+});
 
 const playerLabel = (player) =>
   t(player === "p1" ? "packPlayer1" : "packPlayer2");
@@ -754,6 +791,54 @@ const promptCards = computed(() =>
 );
 
 const recentLog = computed(() => [...game.log].slice(-30).reverse());
+
+// Попап бою видно обом гравцям; поки відкрита модалка розкриття - ховаємо його.
+const showCombat = computed(
+  () => Boolean(game.combat) && blockingPrompt.value?.kind !== "info",
+);
+
+// Карта, яку захисник обрав у руці, але ще не підтвердив: показуємо у зоні блоку.
+const blockPreview = computed(() =>
+  handPrompt.value &&
+  game.combat?.defense === "pending" &&
+  handPrompt.value.player === game.combat.defender
+    ? selection.value[0] || null
+    : null,
+);
+
+// Оголошення зіграної схеми: що саме зіграли і що обрали.
+const announceOpen = ref(false);
+const announceCard = computed(() =>
+  game.announce ? getCard(game.announce.cardId) : null,
+);
+let announceSeen = game.announce ? game.announce.id : 0;
+let announceTimer = null;
+
+watch(
+  () => game.announce?.id,
+  (id) => {
+    if (!id || id <= announceSeen) return;
+    announceSeen = id;
+    announceOpen.value = true;
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => (announceOpen.value = false), 14000);
+  },
+);
+
+watch(
+  () => game.phase,
+  () => {
+    announceOpen.value = false;
+    announceSeen = game.announce ? game.announce.id : 0;
+  },
+);
+
+function pickText(pick) {
+  const label = t(pick.key);
+  return typeof pick.yes === "boolean"
+    ? `${label} — ${t(pick.yes ? "gameYes" : "gameNo")}`
+    : label;
+}
 
 watch(
   () => game.prompt,
@@ -1680,52 +1765,7 @@ function onDelete(id) {
   transform: translateY(-10px);
 }
 
-/* ---------- екран гри: компактна розкладка ---------- */
-.game-page.is-play {
-  --dock-h: 260px;
-  --board-max-h: max(300px, calc(100dvh - 60px - 98px - var(--dock-h)));
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100dvh - 60px);
-  padding-top: 0.75rem;
-  padding-bottom: 0;
-}
-
-.game-topbar {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.game-turnchip {
-  padding: 3px 14px;
-  border-radius: 999px;
-  color: var(--text-white);
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  box-shadow: inset 0 0 10px var(--border-strong);
-}
-
-.game-turnchip.is-p1 {
-  background: var(--color-player);
-}
-
-.game-turnchip.is-p2 {
-  background: var(--color-opponent);
-}
-
-.game-turnchip.is-done {
-  background: var(--color-proceed);
-}
-
-.game-board-wrap {
-  width: min(100%, calc(var(--board-max-h) * var(--ratio, 1.4)));
-  margin: 0 auto;
-}
-
-/* активний герой збільшений і яскравий, неактивний - менший і приглушений */
+/* активний герой виділений, неактивний - менший і приглушений */
 .game-layout .game-player {
   transition:
     transform 0.3s ease,
@@ -1736,119 +1776,116 @@ function onDelete(id) {
 
 .game-layout .game-player.is-active {
   z-index: 2;
-  transform: scale(1.06);
-}
-
-.game-layout .game-player.is-active.is-p1 {
-  box-shadow: 0 0 26px rgba(var(--color-player-rgb), 0.65);
-}
-
-.game-layout .game-player.is-active.is-p2 {
-  box-shadow: 0 0 26px rgba(var(--color-opponent-rgb), 0.65);
+  transform: scale(1.05);
 }
 
 .game-layout .game-player.is-idle {
-  transform: scale(0.93);
+  transform: scale(0.94);
   opacity: 0.5;
   filter: grayscale(0.55) brightness(0.7);
 }
 
-.game-footer {
-  align-items: center;
-  margin: 10px 0 12px;
+/* попап бою лежить поверх мапи */
+.game-center {
+  position: relative;
 }
 
-.game-bug {
-  margin-right: auto;
-  background: transparent;
-  border: 1px solid var(--border-medium);
-  color: var(--text-muted);
+.game-hint {
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--color-info-rgb), 0.6);
+  background: rgba(var(--color-info-rgb), 0.15);
+  color: var(--text-light);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.game-bug:hover {
-  border-color: var(--color-warning);
-  color: var(--color-warning);
+/* оголошення схеми */
+.game-announce {
+  position: fixed;
+  top: 84px;
+  right: 16px;
+  z-index: 1400;
+  width: 230px;
+  padding: 12px 12px 14px;
+  text-align: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: rgba(var(--bg-dark-rgb), 0.96);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55);
+  animation: announce-in 0.3s ease;
 }
 
-/* нижня панель: кнопки дій, підказка і рука завжди в полі зору */
-.game-dock {
-  position: sticky;
-  bottom: 0;
-  z-index: 30;
-  margin: auto -1rem 0;
-  padding: 8px 1rem 10px;
-  background: rgba(var(--bg-dark-rgb), 0.94);
-  border-top: 1px solid var(--border-medium);
-  backdrop-filter: blur(10px);
+.game-announce.side-p1 {
+  border-color: var(--color-player);
 }
 
-.game-dock-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  margin-bottom: 6px;
+.game-announce.side-p2 {
+  border-color: var(--color-opponent);
 }
 
-.game-hand-label {
-  color: var(--text-dim);
-  font-size: 11px;
+.game-announce-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.game-announce-title {
+  margin-bottom: 8px;
+  padding-right: 16px;
+  font-size: 11.5px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
+  color: var(--color-warning);
 }
 
-.game-dock .game-actions {
-  margin: 0;
-  gap: 8px;
+.game-announce-card {
+  width: 100%;
+  border-radius: 8px;
 }
 
-.game-dock .game-prompt-line {
-  gap: 8px 12px;
-  margin: 0 0 6px;
-  padding: 6px 12px;
-  font-size: 13px;
+.game-announce-name {
+  margin: 8px 0 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-white);
 }
 
-.game-hand-strip {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
+.game-announce-picks {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-light);
 }
 
-.hand-item {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: 124px;
-  transform-origin: bottom center;
-  transition: transform 0.18s ease;
+.game-announce-label {
+  color: var(--text-dim);
 }
 
-/* на десктопі карта в руці збільшується при наведенні, щоб її можна було прочитати */
-@media (hover: hover) and (min-width: 992px) {
-  .hand-item:hover {
-    z-index: 40;
-    transform: scale(1.85);
+@keyframes announce-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 991px) {
-  .game-page.is-play {
-    --dock-h: 230px;
-  }
-
-  .game-hand-strip {
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-
-  .hand-item {
-    flex: 0 0 88px;
+@media (max-width: 575px) {
+  .game-announce {
+    top: 70px;
+    right: 8px;
+    width: 180px;
   }
 }
 </style>

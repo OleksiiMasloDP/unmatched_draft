@@ -42,6 +42,7 @@ function createState() {
     turn: "p1",
     stage: "keep",
     discardsLeft: 0,
+    picks: { p1: null, p2: null },
     kept: { p1: [], p2: [] },
     discarded: [],
     decks: { p1: [], p2: [] },
@@ -74,7 +75,14 @@ function isValid(saved) {
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (isValid(saved)) return saved;
+    if (isValid(saved)) {
+      // Старий формат (ходи по черзі) без picks - починаємо драфт заново.
+      if (!saved.picks) {
+        if (saved.phase === "draft") return createState();
+        saved.picks = { p1: null, p2: null };
+      }
+      return saved;
+    }
   } catch {
     return createState();
   }
@@ -83,21 +91,32 @@ function load() {
 
 const state = reactive(load());
 const marks = ref({ keep: null, discard: [] });
+// Локальна гра: кому передати пристрій (ховаємо пак, поки гравець не підтвердить).
+const passFor = ref(null);
 const net = useOnline();
 
+// Що бачить гравець онлайн: лише свій пак і лише свої обрані карти.
+// Скид спільний, тому видимий усім. Суперник бачить лише, чи підтвердили вибір.
 function viewFor(seat) {
-  const reveal =
-    state.phase === "draft" && state.turn === seat ? state.holding[seat] : -1;
-  return {
-    ...JSON.parse(JSON.stringify(state)),
-    packs: state.packs.map((pack, index) =>
-      index === reveal ? [...pack] : pack.map(() => "?"),
-    ),
-    leftover:
-      state.phase === "done"
-        ? [...state.leftover]
-        : state.leftover.map(() => "?"),
-  };
+  const foe = otherPlayer(seat);
+  const reveal = state.phase === "draft" ? state.holding[seat] : -1;
+  const done = state.phase === "done";
+  const view = JSON.parse(JSON.stringify(state));
+  view.packs = state.packs.map((pack, index) =>
+    index === reveal ? [...pack] : pack.map(() => "?"),
+  );
+  view.leftover = done
+    ? [...state.leftover]
+    : state.leftover.map(() => "?");
+  if (view.picks[foe]) {
+    view.picks[foe] = { keep: "?", discard: view.picks[foe].discard.map(() => "?") };
+  }
+  if (!done) {
+    view.kept[foe] = state.kept[foe].map(() => "?");
+    view.decks[foe] = state.decks[foe].map(() => "?");
+    if (state.deckPlayer !== seat) view.deckSelection = [];
+  }
+  return view;
 }
 
 function save() {
@@ -112,7 +131,7 @@ function save() {
 
 function actor() {
   if (state.phase === "heroes") return state.heroes.p1 ? "p2" : "p1";
-  if (state.phase === "draft") return state.turn;
+  if (state.phase === "draft") return null;
   if (state.phase === "deck") return state.deckPlayer;
   return null;
 }
@@ -143,14 +162,12 @@ function startDeckPhase() {
 }
 
 function advance() {
-  state.stage = "keep";
   marks.value = { keep: null, discard: [] };
-  state.discardsLeft = 0;
+  state.picks = { p1: null, p2: null };
 
   for (let guard = 0; guard < 4; guard++) {
-    const a = state.packs[state.holding.p1];
-    const b = state.packs[state.holding.p2];
-
+    const a = state.packs[state.holding.p1] || [];
+    const b = state.packs[state.holding.p2] || [];
     if (!a.length && !b.length) {
       state.pairIndex += 1;
       if (state.pairIndex >= pairsTotal()) {
@@ -158,23 +175,10 @@ function advance() {
         return;
       }
       state.holding = { p1: state.pairIndex * 2, p2: state.pairIndex * 2 + 1 };
-      state.turn = "p1";
-      return;
+      continue;
     }
-
-    if (state.packs[state.holding[state.turn]].length) return;
-    state.turn = otherPlayer(state.turn);
+    return;
   }
-}
-
-function finishTurn() {
-  if (state.turn === "p1") {
-    state.turn = "p2";
-  } else {
-    state.holding = { p1: state.holding.p2, p2: state.holding.p1 };
-    state.turn = "p1";
-  }
-  advance();
 }
 
 function applyHero(heroId, seat) {
@@ -194,32 +198,73 @@ function applyHero(heroId, seat) {
   save();
 }
 
-function discardNeeded() {
-  if (state.phase !== "draft") return 0;
-  const pack = state.packs[state.holding[state.turn]] || [];
+function discardNeededFor(player) {
+  if (state.phase !== "draft" || !player) return 0;
+  const pack = state.packs[state.holding[player]] || [];
   return Math.max(
     0,
     Math.min(PACK_DRAFT_CONFIG.discardPerTurn, pack.length - 1),
   );
 }
 
+// У локальній грі за одним екраном гравці вибирають по черзі (з передачею пристрою).
+function localActor() {
+  if (state.phase !== "draft") return null;
+  if (!state.picks.p1) return "p1";
+  if (!state.picks.p2) return "p2";
+  return null;
+}
+
+// Обидва гравці вже підтвердили вибір: розігруємо раунд одночасно.
+function resolveRound() {
+  for (const player of PLAYERS) {
+    const pick = state.picks[player];
+    const pack = state.packs[state.holding[player]];
+    for (const id of [pick.keep, ...pick.discard]) {
+      if (id && pack.includes(id)) pack.splice(pack.indexOf(id), 1);
+    }
+    if (pick.keep) state.kept[player].push(pick.keep);
+    state.discarded.push(...pick.discard);
+  }
+  marks.value = { keep: null, discard: [] };
+  state.holding = { p1: state.holding.p2, p2: state.holding.p1 };
+  advance();
+  skipEmptyPacks();
+}
+
+// Страховка: якщо в одного гравця пак порожній, а в іншого ні - пропускаємо його.
+function skipEmptyPacks() {
+  if (state.phase !== "draft") return;
+  for (const player of PLAYERS) {
+    const pack = state.packs[state.holding[player]] || [];
+    if (!pack.length && !state.picks[player]) {
+      state.picks[player] = { keep: null, discard: [] };
+    }
+  }
+  if (state.picks.p1 && state.picks.p2) resolveRound();
+}
+
 function applyTurn(keepId, discardIds, seat) {
-  if (state.phase !== "draft" || (seat && seat !== state.turn)) return;
-  const pack = state.packs[state.holding[state.turn]];
+  if (state.phase !== "draft") return;
+  const player = seat || localActor();
+  if (!player || state.picks[player]) return;
+  const pack = state.packs[state.holding[player]];
   const ids = Array.isArray(discardIds) ? discardIds : [];
   if (
     !pack.includes(keepId) ||
-    ids.length !== discardNeeded() ||
+    ids.length !== discardNeededFor(player) ||
     new Set(ids).size !== ids.length ||
     ids.some((id) => id === keepId || !pack.includes(id))
   ) {
     return;
   }
-  for (const id of [keepId, ...ids]) pack.splice(pack.indexOf(id), 1);
-  state.kept[state.turn].push(keepId);
-  state.discarded.push(...ids);
+  state.picks[player] = { keep: keepId, discard: [...ids] };
   marks.value = { keep: null, discard: [] };
-  finishTurn();
+  if (!net.online.value) {
+    // Локальна гра: передаємо пристрій наступному гравцю.
+    passFor.value = player === "p1" ? "p2" : "p1";
+  }
+  if (state.picks.p1 && state.picks.p2) resolveRound();
   save();
 }
 
@@ -247,7 +292,7 @@ function applyDeck(seat) {
 
 function applyView(view) {
   Object.assign(state, view);
-  const pack = state.packs[state.holding[state.turn]] || [];
+  const pack = state.packs[state.holding[net.mySeat.value || "p1"]] || [];
   const { keep, discard } = marks.value;
   if (
     (keep && !pack.includes(keep)) ||
@@ -296,17 +341,24 @@ if (net.isGuest.value) net.send("draft:sync");
 export function usePackDraft() {
   const config = PACK_DRAFT_CONFIG;
 
+  // Чий екран: онлайн - своє місце, локально - гравець, який зараз вибирає.
+  const viewSeat = computed(() => {
+    if (net.online.value && net.mySeat.value) return net.mySeat.value;
+    if (state.phase === "deck") return state.deckPlayer;
+    return passFor.value || localActor() || "p1";
+  });
+
   const currentPack = computed(() =>
     state.phase === "draft"
-      ? state.packs[state.holding[state.turn]]
+      ? (state.packs[state.holding[viewSeat.value]] || [])
           .map((id) => cardById.get(id))
           .filter(Boolean)
       : [],
   );
 
   const keptCards = computed(() => ({
-    p1: state.kept.p1.map((id) => cardById.get(id)),
-    p2: state.kept.p2.map((id) => cardById.get(id)),
+    p1: state.kept.p1.map((id) => cardById.get(id)).filter(Boolean),
+    p2: state.kept.p2.map((id) => cardById.get(id)).filter(Boolean),
   }));
 
   const discardedCards = computed(() =>
@@ -356,17 +408,33 @@ export function usePackDraft() {
     total: pairsTotal(),
   }));
 
-  const needed = computed(() => discardNeeded());
+  const needed = computed(() => discardNeededFor(viewSeat.value));
   const turnReady = computed(
     () =>
       Boolean(marks.value.keep) && marks.value.discard.length === needed.value,
   );
 
   const mySeat = computed(() => net.mySeat.value);
-  const canAct = computed(
-    () => !net.online.value || net.mySeat.value === actor(),
+  const canAct = computed(() => {
+    if (state.phase === "draft") {
+      const seat = net.online.value ? net.mySeat.value : localActor();
+      return Boolean(seat) && !state.picks[seat] && !passFor.value;
+    }
+    return !net.online.value || net.mySeat.value === actor();
+  });
+
+  // Я вже підтвердив вибір і чекаю на суперника (онлайн).
+  const waitingOpponent = computed(
+    () =>
+      state.phase === "draft" &&
+      net.online.value &&
+      Boolean(state.picks[net.mySeat.value]) &&
+      !state.picks[net.mySeat.value === "p1" ? "p2" : "p1"],
   );
-  const viewSeat = computed(() => net.mySeat.value || state.turn);
+
+  function ackPass() {
+    passFor.value = null;
+  }
 
   function command(type, payload) {
     if (net.isGuest.value) {
@@ -416,6 +484,7 @@ export function usePackDraft() {
   function restart() {
     if (net.isGuest.value) return;
     Object.assign(state, createState());
+    passFor.value = null;
     marks.value = { keep: null, discard: [] };
     save();
   }
@@ -446,6 +515,9 @@ export function usePackDraft() {
     turnReady,
     mySeat,
     canAct,
+    waitingOpponent,
+    passFor,
+    ackPass,
     viewSeat,
     pickHero,
     setMark,

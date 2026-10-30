@@ -290,6 +290,7 @@ export const cardEffects = {
   },
 
   "witness-my-last-battle": {
+    faceUp: true,
     canAttack: (c) => c.g.adjacent(c.me, c.foe),
     *after(c) {
       c.g.endTurnNow();

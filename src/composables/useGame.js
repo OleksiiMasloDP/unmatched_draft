@@ -64,6 +64,8 @@ const game = reactive({
   fx: [],
   notice: null,
   fxSeq: 0,
+  combat: null,
+  announce: null,
   winner: null,
 });
 
@@ -172,6 +174,7 @@ function setOver(winner) {
   game.phase = "over";
   game.winner = winner;
   game.prompt = null;
+  game.combat = null;
   flow = null;
   log("logWins", { player: winner });
 }
@@ -250,9 +253,29 @@ function shuffleIntoDeck(player, cardIds) {
   log("logShuffle", { player, n: cardIds.length });
 }
 
+// Tomoe Gozen, "Attack of Opportunity": коли ворожий герой залишає її зону - 1 шкоди.
+function attackOfOpportunity(player, fromSpaceId) {
+  const tomoe = other(player);
+  if (game.phase !== "play" || !pl(tomoe) || hero(tomoe).id !== "tomoe-gozen") {
+    return;
+  }
+  const tomoeZones = active.spaceById.get(spaceOf(tomoe)).zones;
+  const wasInZone = active.spaceById
+    .get(fromSpaceId)
+    .zones.some((zone) => tomoeZones.includes(zone));
+  if (wasInZone && !shared(player, tomoe)) {
+    log("logOpportunity", { player });
+    activeCard = hero(tomoe).passive.name;
+    damage(player, 1);
+    activeCard = null;
+  }
+}
+
 function place(player, spaceId) {
+  const from = spaceOf(player);
   pl(player).space = spaceId;
   log("logMove", { player, space: spaceId });
+  if (from !== spaceId) attackOfOpportunity(player, from);
 }
 
 function swapPlaces() {
@@ -420,6 +443,7 @@ function* maneuver(me) {
     if (!options.length) break;
     const prompt = askSpace(me, "promptMoveSpace", options);
     prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
+    prompt.undo = !boosted;
     const answer = yield prompt;
     if (answer && typeof answer === "object") {
       steps += discardFromHand(me, answer.boost).boost;
@@ -446,7 +470,17 @@ function* scheme(me) {
   const card = getCard(ids[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(card.id), 1);
   log("logScheme", { player: me, card: card.name });
+  game.fxSeq += 1;
+  game.announce = {
+    id: game.fxSeq,
+    kind: "scheme",
+    player: me,
+    cardId: card.id,
+    picks: [],
+    open: true,
+  };
   yield* runEffect(me, card, "scheme", null);
+  if (game.announce) game.announce.open = false;
   pl(me).discard.push(card.id);
   return true;
 }
@@ -469,6 +503,19 @@ function* attack(me) {
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
   log("logAttack", { player: me });
 
+  // Публічний стан бою: його бачать обидва гравці (попап бою).
+  const faceUp = Boolean(cardEffects[attackCard.key]?.faceUp);
+  game.combat = {
+    attacker: me,
+    defender: foe,
+    stage: "defense",
+    defense: "pending",
+    cardIds: { [me]: attackCard.id, [foe]: null },
+    revealed: { p1: null, p2: null, [me]: faceUp ? attackCard.id : null },
+    announcedValue: hero(foe).id === "spider-man" ? attackCard.value : null,
+    boost: { p1: false, p2: false },
+  };
+
   let defenseCard = null;
   const defenseOptions = pl(foe).hand.filter((id) =>
     canDefendWith(getCard(id)),
@@ -488,6 +535,9 @@ function* attack(me) {
       pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
     }
   }
+  game.combat.defense = defenseCard ? "card" : "none";
+  game.combat.cardIds[foe] = defenseCard ? defenseCard.id : null;
+  game.combat.stage = "immediate";
 
   const combat = {
     attacker: me,
@@ -500,7 +550,9 @@ function* attack(me) {
     returnToHand: { p1: false, p2: false },
   };
 
-  const players = [me, foe];
+  // Порядок розіграшу: спочатку ефекти захисника, потім атакуючого
+  // (для кожної стадії: Одразу -> Під час бою -> Після бою).
+  const players = [foe, me];
   for (const player of players) {
     const card = combat.cards[player];
     if (card && !combat.canceled[player]) {
@@ -508,6 +560,7 @@ function* attack(me) {
     }
   }
 
+  game.combat.stage = "boost";
   const boosts = { p1: 0, p2: 0 };
   for (const player of players) {
     const card = combat.cards[player];
@@ -525,6 +578,7 @@ function* attack(me) {
       });
       if (ids.length) {
         boosts[player] = discardFromHand(player, ids[0]).boost;
+        game.combat.boost[player] = true;
       }
     }
   }
@@ -557,6 +611,7 @@ function* attack(me) {
     d: combat.values[foe],
   });
 
+  game.combat.stage = "reveal";
   yield {
     kind: "info",
     player: null,
@@ -569,6 +624,7 @@ function* attack(me) {
         [foe]: defenseCard ? defenseCard.id : null,
       },
       values: { ...combat.values },
+      boosts: { ...boosts },
       dealt,
     },
   };
@@ -576,6 +632,7 @@ function* attack(me) {
   if (dealt > 0) damage(foe, dealt);
   else log("logNoDamage");
 
+  if (game.combat) game.combat.stage = "after";
   for (const player of players) {
     const card = combat.cards[player];
     if (card && !combat.canceled[player] && game.phase === "play") {
@@ -590,10 +647,24 @@ function* attack(me) {
   };
   finish(me, attackCard);
   finish(foe, defenseCard);
+  game.combat = null;
   return true;
 }
 
+// Запам'ятовуємо вибір гравців під час схеми, щоб суперник бачив, що саме обрали.
+function recordPick(prompt, answer) {
+  const note = game.announce;
+  if (!note || !note.open || !prompt) return;
+  if (prompt.kind === "choice") {
+    const choice = prompt.choices.find((item) => item.value === answer);
+    if (choice) note.picks.push({ key: choice.label });
+  } else if (prompt.kind === "confirm" && typeof answer === "boolean") {
+    note.picks.push({ key: prompt.title, yes: answer });
+  }
+}
+
 function advance(answer) {
+  recordPick(game.prompt, answer);
   game.prompt = null;
   while (flow) {
     if (game.phase !== "play") {
@@ -645,6 +716,9 @@ function startGame(deckA, deckB) {
   game.viewer = "p1";
   game.winner = null;
   game.log = [];
+  game.combat = null;
+  game.announce = null;
+  undoPoint = null;
   game.redRoomIgnored = { p1: false, p2: false };
   game.phase = "play";
   log("logStart");
@@ -662,6 +736,9 @@ function resetGame(clearNotice = true) {
   game.prompt = null;
   game.winner = null;
   game.log = [];
+  game.combat = null;
+  game.announce = null;
+  undoPoint = null;
   syncOut();
 }
 
@@ -676,6 +753,7 @@ function viewFor(seat) {
   if (copy.players[foe]) {
     copy.players[foe].hand = copy.players[foe].hand.map(() => "?");
   }
+  if (copy.combat) copy.combat.cardIds[foe] = null;
   if (copy.prompt && copy.prompt.player === foe) {
     copy.prompt = {
       kind: copy.prompt.kind,
@@ -749,9 +827,45 @@ function surrender(player) {
   else applySurrender(net.isHost.value ? "p1" : player);
 }
 
+// Скасування дії: лише поки гравець ще не обрав нічого незворотного
+// (наприклад, натиснув "Маневр", але ще не обрав клітинку і не робив буст).
+let undoPoint = null;
+
+function takeSnapshot() {
+  undoPoint = JSON.stringify({
+    players: game.players,
+    actions: game.actions,
+    turnStart: game.turnStart,
+    redRoomIgnored: game.redRoomIgnored,
+    logLength: game.log.length,
+    flags: turnFlags,
+  });
+}
+
+function undoAction(seat) {
+  if (!undoPoint || !game.prompt?.undo || game.phase !== "play") return;
+  if (seat && seat !== game.turn) return;
+  const snap = JSON.parse(undoPoint);
+  game.players = snap.players;
+  game.actions = snap.actions;
+  game.turnStart = snap.turnStart;
+  game.redRoomIgnored = snap.redRoomIgnored;
+  game.log.length = snap.logLength;
+  turnFlags.noDraw = snap.flags.noDraw;
+  turnFlags.attackBonus = snap.flags.attackBonus;
+  turnFlags.pinned = snap.flags.pinned;
+  flow = null;
+  game.prompt = null;
+  undoPoint = null;
+}
+
 function applyAction(type, seat) {
   if (game.phase !== "play" || (seat && seat !== game.turn)) return;
-  if (type === "maneuver" && canAct()) run(maneuver(game.turn));
+  if (type === "undo") undoAction(seat);
+  else if (type === "maneuver" && canAct()) {
+    takeSnapshot();
+    run(maneuver(game.turn));
+  }
   else if (type === "scheme" && canAct()) run(scheme(game.turn));
   else if (type === "attack" && canAct() && inRange(game.turn)) {
     run(attack(game.turn));
@@ -779,6 +893,7 @@ function doAction(type) {
 const doManeuver = () => doAction("maneuver");
 const doScheme = () => doAction("scheme");
 const doAttack = () => doAction("attack");
+const doUndo = () => doAction("undo");
 
 function validDeck(deck) {
   return (
@@ -889,6 +1004,7 @@ export function useGame() {
     doManeuver,
     doScheme,
     doAttack,
+    doUndo,
     surrender,
     availableActions,
     heroOf: (player) => (pl(player) ? hero(player) : null),
