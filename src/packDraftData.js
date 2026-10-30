@@ -174,6 +174,11 @@ function cardImage(hero, name) {
   };
 }
 
+export function coverImage(heroId) {
+  const entry = CARD_IMAGES[heroId];
+  return entry ? encodeURI(`images/cards/${entry.dir}/cover.webp`) : null;
+}
+
 function slug(value) {
   return value
     .toLowerCase()

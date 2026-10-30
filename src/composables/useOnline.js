@@ -1,6 +1,6 @@
 import { reactive, computed, ref } from "vue";
 
-import { RELAY_URL } from "../relayConfig";
+import { RELAY_URL } from "../relayConfig.js";
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const JOIN_TIMEOUT = 15000;
 

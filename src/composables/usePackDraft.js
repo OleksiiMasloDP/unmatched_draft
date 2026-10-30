@@ -105,11 +105,12 @@ function viewFor(seat) {
   view.packs = state.packs.map((pack, index) =>
     index === reveal ? [...pack] : pack.map(() => "?"),
   );
-  view.leftover = done
-    ? [...state.leftover]
-    : state.leftover.map(() => "?");
+  view.leftover = done ? [...state.leftover] : state.leftover.map(() => "?");
   if (view.picks[foe]) {
-    view.picks[foe] = { keep: "?", discard: view.picks[foe].discard.map(() => "?") };
+    view.picks[foe] = {
+      keep: "?",
+      discard: view.picks[foe].discard.map(() => "?"),
+    };
   }
   if (!done) {
     view.kept[foe] = state.kept[foe].map(() => "?");

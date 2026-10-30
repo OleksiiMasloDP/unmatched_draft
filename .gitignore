@@ -30,3 +30,5 @@ pnpm-debug.log*
 # Системные файлы
 .DS_Store
 Thumbs.db
+# Cloudflare Wrangler local state
+worker/.wrangler/

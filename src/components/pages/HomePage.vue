@@ -204,9 +204,7 @@
             <span class="foot-logo-accent">DRAFT</span>
           </div>
           <p>{{ L.foot.brand }}</p>
-          <button type="button" class="foot-bug" @click="openFeedback()">
-            🐞 {{ L.foot.report }}
-          </button>
+          <ReportBugButton />
         </div>
 
         <nav class="foot-col">
@@ -265,6 +263,7 @@ import {
 } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { banPresets } from "../../draftFormats.js";
+import ReportBugButton from "../ReportBugButton.vue";
 import { useFeedback } from "../../composables/useFeedback";
 import { FEEDBACK } from "../../feedbackConfig";
 

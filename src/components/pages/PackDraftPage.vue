@@ -44,13 +44,7 @@
       >
         {{ t("onlineLeave") }}
       </button>
-      <button
-        class="btn btn-sm btn-outline-secondary action-btn"
-        :title="lang === 'ua' ? 'Повідомити про баг' : 'Report a bug'"
-        @click="openFeedback({ section: 'pack-draft' })"
-      >
-        🐞
-      </button>
+      <ReportBugButton section="pack-draft" />
     </div>
 
     <template v-if="state.phase === 'heroes'">
@@ -316,7 +310,6 @@
     </template>
 
     <template v-else>
-
       <div class="row g-3">
         <div v-for="player in players" :key="player" class="col-12 col-lg-6">
           <div class="pack-summary" :class="'is-' + player">
@@ -442,9 +435,9 @@ import { usePackDraft } from "../../composables/usePackDraft";
 import PackCard from "../PackCard.vue";
 import PackHeroCard from "../PackHeroCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
+import ReportBugButton from "../ReportBugButton.vue";
 import { useOnline } from "../../composables/useOnline";
 import { useSavedDecks } from "../../composables/useSavedDecks";
-import { useFeedback } from "../../composables/useFeedback";
 
 const { t, lang } = useDraftState();
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -478,8 +471,13 @@ const {
   isDeadCard,
 } = usePackDraft();
 
-const { isGuest, online, mySeat, net: netState, leave: leaveRoom } = useOnline();
-const { openFeedback } = useFeedback();
+const {
+  isGuest,
+  online,
+  mySeat,
+  net: netState,
+  leave: leaveRoom,
+} = useOnline();
 const menuId = ref(null);
 const sideTab = ref("heroes");
 const otherSeat = computed(() => (viewSeat.value === "p1" ? "p2" : "p1"));
@@ -939,8 +937,8 @@ function onRestart() {
 
 .pack-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -1124,5 +1122,16 @@ function onRestart() {
   color: var(--text-muted);
   font-size: 12px;
   line-height: 1.4;
+}
+
+@media (max-width: 575px) {
+  .pack-stat-label {
+    font-size: 9px;
+    letter-spacing: 0.4px;
+  }
+
+  .pack-stat-value {
+    font-size: 18px;
+  }
 }
 </style>

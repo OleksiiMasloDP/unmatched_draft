@@ -357,6 +357,7 @@
       </div>
 
       <div class="game-footer">
+        <ReportBugButton section="game" class="game-bug" />
         <button
           v-if="game.phase === 'play'"
           class="btn btn-sm game-surrender is-danger"
@@ -380,9 +381,17 @@
         </button>
       </div>
 
-      <div v-if="modalPrompt && !needsPass" class="game-modal">
-        <div class="game-modal-box">
-          <h3 class="game-modal-title">{{ promptTitle(blockingPrompt) }}</h3>
+      <div
+        v-if="modalPrompt && !needsPass && !effectBlocking"
+        class="game-modal"
+      >
+        <div
+          class="game-modal-box"
+          :class="{ 'is-versus': blockingPrompt.kind === 'info' }"
+        >
+          <h3 v-if="blockingPrompt.kind !== 'info'" class="game-modal-title">
+            {{ promptTitle(blockingPrompt) }}
+          </h3>
 
           <template v-if="blockingPrompt.kind === 'cards'">
             <div class="row g-2">
@@ -448,36 +457,62 @@
           </div>
 
           <template v-else-if="blockingPrompt.kind === 'info'">
-            <div class="row g-3">
+            <div class="vs-grid">
               <div
-                v-for="side in ['attacker', 'defender']"
-                :key="side"
-                class="col-6"
+                v-for="side in revealSides"
+                :key="side.player"
+                class="vs-side"
+                :class="'is-' + side.player"
               >
                 <div class="reveal-label">
-                  {{ t(side === "attacker" ? "gameAttacker" : "gameDefender") }}
-                  · {{ playerLabel(blockingPrompt.combat[side]) }}
+                  {{ side.label }} · {{ t(side.roleKey) }}
                 </div>
-                <PackCard v-if="revealCard(side)" :card="revealCard(side)" />
+                <img
+                  v-if="heroOf(side.player).image"
+                  class="vs-avatar"
+                  :src="heroOf(side.player).image"
+                  :alt="heroOf(side.player).name"
+                />
+                <PackCard
+                  v-if="side.card"
+                  class="reveal-card"
+                  :card="side.card"
+                />
                 <div v-else class="reveal-empty">{{ t("gameNoCard") }}</div>
-                <div class="reveal-value">
-                  {{ t("gameValue") }}:
+                <div class="vs-calc">
+                  <span v-if="side.card">
+                    {{ t("gameCardValue").replace("{n}", side.base) }}
+                  </span>
+                  <span v-if="side.boost" class="is-boost">
+                    {{ t("gameBoostValue").replace("{n}", side.boost) }}
+                  </span>
+                  <span v-if="side.bonus" class="is-boost">
+                    {{ t("gameBonusValue").replace("{n}", side.bonus) }}
+                  </span>
+                  <strong>{{ side.total }}</strong>
+                </div>
+                <div v-if="side.boostCard" class="vs-boost">
+                  <span>{{ t("vsBoosted") }}</span>
+                  <PackCard class="vs-boost-card" :card="side.boostCard" />
+                </div>
+              </div>
+              <div class="vs-center">
+                <div class="vs-mark">VS</div>
+                <div class="vs-score">
+                  {{ revealSides[0].total }} – {{ revealSides[1].total }}
+                </div>
+                <div class="vs-damage">
                   {{
-                    blockingPrompt.combat.values[blockingPrompt.combat[side]]
+                    blockingPrompt.combat.dealt
+                      ? t("gameDamageDealt").replace(
+                          "{n}",
+                          blockingPrompt.combat.dealt,
+                        )
+                      : t("logNoDamage")
                   }}
                 </div>
               </div>
             </div>
-            <p class="reveal-result">
-              {{
-                blockingPrompt.combat.dealt
-                  ? t("gameDamageDealt").replace(
-                      "{n}",
-                      blockingPrompt.combat.dealt,
-                    )
-                  : t("logNoDamage")
-              }}
-            </p>
             <div class="game-modal-actions">
               <button
                 class="btn btn-success btn-sm action-btn"
@@ -510,36 +545,30 @@
         </div>
       </div>
 
-      <div
-        v-if="announceOpen && game.announce && announceCard"
-        class="game-announce"
-        :class="'side-' + game.announce.player"
+      <button
+        v-if="effectHidden && effectEntry && !needsPass"
+        type="button"
+        class="modal-peek"
+        @click="effectHidden = false"
       >
-        <button
-          type="button"
-          class="game-announce-close"
-          :aria-label="t('combatHide')"
-          @click="announceOpen = false"
-        >
-          ✕
-        </button>
-        <div class="game-announce-title">
-          {{ replacePlayer("schemePlayed", game.announce.player) }}
-        </div>
-        <img
-          v-if="announceCard.image"
-          class="game-announce-card"
-          :src="announceCard.image"
-          :alt="announceCard.name"
-        />
-        <div class="game-announce-name">{{ announceCard.name }}</div>
-        <ul v-if="game.announce.picks.length" class="game-announce-picks">
-          <li v-for="(pick, index) in game.announce.picks" :key="index">
-            <span class="game-announce-label">{{ t("schemeChoice") }}:</span>
-            {{ pickText(pick) }}
-          </li>
-        </ul>
-      </div>
+        👁 {{ t("gameShowPopup") }}
+      </button>
+      <EffectDialog
+        v-if="effectEntry && !effectHidden && !needsPass"
+        :entry="effectEntry"
+        :lines="effectLines"
+        :picks="effectPicks"
+        :prompt="effectPrompt"
+        :cards="effectCards"
+        :selection="selection"
+        :mine="effectMine"
+        :blocking="effectBlocking"
+        :player-label="playerLabel(effectEntry.player)"
+        @answer="answerPrompt"
+        @toggle="toggleSelection"
+        @confirm="confirmCards"
+        @close="onEffectClose"
+      />
 
       <TransitionGroup name="toast" tag="div" class="game-toasts">
         <div
@@ -581,6 +610,8 @@ import { useSavedDecks } from "../../composables/useSavedDecks";
 import { getCard, getHero, testDecks } from "../../gameDecks";
 import ActionIcon from "../ActionIcon.vue";
 import CombatPopup from "../CombatPopup.vue";
+import EffectDialog from "../EffectDialog.vue";
+import ReportBugButton from "../ReportBugButton.vue";
 import GameBoard from "../GameBoard.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
@@ -698,7 +729,6 @@ watch(
 
 onBeforeUnmount(() => {
   toastTimers.forEach(clearTimeout);
-  clearTimeout(announceTimer);
 });
 
 const playerLabel = (player) =>
@@ -806,32 +836,132 @@ const blockPreview = computed(() =>
     : null,
 );
 
-// Оголошення зіграної схеми: що саме зіграли і що обрали.
-const announceOpen = ref(false);
-const announceCard = computed(() =>
-  game.announce ? getCard(game.announce.cardId) : null,
+// Вікно ефекту карти: показує, яка карта і що сталося; вибір - всередині вікна.
+const EFFECT_MIN_MS = 3000;
+const EFFECT_HIDE_MS = 8000;
+const effectShown = ref(null);
+const effectHidden = ref(false);
+let effectQueue = [];
+let effectSeen = game.announces.reduce(
+  (max, item) => Math.max(max, item.id),
+  0,
 );
-let announceSeen = game.announce ? game.announce.id : 0;
-let announceTimer = null;
+let effectShownAt = 0;
+let effectPump = null;
+let effectHide = null;
+
+const effectEntry = computed(
+  () => game.announces.find((item) => item.id === effectShown.value) || null,
+);
+
+const effectPrompt = computed(() => {
+  const note = game.announce;
+  if (!note || !note.open || !game.prompt) return null;
+  const prompt = game.prompt;
+  if (!["confirm", "choice", "cards"].includes(prompt.kind)) return null;
+  if (prompt.kind === "cards" && mine(prompt) && handPrompt.value) return null;
+  return {
+    ...prompt,
+    title: promptTitle(prompt),
+  };
+});
+
+const effectBlocking = computed(
+  () =>
+    Boolean(effectPrompt.value) &&
+    effectEntry.value !== null &&
+    effectEntry.value.id === game.announce?.id &&
+    !(online.value === false && needsPass.value),
+);
+
+const effectMine = computed(
+  () => Boolean(effectPrompt.value) && mine(effectPrompt.value),
+);
+
+const effectCards = computed(() =>
+  effectPrompt.value && effectMine.value && effectPrompt.value.kind === "cards"
+    ? effectPrompt.value.options.map(getCard).filter(Boolean)
+    : [],
+);
+
+const effectLines = computed(() =>
+  (effectEntry.value?.lines || []).map((line) => ({
+    text: formatLog(line),
+    card: line.params?.cardId ? getCard(line.params.cardId) : null,
+  })),
+);
+
+const effectPicks = computed(() =>
+  (effectEntry.value?.picks || []).map(pickText),
+);
+
+function showEffect(id, pinned) {
+  effectShown.value = id;
+  effectHidden.value = false;
+  effectShownAt = Date.now();
+  clearTimeout(effectHide);
+  if (!pinned) {
+    effectHide = setTimeout(() => (effectShown.value = null), EFFECT_HIDE_MS);
+  }
+}
+
+function pumpEffects() {
+  clearTimeout(effectPump);
+  const note = game.announce;
+  if (note && note.open && effectPrompt.value) {
+    effectQueue = effectQueue.filter((id) => id > note.id);
+    showEffect(note.id, true);
+    return;
+  }
+  if (!effectQueue.length) return;
+  const wait = effectShownAt + EFFECT_MIN_MS - Date.now();
+  if (effectShown.value && wait > 0) {
+    effectPump = setTimeout(pumpEffects, wait);
+    return;
+  }
+  showEffect(effectQueue.shift(), false);
+  if (effectQueue.length) effectPump = setTimeout(pumpEffects, EFFECT_MIN_MS);
+}
 
 watch(
-  () => game.announce?.id,
-  (id) => {
-    if (!id || id <= announceSeen) return;
-    announceSeen = id;
-    announceOpen.value = true;
-    clearTimeout(announceTimer);
-    announceTimer = setTimeout(() => (announceOpen.value = false), 14000);
+  () => game.announces.map((item) => item.id).join(","),
+  () => {
+    for (const item of game.announces) {
+      if (item.id > effectSeen) {
+        effectSeen = item.id;
+        effectQueue.push(item.id);
+      }
+    }
+    pumpEffects();
   },
+);
+
+watch(
+  () => [game.prompt, game.announce?.open],
+  () => pumpEffects(),
 );
 
 watch(
   () => game.phase,
   () => {
-    announceOpen.value = false;
-    announceSeen = game.announce ? game.announce.id : 0;
+    effectShown.value = null;
+    effectQueue = [];
+    effectSeen = game.announces.reduce(
+      (max, item) => Math.max(max, item.id),
+      0,
+    );
   },
 );
+
+function onEffectClose() {
+  if (effectBlocking.value) effectHidden.value = true;
+  else effectShown.value = null;
+}
+
+onBeforeUnmount(() => {
+  clearTimeout(effectPump);
+  clearTimeout(effectHide);
+});
 
 function pickText(pick) {
   const label = t(pick.key);
@@ -883,11 +1013,29 @@ function confirmCards() {
   answerPrompt([...selection.value]);
 }
 
-function revealCard(side) {
-  const combat = blockingPrompt.value.combat;
-  const id = combat.cardIds[combat[side]];
-  return id ? getCard(id) : null;
-}
+const revealSides = computed(() => {
+  const prompt = blockingPrompt.value;
+  if (!prompt || prompt.kind !== "info") return [];
+  const combat = prompt.combat;
+  const seat = viewer.value;
+  return [seat, opponentOf(seat)].map((player) => {
+    const cardId = combat.cardIds[player];
+    const boostId = combat.boostCardIds?.[player];
+    return {
+      player,
+      label: online.value
+        ? t(player === seat ? "gameYouLabel" : "gameOpponentLabel")
+        : playerLabel(player),
+      roleKey: combat.attacker === player ? "gameAttacker" : "gameDefender",
+      card: cardId ? getCard(cardId) : null,
+      boostCard: boostId ? getCard(boostId) : null,
+      base: combat.base?.[player] ?? 0,
+      boost: combat.boosts?.[player] ?? 0,
+      bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
+      total: combat.values[player],
+    };
+  });
+});
 
 function formatLog(entry) {
   let text = t(entry.key);
@@ -1800,92 +1948,199 @@ function onDelete(id) {
   font-weight: 800;
 }
 
-/* оголошення схеми */
-.game-announce {
-  position: fixed;
-  top: 84px;
-  right: 16px;
-  z-index: 1400;
-  width: 230px;
-  padding: 12px 12px 14px;
-  text-align: center;
-  border: 1px solid var(--border-strong);
-  border-radius: 14px;
-  background: rgba(var(--bg-dark-rgb), 0.96);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55);
-  animation: announce-in 0.3s ease;
+/* ---------- кнопки в рядку підказки ---------- */
+.game-prompt-line .btn,
+.game-prompt-line .action-btn {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  padding: 6px 14px !important;
+  font-size: 12px;
 }
 
-.game-announce.side-p1 {
+.game-prompt-line .btn-outline-light.action-btn {
+  border: 2px solid var(--border-strong) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-white) !important;
+}
+
+.game-prompt-line .btn-outline-light.action-btn:hover {
+  border-color: var(--color-info) !important;
+  color: var(--color-info) !important;
+}
+
+.game-footer .game-bug {
+  margin-right: auto;
+}
+
+/* ---------- вікно бою VS ---------- */
+.game-modal-box.is-versus .game-modal-actions {
+  justify-content: center;
+}
+
+.game-modal-box.is-versus {
+  max-width: 800px;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+}
+
+.vs-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.vs-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.vs-side:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.vs-side:nth-child(2) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.vs-center {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  text-align: center;
+}
+
+.vs-avatar {
+  width: 54px;
+  height: 54px;
+  border: 3px solid var(--border-strong);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.vs-side.is-p1 .vs-avatar {
   border-color: var(--color-player);
 }
 
-.game-announce.side-p2 {
+.vs-side.is-p2 .vs-avatar {
   border-color: var(--color-opponent);
 }
 
-.game-announce-close {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  border: 0;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 14px;
-  cursor: pointer;
+.vs-grid .reveal-card {
+  width: 160px;
+  max-width: 160px;
 }
 
-.game-announce-title {
-  margin-bottom: 8px;
-  padding-right: 16px;
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.vs-grid .reveal-label {
+  text-align: center;
+}
+
+.vs-calc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.vs-calc .is-boost {
   color: var(--color-warning);
 }
 
-.game-announce-card {
-  width: 100%;
-  border-radius: 8px;
+.vs-calc strong {
+  color: var(--text-white);
+  font-size: 24px;
 }
 
-.game-announce-name {
-  margin: 8px 0 4px;
+.vs-boost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px dashed var(--color-warning);
+  border-radius: 10px;
+  color: var(--color-warning);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.vs-boost-card {
+  width: 92px;
+}
+
+.vs-mark {
+  color: var(--color-warning);
+  font-size: 46px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(250, 204, 21, 0.6);
+}
+
+.vs-score {
+  margin-top: 6px;
+  color: var(--text-white);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.vs-damage {
+  margin-top: 6px;
+  color: #ff7a8c;
   font-size: 14px;
   font-weight: 800;
-  color: var(--text-white);
 }
 
-.game-announce-picks {
-  margin: 6px 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-light);
+.game-modal-actions .action-btn {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 160px;
 }
 
-.game-announce-label {
-  color: var(--text-dim);
-}
-
-@keyframes announce-in {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.modal-peek {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 2050;
+  padding: 10px 20px;
+  border: 2px solid var(--color-warning);
+  border-radius: 999px;
+  background: var(--bg-dark);
+  color: var(--color-warning);
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  transform: translateX(-50%);
+  cursor: pointer;
 }
 
 @media (max-width: 575px) {
-  .game-announce {
-    top: 70px;
-    right: 8px;
-    width: 180px;
+  .vs-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .vs-center {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .vs-side:nth-child(2) {
+    grid-column: 2;
+  }
+
+  .vs-grid .reveal-card {
+    width: 120px;
   }
 }
 </style>

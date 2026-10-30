@@ -1,11 +1,6 @@
 <template>
   <div class="combat-wrap">
-    <button
-      v-if="!open"
-      type="button"
-      class="combat-pill"
-      @click="open = true"
-    >
+    <button v-if="!open" type="button" class="combat-pill" @click="open = true">
       ⚔ {{ t("combatShow") }}
     </button>
 
@@ -40,14 +35,18 @@
             />
             <div class="combat-who-text">
               <div class="combat-role">
-                {{ t(side.role === "attacker" ? "gameAttacker" : "gameDefender") }}
+                {{
+                  t(side.role === "attacker" ? "gameAttacker" : "gameDefender")
+                }}
                 · {{ playerLabel(side.player) }}
               </div>
               <div class="combat-hero">{{ heroOf(side.player).name }}</div>
               <div class="combat-hp">
                 <span class="combat-heart">❤</span>
                 {{ players[side.player].hp }}
-                <span class="combat-hp-max">/ {{ players[side.player].maxHp }}</span>
+                <span class="combat-hp-max"
+                  >/ {{ players[side.player].maxHp }}</span
+                >
               </div>
             </div>
           </div>
@@ -60,6 +59,12 @@
             <div v-else-if="isNoDefense(side)" class="combat-ph">
               {{ t("combatNoDefense") }}
             </div>
+            <img
+              v-else-if="coverFor(side)"
+              class="combat-cover"
+              :src="coverFor(side)"
+              :alt="t('combatFaceDown')"
+            />
             <div v-else class="combat-back">
               <span>UNMATCHED</span>
             </div>
@@ -93,6 +98,7 @@
 import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { getCard, getHero } from "../gameDecks";
+import { coverImage } from "../packDraftData";
 import PackCard from "./PackCard.vue";
 
 const props = defineProps({
@@ -132,14 +138,16 @@ function cardFor(side) {
   return id ? getCard(id) : null;
 }
 
+const coverFor = (side) => coverImage(props.players[side.player].heroId);
+
 const isPending = (side) =>
   side.role === "defender" && props.combat.defense === "pending";
 const isNoDefense = (side) =>
   side.role === "defender" && props.combat.defense === "none";
 
 const slotClass = (side) => ({
-  'is-empty': isPending(side) || isNoDefense(side),
-  'is-preview': Boolean(previewFor(side)),
+  "is-empty": isPending(side) || isNoDefense(side),
+  "is-preview": Boolean(previewFor(side)),
 });
 
 const stageText = computed(() => {
@@ -352,6 +360,12 @@ const stageText = computed(() => {
   font-size: 12px;
   font-weight: 700;
   color: var(--text-muted);
+}
+
+.combat-cover {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 .combat-back {

@@ -66,6 +66,7 @@ const game = reactive({
   fxSeq: 0,
   combat: null,
   announce: null,
+  announces: [],
   winner: null,
 });
 
@@ -107,9 +108,33 @@ function shuffle(list) {
   return result;
 }
 
+let currentNote = null;
+
 function log(key, params = {}) {
   game.log.push({ key, params });
   if (game.log.length > 200) game.log.shift();
+  if (currentNote && currentNote.open) currentNote.lines.push({ key, params });
+}
+
+function beginAnnounce(player, card, phase) {
+  game.fxSeq += 1;
+  game.announces.push({
+    id: game.fxSeq,
+    kind: phase,
+    player,
+    cardId: card.id,
+    lines: [],
+    picks: [],
+    open: true,
+  });
+  if (game.announces.length > 12) game.announces.shift();
+  currentNote = game.announces[game.announces.length - 1];
+  game.announce = currentNote;
+}
+
+function endAnnounce() {
+  if (currentNote) currentNote.open = false;
+  currentNote = null;
 }
 
 function distance(a, b) {
@@ -234,7 +259,11 @@ function discardFromHand(player, cardId) {
   if (index === -1) return null;
   target.hand.splice(index, 1);
   target.discard.push(cardId);
-  log("logDiscard", { player, card: getCard(cardId).name });
+  log("logDiscard", {
+    player,
+    card: getCard(cardId).name,
+    cardId,
+  });
   fx("discard", player, { cardId });
   return getCard(cardId);
 }
@@ -388,15 +417,19 @@ function* runEffect(player, card, phase, combat) {
   const effect = cardEffects[card.key];
   if (!effect) {
     if (phase === (combat ? "after" : "scheme")) {
+      beginAnnounce(player, card, phase);
       log("logNoAuto", { card: card.name });
+      endAnnounce();
     }
     return;
   }
   const handler = effect[phase];
   if (!handler) return;
+  beginAnnounce(player, card, phase);
   activeCard = card.name;
   yield* handler(context(player, card, combat));
   activeCard = null;
+  endAnnounce();
 }
 
 function* startTurn() {
@@ -470,17 +503,7 @@ function* scheme(me) {
   const card = getCard(ids[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(card.id), 1);
   log("logScheme", { player: me, card: card.name });
-  game.fxSeq += 1;
-  game.announce = {
-    id: game.fxSeq,
-    kind: "scheme",
-    player: me,
-    cardId: card.id,
-    picks: [],
-    open: true,
-  };
   yield* runEffect(me, card, "scheme", null);
-  if (game.announce) game.announce.open = false;
   pl(me).discard.push(card.id);
   return true;
 }
@@ -562,6 +585,8 @@ function* attack(me) {
 
   game.combat.stage = "boost";
   const boosts = { p1: 0, p2: 0 };
+  const boostCardIds = { p1: null, p2: null };
+  const baseValues = { p1: 0, p2: 0 };
   for (const player of players) {
     const card = combat.cards[player];
     const effect = card && cardEffects[card.key];
@@ -577,7 +602,9 @@ function* attack(me) {
         skip: "gameSkipBoost",
       });
       if (ids.length) {
-        boosts[player] = discardFromHand(player, ids[0]).boost;
+        const boostCard = discardFromHand(player, ids[0]);
+        boosts[player] = boostCard.boost;
+        boostCardIds[player] = boostCard.id;
         game.combat.boost[player] = true;
       }
     }
@@ -591,6 +618,7 @@ function* attack(me) {
     if (effect?.value && !combat.canceled[player]) {
       value = effect.value(context(player, card, combat), value);
     }
+    baseValues[player] = value;
     combat.values[player] = value + boosts[player];
   }
   combat.values[me] += turnFlags.attackBonus[me];
@@ -625,6 +653,9 @@ function* attack(me) {
       },
       values: { ...combat.values },
       boosts: { ...boosts },
+      boostCardIds: { ...boostCardIds },
+      base: { ...baseValues },
+      bonus: turnFlags.attackBonus[me],
       dealt,
     },
   };
@@ -653,7 +684,7 @@ function* attack(me) {
 
 // Запам'ятовуємо вибір гравців під час схеми, щоб суперник бачив, що саме обрали.
 function recordPick(prompt, answer) {
-  const note = game.announce;
+  const note = currentNote;
   if (!note || !note.open || !prompt) return;
   if (prompt.kind === "choice") {
     const choice = prompt.choices.find((item) => item.value === answer);
@@ -718,6 +749,8 @@ function startGame(deckA, deckB) {
   game.log = [];
   game.combat = null;
   game.announce = null;
+  game.announces = [];
+  currentNote = null;
   undoPoint = null;
   game.redRoomIgnored = { p1: false, p2: false };
   game.phase = "play";
@@ -738,6 +771,8 @@ function resetGame(clearNotice = true) {
   game.log = [];
   game.combat = null;
   game.announce = null;
+  game.announces = [];
+  currentNote = null;
   undoPoint = null;
   syncOut();
 }
@@ -762,7 +797,7 @@ function viewFor(seat) {
       skip: copy.prompt.skip,
       options: [],
       boostOptions: [],
-      choices: [],
+      choices: copy.prompt.choices || [],
       min: 0,
       max: 0,
     };
@@ -865,8 +900,7 @@ function applyAction(type, seat) {
   else if (type === "maneuver" && canAct()) {
     takeSnapshot();
     run(maneuver(game.turn));
-  }
-  else if (type === "scheme" && canAct()) run(scheme(game.turn));
+  } else if (type === "scheme" && canAct()) run(scheme(game.turn));
   else if (type === "attack" && canAct() && inRange(game.turn)) {
     run(attack(game.turn));
   }
