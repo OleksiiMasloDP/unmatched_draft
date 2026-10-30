@@ -284,12 +284,32 @@ function handleScroll() {
   }
 }
 
+function handleOutsidePointer(event) {
+  if (!isMenuOpen.value) return;
+  const target = event.target;
+  if (
+    target.closest &&
+    (target.closest(".burger-menu") || target.closest(".burger-btn"))
+  ) {
+    return;
+  }
+  isMenuOpen.value = false;
+}
+
+function handleEscape(event) {
+  if (event.key === "Escape") isMenuOpen.value = false;
+}
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll, { passive: true });
+  document.addEventListener("pointerdown", handleOutsidePointer, true);
+  document.addEventListener("keydown", handleEscape);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
+  document.removeEventListener("pointerdown", handleOutsidePointer, true);
+  document.removeEventListener("keydown", handleEscape);
 });
 </script>
 

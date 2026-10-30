@@ -280,6 +280,9 @@ function shuffleIntoDeck(player, cardIds) {
   target.discard = target.discard.filter((id) => !cardIds.includes(id));
   target.deck = shuffle([...target.deck, ...cardIds]);
   log("logShuffle", { player, n: cardIds.length });
+  for (const id of cardIds) {
+    log("logShuffleCard", { player, card: getCard(id).name, cardId: id });
+  }
 }
 
 // Tomoe Gozen, "Attack of Opportunity": коли ворожий герой залишає її зону - 1 шкоди.

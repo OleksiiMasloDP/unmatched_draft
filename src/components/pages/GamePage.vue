@@ -280,13 +280,20 @@
               </span>
               <span class="game-counter-label">{{ t("gameDeck") }}</span>
             </div>
-            <div class="game-counter" :title="t('gameDiscard')">
+            <button
+              type="button"
+              class="game-counter is-button"
+              :title="t('gameViewDiscard')"
+              @click="discardView = player"
+            >
               <span class="game-counter-icon">🗑</span>
               <span class="game-counter-value">
                 {{ game.players[player].discard.length }}
               </span>
-              <span class="game-counter-label">{{ t("gameDiscard") }}</span>
-            </div>
+              <span class="game-counter-label">
+                {{ t("gameDiscard") }} 🔍
+              </span>
+            </button>
           </div>
           <details class="game-player-passive">
             <summary>{{ heroOf(player).passive.name }}</summary>
@@ -522,6 +529,39 @@
               </button>
             </div>
           </template>
+        </div>
+      </div>
+
+      <div
+        v-if="discardView"
+        class="game-modal"
+        @click.self="discardView = null"
+      >
+        <div class="game-modal-box">
+          <h3 class="game-modal-title">
+            {{ replacePlayer("gameDiscardOf", discardView) }}
+            ({{ discardCards.length }})
+          </h3>
+          <p v-if="!discardCards.length" class="game-hint-empty">
+            {{ t("gameDiscardEmpty") }}
+          </p>
+          <div v-else class="row g-2">
+            <div
+              v-for="card in discardCards"
+              :key="card.id"
+              class="col-4 col-md-3 col-lg-2"
+            >
+              <PackCard :card="card" />
+            </div>
+          </div>
+          <div class="game-modal-actions">
+            <button
+              class="btn btn-primary btn-sm action-btn"
+              @click="discardView = null"
+            >
+              {{ t("combatHide") }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -962,6 +1002,24 @@ onBeforeUnmount(() => {
   clearTimeout(effectPump);
   clearTimeout(effectHide);
 });
+
+// Перегляд скиду (свого і суперника): скид відкритий для обох.
+const discardView = ref(null);
+const discardCards = computed(() =>
+  discardView.value
+    ? [...game.players[discardView.value].discard]
+        .reverse()
+        .map((id) => getCard(id))
+        .filter(Boolean)
+    : [],
+);
+
+watch(
+  () => game.phase,
+  () => {
+    discardView.value = null;
+  },
+);
 
 function pickText(pick) {
   const label = t(pick.key);
@@ -2142,5 +2200,26 @@ function onDelete(id) {
   .vs-grid .reveal-card {
     width: 120px;
   }
+}
+
+/* лічильник скиду - кнопка для перегляду */
+.game-counter.is-button {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.game-counter.is-button:hover {
+  border-color: var(--color-info, #38bdf8);
+  background: rgba(var(--bg-slate-rgb), 0.8);
+}
+
+.game-hint-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 </style>
