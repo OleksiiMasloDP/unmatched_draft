@@ -79,6 +79,15 @@ function buildTestDecks() {
       cardIds: spiderCards,
       isTest: true,
     },
+    {
+      id: "test-deck-5",
+      name: "Test deck 5",
+      heroId: "doctor-strange",
+      cardIds: allCards
+        .filter((card) => card.heroId === "doctor-strange")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

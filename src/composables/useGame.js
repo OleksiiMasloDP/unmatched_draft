@@ -88,6 +88,13 @@ function resetTurnFlags() {
 
 let activeCard = null;
 
+const cur = { p1: "hero", p2: "hero" };
+
+function resetFighters() {
+  cur.p1 = "hero";
+  cur.p2 = "hero";
+}
+
 function fx(type, player, extra = {}) {
   game.fxSeq += 1;
   game.fx.push({ id: game.fxSeq, type, player, ...extra });
@@ -97,7 +104,36 @@ function fx(type, player, extra = {}) {
 const other = (player) => (player === "p1" ? "p2" : "p1");
 const pl = (player) => game.players[player];
 const hero = (player) => getHero(pl(player).heroId);
-const spaceOf = (player) => pl(player).space;
+const spaceOf = (player) =>
+  cur[player] === "sk" && pl(player).sidekick
+    ? pl(player).sidekick.space
+    : pl(player).space;
+const fighterSpace = (player, fighter) =>
+  fighter === "sk" ? pl(player).sidekick.space : pl(player).space;
+const fightersOf = (player) =>
+  pl(player).sidekick && !pl(player).sidekick.down ? ["hero", "sk"] : ["hero"];
+const occupiedBy = (player) =>
+  fightersOf(player).map((fighter) => fighterSpace(player, fighter));
+const occupied = () => [...occupiedBy("p1"), ...occupiedBy("p2")];
+const fighterName = (player, fighter) =>
+  fighter === "sk" ? pl(player).sidekick.name : hero(player).name;
+
+function withFighter(player, fighter, fn) {
+  const before = cur[player];
+  cur[player] = fighter;
+  try {
+    return fn();
+  } finally {
+    cur[player] = before;
+  }
+}
+
+const allowedFor = (card, fighter) =>
+  card.kind === "sidekick"
+    ? fighter === "sk"
+    : card.kind === "any"
+      ? true
+      : fighter === "hero";
 
 function shuffle(list) {
   const result = [...list];
@@ -159,40 +195,54 @@ function zoneCount(player) {
 function reach(player, steps) {
   if (turnFlags.pinned[player]) return [];
   const start = spaceOf(player);
-  const blocked = spaceOf(other(player));
+  const foes = occupiedBy(other(player));
+  const busy = occupied();
   const seen = new Map([[start, 0]]);
   const queue = [start];
   while (queue.length) {
     const current = queue.shift();
     if (seen.get(current) >= steps) continue;
     for (const next of active.spaceById.get(current).links) {
-      if (next === blocked || seen.has(next)) continue;
+      if (foes.includes(next) || seen.has(next)) continue;
       seen.set(next, seen.get(current) + 1);
       queue.push(next);
     }
   }
-  return [...seen.keys()].filter((id) => id !== start);
+  return [...seen.keys()].filter((id) => !busy.includes(id));
 }
 
 function zoneSpaces(player) {
   const zones = active.spaceById.get(spaceOf(player)).zones;
-  const blocked = spaceOf(other(player));
+  const busy = occupied();
   return active.map.spaces
     .filter(
       (space) =>
-        space.id !== blocked &&
-        space.id !== spaceOf(player) &&
+        !busy.includes(space.id) &&
         space.zones.some((zone) => zones.includes(zone)),
     )
     .map((space) => space.id);
 }
 
-function inRange(player) {
+function inRange(player, mine = "hero", theirs = "hero") {
   const foe = other(player);
-  const data = hero(player);
-  if (data.attack === "range") return shared(player, foe);
-  const reachDistance = data.id === "ms-marvel" ? 2 : 1;
-  return distance(player, foe) <= reachDistance;
+  return withFighter(player, mine, () =>
+    withFighter(foe, theirs, () => {
+      const data = hero(player);
+      if (data.attack === "range") return shared(player, foe);
+      const reachDistance = data.id === "ms-marvel" && mine === "hero" ? 2 : 1;
+      return distance(player, foe) <= reachDistance;
+    }),
+  );
+}
+
+function attackPairs(player) {
+  const pairs = [];
+  for (const mine of fightersOf(player)) {
+    for (const theirs of fightersOf(other(player))) {
+      if (inRange(player, mine, theirs)) pairs.push({ mine, theirs });
+    }
+  }
+  return pairs;
 }
 
 function setOver(winner) {
@@ -204,21 +254,61 @@ function setOver(winner) {
   log("logWins", { player: winner });
 }
 
-function damage(player, amount) {
+function damage(player, amount, fighter = cur[player]) {
   if (amount <= 0 || game.phase !== "play") return;
+  if (fighter === "sk" && pl(player).sidekick) {
+    const kid = pl(player).sidekick;
+    if (kid.down) return;
+    kid.hp = Math.max(0, kid.hp - amount);
+    log("logDamageSk", { who: kid.name, n: amount });
+    fx("damage", player, { n: amount, src: activeCard, fighter: "sk" });
+    if (kid.hp === 0) {
+      kid.down = true;
+      log("logSidekickDown", { who: kid.name });
+      if (!game.combat) pl(player).sidekick = null;
+    }
+    return;
+  }
   const target = pl(player);
   target.hp = Math.max(0, target.hp - amount);
   log("logDamage", { player, n: amount });
-  fx("damage", player, { n: amount, src: activeCard });
+  fx("damage", player, { n: amount, src: activeCard, fighter: "hero" });
   if (target.hp === 0) setOver(other(player));
 }
 
-function heal(player, amount) {
+function heal(player, amount, fighter = cur[player]) {
+  if (fighter === "sk" && pl(player).sidekick) {
+    const kid = pl(player).sidekick;
+    const healed = Math.min(amount, kid.maxHp - kid.hp);
+    kid.hp += healed;
+    log("logHealSk", { who: kid.name, n: healed });
+    if (healed > 0) fx("heal", player, { n: healed, fighter: "sk" });
+    return;
+  }
   const target = pl(player);
   const healed = Math.min(amount, target.maxHp - target.hp);
   target.hp += healed;
   log("logHeal", { player, n: healed });
-  if (healed > 0) fx("heal", player, { n: healed });
+  if (healed > 0) fx("heal", player, { n: healed, fighter: "hero" });
+}
+
+function healFriendly(player, amount) {
+  const base = cur[player];
+  const baseSpace = spaceOf(player);
+  heal(player, amount, base);
+  for (const fighter of fightersOf(player)) {
+    if (fighter === base) continue;
+    const link = active.spaceById.get(baseSpace).links;
+    if (link.includes(fighterSpace(player, fighter))) {
+      heal(player, amount, fighter);
+    }
+  }
+}
+
+function sidekickAdjacent(player) {
+  const kid = pl(player).sidekick;
+  if (!kid || kid.down) return false;
+  return active.spaceById.get(pl(player).space).links.includes(kid.space);
 }
 
 function draw(player, count) {
@@ -234,7 +324,7 @@ function draw(player, count) {
       drawn += 1;
     } else {
       log("logExhaust", { player, n: EXHAUSTION_DAMAGE });
-      damage(player, EXHAUSTION_DAMAGE);
+      damage(player, EXHAUSTION_DAMAGE, "hero");
     }
   }
   if (drawn) {
@@ -288,7 +378,12 @@ function shuffleIntoDeck(player, cardIds) {
 // Tomoe Gozen, "Attack of Opportunity": коли ворожий герой залишає її зону - 1 шкоди.
 function attackOfOpportunity(player, fromSpaceId) {
   const tomoe = other(player);
-  if (game.phase !== "play" || !pl(tomoe) || hero(tomoe).id !== "tomoe-gozen") {
+  if (
+    game.phase !== "play" ||
+    !pl(tomoe) ||
+    hero(tomoe).id !== "tomoe-gozen" ||
+    cur[player] !== "hero"
+  ) {
     return;
   }
   const tomoeZones = active.spaceById.get(spaceOf(tomoe)).zones;
@@ -298,30 +393,39 @@ function attackOfOpportunity(player, fromSpaceId) {
   if (wasInZone && !shared(player, tomoe)) {
     log("logOpportunity", { player });
     activeCard = hero(tomoe).passive.name;
-    damage(player, 1);
+    damage(player, 1, "hero");
     activeCard = null;
   }
 }
 
+function setSpace(player, fighter, spaceId) {
+  if (fighter === "sk") pl(player).sidekick.space = spaceId;
+  else pl(player).space = spaceId;
+}
+
 function place(player, spaceId) {
   const from = spaceOf(player);
-  pl(player).space = spaceId;
-  log("logMove", { player, space: spaceId });
+  setSpace(player, cur[player], spaceId);
+  if (cur[player] === "sk") {
+    log("logMoveSk", { who: pl(player).sidekick.name, space: spaceId });
+  } else {
+    log("logMove", { player, space: spaceId });
+  }
   if (from !== spaceId) attackOfOpportunity(player, from);
 }
 
 function swapPlaces() {
-  const a = pl("p1").space;
-  pl("p1").space = pl("p2").space;
-  pl("p2").space = a;
+  const a = spaceOf("p1");
+  setSpace("p1", cur.p1, spaceOf("p2"));
+  setSpace("p2", cur.p2, a);
   log("logSwap");
 }
 
 function adjacentSpaces(player) {
-  const blocked = spaceOf(other(player));
+  const blocked = occupiedBy(other(player));
   return active.spaceById
     .get(spaceOf(other(player)))
-    .links.filter((id) => id !== blocked);
+    .links.filter((id) => !blocked.includes(id));
 }
 
 function spendAction() {
@@ -364,6 +468,32 @@ const api = {
   drawUntil,
   damage,
   heal,
+  healFriendly,
+  sidekickAdjacent,
+  startSpaces: () => Object.values(active.map.starts),
+  occupiedSpaces: () => occupied(),
+  spaceOf,
+  fighterSpace,
+  cardBoost: (id) => getCard(id).boost,
+  putOnDeckTop: (player, id) => {
+    const target = pl(player);
+    target.hand.splice(target.hand.indexOf(id), 1);
+    target.deck.unshift(id);
+    log("logRevealTop", { player, card: getCard(id).name, cardId: id });
+  },
+  shuffleHandIntoDeck: (player) => {
+    const target = pl(player);
+    const n = target.hand.length;
+    target.deck = shuffle([...target.deck, ...target.hand]);
+    target.hand = [];
+    log("logShuffleHand", { player, n });
+  },
+  fighterOf: (player) => cur[player],
+  shuffleDeck: (player) => {
+    pl(player).deck = shuffle(pl(player).deck);
+    log("logShuffleDeck", { player });
+  },
+  mistsReplace,
   place,
   reach,
   zoneSpaces,
@@ -407,10 +537,24 @@ const api = {
 
 const isScheme = (card) => card.value === null;
 const canAttackWith = (card) => !isScheme(card) && card.type !== "defense";
-const attackPlayable = (player, card) =>
+const attackPlayable = (player, card, fighter = cur[player]) =>
   canAttackWith(card) &&
-  (cardEffects[card.key]?.canAttack?.(context(player, card)) ?? true);
+  allowedFor(card, fighter) &&
+  withFighter(
+    player,
+    fighter,
+    () => cardEffects[card.key]?.canAttack?.(context(player, card)) ?? true,
+  );
 const canDefendWith = (card) => !isScheme(card) && card.type !== "attack";
+
+const attackCardsFor = (player, fighter) =>
+  pl(player).hand.filter((id) => attackPlayable(player, getCard(id), fighter));
+
+function attackChoices(player) {
+  return attackPairs(player).filter(
+    ({ mine }) => attackCardsFor(player, mine).length,
+  );
+}
 
 function context(player, card, combat = null) {
   return { g: api, me: player, foe: other(player), card, combat };
@@ -435,6 +579,55 @@ function* runEffect(player, card, phase, combat) {
   endAnnounce();
 }
 
+function* mistsReplace(me, combat) {
+  const foe = other(me);
+  const outer = currentNote;
+  const old = combat.cards[foe];
+  if (old) {
+    pl(foe).discard.push(old.id);
+    log("logMistsDiscard", { card: old.name, cardId: old.id });
+    fx("discard", foe, { cardId: old.id });
+  }
+  combat.cards[foe] = null;
+  const attackerRole = combat.attacker === foe;
+  const fighter = combat.fighters[foe];
+  const revealed = [];
+  let found = null;
+  while (pl(foe).deck.length) {
+    const id = pl(foe).deck.shift();
+    const card = getCard(id);
+    log("logMistsReveal", { player: foe, card: card.name, cardId: id });
+    const typeOk = card.type === "attack" || card.type === "versatile";
+    const playable =
+      typeOk &&
+      !isScheme(card) &&
+      allowedFor(card, fighter) &&
+      (attackerRole ? attackPlayable(foe, card, fighter) : canDefendWith(card));
+    if (playable) {
+      found = card;
+      break;
+    }
+    revealed.push(id);
+  }
+  pl(foe).deck.push(...shuffle(revealed));
+  combat.cards[foe] = found;
+  combat.canceled[foe] = false;
+  if (game.combat) {
+    game.combat.cardIds[foe] = found ? found.id : null;
+    game.combat.covers[foe] = found ? found.heroId : null;
+  }
+  if (found) {
+    log("logMistsPlay", { player: foe, card: found.name, cardId: found.id });
+    if (combat.immediateDone[foe]) {
+      yield* runEffect(foe, found, "immediate", combat);
+      currentNote = outer;
+      game.announce = outer;
+    }
+  } else {
+    log("logMistsNone", { player: foe });
+  }
+}
+
 function* startTurn() {
   const me = game.turn;
   resetTurnFlags();
@@ -442,6 +635,7 @@ function* startTurn() {
   game.turnStart = spaceOf(me);
   game.redRoomIgnored[me] = false;
   log("logTurn", { player: me });
+  cur[me] = "hero";
   if (hero(me).id === "ms-marvel") {
     const options = reach(me, 1);
     if (options.length) {
@@ -472,23 +666,32 @@ function* maneuver(me) {
   draw(me, 1);
   if (game.phase !== "play") return true;
 
-  let steps = hero(me).move;
   let boosted = false;
-  for (;;) {
-    const options = reach(me, steps);
-    if (!options.length) break;
-    const prompt = askSpace(me, "promptMoveSpace", options);
-    prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
-    prompt.undo = !boosted;
-    const answer = yield prompt;
-    if (answer && typeof answer === "object") {
-      steps += discardFromHand(me, answer.boost).boost;
-      boosted = true;
-      continue;
+  for (const fighter of fightersOf(me)) {
+    cur[me] = fighter;
+    let steps = hero(me).move;
+    for (;;) {
+      const options = reach(me, steps);
+      if (!options.length) break;
+      const prompt = askSpace(
+        me,
+        fighter === "sk" ? "promptMoveSidekick" : "promptMoveSpace",
+        options,
+      );
+      prompt.fighter = fighter;
+      prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
+      prompt.undo = !boosted;
+      const answer = yield prompt;
+      if (answer && typeof answer === "object") {
+        steps += discardFromHand(me, answer.boost).boost;
+        boosted = true;
+        continue;
+      }
+      if (answer) place(me, answer);
+      break;
     }
-    if (answer) place(me, answer);
-    break;
   }
+  cur[me] = "hero";
   return true;
 }
 
@@ -511,31 +714,74 @@ function* scheme(me) {
   return true;
 }
 
+function* pickFighter(me, title, fighters) {
+  if (fighters.length === 1) return fighters[0];
+  const prompt = askSpace(
+    me,
+    title,
+    fighters.map((fighter) => fighterSpace(me, fighter)),
+  );
+  prompt.undo = true;
+  const space = yield prompt;
+  if (!space) return null;
+  return fighters.find((fighter) => fighterSpace(me, fighter) === space);
+}
+
+function* pickTarget(me, foe, fighters) {
+  if (fighters.length === 1) return fighters[0];
+  const prompt = askSpace(
+    me,
+    "promptAttackTarget",
+    fighters.map((fighter) => fighterSpace(foe, fighter)),
+  );
+  prompt.undo = true;
+  const space = yield prompt;
+  if (!space) return null;
+  return fighters.find((fighter) => fighterSpace(foe, fighter) === space);
+}
+
 function* attack(me) {
   const foe = other(me);
-  if (!inRange(me)) return false;
+  const choices = attackChoices(me);
+  if (!choices.length) return false;
 
-  const options = pl(me).hand.filter((id) => attackPlayable(me, getCard(id)));
-  if (!options.length) return false;
+  const mine = yield* pickFighter(me, "promptAttackWith", [
+    ...new Set(choices.map((item) => item.mine)),
+  ]);
+  if (!mine) return false;
+  const theirs = yield* pickTarget(me, foe, [
+    ...new Set(
+      choices.filter((item) => item.mine === mine).map((item) => item.theirs),
+    ),
+  ]);
+  if (!theirs) return false;
+
+  cur[me] = mine;
+  cur[foe] = theirs;
+
+  const options = attackCardsFor(me, mine);
   const attackIds = yield askCards(me, "promptAttackCard", options, {
     min: 0,
     max: 1,
     skip: "gameCancel",
   });
-  if (!attackIds.length) return false;
+  if (!attackIds.length) {
+    resetFighters();
+    return false;
+  }
 
   spendAction();
   const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
   log("logAttack", { player: me });
 
-  // Публічний стан бою: його бачать обидва гравці (попап бою).
   const faceUp = Boolean(cardEffects[attackCard.key]?.faceUp);
   game.combat = {
     attacker: me,
     defender: foe,
     stage: "defense",
     defense: "pending",
+    fighters: { [me]: mine, [foe]: theirs },
     cardIds: { [me]: attackCard.id, [foe]: null },
     covers: { [me]: attackCard.heroId, [foe]: null },
     revealed: { p1: null, p2: null, [me]: faceUp ? attackCard.id : null },
@@ -544,9 +790,10 @@ function* attack(me) {
   };
 
   let defenseCard = null;
-  const defenseOptions = pl(foe).hand.filter((id) =>
-    canDefendWith(getCard(id)),
-  );
+  const defenseOptions = pl(foe).hand.filter((id) => {
+    const card = getCard(id);
+    return canDefendWith(card) && allowedFor(card, theirs);
+  });
   const defensePrompt = askCards(foe, "promptDefenseCard", defenseOptions, {
     min: 0,
     max: 1,
@@ -568,27 +815,30 @@ function* attack(me) {
   const combat = {
     attacker: me,
     defender: foe,
+    fighters: { [me]: mine, [foe]: theirs },
     cards: { [me]: attackCard, [foe]: defenseCard },
     canceled: { p1: false, p2: false },
     taken: { p1: 0, p2: 0 },
     won: { p1: false, p2: false },
     values: { p1: 0, p2: 0 },
     returnToHand: { p1: false, p2: false },
+    kept: { p1: false, p2: false },
+    immediateDone: { p1: false, p2: false },
   };
 
-  // Порядок розіграшу: спочатку ефекти захисника, потім атакуючого
-  // (для кожної стадії: Одразу -> Під час бою -> Після бою).
   const players = [foe, me];
   for (const player of players) {
     const card = combat.cards[player];
     if (card && !combat.canceled[player]) {
       yield* runEffect(player, card, "immediate", combat);
     }
+    combat.immediateDone[player] = true;
   }
 
   game.combat.stage = "boost";
   const boosts = { p1: 0, p2: 0 };
   const boostCardIds = { p1: null, p2: null };
+  const boostLists = { p1: [], p2: [] };
   const baseValues = { p1: 0, p2: 0 };
   for (const player of players) {
     const card = combat.cards[player];
@@ -606,10 +856,44 @@ function* attack(me) {
       });
       if (ids.length) {
         const boostCard = discardFromHand(player, ids[0]);
-        boosts[player] = boostCard.boost;
+        boosts[player] += boostCard.boost;
         boostCardIds[player] = boostCard.id;
+        boostLists[player].push(boostCard.id);
         game.combat.boost[player] = true;
       }
+    }
+    const blind = effect?.blindBoost?.(context(player, card, combat)) || 0;
+    for (let i = 0; card && !combat.canceled[player] && i < blind; i++) {
+      if (!pl(player).deck.length) break;
+      const ok = yield askConfirm(player, "promptBlindBoost");
+      if (!ok) break;
+      const id = pl(player).deck.shift();
+      pl(player).discard.push(id);
+      const boostCard = getCard(id);
+      boosts[player] += boostCard.boost;
+      boostCardIds[player] = id;
+      boostLists[player].push(id);
+      game.combat.boost[player] = true;
+      log("logBlindBoost", {
+        player,
+        card: boostCard.name,
+        cardId: id,
+        n: boostCard.boost,
+      });
+      fx("discard", player, { cardId: id });
+    }
+  }
+
+  const ignored = { p1: false, p2: false };
+  for (const player of players) {
+    const card = combat.cards[player];
+    const effect = card && cardEffects[card.key];
+    if (
+      effect?.ignoreFoeValue &&
+      !combat.canceled[player] &&
+      effect.ignoreFoeValue(context(player, card, combat))
+    ) {
+      ignored[other(player)] = true;
     }
   }
 
@@ -621,16 +905,22 @@ function* attack(me) {
     if (effect?.value && !combat.canceled[player]) {
       value = effect.value(context(player, card, combat), value);
     }
+    if (ignored[player]) value = 0;
     baseValues[player] = value;
-    combat.values[player] = value + boosts[player];
+    let total = value + boosts[player];
+    if (effect?.finalValue && !combat.canceled[player]) {
+      total = effect.finalValue(context(player, card, combat), total);
+    }
+    combat.values[player] = total;
   }
   combat.values[me] += turnFlags.attackBonus[me];
 
   const raw = Math.max(0, combat.values[me] - combat.values[foe]);
   let dealt = raw;
-  const capEffect = defenseCard && cardEffects[defenseCard.key]?.damageCap;
+  const capEffect =
+    combat.cards[foe] && cardEffects[combat.cards[foe].key]?.damageCap;
   if (capEffect && !combat.canceled[foe]) {
-    dealt = Math.min(dealt, capEffect(context(foe, defenseCard, combat)));
+    dealt = Math.min(dealt, capEffect(context(foe, combat.cards[foe], combat)));
   }
   combat.taken[foe] = dealt;
   combat.won[me] = raw > 0;
@@ -650,13 +940,15 @@ function* attack(me) {
     combat: {
       attacker: me,
       defender: foe,
+      fighters: { [me]: mine, [foe]: theirs },
       cardIds: {
-        [me]: attackCard.id,
-        [foe]: defenseCard ? defenseCard.id : null,
+        [me]: combat.cards[me] ? combat.cards[me].id : null,
+        [foe]: combat.cards[foe] ? combat.cards[foe].id : null,
       },
       values: { ...combat.values },
       boosts: { ...boosts },
       boostCardIds: { ...boostCardIds },
+      boostCardLists: { p1: [...boostLists.p1], p2: [...boostLists.p2] },
       base: { ...baseValues },
       bonus: turnFlags.attackBonus[me],
       dealt,
@@ -674,14 +966,44 @@ function* attack(me) {
     }
   }
 
+  for (const player of players) {
+    const card = combat.cards[player];
+    if (
+      game.phase === "play" &&
+      card &&
+      combat.fighters[player] === "hero" &&
+      hero(player).id === "doctor-strange" &&
+      !combat.returnToHand[player]
+    ) {
+      beginAnnounce(player, card, "after");
+      const ok = yield askConfirm(player, "promptDarkPact");
+      if (ok) {
+        activeCard = hero(player).passive.name;
+        log("logDarkPact", { player, card: card.name, cardId: card.id });
+        damage(player, 1, "hero");
+        activeCard = null;
+        if (game.phase === "play") {
+          pl(player).deck.push(card.id);
+          combat.kept[player] = true;
+          draw(player, 1);
+        }
+      }
+      endAnnounce();
+    }
+  }
+
   const finish = (player, card) => {
-    if (!card) return;
+    if (!card || combat.kept[player]) return;
     if (combat.returnToHand[player]) pl(player).hand.push(card.id);
     else pl(player).discard.push(card.id);
   };
-  finish(me, attackCard);
-  finish(foe, defenseCard);
+  finish(me, combat.cards[me]);
+  finish(foe, combat.cards[foe]);
+  for (const player of ["p1", "p2"]) {
+    if (pl(player).sidekick?.down) pl(player).sidekick = null;
+  }
   game.combat = null;
+  resetFighters();
   return true;
 }
 
@@ -718,6 +1040,7 @@ function advance(answer) {
 }
 
 function run(generator) {
+  resetFighters();
   flow = generator;
   advance(undefined);
 }
@@ -737,6 +1060,15 @@ function startGame(deckA, deckB) {
       hp: data.hp,
       maxHp: data.hp,
       space: active.map.starts[player],
+      sidekick: data.sidekick
+        ? {
+            name: data.sidekick.name,
+            hp: data.sidekick.hp,
+            maxHp: data.sidekick.hp,
+            space: null,
+            down: false,
+          }
+        : null,
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],
@@ -746,6 +1078,15 @@ function startGame(deckA, deckB) {
   useMapId(game.mapId);
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
+  for (const player of ["p1", "p2"]) {
+    const kid = pl(player).sidekick;
+    if (!kid) continue;
+    const foeStart = active.map.starts[other(player)];
+    const home = active.map.starts[player];
+    kid.space =
+      active.spaceById.get(home).links.find((id) => id !== foeStart) || home;
+  }
+  resetFighters();
   game.turn = "p1";
   game.viewer = "p1";
   game.winner = null;
@@ -904,7 +1245,8 @@ function applyAction(type, seat) {
     takeSnapshot();
     run(maneuver(game.turn));
   } else if (type === "scheme" && canAct()) run(scheme(game.turn));
-  else if (type === "attack" && canAct() && inRange(game.turn)) {
+  else if (type === "attack" && canAct() && attackChoices(game.turn).length) {
+    takeSnapshot();
     run(attack(game.turn));
   }
   syncOut();
@@ -992,11 +1334,7 @@ function availableActions() {
   return {
     maneuver: idle && game.actions > 0,
     scheme: idle && game.actions > 0 && hand.some(isScheme),
-    attack:
-      idle &&
-      game.actions > 0 &&
-      inRange(me) &&
-      hand.some((card) => attackPlayable(me, card)),
+    attack: idle && game.actions > 0 && attackChoices(me).length > 0,
   };
 }
 

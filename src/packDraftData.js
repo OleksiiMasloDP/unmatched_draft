@@ -3,6 +3,7 @@ import {
   winterSoldierCards,
   spiderManCards,
   tomoeGozenCards,
+  doctorStrangeCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -81,6 +82,23 @@ export const packDraftHeroes = [
     sidekick: null,
     cards: winterSoldierCards,
   },
+  {
+    id: "doctor-strange",
+    name: "Doctor Strange",
+    hp: 14,
+    move: 2,
+    attack: "range",
+    image: "images/doctor_strange.webp",
+    passive: {
+      name: "Dark Pact",
+      text: {
+        en: "After each combat, if Doctor Strange played a card, you may deal 1 damage to him. If you do, put that card on the bottom of your deck and draw 1 card.",
+        ua: "Після кожного бою, якщо Doctor Strange зіграв карту, ви можете завдати йому 1 шкоди. Якщо так, покладіть цю карту на низ колоди та візьміть 1 карту.",
+      },
+    },
+    sidekick: { name: "Wong", hp: 6 },
+    cards: doctorStrangeCards,
+  },
 ];
 
 const CARD_IMAGES = {
@@ -152,6 +170,22 @@ const CARD_IMAGES = {
       without_remorse: "attack",
     },
   },
+  "doctor-strange": {
+    dir: "Doctor Strange",
+    files: {
+      bolts_of_balthakk: "attack",
+      eye_of_agamotto: "scheme",
+      cloak_of_levitation: "versatile",
+      feint: "versatile",
+      master_of_kamar_taj: "versatile",
+      seven_suns_of_cinnibus: "versatile",
+      steadfast_disciple: "versatile",
+      the_mists_of_munnopor: "defense",
+      the_rings_of_raggadorr: "attack",
+      the_winds_of_watoomb: "attack",
+      no_really_im_a_doctor: "scheme",
+    },
+  },
 };
 
 const CARD_IMAGE_ALIASES = {
@@ -187,22 +221,24 @@ function slug(value) {
 }
 
 function expandDeck(hero) {
-  return hero.cards.flatMap(([quantity, name, value, boost, en, ua]) => {
-    const art = cardImage(hero, name);
-    return Array.from({ length: quantity }, (_, index) => ({
-      id: `${hero.id}-${slug(name)}-${index + 1}`,
-      key: slug(name),
-      heroId: hero.id,
-      kind: "hero",
-      sidekick: null,
-      name,
-      type: value === null ? "scheme" : art?.type || null,
-      value,
-      boost,
-      text: { en, ua },
-      image: art?.image || null,
-    }));
-  });
+  return hero.cards.flatMap(
+    ([quantity, name, value, boost, en, ua, kind = "hero", cardType]) => {
+      const art = cardImage(hero, name);
+      return Array.from({ length: quantity }, (_, index) => ({
+        id: `${hero.id}-${slug(name)}-${index + 1}`,
+        key: slug(name),
+        heroId: hero.id,
+        kind,
+        sidekick: kind === "sidekick" ? hero.sidekick.name : null,
+        name,
+        type: value === null ? "scheme" : art?.type || cardType || null,
+        value,
+        boost,
+        text: { en, ua },
+        image: art?.image || null,
+      }));
+    },
+  );
 }
 
 export function buildAllCards() {

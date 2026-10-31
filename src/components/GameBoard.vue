@@ -80,6 +80,36 @@
       </g>
     </g>
 
+    <g v-for="player in ['p1', 'p2']" :key="'sk-' + player">
+      <g
+        v-if="players[player] && players[player].sidekick"
+        class="board-hero board-sidekick"
+        :class="['is-' + player, { 'is-hit': hit[player + '-sk'] }]"
+      >
+        <circle
+          :cx="byId.get(players[player].sidekick.space).x"
+          :cy="byId.get(players[player].sidekick.space).y"
+          r="30"
+        />
+        <text
+          class="hero-initials is-small"
+          :x="byId.get(players[player].sidekick.space).x"
+          :y="byId.get(players[player].sidekick.space).y + 8"
+          text-anchor="middle"
+        >
+          {{ players[player].sidekick.name.slice(0, 2).toUpperCase() }}
+        </text>
+        <g
+          :transform="`translate(${byId.get(players[player].sidekick.space).x + 24}, ${byId.get(players[player].sidekick.space).y + 28})`"
+        >
+          <circle class="hp-badge" r="18" />
+          <text class="hp-label is-small" y="7" text-anchor="middle">
+            {{ players[player].sidekick.hp }}
+          </text>
+        </g>
+      </g>
+    </g>
+
     <g
       v-for="item in floats"
       :key="item.id"
@@ -135,7 +165,12 @@ const fillFor = (space) =>
     : props.map.zoneColors[space.zones[0]];
 
 const floats = ref([]);
-const hit = reactive({ p1: false, p2: false });
+const hit = reactive({
+  p1: false,
+  p2: false,
+  "p1-sk": false,
+  "p2-sk": false,
+});
 let lastFx = Math.max(0, ...props.fx.map((item) => item.id));
 const timers = [];
 
@@ -147,8 +182,10 @@ watch(
     fresh.forEach((item, index) => {
       if (item.type !== "damage" && item.type !== "heal") return;
       const unit = props.players[item.player];
-      const space = unit && byId.value.get(unit.space);
+      const kid = item.fighter === "sk" ? unit?.sidekick : null;
+      const space = unit && byId.value.get(kid ? kid.space : unit.space);
       if (!space) return;
+      const hitKey = kid ? item.player + "-sk" : item.player;
       const entry = {
         id: item.id,
         type: item.type,
@@ -158,8 +195,8 @@ watch(
       };
       floats.value = [...floats.value, entry];
       if (item.type === "damage") {
-        hit[item.player] = true;
-        timers.push(setTimeout(() => (hit[item.player] = false), 600));
+        hit[hitKey] = true;
+        timers.push(setTimeout(() => (hit[hitKey] = false), 600));
       }
       timers.push(
         setTimeout(() => {
@@ -305,6 +342,14 @@ const initials = (heroId) =>
   fill: var(--bg-dark);
   stroke: var(--text-white);
   stroke-width: 4;
+}
+
+.hero-initials.is-small {
+  font-size: 22px;
+}
+
+.hp-label.is-small {
+  font-size: 19px;
 }
 
 .hp-label {

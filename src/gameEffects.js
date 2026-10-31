@@ -412,4 +412,105 @@ export const cardEffects = {
       else c.g.gainAction(1);
     },
   },
+
+  "cloak-of-levitation": {
+    ignoreFoeValue: (c) => c.g.adjacent(c.me, c.foe),
+  },
+
+  "steadfast-disciple": {
+    *after(c) {
+      if (!c.g.adjacent(c.me, c.foe)) return;
+      c.g.damage(c.foe, 1);
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "master-of-kamar-taj": {
+    value: (c, value) => (c.g.sidekickAdjacent(c.me) ? 4 : value),
+  },
+
+  "bolts-of-balthakk": {
+    blindBoost: () => 1,
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.gainAction(1);
+    },
+  },
+
+  "seven-suns-of-cinnibus": {
+    blindBoost: () => 2,
+    finalValue: (c, total) => (total > 7 ? 0 : total),
+  },
+
+  "the-mists-of-munnopor": {
+    *immediate(c) {
+      yield* c.g.mistsReplace(c.me, c.combat);
+    },
+  },
+
+  "the-rings-of-raggadorr": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const dealt = c.combat.taken[c.foe];
+      if (dealt > 0) c.g.healFriendly(c.me, dealt);
+    },
+  },
+
+  "the-winds-of-watoomb": {
+    *after(c) {
+      const busy = () => c.g.occupiedSpaces();
+      const mine = c.g.spaceOf(c.me);
+      const theirs = c.g.spaceOf(c.foe);
+      const first = c.g
+        .startSpaces()
+        .filter((id) => !busy().includes(id) || id === mine);
+      if (first.length) {
+        const space = yield c.g.askSpace(c.foe, "promptWindsStrange", first);
+        if (space) c.g.place(c.me, space);
+      }
+      const second = c.g
+        .startSpaces()
+        .filter(
+          (id) =>
+            id !== c.g.spaceOf(c.me) && (!busy().includes(id) || id === theirs),
+        );
+      if (second.length) {
+        const space = yield c.g.askSpace(c.me, "promptWindsFoe", second);
+        if (space) c.g.place(c.foe, space);
+      }
+      c.g.shuffleDeck(c.me);
+      c.g.shuffleDeck(c.foe);
+    },
+  },
+
+  "eye-of-agamotto": {
+    *scheme(c) {
+      c.g.shuffleHandIntoDeck(c.me);
+      c.g.draw(c.me, 5);
+      c.g.gainAction(1);
+    },
+  },
+
+  "no-really-i-m-a-doctor": {
+    *scheme(c) {
+      if (!c.g.handSize(c.me)) return;
+      const ids = yield c.g.askCards(
+        c.me,
+        "promptRevealToTop",
+        c.g.handOf(c.me),
+        { min: 1, max: 1 },
+      );
+      const amount = c.g.cardBoost(ids[0]);
+      c.g.putOnDeckTop(c.me, ids[0]);
+      const fighters = ["hero"];
+      if (c.g.sidekickAdjacent(c.me)) fighters.push("sk");
+      let who = "hero";
+      if (fighters.length > 1) {
+        const spaces = fighters.map((f) => c.g.fighterSpace(c.me, f));
+        const space = yield c.g.askSpace(c.me, "promptHealWho", spaces);
+        who =
+          fighters.find((f) => c.g.fighterSpace(c.me, f) === space) || "hero";
+      }
+      c.g.heal(c.me, amount, who);
+    },
+  },
 };

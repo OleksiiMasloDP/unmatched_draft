@@ -265,6 +265,16 @@
               }"
             ></div>
           </div>
+          <div v-if="heroOf(player).sidekick" class="game-sidekick">
+            <span class="game-sidekick-name">
+              {{ heroOf(player).sidekick.name }}
+            </span>
+            <span v-if="game.players[player].sidekick" class="game-sidekick-hp">
+              ❤ {{ game.players[player].sidekick.hp }} /
+              {{ game.players[player].sidekick.maxHp }}
+            </span>
+            <span v-else class="game-sidekick-hp is-down">✝</span>
+          </div>
           <div class="game-counters">
             <div class="game-counter" :title="t('gameHand')">
               <span class="game-counter-icon">🖐</span>
@@ -473,6 +483,9 @@
               >
                 <div class="reveal-label">
                   {{ side.label }} · {{ t(side.roleKey) }}
+                  <template v-if="side.fighterName">
+                    · {{ side.fighterName }}
+                  </template>
                 </div>
                 <img
                   v-if="heroOf(side.player).image"
@@ -498,9 +511,16 @@
                   </span>
                   <strong>{{ side.total }}</strong>
                 </div>
-                <div v-if="side.boostCard" class="vs-boost">
+                <div v-if="side.boostCards.length" class="vs-boost">
                   <span>{{ t("vsBoosted") }}</span>
-                  <PackCard class="vs-boost-card" :card="side.boostCard" />
+                  <div class="vs-boost-row">
+                    <PackCard
+                      v-for="boost in side.boostCards"
+                      :key="boost.id"
+                      class="vs-boost-card"
+                      :card="boost"
+                    />
+                  </div>
                 </div>
               </div>
               <div class="vs-center">
@@ -719,7 +739,10 @@ let lastFx = Math.max(0, ...game.fx.map((item) => item.id));
 const toastTimers = [];
 
 function toastFor(item) {
-  const who = playerLabel(item.player);
+  const kidName = heroOf(item.player)?.sidekick?.name;
+  const who =
+    playerLabel(item.player) +
+    (item.fighter === "sk" && kidName ? ` (${kidName})` : "");
   if (item.type === "damage") {
     return {
       text: t(item.src ? "fxDamageSrc" : "fxDamage")
@@ -1105,7 +1128,11 @@ const revealSides = computed(() => {
   const seat = viewer.value;
   return [seat, opponentOf(seat)].map((player) => {
     const cardId = combat.cardIds[player];
-    const boostId = combat.boostCardIds?.[player];
+    const boostIds =
+      combat.boostCardLists?.[player] ||
+      (combat.boostCardIds?.[player] ? [combat.boostCardIds[player]] : []);
+    const fighter = combat.fighters?.[player];
+    const kid = game.players[player]?.sidekick;
     return {
       player,
       label: online.value
@@ -1113,7 +1140,9 @@ const revealSides = computed(() => {
         : playerLabel(player),
       roleKey: combat.attacker === player ? "gameAttacker" : "gameDefender",
       card: cardId ? getCard(cardId) : null,
-      boostCard: boostId ? getCard(boostId) : null,
+      boostCards: boostIds.map(getCard).filter(Boolean),
+      fighterName:
+        fighter === "sk" ? (kid?.name ?? heroOf(player).sidekick?.name) : null,
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
@@ -1549,6 +1578,31 @@ function onDelete(id) {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
+}
+
+.game-sidekick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.game-sidekick-name {
+  color: var(--text-white);
+}
+
+.game-sidekick-hp {
+  color: var(--color-danger);
+  font-weight: 800;
+}
+
+.game-sidekick-hp.is-down {
+  color: var(--text-dim);
 }
 
 .game-hp-max {
@@ -2158,6 +2212,11 @@ function onDelete(id) {
   font-weight: 800;
   letter-spacing: 0.6px;
   text-transform: uppercase;
+}
+
+.vs-boost-row {
+  display: flex;
+  gap: 6px;
 }
 
 .vs-boost-card {
