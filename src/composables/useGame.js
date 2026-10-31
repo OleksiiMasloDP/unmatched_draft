@@ -634,7 +634,7 @@ function* attack(me) {
   }
   combat.taken[foe] = dealt;
   combat.won[me] = raw > 0;
-  combat.won[foe] = combat.values[foe] > combat.values[me];
+  combat.won[foe] = raw === 0;
   log("logCombat", {
     attacker: me,
     a: combat.values[me],
