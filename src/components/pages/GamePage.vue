@@ -143,6 +143,9 @@
           <template v-if="game.phase === 'over'">
             {{ replacePlayer("gameWinner", game.winner) }}
           </template>
+          <template v-else-if="game.phase === 'mulligan'">
+            {{ t("mulliganBanner") }}
+          </template>
           <template v-else>
             {{ replacePlayer("gameTurnOf", game.turn) }} ·
             {{ t("gameActionsLeft").replace("{n}", game.actions) }}
@@ -659,6 +662,73 @@
         </div>
       </TransitionGroup>
 
+      <div
+        v-if="game.phase === 'mulligan' && game.mulligan && !needsPass"
+        class="game-modal"
+      >
+        <div class="game-modal-box is-mulligan">
+          <template v-if="game.mulligan.reveal">
+            <h3 class="game-modal-title">{{ t("mulliganRevealTitle") }}</h3>
+            <div class="mulligan-reveal">
+              <div
+                v-for="player in players"
+                :key="player"
+                class="mulligan-reveal-row"
+                :class="'is-' + game.mulligan.reveal[player]"
+              >
+                <span>{{ playerTag(player) }}</span>
+                <span>
+                  {{
+                    t(
+                      game.mulligan.reveal[player] === "mulligan"
+                        ? "mulliganChoiceRedraw"
+                        : "mulliganChoiceKeep",
+                    )
+                  }}
+                </span>
+              </div>
+            </div>
+            <div class="game-modal-actions">
+              <button
+                class="btn btn-success btn-sm action-btn"
+                @click="continueMulligan"
+              >
+                {{ t("mulliganStart") }}
+              </button>
+            </div>
+          </template>
+
+          <template v-else-if="mulliganTurn">
+            <h3 class="game-modal-title">
+              {{ t("mulliganTitle") }} · {{ playerTag(mulliganTurn) }}
+            </h3>
+            <p class="mulligan-note">{{ t("mulliganNote") }}</p>
+            <div class="mulligan-hand">
+              <PackCard v-for="card in handCards" :key="card.id" :card="card" />
+            </div>
+            <div class="game-modal-actions is-center">
+              <button
+                class="btn btn-success btn-sm action-btn"
+                @click="decideMulligan(false)"
+              >
+                {{ t("mulliganKeep") }}
+              </button>
+              <button
+                class="btn btn-warning btn-sm action-btn"
+                @click="decideMulligan(true)"
+              >
+                {{ t("mulliganRedraw") }}
+              </button>
+            </div>
+          </template>
+
+          <template v-else>
+            <h3 class="game-modal-title">{{ t("mulliganWaitTitle") }}</h3>
+            <p class="mulligan-note">{{ t("mulliganWaitText") }}</p>
+          </template>
+        </div>
+      </div>
+
       <div v-if="needsPass" class="game-pass">
         <div class="game-pass-box">
           <h3>{{ replacePlayer("gamePassTitle", passTarget) }}</h3>
@@ -700,6 +770,8 @@ const {
   chooseDeck,
   resetGame,
   answerPrompt,
+  chooseMulligan,
+  continueMulligan,
   doManeuver,
   doScheme,
   doAttack,
@@ -873,10 +945,26 @@ const waitingOpponent = computed(() => {
   return owner !== null && owner !== mySeat.value;
 });
 
-const passTarget = computed(() => game.prompt?.player ?? game.turn);
+// Мулігана: хто ще не обрав (онлайн - лише я; локально - по черзі p1, p2).
+const mulliganTurn = computed(() => {
+  const state = game.mulligan;
+  if (game.phase !== "mulligan" || !state || state.reveal) return null;
+  if (online.value) return state.decided[mySeat.value] ? null : mySeat.value;
+  return players.find((player) => !state.decided[player]) ?? null;
+});
+
+const decideMulligan = (redraw) => chooseMulligan(redraw, viewer.value);
+
+const passTarget = computed(
+  () => mulliganTurn.value ?? game.prompt?.player ?? game.turn,
+);
 
 const needsPass = computed(() => {
-  if (online.value || game.phase !== "play") return false;
+  if (online.value) return false;
+  if (game.phase === "mulligan") {
+    return mulliganTurn.value !== null && mulliganTurn.value !== game.viewer;
+  }
+  if (game.phase !== "play") return false;
   const owner = game.prompt ? game.prompt.player : game.turn;
   return owner !== null && owner !== game.viewer;
 });
@@ -1792,6 +1880,68 @@ function onDelete(id) {
   color: var(--text-white);
   font-size: 18px;
   font-weight: 800;
+}
+
+.game-modal-box.is-mulligan {
+  max-width: min(1180px, 96vw);
+  max-height: 92vh;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.game-modal-box.is-mulligan .game-modal-title {
+  font-size: 20px;
+}
+
+.mulligan-hand {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.game-modal-actions.is-center {
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .mulligan-hand {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .mulligan-hand {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mulligan-note {
+  margin: 0 0 14px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.mulligan-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mulligan-reveal-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-white);
+  font-weight: 800;
+}
+
+.mulligan-reveal-row.is-mulligan {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.12);
 }
 
 .game-modal-title {

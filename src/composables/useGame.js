@@ -68,10 +68,12 @@ const game = reactive({
   announce: null,
   announces: [],
   winner: null,
+  mulligan: null,
 });
 
 let flow = null;
 let lobbyDecks = { p1: null, p2: null };
+let mulliganChoices = { p1: null, p2: null };
 const net = useOnline();
 
 const turnFlags = {
@@ -228,8 +230,10 @@ function inRange(player, mine = "hero", theirs = "hero") {
   return withFighter(player, mine, () =>
     withFighter(foe, theirs, () => {
       const data = hero(player);
-      if (data.attack === "range") return shared(player, foe);
       const reachDistance = data.id === "ms-marvel" && mine === "hero" ? 2 : 1;
+      if (data.attack === "range") {
+        return shared(player, foe) || distance(player, foe) <= reachDistance;
+      }
       return distance(player, foe) <= reachDistance;
     }),
   );
@@ -1097,16 +1101,60 @@ function startGame(deckA, deckB) {
   currentNote = null;
   undoPoint = null;
   game.redRoomIgnored = { p1: false, p2: false };
+  mulliganChoices = { p1: null, p2: null };
+  game.mulligan = { decided: { p1: false, p2: false }, reveal: null };
+  game.phase = "mulligan";
+  syncOut();
+}
+
+function beginPlay() {
+  game.mulligan = null;
+  game.viewer = "p1";
   game.phase = "play";
   log("logStart");
   run(startTurn());
   syncOut();
 }
 
+function revealMulligan() {
+  const reveal = { p1: "keep", p2: "keep" };
+  for (const player of ["p1", "p2"]) {
+    if (mulliganChoices[player]) {
+      const state = pl(player);
+      const pile = shuffle([...state.hand, ...state.deck]);
+      state.hand = pile.slice(0, START_HAND);
+      state.deck = pile.slice(START_HAND);
+      reveal[player] = "mulligan";
+      log("logMulligan", { player });
+    } else {
+      log("logKeepHand", { player });
+    }
+  }
+  game.mulligan.reveal = reveal;
+}
+
+function applyMulligan(player, redraw) {
+  const state = game.mulligan;
+  if (game.phase !== "mulligan" || !state || state.reveal) return;
+  if (player !== "p1" && player !== "p2") return;
+  if (typeof redraw !== "boolean" || state.decided[player]) return;
+  mulliganChoices[player] = redraw;
+  state.decided[player] = true;
+  if (state.decided.p1 && state.decided.p2) revealMulligan();
+  syncOut();
+}
+
+function applyMulliganContinue() {
+  if (game.phase !== "mulligan" || !game.mulligan?.reveal) return;
+  beginPlay();
+}
+
 function resetGame(clearNotice = true) {
   flow = null;
   if (clearNotice) game.notice = null;
   lobbyDecks = { p1: null, p2: null };
+  mulliganChoices = { p1: null, p2: null };
+  game.mulligan = null;
   game.lobby = { p1: null, p2: null };
   game.phase = "setup";
   game.players = { p1: null, p2: null };
@@ -1264,6 +1312,16 @@ function answerPrompt(answer) {
   applyAnswer(answer, seatFor());
 }
 
+function chooseMulligan(redraw, player) {
+  if (net.isGuest.value) send({ type: "mulligan", redraw });
+  else applyMulligan(net.isHost.value ? "p1" : player, redraw);
+}
+
+function continueMulligan() {
+  if (net.isGuest.value) send({ type: "mulliganContinue" });
+  else applyMulliganContinue();
+}
+
 function doAction(type) {
   if (net.isGuest.value) send({ type });
   else applyAction(type, seatFor());
@@ -1349,6 +1407,8 @@ net.on("game:cmd", (message) => {
   if (message.type === "answer") applyAnswer(message.answer, "p2");
   else if (message.type === "deck") setLobbyDeck("p2", message.deck);
   else if (message.type === "surrender") applySurrender("p2");
+  else if (message.type === "mulligan") applyMulligan("p2", message.redraw);
+  else if (message.type === "mulliganContinue") applyMulliganContinue();
   else applyAction(message.type, "p2");
 });
 
@@ -1376,6 +1436,8 @@ export function useGame() {
     chooseDeck,
     resetGame,
     answerPrompt,
+    chooseMulligan,
+    continueMulligan,
     doManeuver,
     doScheme,
     doAttack,
