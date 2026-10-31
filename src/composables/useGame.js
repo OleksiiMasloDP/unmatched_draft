@@ -69,6 +69,7 @@ const game = reactive({
   announces: [],
   winner: null,
   mulligan: null,
+  toss: null,
 });
 
 let flow = null;
@@ -1052,7 +1053,7 @@ function run(generator) {
 const canAct = () =>
   game.phase === "play" && !game.prompt && !flow && game.actions > 0;
 
-function startGame(deckA, deckB) {
+function startGame(deckA, deckB, first = "p1") {
   game.notice = null;
   if (deckA.heroId === deckB.heroId) return;
   const setup = (deck, player) => {
@@ -1091,10 +1092,12 @@ function startGame(deckA, deckB) {
       active.spaceById.get(home).links.find((id) => id !== foeStart) || home;
   }
   resetFighters();
-  game.turn = "p1";
+  game.turn = first;
   game.viewer = "p1";
   game.winner = null;
   game.log = [];
+  game.toss = null;
+  log("logFirstPlayer", { player: first });
   game.combat = null;
   game.announce = null;
   game.announces = [];
@@ -1156,6 +1159,7 @@ function resetGame(clearNotice = true) {
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = null;
   game.lobby = { p1: null, p2: null };
+  game.toss = null;
   game.phase = "setup";
   game.players = { p1: null, p2: null };
   game.prompt = null;
@@ -1345,6 +1349,7 @@ function validDeck(deck) {
 }
 
 function setLobbyDeck(player, deck) {
+  if (game.phase !== "setup" || game.toss || !validDeck(deck)) return;
   if (game.phase !== "setup" || !validDeck(deck)) return;
   if (game.lobby[other(player)]?.heroId === deck.heroId) return;
   lobbyDecks[player] = {
@@ -1367,20 +1372,75 @@ function chooseDeck(deck) {
   setLobbyDeck("p1", deck);
 }
 
-function setMap(id) {
-  if (game.phase !== "setup" || net.isGuest.value) return;
+function rollDie() {
+  return 1 + Math.floor(Math.random() * 6);
+}
+
+function rollToss() {
+  let rolls;
+  let rerolls = -1;
+  do {
+    rolls = { p1: rollDie(), p2: rollDie() };
+    rerolls += 1;
+  } while (rolls.p1 === rolls.p2);
+  game.fxSeq += 1;
+  game.toss = {
+    id: game.fxSeq,
+    rolls,
+    rerolls,
+    winner: rolls.p1 > rolls.p2 ? "p1" : "p2",
+    stage: "map",
+  };
+  syncOut();
+}
+
+function applyMap(player, id) {
+  if (game.phase !== "setup") return;
   if (!gameMaps.some((item) => item.id === id)) return;
+  if (net.online.value) {
+    if (game.toss?.stage !== "map" || game.toss.winner !== player) return;
+  }
   game.mapId = id;
   useMapId(id);
   syncOut();
 }
 
+function applyMapConfirm(player) {
+  const toss = game.toss;
+  if (game.phase !== "setup" || toss?.stage !== "map") return;
+  if (toss.winner !== player) return;
+  toss.stage = "order";
+  syncOut();
+}
+
+function applyOrder(player, goFirst) {
+  const toss = game.toss;
+  if (game.phase !== "setup" || toss?.stage !== "order") return;
+  if (player !== other(toss.winner) || typeof goFirst !== "boolean") return;
+  if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
+  startGame(lobbyDecks.p1, lobbyDecks.p2, goFirst ? player : toss.winner);
+}
+
+function setMap(id) {
+  if (net.isGuest.value) send({ type: "map", id });
+  else applyMap("p1", id);
+}
+
+function confirmMap() {
+  if (net.isGuest.value) send({ type: "mapConfirm" });
+  else applyMapConfirm("p1");
+}
+
+function chooseOrder(goFirst) {
+  if (net.isGuest.value) send({ type: "order", goFirst });
+  else applyOrder("p1", goFirst);
+}
 function startOnlineGame() {
   game.notice = null;
-  if (!net.isHost.value || game.phase !== "setup") return;
+  if (!net.isHost.value || game.phase !== "setup" || game.toss) return;
   if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
   if (lobbyDecks.p1.heroId === lobbyDecks.p2.heroId) return;
-  startGame(lobbyDecks.p1, lobbyDecks.p2);
+  rollToss();
 }
 
 function availableActions() {
@@ -1409,6 +1469,9 @@ net.on("game:cmd", (message) => {
   else if (message.type === "surrender") applySurrender("p2");
   else if (message.type === "mulligan") applyMulligan("p2", message.redraw);
   else if (message.type === "mulliganContinue") applyMulliganContinue();
+  else if (message.type === "map") applyMap("p2", message.id);
+  else if (message.type === "mapConfirm") applyMapConfirm("p2");
+  else if (message.type === "order") applyOrder("p2", message.goFirst);
   else applyAction(message.type, "p2");
 });
 
@@ -1446,5 +1509,7 @@ export function useGame() {
     availableActions,
     heroOf: (player) => (pl(player) ? hero(player) : null),
     other,
+    confirmMap,
+    chooseOrder,
   };
 }

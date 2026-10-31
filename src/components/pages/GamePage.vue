@@ -27,7 +27,7 @@
             type="button"
             class="map-tile"
             :class="{ 'is-selected': game.mapId === item.id }"
-            :disabled="isGuest"
+            :disabled="!canPickMap"
             @click="setMap(item.id)"
           >
             <img :src="item.image" :alt="item.name" />
@@ -43,6 +43,9 @@
           <h2 class="game-subtitle">
             {{ playerLabel(player) }} · {{ t("gameDeckLabel") }}
           </h2>
+          <p v-if="online && !game.toss" class="game-prompt-line">
+            {{ t("tossMapHint") }}
+          </p>
           <div class="deck-tiles">
             <div
               v-for="deck in allDecks"
@@ -99,6 +102,7 @@
           <button
             class="btn btn-primary btn-sm action-btn"
             @click="onChooseDeck"
+            :disabled="Boolean(game.toss)"
           >
             {{
               game.lobby[mySeat]
@@ -115,14 +119,79 @@
             }}
           </div>
           <button
-            v-if="isHost"
+            v-if="isHost && !game.toss"
             class="btn btn-success btn-sm action-btn"
             :disabled="!game.lobby.p1 || !game.lobby.p2"
             @click="startOnlineGame"
           >
-            {{ t("gameStart") }}
+            {{ t("tossRoll") }}
           </button>
-          <p v-else class="game-prompt-line">{{ t("onlineWaitHost") }}</p>
+          <p v-else-if="!isHost && !game.toss" class="game-prompt-line">
+            {{ t("onlineWaitHost") }}
+          </p>
+
+          <div v-if="game.toss" class="toss">
+            <h2 class="game-subtitle">{{ t("tossTitle") }}</h2>
+            <div class="toss-dice">
+              <div
+                v-for="player in players"
+                :key="player"
+                class="toss-side"
+                :class="{
+                  'is-winner': tossDone && game.toss.winner === player,
+                }"
+              >
+                <div class="toss-die" :class="{ 'is-rolling': !tossDone }">
+                  {{ dice[player] }}
+                </div>
+                <div class="toss-name">
+                  {{ playerLabel(player) }}
+                  <template v-if="player === mySeat">
+                    · {{ t("packYou") }}
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <template v-if="tossDone">
+              <p v-if="game.toss.rerolls" class="game-prompt-line">
+                {{ t("tossReroll") }}
+              </p>
+              <p class="game-prompt-line">
+                {{ t(iWonToss ? "tossYouWon" : "tossOppWon") }}
+              </p>
+
+              <template v-if="game.toss.stage === 'map'">
+                <button
+                  v-if="iWonToss"
+                  class="btn btn-success btn-sm action-btn"
+                  @click="confirmMap"
+                >
+                  {{ t("tossConfirmMap") }}
+                </button>
+                <p v-else class="game-prompt-line">{{ t("tossWaitMap") }}</p>
+              </template>
+
+              <template v-else>
+                <div v-if="!iWonToss" class="toss-order">
+                  <p class="game-prompt-line">{{ t("tossPickOrder") }}</p>
+                  <button
+                    class="btn btn-success btn-sm action-btn"
+                    @click="chooseOrder(true)"
+                  >
+                    {{ t("tossFirst") }}
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm action-btn"
+                    @click="chooseOrder(false)"
+                  >
+                    {{ t("tossSecond") }}
+                  </button>
+                </div>
+                <p v-else class="game-prompt-line">{{ t("tossWaitOrder") }}</p>
+              </template>
+            </template>
+          </div>
         </template>
         <button
           v-else
@@ -765,6 +834,8 @@ const {
   map,
   maps,
   setMap,
+  confirmMap,
+  chooseOrder,
   startGame,
   startOnlineGame,
   chooseDeck,
@@ -790,6 +861,50 @@ const {
   leave: leaveRoom,
 } = useOnline();
 const boostOpen = ref(false);
+const TOSS_ANIM_MS = 1800;
+const dice = ref({ p1: 1, p2: 1 });
+const tossDone = ref(false);
+let tossSpin = null;
+let tossEnd = null;
+
+function stopToss() {
+  clearInterval(tossSpin);
+  clearTimeout(tossEnd);
+}
+
+watch(
+  () => game.toss?.id,
+  () => {
+    stopToss();
+    const current = game.toss;
+    tossDone.value = false;
+    if (!current) return;
+    tossSpin = setInterval(() => {
+      dice.value = {
+        p1: 1 + Math.floor(Math.random() * 6),
+        p2: 1 + Math.floor(Math.random() * 6),
+      };
+    }, 90);
+    tossEnd = setTimeout(() => {
+      stopToss();
+      dice.value = { p1: current.rolls.p1, p2: current.rolls.p2 };
+      tossDone.value = true;
+    }, TOSS_ANIM_MS);
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(stopToss);
+
+const iWonToss = computed(() => game.toss?.winner === mySeat.value);
+
+const canPickMap = computed(
+  () =>
+    !online.value ||
+    (tossDone.value &&
+      game.toss?.stage === "map" &&
+      game.toss.winner === mySeat.value),
+);
 const logOpen = ref(false);
 const surrenderOpen = ref(false);
 
@@ -1880,6 +1995,67 @@ function onDelete(id) {
   color: var(--text-white);
   font-size: 18px;
   font-weight: 800;
+}
+
+.toss {
+  margin-top: 16px;
+}
+.toss-dice {
+  display: flex;
+  gap: 28px;
+  margin: 12px 0;
+}
+.toss-side {
+  text-align: center;
+}
+.toss-die {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 8px;
+  border: 2px solid var(--border-medium);
+  border-radius: 16px;
+  background: var(--bg-slate);
+  color: var(--text-white);
+  font-size: 40px;
+  font-weight: 900;
+}
+.toss-die.is-rolling {
+  animation: toss-roll 0.45s linear infinite;
+}
+.toss-side.is-winner .toss-die {
+  border-color: #f59e0b;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.55);
+}
+.toss-name {
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 800;
+}
+.toss-order {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+@keyframes toss-roll {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(14deg) scale(1.08);
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+  }
+  75% {
+    transform: rotate(-14deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
 }
 
 .game-modal-box.is-mulligan {
