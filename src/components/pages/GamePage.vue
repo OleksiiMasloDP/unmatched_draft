@@ -876,7 +876,10 @@ const recentLog = computed(() => [...game.log].slice(-30).reverse());
 
 // Попап бою видно обом гравцям; поки відкрита модалка розкриття - ховаємо його.
 const showCombat = computed(
-  () => Boolean(game.combat) && blockingPrompt.value?.kind !== "info",
+  () =>
+    Boolean(game.combat) &&
+    blockingPrompt.value?.kind !== "info" &&
+    game.prompt?.kind !== "space",
 );
 
 // Карта, яку захисник обрав у руці, але ще не підтвердив: показуємо у зоні блоку.
