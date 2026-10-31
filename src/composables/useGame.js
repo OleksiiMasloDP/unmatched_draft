@@ -547,20 +547,18 @@ function* attack(me) {
   const defenseOptions = pl(foe).hand.filter((id) =>
     canDefendWith(getCard(id)),
   );
-  if (defenseOptions.length) {
-    const defensePrompt = askCards(foe, "promptDefenseCard", defenseOptions, {
-      min: 0,
-      max: 1,
-      skip: "gameNoDefense",
-    });
-    if (hero(foe).id === "spider-man") {
-      defensePrompt.hint = { key: "promptSpideySense", n: attackCard.value };
-    }
-    const defenseIds = yield defensePrompt;
-    if (defenseIds.length) {
-      defenseCard = getCard(defenseIds[0]);
-      pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
-    }
+  const defensePrompt = askCards(foe, "promptDefenseCard", defenseOptions, {
+    min: 0,
+    max: 1,
+    skip: "gameNoDefense",
+  });
+  if (hero(foe).id === "spider-man") {
+    defensePrompt.hint = { key: "promptSpideySense", n: attackCard.value };
+  }
+  const defenseIds = yield defensePrompt;
+  if (defenseIds.length) {
+    defenseCard = getCard(defenseIds[0]);
+    pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
   }
   game.combat.defense = defenseCard ? "card" : "none";
   game.combat.cardIds[foe] = defenseCard ? defenseCard.id : null;

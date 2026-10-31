@@ -950,9 +950,6 @@ function resetCollectionFilter() {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 10px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(var(--color-player-rgb), 0.6)
-    rgba(var(--bg-dark-rgb), 0.4);
 }
 
 .char-picker-item {
