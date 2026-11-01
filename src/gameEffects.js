@@ -568,7 +568,7 @@ export const cardEffects = {
     },
   },
 
-  "queen-anne-s-revenge": {
+  "queen-annes-revenge": {
     uncancelable: true,
     value: (c, value) =>
       Math.max(0, value - 2 * (c.combat.ransomPaid[c.me] || 0)),
