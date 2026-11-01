@@ -56,7 +56,14 @@
       <g
         v-if="players[player]"
         class="board-hero"
-        :class="['is-' + player, { 'is-hit': hit[player] }]"
+        :class="[
+          'is-' + player,
+          {
+            'is-hit': hit[player],
+            'is-active':
+              active && active.player === player && active.fighter === 'hero',
+          },
+        ]"
       >
         <circle
           :cx="byId.get(players[player].space).x"
@@ -98,7 +105,14 @@
         v-for="kid in players[player] ? players[player].sidekicks : []"
         :key="kid.id"
         class="board-hero board-sidekick"
-        :class="['is-' + player, { 'is-hit': hit[player + '-' + kid.id] }]"
+        :class="[
+          'is-' + player,
+          {
+            'is-hit': hit[player + '-' + kid.id],
+            'is-active':
+              active && active.player === player && active.fighter === kid.id,
+          },
+        ]"
       >
         <circle
           :cx="byId.get(kid.space).x"
@@ -163,6 +177,10 @@ const props = defineProps({
   options: {
     type: Array,
     default: () => [],
+  },
+  active: {
+    type: Object,
+    default: null,
   },
   fx: {
     type: Array,
@@ -296,6 +314,22 @@ const initials = (heroId) =>
 
 .board-hero.is-p2 > circle {
   fill: var(--color-opponent);
+}
+
+.board-hero.is-active > circle {
+  stroke: var(--color-warning);
+  stroke-width: 11;
+  animation: board-active 1s ease-in-out infinite;
+}
+
+@keyframes board-active {
+  0%,
+  100% {
+    stroke-opacity: 1;
+  }
+  50% {
+    stroke-opacity: 0.4;
+  }
 }
 
 .board-hero.is-hit {

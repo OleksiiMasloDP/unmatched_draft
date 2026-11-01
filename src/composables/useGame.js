@@ -404,9 +404,27 @@ function summon(player, spaceId) {
   log("logSummon", { who: kidData.name, space: spaceId });
 }
 
+function* chooseMover(player, remaining, canMove) {
+  const able = remaining.filter((fighter) => {
+    cur[player] = fighter;
+    return canMove();
+  });
+  if (!able.length) return null;
+  if (able.length === 1) return able[0];
+  const picked = yield* pickFighter(player, "promptMoveWith", able);
+  return picked || able[0];
+}
+
 function* moveAll(player, steps, through) {
-  for (const fighter of fightersOf(player)) {
-    if (game.phase !== "play") break;
+  const remaining = [...fightersOf(player)];
+  while (game.phase === "play") {
+    const fighter = yield* chooseMover(
+      player,
+      remaining,
+      () => stepOptions(player, through, steps).size > 0,
+    );
+    if (!fighter) break;
+    remaining.splice(remaining.indexOf(fighter), 1);
     cur[player] = fighter;
     yield* walk(
       player,
@@ -879,13 +897,22 @@ function* maneuver(me) {
   if (game.phase !== "play") return true;
 
   let boosted = false;
-  for (const fighter of fightersOf(me)) {
-    if (game.phase !== "play") break;
+  let boostSteps = 0;
+  let started = false;
+  const remaining = [...fightersOf(me)];
+  while (game.phase === "play") {
+    const fighter = yield* chooseMover(
+      me,
+      remaining,
+      () => stepOptions(me, false, hero(me).move + boostSteps).size > 0,
+    );
+    if (!fighter) break;
+    remaining.splice(remaining.indexOf(fighter), 1);
     cur[me] = fighter;
-    let steps = hero(me).move;
     let moved = 0;
-    while (moved < steps && game.phase === "play") {
-      const hops = stepOptions(me, false, steps - moved);
+    while (moved < hero(me).move + boostSteps && game.phase === "play") {
+      const left = hero(me).move + boostSteps - moved;
+      const hops = stepOptions(me, false, left);
       if (!hops.size) break;
       const prompt = askSpace(
         me,
@@ -893,19 +920,21 @@ function* maneuver(me) {
         [...hops.keys()],
       );
       prompt.fighter = fighter;
-      prompt.left = steps - moved;
-      prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
+      prompt.left = left;
+      prompt.boostOptions = !boosted && !started ? [...pl(me).hand] : [];
       prompt.undo = !boosted;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
-        steps += discardFromHand(me, answer.boost).boost;
+        boostSteps += discardFromHand(me, answer.boost).boost;
         boosted = true;
         continue;
       }
       if (!answer) break;
       place(me, answer);
       moved += hops.get(answer);
+      started = true;
     }
+    started = true;
   }
   cur[me] = "hero";
   return true;

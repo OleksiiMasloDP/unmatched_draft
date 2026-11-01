@@ -425,6 +425,7 @@
             :map="map"
             :players="game.players"
             :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+            :active="activeFighter"
             :fx="game.fx"
             @select="answerPrompt"
           />
@@ -1036,6 +1037,12 @@ const mine = (prompt) =>
 
 const spacePrompt = computed(() =>
   game.prompt?.kind === "space" && mine(game.prompt) ? game.prompt : null,
+);
+
+const activeFighter = computed(() =>
+  game.prompt?.kind === "space" && game.prompt.fighter
+    ? { player: game.prompt.player, fighter: game.prompt.fighter }
+    : null,
 );
 
 const blockingPrompt = computed(() =>
