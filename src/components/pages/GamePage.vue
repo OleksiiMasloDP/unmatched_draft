@@ -360,9 +360,15 @@
             <span class="game-sidekick-name">
               🪙 {{ game.players[player].coins }}
             </span>
-            <span class="game-sidekick-hp">
-              {{ t("gameTreasury") }}: {{ game.treasury }}
+          </div>
+          <div
+            v-else-if="heroOf(opponentOf(player))?.id === 'blackbeard'"
+            class="game-sidekick"
+          >
+            <span class="game-sidekick-name">
+              🪙 {{ game.treasury }}
             </span>
+            <span class="game-sidekick-hp">{{ t("gameTreasury") }}</span>
           </div>
           <div class="game-counters">
             <div class="game-counter" :title="t('gameHand')">

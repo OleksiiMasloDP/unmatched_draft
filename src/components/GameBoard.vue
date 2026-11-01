@@ -37,6 +37,19 @@
           r="38"
         />
       </clipPath>
+      <template v-for="player in ['p1', 'p2']" :key="'kc-' + player">
+        <clipPath
+          v-for="kid in players[player] ? players[player].sidekicks : []"
+          :id="`kid-${player}-${kid.id}`"
+          :key="kid.id"
+        >
+          <circle
+            :cx="byId.get(kid.space).x"
+            :cy="byId.get(kid.space).y"
+            r="30"
+          />
+        </clipPath>
+      </template>
     </defs>
 
     <g v-for="player in ['p1', 'p2']" :key="player">
@@ -100,6 +113,17 @@
         >
           {{ kid.name.slice(0, 2).toUpperCase() }}
         </text>
+        <image
+          v-if="kidImage(player, kid)"
+          :href="kidImage(player, kid)"
+          :x="byId.get(kid.space).x - 30"
+          :y="byId.get(kid.space).y - 30"
+          width="60"
+          height="60"
+          preserveAspectRatio="xMidYMin slice"
+          :clip-path="`url(#kid-${player}-${kid.id})`"
+          @error="failedImages['kid-' + players[player].heroId] = true"
+        />
         <g
           :transform="`translate(${byId.get(kid.space).x + 24}, ${byId.get(kid.space).y + 28})`"
         >
@@ -212,6 +236,12 @@ const failedImages = reactive({});
 
 const heroImage = (heroId) =>
   failedImages[heroId] ? null : getHero(heroId)?.image || null;
+
+const kidImage = (player, kid) => {
+  const heroId = props.players[player]?.heroId;
+  if (!heroId || failedImages["kid-" + heroId]) return null;
+  return getHero(heroId)?.sidekick?.image || null;
+};
 
 const initials = (heroId) =>
   getHero(heroId)

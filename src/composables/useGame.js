@@ -1236,20 +1236,22 @@ function startGame(deckA, deckB, first = "p1") {
       hp: data.hp,
       maxHp: data.hp,
       space: active.map.starts[player],
-      sidekicks:
-        data.sidekick && !data.sidekick.summon
-          ? [
-              {
-                id: "sk1",
-                name: data.sidekick.name,
-                hp: data.sidekick.hp,
-                maxHp: data.sidekick.hp,
-                attack: data.sidekick.attack,
-                space: null,
-                down: false,
-              },
-            ]
-          : [],
+      sidekicks: data.sidekick
+        ? Array.from(
+            {
+              length: data.sidekick.summon ? (data.sidekick.start ?? 0) : 1,
+            },
+            (_, i) => ({
+              id: "sk" + (i + 1),
+              name: data.sidekick.name,
+              hp: data.sidekick.hp,
+              maxHp: data.sidekick.hp,
+              attack: data.sidekick.attack,
+              space: null,
+              down: false,
+            }),
+          )
+        : [],
       coins: data.id === "blackbeard" ? 2 : 0,
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
@@ -1260,13 +1262,14 @@ function startGame(deckA, deckB, first = "p1") {
   useMapId(game.mapId);
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
+  const taken = new Set([active.map.starts.p1, active.map.starts.p2]);
   for (const player of ["p1", "p2"]) {
-    const kid = pl(player).sidekicks[0];
-    if (!kid) continue;
-    const foeStart = active.map.starts[other(player)];
     const home = active.map.starts[player];
-    kid.space =
-      active.spaceById.get(home).links.find((id) => id !== foeStart) || home;
+    for (const kid of pl(player).sidekicks) {
+      const links = active.spaceById.get(home).links;
+      kid.space = links.find((id) => !taken.has(id)) || home;
+      taken.add(kid.space);
+    }
   }
   game.treasury = [deckA, deckB].some((deck) => deck.heroId === "blackbeard")
     ? 1

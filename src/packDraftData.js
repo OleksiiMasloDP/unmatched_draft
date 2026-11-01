@@ -97,7 +97,12 @@ export const packDraftHeroes = [
         ua: "Після кожного бою, якщо Doctor Strange зіграв карту, ви можете завдати йому 1 шкоди. Якщо так, покладіть цю карту на низ колоди та візьміть 1 карту.",
       },
     },
-    sidekick: { name: "Wong", hp: 6, attack: "range" },
+    sidekick: {
+      name: "Wong",
+      hp: 6,
+      attack: "range",
+      image: "images/wong.webp",
+    },
     cards: doctorStrangeCards,
   },
   {
@@ -118,8 +123,10 @@ export const packDraftHeroes = [
       name: "Sea Dog",
       hp: 1,
       attack: "melee",
+      image: "images/seadog.webp",
       summon: true,
-      count: 3,
+      count: 2,
+      start: 2,
     },
     cards: blackbeardCards,
   },
@@ -223,7 +230,7 @@ const CARD_IMAGES = {
       light_the_fuse: "attack",
       no_prey_no_pay: "versatile",
       parley: "versatile",
-      queena_annes_revenge: "versatile",
+      queen_annes_revenge: "versatile",
       show_a_leg: "versatile",
     },
   },
@@ -231,6 +238,7 @@ const CARD_IMAGES = {
 
 const CARD_IMAGE_ALIASES = {
   "tomoe-gozen": { "confront any demon or god": "demon" },
+  blackbeard: { "queen anne's revenge": "queen_annes_revenge" },
 };
 
 const squash = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
