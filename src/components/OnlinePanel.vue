@@ -90,6 +90,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useDraftState } from "../composables/useDraftState";
 import { useOnline } from "../composables/useOnline";
 
+const emit = defineEmits(["local"]);
 const { t } = useDraftState();
 const { net, mode, setMode, host, join, leave } = useOnline();
 const route = useRoute();
@@ -115,6 +116,7 @@ const replaceSeat = (key) =>
 function chooseMode(next) {
   if (next === "local" && net.role !== null) leave();
   setMode(next);
+  if (next === "local") emit("local");
 }
 
 function hostRoom() {

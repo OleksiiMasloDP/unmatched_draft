@@ -164,13 +164,12 @@ export const translations = {
     packDraftTitle: "Pack Draft",
     packBeta: "Beta",
     packIntro:
-      "A draft format for 2 players and 4 heroes: all cards go into one pool, are split into packs and drafted, and only then played. Play on one screen and pass the turn between players.",
-    packBetaNote: "Beta: cards without art show text only.",
+      "A draft format for 2 players: choose 4 characters, mix their cards into one pool, split it into packs, draft, and only then play. Play on one screen or by link.",
     packRulesTitle: "Rules",
     packRule1:
-      "Choose 4 heroes (with or without sidekicks). Mix all their cards into one shared pool and make 10 packs of 12 cards. Any leftover cards are discarded openly and do not play.",
+      "Players take turns choosing 4 characters (Player 1, Player 2, Player 1, Player 2). Mix all their cards into one shared pool and make packs of 12 cards (up to 10 packs). Any leftover cards are discarded openly and do not play.",
     packRule2:
-      "Each player chooses 1 of the 4 heroes and gets their passive ability and sidekick, if there is one.",
+      "The first character each player chooses is the hero they play: they get its passive ability and sidekick, if there is one. The other two characters only add their cards to the pool.",
     packRule3:
       "Each player takes a pack of 12 cards, looks through it, keeps 1 card, discards 1 card openly and passes the pack to the opponent. Repeat until the packs are empty, then move on to the next packs.",
     packRule4:
@@ -183,6 +182,23 @@ export const translations = {
     packRestartConfirm: "Click again to confirm",
     packNewDraft: "New draft",
     packPickHero: "{player}: choose your hero",
+    packStepMode: "Play mode",
+    packStepHeroes: "Characters",
+    packStepDraft: "Draft",
+    packStepBack: "Back to play mode",
+    packPickCharacter: "{player}: choose character {n} of {total}",
+    packPickCharacterHint:
+      "Order of choice: Player 1, Player 2, Player 1, Player 2. The first pick of each player is the hero they play; the other two only add their cards to the draft pool.",
+    packRolePlays: "plays",
+    packRoleCards: "cards only",
+    packExtraHeroes: "Also in the pool",
+    packDeckAutoSaved: "Deck saved automatically",
+    packSavedDecksTitle: "Saved decks",
+    packSavedDecksEmpty:
+      "No saved decks yet. Decks are saved automatically after a draft.",
+    packDeckCards: "{n} cards",
+    packDeckRename: "Rename",
+    packDeckDelete: "Delete",
     packHp: "HP",
     packMove: "Move",
     packAttack: "Attack",
@@ -449,7 +465,8 @@ export const translations = {
     logMistsReveal: "{player} reveals {card}",
     logMistsPlay: "{player} plays {card}",
     logMistsNone: "{player} has no card to play",
-    logMistsNoDeck: "{player} has no cards left in the deck, the card is not replaced",
+    logMistsNoDeck:
+      "{player} has no cards left in the deck, the card is not replaced",
     logMistsBottom: "{card} goes to the bottom of {player}'s deck",
     logShuffleDeck: "{player} shuffles the deck",
     logShuffleHand: "{player} shuffles {n} cards from hand into the deck",
@@ -482,6 +499,11 @@ export const translations = {
     packDeckSaved: "Saved",
     packDeckName: "Deck name",
     packPlayDeck: "Play",
+    packPickPlay: "{player}: choose which character you play",
+    packPlayHint:
+      "The pool is set: the cards of these four characters will be drafted. Choose the character you play: Player 2 first, then Player 1.",
+    packRolePlays: "plays",
+    packRoleCards: "cards only",
   },
   ua: {
     navigation: "Навігація",
@@ -648,13 +670,12 @@ export const translations = {
     packDraftTitle: "Пак-драфт",
     packBeta: "Бета",
     packIntro:
-      "Драфт-формат для 2 гравців і 4 героїв: усі карти йдуть в один пул, діляться на паки, драфтяться і лише потім грають. Грайте на одному екрані, передаючи хід між гравцями.",
-    packBetaNote: "Бета: картки без зображення показують лише текст.",
+      "Драфт-формат для 2 гравців: оберіть 4 персонажів, змішайте їхні карти в один пул, розділіть на паки, задрафтуйте і лише потім грайте. Грайте на одному екрані або за посиланням.",
     packRulesTitle: "Правила",
     packRule1:
-      "Оберіть 4 героїв (з помічниками або без). Змішайте всі їхні карти в один спільний пул і сформуйте 10 паків по 12 карт. Зайві карти скиньте відкрито, у гру вони не входять.",
+      "Гравці по черзі обирають 4 персонажів (гравець 1, гравець 2, гравець 1, гравець 2). Змішайте всі їхні карти в один спільний пул і сформуйте паки по 12 карт (до 10 паків). Зайві карти скиньте відкрито, у гру вони не входять.",
     packRule2:
-      "Кожен гравець обирає 1 героя з 4 і отримує його пасивну здатність та помічника, якщо він є.",
+      "Перший персонаж, якого обирає кожен гравець, - це герой, за якого він грає: він отримує його пасивну здатність та помічника, якщо він є. Решта двох персонажів лише додають свої карти в пул.",
     packRule3:
       "Кожен гравець бере пак з 12 карт, переглядає його, залишає собі 1 карту, 1 карту скидає відкрито й передає пак супернику. Так повторюється, доки паки не закінчаться, потім беруться наступні паки.",
     packRule4:
@@ -667,6 +688,23 @@ export const translations = {
     packRestartConfirm: "Натисніть ще раз для підтвердження",
     packNewDraft: "Новий драфт",
     packPickHero: "{player}: оберіть героя",
+    packStepMode: "Режим гри",
+    packStepHeroes: "Персонажі",
+    packStepDraft: "Драфт",
+    packStepBack: "Назад до режиму гри",
+    packPickCharacter: "{player}: оберіть персонажа {n} з {total}",
+    packPickCharacterHint:
+      "Порядок вибору: гравець 1, гравець 2, гравець 1, гравець 2. Перший вибір кожного гравця - герой, за якого він грає; решта двох лише додають свої карти в пул драфту.",
+    packRolePlays: "грає",
+    packRoleCards: "лише карти",
+    packExtraHeroes: "Також у пулі",
+    packDeckAutoSaved: "Колоду збережено автоматично",
+    packSavedDecksTitle: "Збережені колоди",
+    packSavedDecksEmpty:
+      "Збережених колод поки немає. Колоди зберігаються автоматично після драфту.",
+    packDeckCards: "{n} карт",
+    packDeckRename: "Перейменувати",
+    packDeckDelete: "Видалити",
     packHp: "HP",
     packMove: "Рух",
     packAttack: "Атака",
@@ -935,7 +973,8 @@ export const translations = {
     logMistsReveal: "{player} розкриває {card}",
     logMistsPlay: "{player} грає {card}",
     logMistsNone: "У {player} немає карти для розіграшу",
-    logMistsNoDeck: "У {player} не залишилось карт у колоді, карта не замінюється",
+    logMistsNoDeck:
+      "У {player} не залишилось карт у колоді, карта не замінюється",
     logMistsBottom: "{card} йде на низ колоди {player}",
     logShuffleDeck: "{player} тасує колоду",
     logShuffleHand: "{player} тасує руку в колоду: {n}",
@@ -968,5 +1007,10 @@ export const translations = {
     packDeckSaved: "Збережено",
     packDeckName: "Назва колоди",
     packPlayDeck: "Грати",
+    packPickPlay: "{player}: оберіть, яким персонажем граєте",
+    packPlayHint:
+      "Пул зібрано: драфтитимуться карти цих чотирьох персонажів. Оберіть персонажа, за якого граєте: спершу гравець 2, потім гравець 1.",
+    packRolePlays: "грає",
+    packRoleCards: "лише карти",
   },
 };

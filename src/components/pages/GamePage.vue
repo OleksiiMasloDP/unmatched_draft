@@ -76,17 +76,6 @@
                 </div>
                 <div class="deck-meta">{{ deckMeta(deck) }}</div>
               </div>
-              <button
-                v-if="!deck.isTest"
-                type="button"
-                class="btn btn-danger btn-sm deck-delete"
-                :class="{ 'is-confirming': pendingDeleteId === deck.id }"
-                @click.stop="onDelete(deck.id)"
-              >
-                {{
-                  pendingDeleteId === deck.id ? t("formatsDeleteConfirm") : "×"
-                }}
-              </button>
             </div>
           </div>
         </div>
@@ -877,7 +866,7 @@ const {
   availableActions,
   heroOf,
 } = useGame();
-const { savedDecks, deleteDeck } = useSavedDecks();
+const { savedDecks } = useSavedDecks();
 const {
   net: netState,
   online,
@@ -938,8 +927,6 @@ const players = ["p1", "p2"];
 const allDecks = computed(() => [...testDecks, ...savedDecks.value]);
 const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
-const pendingDeleteId = ref(null);
-let deleteTimer = null;
 
 const available = computed(() => availableActions());
 
@@ -1451,23 +1438,6 @@ function onNewGame() {
   resetGame();
 }
 
-function onDelete(id) {
-  if (pendingDeleteId.value !== id) {
-    pendingDeleteId.value = id;
-    clearTimeout(deleteTimer);
-    deleteTimer = setTimeout(() => (pendingDeleteId.value = null), 3000);
-    return;
-  }
-  clearTimeout(deleteTimer);
-  pendingDeleteId.value = null;
-  deleteDeck(id);
-  for (const player of players) {
-    if (selected.value[player] === id) {
-      selected.value[player] = testDecks[0].id;
-    }
-  }
-  ensureUnique("p1");
-}
 </script>
 
 <style scoped>
@@ -1679,14 +1649,6 @@ function onDelete(id) {
   font-size: 10px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-}
-
-.deck-delete {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  padding: 0 8px;
-  line-height: 1.4;
 }
 
 .game-start {

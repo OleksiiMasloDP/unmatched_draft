@@ -13,6 +13,7 @@
         <div class="pack-hero-name">{{ hero.name }}</div>
         <span v-if="owner" class="pack-hero-owner" :class="'is-' + owner">
           {{ t(owner === "p1" ? "packPlayer1" : "packPlayer2") }}
+          <template v-if="note"> · {{ note }}</template>
         </span>
       </div>
 
@@ -53,6 +54,10 @@ defineProps({
   clickable: {
     type: Boolean,
     default: false,
+  },
+  note: {
+    type: String,
+    default: "",
   },
 });
 

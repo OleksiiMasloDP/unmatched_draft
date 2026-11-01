@@ -29,12 +29,19 @@ function persist() {
 }
 
 export function useSavedDecks() {
-  function saveDeck({ name, heroId, cardIds }) {
+  function saveDeck({ name, heroId, cardIds, draftId, player }) {
+    if (draftId && player) {
+      const existing = savedDecks.value.find(
+        (deck) => deck.draftId === draftId && deck.player === player,
+      );
+      if (existing) return existing.id;
+    }
     const deck = {
       id: `deck_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
       name: name.trim() || getHero(heroId).name,
       heroId,
       cardIds: [...cardIds],
+      ...(draftId && player ? { draftId, player } : {}),
     };
     savedDecks.value = [...savedDecks.value, deck];
     persist();
@@ -46,5 +53,14 @@ export function useSavedDecks() {
     persist();
   }
 
-  return { savedDecks, saveDeck, deleteDeck };
+  function renameDeck(id, name) {
+    const clean = String(name || "").trim();
+    if (!clean) return;
+    savedDecks.value = savedDecks.value.map((deck) =>
+      deck.id === id ? { ...deck, name: clean } : deck,
+    );
+    persist();
+  }
+
+  return { savedDecks, saveDeck, deleteDeck, renameDeck };
 }

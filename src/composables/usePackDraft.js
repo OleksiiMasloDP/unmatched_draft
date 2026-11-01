@@ -8,6 +8,9 @@ import {
 
 const STORAGE_KEY = "unmatched_pack_draft_v1";
 const PLAYERS = ["p1", "p2"];
+// Кількість персонажів, карти яких змішуються в пул (вибір: p1, p2, p1, p2).
+const POOL_SIZE = 4;
+// Спочатку набираємо пул (p1, p2, p1, p2), потім обираємо, ким грати: p2, потім p1.
 
 const allCards = buildAllCards();
 const cardById = new Map(allCards.map((card) => [card.id, card]));
@@ -22,8 +25,15 @@ function shuffle(list) {
   return result;
 }
 
-function createState() {
-  const ids = shuffle(allCards.map((card) => card.id));
+function newDraftId() {
+  return `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+}
+
+// Паки збираються лише з карт обраних персонажів.
+function buildPacks(poolIds) {
+  const ids = shuffle(
+    allCards.filter((card) => poolIds.includes(card.heroId)).map((c) => c.id),
+  );
   const { packSize, packCount } = PACK_DRAFT_CONFIG;
   const packsTotal = Math.min(packCount, Math.floor(ids.length / packSize));
   const packsUsed = packsTotal - (packsTotal % 2);
@@ -31,12 +41,18 @@ function createState() {
   for (let i = 0; i < packsUsed; i++) {
     packs.push(ids.slice(i * packSize, (i + 1) * packSize));
   }
+  return { packs, leftover: ids.slice(packsUsed * packSize) };
+}
 
+function createState() {
   return {
     phase: "heroes",
+    draftId: newDraftId(),
+    // Обрані персонажі за порядком вибору. 1-й і 2-й - герої гравців 1 і 2.
+    pool: [],
     heroes: { p1: null, p2: null },
-    packs,
-    leftover: ids.slice(packsUsed * packSize),
+    packs: [],
+    leftover: [],
     pairIndex: 0,
     holding: { p1: 0, p2: 1 },
     turn: "p1",
@@ -62,12 +78,28 @@ function isValid(saved) {
     ...(saved.kept?.p1 || []),
     ...(saved.kept?.p2 || []),
   ];
+  if (
+    !Array.isArray(saved.pool) ||
+    !saved.draftId ||
+    saved.pool.length > POOL_SIZE ||
+    new Set(saved.pool).size !== saved.pool.length ||
+    saved.pool.some((id) => !heroById.has(id))
+  ) {
+    return false;
+  }
+  const inHeroes = saved.phase === "heroes";
+  const picked = Boolean(saved.heroes?.p1 || saved.heroes?.p2);
+  if (inHeroes && saved.pool.length < POOL_SIZE && picked) return false;
+  const expected = inHeroes
+    ? 0
+    : allCards.filter((card) => saved.pool.includes(card.heroId)).length;
   return (
     ["heroes", "draft", "deck", "done"].includes(saved.phase) &&
+    (inHeroes || saved.pool.length === POOL_SIZE) &&
     saved.heroes &&
     saved.kept &&
     saved.decks &&
-    ids.length === allCards.length &&
+    ids.length === expected &&
     ids.every((id) => cardById.has(id))
   );
 }
@@ -131,10 +163,16 @@ function save() {
 }
 
 function actor() {
-  if (state.phase === "heroes") return state.heroes.p1 ? "p2" : "p1";
+  if (state.phase === "heroes") return heroesActor();
   if (state.phase === "draft") return null;
   if (state.phase === "deck") return state.deckPlayer;
   return null;
+}
+
+// Набір пулу: p1, p2, p1, p2. Вибір героя для гри: спершу p2, потім p1.
+function heroesActor() {
+  if (state.pool.length < POOL_SIZE) return state.pool.length % 2 === 0 ? "p1" : "p2";
+  return state.heroes.p2 ? "p1" : "p2";
 }
 
 function otherPlayer(player) {
@@ -184,17 +222,27 @@ function advance() {
 
 function applyHero(heroId, seat) {
   if (state.phase !== "heroes" || (seat && seat !== actor())) return;
-  const taken = Object.values(state.heroes);
+  const taken =
+    state.pool.length < POOL_SIZE
+      ? state.pool
+      : Object.values(state.heroes).filter(Boolean);
+  const inPool = state.pool.length < POOL_SIZE || state.pool.includes(heroId);
   if (
+    !inPool ||
     !packDraftHeroes.some(
       (hero) => hero.id === heroId && !taken.includes(hero.id),
     )
   )
     return;
-  state.heroes[actor()] = heroId;
-  if (state.heroes.p1 && state.heroes.p2) {
-    state.phase = "draft";
-    advance();
+  if (state.pool.length < POOL_SIZE) {
+    state.pool.push(heroId);
+  } else {
+    state.heroes[actor()] = heroId;
+    if (state.heroes.p1 && state.heroes.p2) {
+      Object.assign(state, buildPacks(state.pool));
+      state.phase = "draft";
+      advance();
+    }
   }
   save();
 }
@@ -392,12 +440,19 @@ export function usePackDraft() {
       : [],
   );
 
-  const pickerPlayer = computed(() => (state.heroes.p1 ? "p2" : "p1"));
+  const pickerPlayer = computed(() => heroesActor());
 
-  const availableHeroes = computed(() => {
-    const taken = Object.values(state.heroes);
-    return packDraftHeroes.filter((hero) => !taken.includes(hero.id));
-  });
+  const poolHeroes = computed(() =>
+    state.pool.map((id) => heroById.get(id)).filter(Boolean),
+  );
+
+  const availableHeroes = computed(() =>
+    state.pool.length < POOL_SIZE
+      ? packDraftHeroes.filter((hero) => !state.pool.includes(hero.id))
+      : poolHeroes.value.filter(
+          (hero) => hero.id !== state.heroes.p1 && hero.id !== state.heroes.p2,
+        ),
+  );
 
   const playerHeroes = computed(() => ({
     p1: heroById.get(state.heroes.p1) || null,
@@ -509,6 +564,8 @@ export function usePackDraft() {
     deckPoolCards,
     pickerPlayer,
     availableHeroes,
+    poolHeroes,
+    poolSize: POOL_SIZE,
     playerHeroes,
     packRound,
     marks,

@@ -1,16 +1,36 @@
 <template>
   <div class="pack-page container">
-    <template v-if="!started">
-      <div class="pack-title-row">
-        <h1 class="page-main-title">{{ t("packDraftTitle") }}</h1>
-        <span class="pack-beta">{{ t("packBeta") }}</span>
-      </div>
+    <div class="pack-title-row">
+      <h1 class="page-main-title">{{ t("packDraftTitle") }}</h1>
+      <span class="pack-beta">{{ t("packBeta") }}</span>
+    </div>
 
+    <div class="pack-steps">
+      <span
+        class="pack-step"
+        :class="{
+          active: step === 1,
+          done: step > 1,
+          'is-link': canGoBack,
+        }"
+        :role="canGoBack ? 'button' : null"
+        :title="canGoBack ? t('packStepBack') : ''"
+        @click="canGoBack && backToMode()"
+      >
+        <b>1</b> {{ t("packStepMode") }}
+      </span>
+      <span class="pack-step" :class="{ active: step === 2, done: step > 2 }">
+        <b>2</b> {{ t("packStepHeroes") }}
+      </span>
+      <span class="pack-step" :class="{ active: step === 3 }">
+        <b>3</b> {{ t("packStepDraft") }}
+      </span>
+    </div>
+
+    <template v-if="step === 1">
       <p class="engine-sub-desc engine-sub-desktop pack-intro">
         {{ t("packIntro") }}
       </p>
-
-      <div class="pack-note">{{ t("packBetaNote") }}</div>
 
       <details class="pack-rules">
         <summary>{{ t("packRulesTitle") }}</summary>
@@ -19,10 +39,12 @@
         </ol>
       </details>
 
-      <OnlinePanel />
+      <OnlinePanel @local="localChosen = true" />
+
+      <SavedDecksPanel />
     </template>
 
-    <div class="pack-topbar">
+    <div v-if="step > 1" class="pack-topbar">
       <div class="pack-banner" :class="banner.cls">
         {{ banner.text }}
         <span v-if="banner.hero" class="pack-banner-hero">
@@ -47,17 +69,21 @@
       <ReportBugButton section="pack-draft" />
     </div>
 
-    <template v-if="state.phase === 'heroes'">
+    <template v-if="step === 2">
+      <p class="pack-hint">
+        {{ t(playStage ? "packPlayHint" : "packPickCharacterHint") }}
+      </p>
       <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
       <div class="row g-3">
         <div
-          v-for="hero in heroes"
+          v-for="hero in stageHeroes"
           :key="hero.id"
           class="col-12 col-sm-6 col-lg-3"
         >
           <PackHeroCard
             :hero="hero"
             :owner="heroOwner(hero.id)"
+            :note="heroNote(hero.id)"
             :clickable="!heroOwner(hero.id) && canAct"
             @select="pickHero"
           />
@@ -229,6 +255,10 @@
                   </p>
                 </template>
               </div>
+              <p v-if="extraHeroes.length" class="pack-side-passive">
+                <b>{{ t("packExtraHeroes") }}:</b>
+                {{ extraHeroes.map((hero) => hero.name).join(", ") }}
+              </p>
             </div>
 
             <div v-else-if="sideTab === 'kept'" class="pack-side-body">
@@ -309,7 +339,7 @@
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="state.phase === 'done'">
       <div class="row g-3">
         <div v-for="player in players" :key="player" class="col-12 col-lg-6">
           <div class="pack-summary" :class="'is-' + player">
@@ -347,28 +377,13 @@
             </div>
 
             <div v-if="canSave(player)" class="pack-save">
-              <template v-if="savedFlags[player]">
-                <span class="pack-saved">{{ t("packDeckSaved") }}</span>
-                <router-link
-                  :to="{ name: 'game' }"
-                  class="btn btn-primary btn-sm action-btn"
-                >
-                  {{ t("packPlayDeck") }}
-                </router-link>
-              </template>
-              <template v-else>
-                <input
-                  v-model="deckNames[player]"
-                  class="form-control form-control-sm search-field"
-                  :placeholder="t('packDeckName')"
-                />
-                <button
-                  class="btn btn-success btn-sm action-btn"
-                  @click="onSaveDeck(player)"
-                >
-                  {{ t("packSaveDeck") }}
-                </button>
-              </template>
+              <span class="pack-saved">{{ t("packDeckAutoSaved") }}</span>
+              <router-link
+                :to="{ name: 'game' }"
+                class="btn btn-primary btn-sm action-btn"
+              >
+                {{ t("packPlayDeck") }}
+              </router-link>
             </div>
 
             <div class="pack-summary-title">
@@ -429,12 +444,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { usePackDraft } from "../../composables/usePackDraft";
 import PackCard from "../PackCard.vue";
 import PackHeroCard from "../PackHeroCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
+import SavedDecksPanel from "../SavedDecksPanel.vue";
 import ReportBugButton from "../ReportBugButton.vue";
 import { useOnline } from "../../composables/useOnline";
 import { useSavedDecks } from "../../composables/useSavedDecks";
@@ -453,6 +469,8 @@ const {
   deckPoolCards,
   pickerPlayer,
   playerHeroes,
+  poolHeroes,
+  poolSize,
   marks,
   needed,
   turnReady,
@@ -531,43 +549,76 @@ const playerTag = (player) =>
 const { saveDeck } = useSavedDecks();
 const canSave = (player) => !online.value || mySeat.value === player;
 const players = ["p1", "p2"];
-const deckNames = reactive({ p1: "", p2: "" });
-const savedFlags = reactive({ p1: false, p2: false });
 
-watch(
-  () => state.phase,
-  (phase) => {
-    if (phase !== "done") {
-      savedFlags.p1 = false;
-      savedFlags.p2 = false;
-      deckNames.p1 = "";
-      deckNames.p2 = "";
-    }
-  },
+// Крок 1 - режим гри, 2 - вибір персонажів, 3 - сам драфт.
+const localChosen = ref(
+  state.phase !== "heroes" || state.pool.length > 0 || online.value,
 );
+const step = computed(() => {
+  if (state.phase !== "heroes") return 3;
+  if (state.pool.length > 0) return 2;
+  return online.value || localChosen.value ? 2 : 1;
+});
+const canGoBack = computed(() => step.value === 2 && state.pool.length === 0);
 
-function onSaveDeck(player) {
-  const hero = playerHeroes.value[player];
-  saveDeck({
-    name:
-      deckNames[player] ||
-      `${hero.name} · ${t(player === "p1" ? "packPlayer1" : "packPlayer2")}`,
-    heroId: hero.id,
-    cardIds: state.decks[player],
-  });
-  savedFlags[player] = true;
+function backToMode() {
+  if (netState.role) leaveRoom();
+  localChosen.value = false;
 }
-// Вступ (заголовок, правила, режим гри) показуємо лише до початку драфту.
-const started = computed(
-  () => state.phase !== "heroes" || Boolean(state.heroes.p1),
+
+const extraHeroes = computed(() =>
+  poolHeroes.value.filter(
+    (hero) => hero.id !== state.heroes.p1 && hero.id !== state.heroes.p2,
+  ),
 );
+
+// Після набору пулу кожен обирає, ким грає: спершу гравець 2, потім гравець 1.
+const playStage = computed(
+  () => state.phase === "heroes" && state.pool.length >= poolSize,
+);
+const stageHeroes = computed(() =>
+  playStage.value ? poolHeroes.value : heroes,
+);
+
+// Колоди зберігаються автоматично, коли драфт завершено і колоду видно.
+function autoSaveDecks() {
+  if (state.phase !== "done") return;
+  for (const player of players) {
+    const hero = playerHeroes.value[player];
+    const cardIds = state.decks[player];
+    if (!canSave(player) || !hero || !cardIds.length) continue;
+    if (cardIds.some((id) => id === "?")) continue;
+    const stamp = new Date().toLocaleString(
+      lang.value === "ua" ? "uk-UA" : "en-GB",
+      {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      },
+    );
+    saveDeck({
+      name: `${hero.name} · ${stamp}`,
+      heroId: hero.id,
+      cardIds,
+      draftId: state.draftId,
+      player,
+    });
+  }
+}
+
+watch(() => state.phase, autoSaveDecks, { immediate: true });
 
 // Одна рядкова плашка: чий зараз хід / що робити.
 const banner = computed(() => {
   if (state.phase === "heroes") {
     return {
       cls: "is-" + pickerPlayer.value,
-      text: replacePlayer("packPickHero", pickerPlayer.value),
+      text: playStage.value
+        ? replacePlayer("packPickPlay", pickerPlayer.value)
+        : replacePlayer("packPickCharacter", pickerPlayer.value)
+            .replace("{n}", state.pool.length + 1)
+            .replace("{total}", poolSize),
       hero: "",
     };
   }
@@ -597,8 +648,20 @@ const banner = computed(() => {
 const confirmingRestart = ref(false);
 let confirmTimer = null;
 
-const heroOwner = (heroId) =>
-  players.find((player) => state.heroes[player] === heroId) || "";
+// Поки набираємо пул: хто обрав персонажа (1-й і 3-й - гравець 1, 2-й і 4-й -
+// гравець 2). Коли пул зібрано: хто грає цим персонажем.
+const heroOwner = (heroId) => {
+  if (state.pool.length < poolSize) {
+    const index = state.pool.indexOf(heroId);
+    return index === -1 ? "" : players[index % 2];
+  }
+  return players.find((player) => state.heroes[player] === heroId) || "";
+};
+
+const heroNote = (heroId) => {
+  if (!state.heroes.p1 && !state.heroes.p2) return "";
+  return t(Object.values(state.heroes).includes(heroId) ? "packRolePlays" : "packRoleCards");
+};
 
 const playerLabelText = (player) =>
   t(player === "p1" ? "packPlayer1" : "packPlayer2");
@@ -650,14 +713,56 @@ function onRestart() {
   margin-bottom: 12px;
 }
 
-.pack-note {
-  margin-bottom: 12px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(var(--color-info-rgb), 0.4);
-  background: rgba(var(--bg-slate-rgb), 0.8);
-  color: var(--text-muted);
-  font-size: 12.5px;
+.pack-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px;
+}
+
+.pack-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pack-step b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+}
+
+.pack-step.active {
+  background: rgba(var(--color-player-rgb), 0.12);
+  border-color: rgba(var(--color-player-rgb), 0.6);
+  color: var(--text-white);
+}
+
+.pack-step.done {
+  border-color: rgba(var(--color-proceed-rgb), 0.5);
+  color: var(--color-success-light);
+}
+
+.pack-step.is-link {
+  cursor: pointer;
+}
+
+.pack-step.is-link:hover {
+  border-color: var(--color-success-light);
 }
 
 .pack-rules,
