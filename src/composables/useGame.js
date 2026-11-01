@@ -107,19 +107,27 @@ function fx(type, player, extra = {}) {
 const other = (player) => (player === "p1" ? "p2" : "p1");
 const pl = (player) => game.players[player];
 const hero = (player) => getHero(pl(player).heroId);
-const spaceOf = (player) =>
-  cur[player] === "sk" && pl(player).sidekick
-    ? pl(player).sidekick.space
-    : pl(player).space;
+const kidOf = (player, fighter) =>
+  fighter === "hero"
+    ? null
+    : pl(player).sidekicks.find((kid) => kid.id === fighter) || null;
 const fighterSpace = (player, fighter) =>
-  fighter === "sk" ? pl(player).sidekick.space : pl(player).space;
-const fightersOf = (player) =>
-  pl(player).sidekick && !pl(player).sidekick.down ? ["hero", "sk"] : ["hero"];
+  fighter === "hero" ? pl(player).space : kidOf(player, fighter).space;
+const spaceOf = (player) =>
+  cur[player] !== "hero" && kidOf(player, cur[player])
+    ? kidOf(player, cur[player]).space
+    : pl(player).space;
+const fightersOf = (player) => [
+  "hero",
+  ...pl(player)
+    .sidekicks.filter((kid) => !kid.down)
+    .map((kid) => kid.id),
+];
 const occupiedBy = (player) =>
   fightersOf(player).map((fighter) => fighterSpace(player, fighter));
 const occupied = () => [...occupiedBy("p1"), ...occupiedBy("p2")];
 const fighterName = (player, fighter) =>
-  fighter === "sk" ? pl(player).sidekick.name : hero(player).name;
+  fighter === "hero" ? hero(player).name : kidOf(player, fighter).name;
 
 function withFighter(player, fighter, fn) {
   const before = cur[player];
@@ -133,7 +141,7 @@ function withFighter(player, fighter, fn) {
 
 const allowedFor = (card, fighter) =>
   card.kind === "sidekick"
-    ? fighter === "sk"
+    ? fighter !== "hero"
     : card.kind === "any"
       ? true
       : fighter === "hero";
@@ -195,10 +203,10 @@ function zoneCount(player) {
   return active.spaceById.get(spaceOf(player)).zones.length;
 }
 
-function reach(player, steps) {
+function reach(player, steps, through = false) {
   if (turnFlags.pinned[player]) return [];
   const start = spaceOf(player);
-  const foes = occupiedBy(other(player));
+  const foes = through ? [] : occupiedBy(other(player));
   const busy = occupied();
   const seen = new Map([[start, 0]]);
   const queue = [start];
@@ -230,7 +238,11 @@ function inRange(player, mine = "hero", theirs = "hero") {
   const foe = other(player);
   return withFighter(player, mine, () =>
     withFighter(foe, theirs, () => {
-      const data = hero(player);
+      const kid = kidOf(player, mine);
+      const data = {
+        ...hero(player),
+        attack: kid ? kid.attack : hero(player).attack,
+      };
       const reachDistance = data.id === "ms-marvel" && mine === "hero" ? 2 : 1;
       if (data.attack === "range") {
         return shared(player, foe) || distance(player, foe) <= reachDistance;
@@ -261,16 +273,18 @@ function setOver(winner) {
 
 function damage(player, amount, fighter = cur[player]) {
   if (amount <= 0 || game.phase !== "play") return;
-  if (fighter === "sk" && pl(player).sidekick) {
-    const kid = pl(player).sidekick;
-    if (kid.down) return;
+  if (fighter !== "hero") {
+    const kid = kidOf(player, fighter);
+    if (!kid || kid.down) return;
     kid.hp = Math.max(0, kid.hp - amount);
     log("logDamageSk", { who: kid.name, n: amount });
-    fx("damage", player, { n: amount, src: activeCard, fighter: "sk" });
+    fx("damage", player, { n: amount, src: activeCard, fighter });
     if (kid.hp === 0) {
       kid.down = true;
       log("logSidekickDown", { who: kid.name });
-      if (!game.combat) pl(player).sidekick = null;
+      if (!game.combat) {
+        pl(player).sidekicks = pl(player).sidekicks.filter((k) => !k.down);
+      }
     }
     return;
   }
@@ -282,12 +296,13 @@ function damage(player, amount, fighter = cur[player]) {
 }
 
 function heal(player, amount, fighter = cur[player]) {
-  if (fighter === "sk" && pl(player).sidekick) {
-    const kid = pl(player).sidekick;
+  if (fighter !== "hero") {
+    const kid = kidOf(player, fighter);
+    if (!kid) return;
     const healed = Math.min(amount, kid.maxHp - kid.hp);
     kid.hp += healed;
     log("logHealSk", { who: kid.name, n: healed });
-    if (healed > 0) fx("heal", player, { n: healed, fighter: "sk" });
+    if (healed > 0) fx("heal", player, { n: healed, fighter });
     return;
   }
   const target = pl(player);
@@ -311,9 +326,130 @@ function healFriendly(player, amount) {
 }
 
 function sidekickAdjacent(player) {
-  const kid = pl(player).sidekick;
-  if (!kid || kid.down) return false;
-  return active.spaceById.get(pl(player).space).links.includes(kid.space);
+  const links = active.spaceById.get(pl(player).space).links;
+  return pl(player).sidekicks.some(
+    (kid) => !kid.down && links.includes(kid.space),
+  );
+}
+
+function adjacentToFoe(player) {
+  const links = active.spaceById.get(spaceOf(player)).links;
+  return occupiedBy(other(player)).some((id) => links.includes(id));
+}
+
+function foeFightersInZone(player) {
+  const zones = active.spaceById.get(spaceOf(player)).zones;
+  const foe = other(player);
+  return fightersOf(foe).filter((fighter) =>
+    active.spaceById
+      .get(fighterSpace(foe, fighter))
+      .zones.some((zone) => zones.includes(zone)),
+  );
+}
+
+function adjacentFightersOf(player) {
+  const links = active.spaceById.get(spaceOf(player)).links;
+  const found = [];
+  for (const owner of ["p1", "p2"]) {
+    for (const fighter of fightersOf(owner)) {
+      if (owner === player && fighter === cur[player]) continue;
+      if (links.includes(fighterSpace(owner, fighter))) {
+        found.push({ owner, fighter });
+      }
+    }
+  }
+  return found;
+}
+
+function otherFriendAdjacentToFoe(player) {
+  const foeLinks = active.spaceById.get(spaceOf(other(player))).links;
+  return fightersOf(player).some(
+    (fighter) =>
+      fighter !== cur[player] &&
+      foeLinks.includes(fighterSpace(player, fighter)),
+  );
+}
+
+function summonSpaces(player, zoneOnly) {
+  const kidData = hero(player).sidekick;
+  if (!kidData || !kidData.summon) return [];
+  if (pl(player).sidekicks.filter((kid) => !kid.down).length >= kidData.count) {
+    return [];
+  }
+  const busy = occupied();
+  const zones = active.spaceById.get(pl(player).space).zones;
+  return active.map.spaces
+    .filter(
+      (space) =>
+        !busy.includes(space.id) &&
+        (!zoneOnly || space.zones.some((zone) => zones.includes(zone))),
+    )
+    .map((space) => space.id);
+}
+
+function summon(player, spaceId) {
+  const kidData = hero(player).sidekick;
+  const used = new Set(pl(player).sidekicks.map((kid) => kid.id));
+  let n = 1;
+  while (used.has("sk" + n)) n += 1;
+  pl(player).sidekicks.push({
+    id: "sk" + n,
+    name: kidData.name,
+    hp: kidData.hp,
+    maxHp: kidData.hp,
+    attack: kidData.attack,
+    space: spaceId,
+    down: false,
+  });
+  log("logSummon", { who: kidData.name, space: spaceId });
+}
+
+function* moveAll(player, steps, through) {
+  for (const fighter of fightersOf(player)) {
+    cur[player] = fighter;
+    const options = reach(player, steps, through);
+    if (!options.length) continue;
+    const prompt = askSpace(
+      player,
+      fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+      options,
+    );
+    prompt.fighter = fighter;
+    const space = yield prompt;
+    if (space) place(player, space);
+  }
+  cur[player] = "hero";
+}
+
+function payCoin(player) {
+  if (pl(player).coins > 0) {
+    pl(player).coins -= 1;
+    game.treasury += 1;
+    log("logPayCoin", { player });
+  }
+}
+
+function stealCoin(player) {
+  if (game.treasury > 0) {
+    game.treasury -= 1;
+    pl(player).coins += 1;
+    log("logStealCoin", { player });
+  }
+}
+
+function* ransom(owner, cost, combat) {
+  if (hero(owner).id !== "blackbeard" || game.treasury < cost) return false;
+  const payer = other(owner);
+  const ok = yield askConfirm(
+    payer,
+    cost === 2 ? "promptRansom2" : "promptRansom1",
+  );
+  if (!ok) return false;
+  game.treasury -= cost;
+  pl(owner).coins += cost;
+  if (combat) combat.ransomPaid[owner] += cost;
+  log("logRansom", { player: payer, n: cost });
+  return true;
 }
 
 function draw(player, count) {
@@ -404,15 +540,15 @@ function attackOfOpportunity(player, fromSpaceId) {
 }
 
 function setSpace(player, fighter, spaceId) {
-  if (fighter === "sk") pl(player).sidekick.space = spaceId;
-  else pl(player).space = spaceId;
+  if (fighter === "hero") pl(player).space = spaceId;
+  else kidOf(player, fighter).space = spaceId;
 }
 
 function place(player, spaceId) {
   const from = spaceOf(player);
   setSpace(player, cur[player], spaceId);
-  if (cur[player] === "sk") {
-    log("logMoveSk", { who: pl(player).sidekick.name, space: spaceId });
+  if (cur[player] !== "hero") {
+    log("logMoveSk", { who: kidOf(player, cur[player]).name, space: spaceId });
   } else {
     log("logMove", { player, space: spaceId });
   }
@@ -475,6 +611,25 @@ const api = {
   heal,
   healFriendly,
   sidekickAdjacent,
+  adjacentToFoe,
+  adjacentSidekicks: (player) =>
+    pl(player)
+      .sidekicks.filter(
+        (kid) =>
+          !kid.down &&
+          active.spaceById.get(pl(player).space).links.includes(kid.space),
+      )
+      .map((kid) => kid.id),
+  foeFightersInZone,
+  adjacentFightersOf,
+  otherFriendAdjacentToFoe,
+  summonSpaces,
+  summon,
+  moveAll,
+  ransom,
+  stealCoin,
+  payCoin,
+  fighterName,
   startSpaces: () => Object.values(active.map.starts),
   occupiedSpaces: () => occupied(),
   spaceOf,
@@ -641,6 +796,13 @@ function* startTurn() {
   game.redRoomIgnored[me] = false;
   log("logTurn", { player: me });
   cur[me] = "hero";
+  if (hero(me).id === "blackbeard" && pl(me).coins > 0) {
+    const ok = yield askConfirm(me, "promptPayAction");
+    if (ok) {
+      payCoin(me);
+      gainAction(1);
+    }
+  }
   if (hero(me).id === "ms-marvel") {
     const options = reach(me, 1);
     if (options.length) {
@@ -680,7 +842,7 @@ function* maneuver(me) {
       if (!options.length) break;
       const prompt = askSpace(
         me,
-        fighter === "sk" ? "promptMoveSidekick" : "promptMoveSpace",
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
         options,
       );
       prompt.fighter = fighter;
@@ -828,6 +990,7 @@ function* attack(me) {
     values: { p1: 0, p2: 0 },
     returnToHand: { p1: false, p2: false },
     kept: { p1: false, p2: false },
+    ransomPaid: { p1: 0, p2: 0 },
     immediateDone: { p1: false, p2: false },
   };
 
@@ -962,6 +1125,14 @@ function* attack(me) {
 
   if (dealt > 0) damage(foe, dealt);
   else log("logNoDamage");
+  if (
+    dealt > 0 &&
+    game.phase === "play" &&
+    theirs === "hero" &&
+    hero(foe).id === "blackbeard"
+  ) {
+    payCoin(foe);
+  }
 
   if (game.combat) game.combat.stage = "after";
   for (const player of players) {
@@ -1005,7 +1176,7 @@ function* attack(me) {
   finish(me, combat.cards[me]);
   finish(foe, combat.cards[foe]);
   for (const player of ["p1", "p2"]) {
-    if (pl(player).sidekick?.down) pl(player).sidekick = null;
+    pl(player).sidekicks = pl(player).sidekicks.filter((kid) => !kid.down);
   }
   game.combat = null;
   resetFighters();
@@ -1065,15 +1236,21 @@ function startGame(deckA, deckB, first = "p1") {
       hp: data.hp,
       maxHp: data.hp,
       space: active.map.starts[player],
-      sidekick: data.sidekick
-        ? {
-            name: data.sidekick.name,
-            hp: data.sidekick.hp,
-            maxHp: data.sidekick.hp,
-            space: null,
-            down: false,
-          }
-        : null,
+      sidekicks:
+        data.sidekick && !data.sidekick.summon
+          ? [
+              {
+                id: "sk1",
+                name: data.sidekick.name,
+                hp: data.sidekick.hp,
+                maxHp: data.sidekick.hp,
+                attack: data.sidekick.attack,
+                space: null,
+                down: false,
+              },
+            ]
+          : [],
+      coins: data.id === "blackbeard" ? 2 : 0,
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],
@@ -1084,13 +1261,16 @@ function startGame(deckA, deckB, first = "p1") {
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
   for (const player of ["p1", "p2"]) {
-    const kid = pl(player).sidekick;
+    const kid = pl(player).sidekicks[0];
     if (!kid) continue;
     const foeStart = active.map.starts[other(player)];
     const home = active.map.starts[player];
     kid.space =
       active.spaceById.get(home).links.find((id) => id !== foeStart) || home;
   }
+  game.treasury = [deckA, deckB].some((deck) => deck.heroId === "blackbeard")
+    ? 1
+    : 0;
   resetFighters();
   game.turn = first;
   game.viewer = "p1";

@@ -82,29 +82,30 @@
 
     <g v-for="player in ['p1', 'p2']" :key="'sk-' + player">
       <g
-        v-if="players[player] && players[player].sidekick"
+        v-for="kid in players[player] ? players[player].sidekicks : []"
+        :key="kid.id"
         class="board-hero board-sidekick"
-        :class="['is-' + player, { 'is-hit': hit[player + '-sk'] }]"
+        :class="['is-' + player, { 'is-hit': hit[player + '-' + kid.id] }]"
       >
         <circle
-          :cx="byId.get(players[player].sidekick.space).x"
-          :cy="byId.get(players[player].sidekick.space).y"
+          :cx="byId.get(kid.space).x"
+          :cy="byId.get(kid.space).y"
           r="30"
         />
         <text
           class="hero-initials is-small"
-          :x="byId.get(players[player].sidekick.space).x"
-          :y="byId.get(players[player].sidekick.space).y + 8"
+          :x="byId.get(kid.space).x"
+          :y="byId.get(kid.space).y + 8"
           text-anchor="middle"
         >
-          {{ players[player].sidekick.name.slice(0, 2).toUpperCase() }}
+          {{ kid.name.slice(0, 2).toUpperCase() }}
         </text>
         <g
-          :transform="`translate(${byId.get(players[player].sidekick.space).x + 24}, ${byId.get(players[player].sidekick.space).y + 28})`"
+          :transform="`translate(${byId.get(kid.space).x + 24}, ${byId.get(kid.space).y + 28})`"
         >
           <circle class="hp-badge" r="18" />
           <text class="hp-label is-small" y="7" text-anchor="middle">
-            {{ players[player].sidekick.hp }}
+            {{ kid.hp }}
           </text>
         </g>
       </g>
@@ -165,12 +166,7 @@ const fillFor = (space) =>
     : props.map.zoneColors[space.zones[0]];
 
 const floats = ref([]);
-const hit = reactive({
-  p1: false,
-  p2: false,
-  "p1-sk": false,
-  "p2-sk": false,
-});
+const hit = reactive({});
 let lastFx = Math.max(0, ...props.fx.map((item) => item.id));
 const timers = [];
 
@@ -182,10 +178,13 @@ watch(
     fresh.forEach((item, index) => {
       if (item.type !== "damage" && item.type !== "heal") return;
       const unit = props.players[item.player];
-      const kid = item.fighter === "sk" ? unit?.sidekick : null;
+      const kid =
+        item.fighter && item.fighter !== "hero"
+          ? unit?.sidekicks?.find((k) => k.id === item.fighter)
+          : null;
       const space = unit && byId.value.get(kid ? kid.space : unit.space);
       if (!space) return;
-      const hitKey = kid ? item.player + "-sk" : item.player;
+      const hitKey = kid ? item.player + "-" + kid.id : item.player;
       const entry = {
         id: item.id,
         type: item.type,

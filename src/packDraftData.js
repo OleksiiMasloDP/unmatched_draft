@@ -4,6 +4,7 @@ import {
   spiderManCards,
   tomoeGozenCards,
   doctorStrangeCards,
+  blackbeardCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -96,8 +97,31 @@ export const packDraftHeroes = [
         ua: "Після кожного бою, якщо Doctor Strange зіграв карту, ви можете завдати йому 1 шкоди. Якщо так, покладіть цю карту на низ колоди та візьміть 1 карту.",
       },
     },
-    sidekick: { name: "Wong", hp: 6 },
+    sidekick: { name: "Wong", hp: 6, attack: "range" },
     cards: doctorStrangeCards,
+  },
+  {
+    id: "blackbeard",
+    name: "Blackbeard",
+    hp: 13,
+    move: 2,
+    attack: "range",
+    image: "images/blackbeard.webp",
+    passive: {
+      name: "Privateer Turned Pirate",
+      text: {
+        en: "Start the game with 1 doubloon in the treasury, you have the other 2. At the start of your turn, you may pay 1 doubloon to gain 1 action. When Blackbeard takes combat damage, pay 1 doubloon. Opponents can pay a ransom from the treasury to ignore effects marked with 🪙.",
+        ua: "Починайте гру з 1 дублоном у скарбниці, інші 2 у вас. На початку вашого ходу ви можете сплатити 1 дублон, щоб отримати 1 дію. Коли Blackbeard отримує бойову шкоду, сплатіть 1 дублон. Суперники можуть сплатити викуп зі скарбниці, щоб проігнорувати ефекти з 🪙.",
+      },
+    },
+    sidekick: {
+      name: "Sea Dog",
+      hp: 1,
+      attack: "melee",
+      summon: true,
+      count: 3,
+    },
+    cards: blackbeardCards,
   },
 ];
 
@@ -186,6 +210,23 @@ const CARD_IMAGES = {
       no_really_im_a_doctor: "scheme",
     },
   },
+  blackbeard: {
+    dir: "Blackbeard",
+    files: {
+      avast_ye: "attack",
+      fearsome_and_calculating: "versatile",
+      plunder: "scheme",
+      scourge_of_the_seven_seas: "scheme",
+      a_brace_of_primed_pistols: "attack",
+      give_no_quarter: "attack",
+      intimidating_visage: "defense",
+      light_the_fuse: "attack",
+      no_prey_no_pay: "versatile",
+      parley: "versatile",
+      queena_annes_revenge: "versatile",
+      show_a_leg: "versatile",
+    },
+  },
 };
 
 const CARD_IMAGE_ALIASES = {
@@ -210,7 +251,9 @@ function cardImage(hero, name) {
 
 export function coverImage(heroId) {
   const entry = CARD_IMAGES[heroId];
-  return entry ? encodeURI(`images/cards/${entry.dir}/cover.webp`) : null;
+  return entry && entry.cover !== false
+    ? encodeURI(`images/cards/${entry.dir}/cover.webp`)
+    : null;
 }
 
 function slug(value) {

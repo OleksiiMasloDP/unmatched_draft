@@ -5,7 +5,10 @@ function cancelOpponentCard(c) {
   const target = c.foe;
   const targetCard = c.combat.cards[target];
   if (!targetCard) return;
-  if (c.g.hero(target).id === "winter-soldier") {
+  if (
+    c.g.hero(target).id === "winter-soldier" ||
+    cardEffects[targetCard.key]?.uncancelable
+  ) {
     c.g.log("logCantCancel", { card: targetCard.name });
     return;
   }
@@ -501,8 +504,7 @@ export const cardEffects = {
       );
       const amount = c.g.cardBoost(ids[0]);
       c.g.putOnDeckTop(c.me, ids[0]);
-      const fighters = ["hero"];
-      if (c.g.sidekickAdjacent(c.me)) fighters.push("sk");
+      const fighters = ["hero", ...c.g.adjacentSidekicks(c.me)];
       let who = "hero";
       if (fighters.length > 1) {
         const spaces = fighters.map((f) => c.g.fighterSpace(c.me, f));
@@ -511,6 +513,128 @@ export const cardEffects = {
           fighters.find((f) => c.g.fighterSpace(c.me, f) === space) || "hero";
       }
       c.g.heal(c.me, amount, who);
+    },
+  },
+
+  "avast-ye": {
+    *immediate(c) {
+      const paid = yield* c.g.ransom(c.me, 1, c.combat);
+      if (!paid && c.g.handSize(c.foe)) c.g.discardRandom(c.foe, 1);
+    },
+    *after(c) {
+      const paid = yield* c.g.ransom(c.me, 1, c.combat);
+      if (paid) return;
+      for (const fighter of c.g.foeFightersInZone(c.me)) {
+        c.g.damage(c.foe, 1, fighter);
+      }
+    },
+  },
+
+  "give-no-quarter": {
+    value: (c, value) => (c.g.otherFriendAdjacentToFoe(c.me) ? 5 : value),
+    *after(c) {
+      const paid = yield* c.g.ransom(c.me, 1, c.combat);
+      if (!paid) c.g.gainAction(1);
+    },
+  },
+
+  "light-the-fuse": {
+    *after(c) {
+      const options = c.g.reach(c.me, 2);
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptMoveSidekick", options);
+        if (space) c.g.place(c.me, space);
+      }
+      for (const { owner, fighter } of c.g.adjacentFightersOf(c.me)) {
+        c.g.damage(owner, 1, fighter);
+      }
+    },
+  },
+
+  "a-brace-of-primed-pistols": {
+    *after(c) {
+      const paid = yield* c.g.ransom(c.me, 2, c.combat);
+      if (paid) return;
+      const targets = c.g.foeFightersInZone(c.me);
+      if (!targets.length) return;
+      let target = targets[0];
+      if (targets.length > 1) {
+        const spaces = targets.map((f) => c.g.fighterSpace(c.foe, f));
+        const space = yield c.g.askSpace(c.me, "promptAttackTarget", spaces);
+        target =
+          targets.find((f) => c.g.fighterSpace(c.foe, f) === space) || target;
+      }
+      c.g.damage(c.foe, 3, target);
+    },
+  },
+
+  "queen-anne-s-revenge": {
+    uncancelable: true,
+    value: (c, value) =>
+      Math.max(0, value - 2 * (c.combat.ransomPaid[c.me] || 0)),
+  },
+
+  parley: {
+    *immediate(c) {
+      const paid = yield* c.g.ransom(c.me, 2, c.combat);
+      if (!paid) cancelOpponentCard(c);
+    },
+  },
+
+  "fearsome-and-calculating": {
+    *immediate(c) {
+      const paid = yield* c.g.ransom(c.me, 1, c.combat);
+      if (paid || !c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.me,
+        "promptChooseFoeDiscard",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "show-a-leg": {
+    *after(c) {
+      const options = c.g.summonSpaces(c.me, true);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptSummon", options);
+      if (space) c.g.summon(c.me, space);
+    },
+  },
+
+  "no-prey-no-pay": {
+    canBoost: () => true,
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.draw(c.me, 1);
+    },
+  },
+
+  "intimidating-visage": {
+    *after(c) {
+      if (c.g.adjacentToFoe(c.me)) c.g.heal(c.me, 2, "hero");
+    },
+  },
+
+  plunder: {
+    *scheme(c) {
+      yield* c.g.moveAll(c.me, 3, true);
+      c.g.stealCoin(c.me);
+    },
+  },
+
+  "scourge-of-the-seven-seas": {
+    *scheme(c) {
+      if (!(yield* c.g.ransom(c.me, 1, null))) c.g.heal(c.me, 2, "hero");
+      if (!(yield* c.g.ransom(c.me, 1, null))) {
+        const options = c.g.summonSpaces(c.me, false);
+        if (options.length) {
+          const space = yield c.g.askSpace(c.me, "promptSummon", options);
+          if (space) c.g.summon(c.me, space);
+        }
+      }
+      if (!(yield* c.g.ransom(c.me, 1, null))) c.g.gainAction(1);
     },
   },
 };

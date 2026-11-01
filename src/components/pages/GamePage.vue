@@ -341,11 +341,28 @@
             <span class="game-sidekick-name">
               {{ heroOf(player).sidekick.name }}
             </span>
-            <span v-if="game.players[player].sidekick" class="game-sidekick-hp">
-              ❤ {{ game.players[player].sidekick.hp }} /
-              {{ game.players[player].sidekick.maxHp }}
+            <span
+              v-for="kid in game.players[player].sidekicks"
+              :key="kid.id"
+              class="game-sidekick-hp"
+            >
+              ❤ {{ kid.hp
+              }}<template v-if="kid.maxHp > 1">/{{ kid.maxHp }}</template>
             </span>
-            <span v-else class="game-sidekick-hp is-down">✝</span>
+            <span
+              v-if="!game.players[player].sidekicks.length"
+              class="game-sidekick-hp is-down"
+            >
+              {{ heroOf(player).sidekick.summon ? "—" : "✝" }}
+            </span>
+          </div>
+          <div v-if="heroOf(player).id === 'blackbeard'" class="game-sidekick">
+            <span class="game-sidekick-name">
+              🪙 {{ game.players[player].coins }}
+            </span>
+            <span class="game-sidekick-hp">
+              {{ t("gameTreasury") }}: {{ game.treasury }}
+            </span>
           </div>
           <div class="game-counters">
             <div class="game-counter" :title="t('gameHand')">
@@ -929,7 +946,7 @@ function toastFor(item) {
   const kidName = heroOf(item.player)?.sidekick?.name;
   const who =
     playerLabel(item.player) +
-    (item.fighter === "sk" && kidName ? ` (${kidName})` : "");
+    (item.fighter && item.fighter !== "hero" && kidName ? ` (${kidName})` : "");
   if (item.type === "damage") {
     return {
       text: t(item.src ? "fxDamageSrc" : "fxDamage")
@@ -1335,7 +1352,7 @@ const revealSides = computed(() => {
       combat.boostCardLists?.[player] ||
       (combat.boostCardIds?.[player] ? [combat.boostCardIds[player]] : []);
     const fighter = combat.fighters?.[player];
-    const kid = game.players[player]?.sidekick;
+    const kid = game.players[player]?.sidekicks?.find((k) => k.id === fighter);
     return {
       player,
       label: online.value
@@ -1345,7 +1362,9 @@ const revealSides = computed(() => {
       card: cardId ? getCard(cardId) : null,
       boostCards: boostIds.map(getCard).filter(Boolean),
       fighterName:
-        fighter === "sk" ? (kid?.name ?? heroOf(player).sidekick?.name) : null,
+        fighter && fighter !== "hero"
+          ? (kid?.name ?? heroOf(player).sidekick?.name)
+          : null,
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
