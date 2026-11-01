@@ -273,7 +273,7 @@ export const soho = makeMap({
   radius: 62,
   spaces: SOHO_SPACES,
   links: SOHO_LINKS,
-  starts: { p1: "H3", p2: "H15" },
+  starts: { p1: "H3", p2: "H15", p3: "H22", p4: "H24" },
 });
 
 const MCMINNVILLE_SPACES = [
@@ -627,7 +627,7 @@ export const fayrlundForest = makeMap({
   radius: 62,
   spaces: FAYRLUND_SPACES,
   links: FAYRLUND_LINKS,
-  starts: { p1: "F11", p2: "F25" },
+  starts: { p1: "F11", p2: "F25", p3: "F21", p4: "F1" },
 });
 
 const GLOBE_SPACES = [
@@ -726,7 +726,7 @@ export const globeTheatre = makeMap({
   radius: 62,
   spaces: GLOBE_SPACES,
   links: GLOBE_LINKS,
-  starts: { p1: "G32", p2: "G1" },
+  starts: { p1: "G32", p2: "G1", p3: "G14", p4: "G21" },
 });
 
 const MARMOREAL_SPACES = [
@@ -912,7 +912,7 @@ export const venice = makeMap({
   radius: 62,
   spaces: VENICE_SPACES,
   links: VENICE_LINKS,
-  starts: { p1: "V8", p2: "V22" },
+  starts: { p1: "V8", p2: "V22", p3: "V33", p4: "V2" },
 });
 
 const SARPEDON_SPACES = [
