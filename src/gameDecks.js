@@ -80,11 +80,20 @@ function buildTestDecks() {
       isTest: true,
     },
     {
-      id: "test-deck-5",
-      name: "Test deck 5",
+      id: "tesst-deck-5",
+      name: "Strange Deck",
       heroId: "doctor-strange",
       cardIds: allCards
         .filter((card) => card.heroId === "doctor-strange")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-6",
+      name: "Blackbeard Deck",
+      heroId: "blackbeard",
+      cardIds: allCards
+        .filter((card) => card.heroId === "blackbeard")
         .map((card) => card.id),
       isTest: true,
     },
