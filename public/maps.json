@@ -1520,7 +1520,7 @@
     "id": 33,
     "name": "Thrilla In Manilla",
     "set": "Muhammad Ali vs Bruce Lee",
-    "image": "maps/manilla.jpg",
+    "image": "maps/thrilla_in_manilla.jpg",
     "favoredBy": ["Achilles", "Daredevil"],
     "neutralTo": [
       "Titania",

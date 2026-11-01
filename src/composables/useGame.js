@@ -406,17 +406,15 @@ function summon(player, spaceId) {
 
 function* moveAll(player, steps, through) {
   for (const fighter of fightersOf(player)) {
+    if (game.phase !== "play") break;
     cur[player] = fighter;
-    const options = reach(player, steps, through);
-    if (!options.length) continue;
-    const prompt = askSpace(
+    yield* walk(
       player,
+      player,
+      steps,
       fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
-      options,
+      { through, fighter },
     );
-    prompt.fighter = fighter;
-    const space = yield prompt;
-    if (space) place(player, space);
   }
   cur[player] = "hero";
 }
@@ -602,6 +600,48 @@ const askChoice = (player, title, choices) => ({
   choices,
 });
 
+// Рух по клітинках. Кожен крок - окремий вибір: клітинки, на які можна стати
+// наступним кроком (через зайняті клітинки можна проходити, але не зупинятись;
+// вартість стрибка - кількість пройдених клітинок). Кожен крок викликає place(),
+// тому "Attack of Opportunity" спрацьовує щоразу, коли ворог виходить із зони.
+function stepOptions(player, through = false, left = 1) {
+  const hops = new Map();
+  if (turnFlags.pinned[player]) return hops;
+  const start = spaceOf(player);
+  const foes = through ? [] : occupiedBy(other(player));
+  const busy = occupied();
+  const seen = new Map([[start, 0]]);
+  const queue = [start];
+  while (queue.length) {
+    const current = queue.shift();
+    const depth = seen.get(current);
+    if (depth >= left) continue;
+    for (const next of active.spaceById.get(current).links) {
+      if (foes.includes(next) || seen.has(next)) continue;
+      seen.set(next, depth + 1);
+      if (busy.includes(next)) queue.push(next);
+      else hops.set(next, depth + 1);
+    }
+  }
+  return hops;
+}
+
+// chooser обирає клітинки, player (його поточний боєць) рухається.
+function* walk(chooser, player, steps, title, { through = false, fighter } = {}) {
+  let left = steps;
+  while (left > 0 && game.phase === "play") {
+    const hops = stepOptions(player, through, left);
+    if (!hops.size) break;
+    const prompt = askSpace(chooser, title, [...hops.keys()]);
+    prompt.left = left;
+    if (fighter) prompt.fighter = fighter;
+    const space = yield prompt;
+    if (!space) break;
+    place(player, space);
+    left -= hops.get(space);
+  }
+}
+
 const api = {
   hero,
   log,
@@ -656,6 +696,7 @@ const api = {
   mistsReplace,
   place,
   reach,
+  walk,
   zoneSpaces,
   shared,
   adjacent,
@@ -804,11 +845,7 @@ function* startTurn() {
     }
   }
   if (hero(me).id === "ms-marvel") {
-    const options = reach(me, 1);
-    if (options.length) {
-      const space = yield askSpace(me, "promptStretchy", options);
-      if (space) place(me, space);
-    }
+    yield* walk(me, me, 1, "promptStretchy");
   }
 }
 
@@ -835,17 +872,20 @@ function* maneuver(me) {
 
   let boosted = false;
   for (const fighter of fightersOf(me)) {
+    if (game.phase !== "play") break;
     cur[me] = fighter;
     let steps = hero(me).move;
-    for (;;) {
-      const options = reach(me, steps);
-      if (!options.length) break;
+    let moved = 0;
+    while (moved < steps && game.phase === "play") {
+      const hops = stepOptions(me, false, steps - moved);
+      if (!hops.size) break;
       const prompt = askSpace(
         me,
         fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
-        options,
+        [...hops.keys()],
       );
       prompt.fighter = fighter;
+      prompt.left = steps - moved;
       prompt.boostOptions = !boosted ? [...pl(me).hand] : [];
       prompt.undo = !boosted;
       const answer = yield prompt;
@@ -854,8 +894,9 @@ function* maneuver(me) {
         boosted = true;
         continue;
       }
-      if (answer) place(me, answer);
-      break;
+      if (!answer) break;
+      place(me, answer);
+      moved += hops.get(answer);
     }
   }
   cur[me] = "hero";

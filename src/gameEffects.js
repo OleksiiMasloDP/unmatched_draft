@@ -89,13 +89,7 @@ export const cardEffects = {
         );
         c.g.discardFromHand(c.foe, ids[0]);
       }
-      if (move) {
-        const options = c.g.reach(c.foe, 3);
-        if (options.length) {
-          const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
-          if (space) c.g.place(c.foe, space);
-        }
-      }
+      if (move) yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
     },
   },
 
@@ -133,10 +127,7 @@ export const cardEffects = {
     value: (c, value) => (c.g.adjacent(c.me, c.foe) ? 6 : value),
     *after(c) {
       if (!redRoomOn(c)) return;
-      const options = c.g.reach(c.foe, 5);
-      if (!options.length) return;
-      const space = yield c.g.askSpace(c.foe, "promptRedRoomMove", options);
-      if (space) c.g.place(c.foe, space);
+      yield* c.g.walk(c.foe, c.foe, 5, "promptRedRoomMove");
     },
   },
 
@@ -248,10 +239,7 @@ export const cardEffects = {
     *after(c) {
       const dealt = c.combat.taken[c.foe];
       if (dealt <= 0) return;
-      const options = c.g.reach(c.foe, dealt);
-      if (!options.length) return;
-      const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
-      if (space) c.g.place(c.foe, space);
+      yield* c.g.walk(c.me, c.foe, dealt, "promptMoveFoe");
     },
   },
 
@@ -318,11 +306,7 @@ export const cardEffects = {
 
   "a-warrior-s-way": {
     *after(c) {
-      const options = c.g.reach(c.foe, 3);
-      if (options.length) {
-        const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
-        if (space) c.g.place(c.foe, space);
-      }
+      yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
       const near = c.g.adjacentSpaces(c.me);
       if (near.length) {
         const space = yield c.g.askSpace(c.me, "promptPlaceAdjacent", near);
@@ -373,10 +357,7 @@ export const cardEffects = {
         { value: "foe", label: "gameSkirmishFoe" },
       ]);
       const target = who === "me" ? c.me : c.foe;
-      const options = c.g.reach(target, 2);
-      if (!options.length) return;
-      const space = yield c.g.askSpace(c.me, "promptMoveFoe", options);
-      if (space) c.g.place(target, space);
+      yield* c.g.walk(c.me, target, 2, "promptMoveFoe");
     },
   },
 
@@ -402,11 +383,7 @@ export const cardEffects = {
 
   "lord-kiso-s-final-stand": {
     *scheme(c) {
-      const options = c.g.reach(c.me, 3);
-      if (options.length) {
-        const space = yield c.g.askSpace(c.me, "promptMoveSpace", options);
-        if (space) c.g.place(c.me, space);
-      }
+      yield* c.g.walk(c.me, c.me, 3, "promptMoveSpace");
       const choice = yield c.g.askChoice(c.me, "promptKisoChoice", [
         { value: "heal", label: "gameKisoHeal" },
         { value: "action", label: "gameKisoAction" },
@@ -540,11 +517,7 @@ export const cardEffects = {
 
   "light-the-fuse": {
     *after(c) {
-      const options = c.g.reach(c.me, 2);
-      if (options.length) {
-        const space = yield c.g.askSpace(c.me, "promptMoveSidekick", options);
-        if (space) c.g.place(c.me, space);
-      }
+      yield* c.g.walk(c.me, c.me, 2, "promptMoveSidekick");
       for (const { owner, fighter } of c.g.adjacentFightersOf(c.me)) {
         c.g.damage(owner, 1, fighter);
       }

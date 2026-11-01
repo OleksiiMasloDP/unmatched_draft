@@ -256,7 +256,9 @@
             class="btn btn-sm action-btn game-skip"
             @click="answerPrompt(null)"
           >
-            <ActionIcon name="skip" />{{ t("gameSkip") }}
+            <ActionIcon name="skip" />{{
+              t(spacePrompt.left ? "gameStopMove" : "gameSkip")
+            }}
           </button>
         </div>
       </div>
@@ -1313,7 +1315,8 @@ watch(
 );
 
 function promptTitle(prompt) {
-  const title = t(prompt.title);
+  const base = t(prompt.title);
+  const title = prompt.left ? `${base} (${prompt.left})` : base;
   return prompt.player ? `${playerLabel(prompt.player)}: ${title}` : title;
 }
 
