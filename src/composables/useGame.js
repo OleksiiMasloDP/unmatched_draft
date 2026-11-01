@@ -783,6 +783,10 @@ function* runEffect(player, card, phase, combat) {
 function* mistsReplace(me, combat) {
   const foe = other(me);
   const outer = currentNote;
+  if (!pl(foe).deck.length) {
+    log("logMistsNoDeck", { player: foe });
+    return;
+  }
   const old = combat.cards[foe];
   if (old) {
     pl(foe).discard.push(old.id);
@@ -810,7 +814,11 @@ function* mistsReplace(me, combat) {
     }
     revealed.push(id);
   }
-  pl(foe).deck.push(...shuffle(revealed));
+  const bottom = shuffle(revealed);
+  pl(foe).deck.push(...bottom);
+  for (const id of bottom) {
+    log("logMistsBottom", { player: foe, card: getCard(id).name, cardId: id });
+  }
   combat.cards[foe] = found;
   combat.canceled[foe] = false;
   if (game.combat) {
