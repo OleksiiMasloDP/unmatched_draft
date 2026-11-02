@@ -645,7 +645,13 @@ function stepOptions(player, through = false, left = 1) {
 }
 
 // chooser обирає клітинки, player (його поточний боєць) рухається.
-function* walk(chooser, player, steps, title, { through = false, fighter } = {}) {
+function* walk(
+  chooser,
+  player,
+  steps,
+  title,
+  { through = false, fighter } = {},
+) {
   let left = steps;
   while (left > 0 && game.phase === "play") {
     const hops = stepOptions(player, through, left);
@@ -805,13 +811,6 @@ function* mistsReplace(me, combat) {
     log("logMistsNoDeck", { player: foe });
     return;
   }
-  const old = combat.cards[foe];
-  if (old) {
-    pl(foe).discard.push(old.id);
-    log("logMistsDiscard", { card: old.name, cardId: old.id });
-    fx("discard", foe, { cardId: old.id });
-  }
-  combat.cards[foe] = null;
   const attackerRole = combat.attacker === foe;
   const fighter = combat.fighters[foe];
   const revealed = [];
@@ -832,19 +831,35 @@ function* mistsReplace(me, combat) {
     }
     revealed.push(id);
   }
+  const old = combat.cards[foe];
+  if (found && old) {
+    pl(foe).discard.push(old.id);
+    log("logMistsDiscard", { card: old.name, cardId: old.id });
+    fx("discard", foe, { cardId: old.id });
+  }
   const bottom = shuffle(revealed);
   pl(foe).deck.push(...bottom);
   for (const id of bottom) {
     log("logMistsBottom", { player: foe, card: getCard(id).name, cardId: id });
   }
-  combat.cards[foe] = found;
-  combat.canceled[foe] = false;
-  if (game.combat) {
-    game.combat.cardIds[foe] = found ? found.id : null;
-    game.combat.covers[foe] = found ? found.heroId : null;
-    if (game.combat.shown) game.combat.shown[foe] = found ? found.id : null;
-  }
+  yield {
+    kind: "info",
+    player: null,
+    title: "gameMistsTitle",
+    mists: {
+      owner: foe,
+      rejected: [...revealed],
+      found: found ? found.id : null,
+      kept: !found && old ? old.id : null,
+    },
+  };
   if (found) {
+    combat.cards[foe] = found;
+    combat.canceled[foe] = false;
+    if (game.combat) {
+      game.combat.cardIds[foe] = found.id;
+      game.combat.covers[foe] = found.heroId;
+    }
     log("logMistsPlay", { player: foe, card: found.name, cardId: found.id });
     if (combat.immediateDone[foe]) {
       yield* runEffect(foe, found, "immediate", combat);

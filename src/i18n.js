@@ -362,6 +362,11 @@ export const translations = {
     schemeChoice: "Choice",
     logOpportunity: "{player} leaves Tomoe's zone and takes 1 damage",
     gameNoCard: "No card",
+    gameMistsTitle: "Mists of Munnopor",
+    gameMistsText:
+      "Cards revealed from {player}'s deck that cannot be played go to the bottom:",
+    gameMistsFound: "Replacement card:",
+    gameMistsKept: "No suitable card found, the original card stays.",
     gameValue: "Value",
     gameDamageDealt: "Damage dealt: {n}",
     gameShrinkDiscard: "Opponent discards 1 card",
@@ -871,6 +876,11 @@ export const translations = {
     schemeChoice: "Вибір",
     logOpportunity: "{player} залишає зону Tomoe і отримує 1 шкоди",
     gameNoCard: "Без карти",
+    gameMistsTitle: "Mists of Munnopor",
+    gameMistsText:
+      "Розкриті з колоди {player} карти, які не підійшли, йдуть вниз колоди:",
+    gameMistsFound: "Карта-заміна:",
+    gameMistsKept: "Підходящої карти не знайдено, початкова карта залишається.",
     gameValue: "Значення",
     gameDamageDealt: "Завдано шкоди: {n}",
     gameShrinkDiscard: "Супротивник скидає 1 карту",

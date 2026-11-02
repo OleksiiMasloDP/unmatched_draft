@@ -660,7 +660,11 @@ const heroOwner = (heroId) => {
 
 const heroNote = (heroId) => {
   if (!state.heroes.p1 && !state.heroes.p2) return "";
-  return t(Object.values(state.heroes).includes(heroId) ? "packRolePlays" : "packRoleCards");
+  return t(
+    Object.values(state.heroes).includes(heroId)
+      ? "packRolePlays"
+      : "packRoleCards",
+  );
 };
 
 const playerLabelText = (player) =>

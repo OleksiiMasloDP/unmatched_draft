@@ -356,9 +356,7 @@
             v-else-if="heroOf(opponentOf(player))?.id === 'blackbeard'"
             class="game-sidekick"
           >
-            <span class="game-sidekick-name">
-              🪙 {{ game.treasury }}
-            </span>
+            <span class="game-sidekick-name"> 🪙 {{ game.treasury }} </span>
             <span class="game-sidekick-hp">{{ t("gameTreasury") }}</span>
           </div>
           <div class="game-counters">
@@ -491,9 +489,15 @@
       >
         <div
           class="game-modal-box"
-          :class="{ 'is-versus': blockingPrompt.kind === 'info' }"
+          :class="{
+            'is-versus':
+              blockingPrompt.kind === 'info' && blockingPrompt.combat,
+          }"
         >
-          <h3 v-if="blockingPrompt.kind !== 'info'" class="game-modal-title">
+          <h3
+            v-if="blockingPrompt.kind !== 'info' || blockingPrompt.mists"
+            class="game-modal-title"
+          >
             {{ promptTitle(blockingPrompt) }}
           </h3>
 
@@ -559,6 +563,38 @@
               {{ t(choice.label) }}
             </button>
           </div>
+
+          <template v-else-if="blockingPrompt.mists">
+            <p class="game-hint-empty">
+              {{ replacePlayer("gameMistsText", blockingPrompt.mists.owner) }}
+            </p>
+            <div v-if="mistsRejected.length" class="row g-2">
+              <div
+                v-for="card in mistsRejected"
+                :key="card.id"
+                class="col-4 col-md-3"
+              >
+                <PackCard :card="card" />
+              </div>
+            </div>
+            <p v-if="mistsFound" class="game-hint-empty">
+              {{ t("gameMistsFound") }}
+            </p>
+            <div v-if="mistsFound" class="row g-2 justify-content-center">
+              <div class="col-6 col-md-4">
+                <PackCard :card="mistsFound" />
+              </div>
+            </div>
+            <p v-else class="game-hint-empty">{{ t("gameMistsKept") }}</p>
+            <div class="game-modal-actions">
+              <button
+                class="btn btn-success btn-sm action-btn"
+                @click="answerPrompt()"
+              >
+                {{ t("gameConfirm") }}
+              </button>
+            </div>
+          </template>
 
           <template v-else-if="blockingPrompt.kind === 'info'">
             <div class="vs-grid">
@@ -1344,6 +1380,16 @@ function confirmCards() {
   answerPrompt([...selection.value]);
 }
 
+const mistsRejected = computed(() =>
+  (blockingPrompt.value?.mists?.rejected || []).map(getCard).filter(Boolean),
+);
+
+const mistsFound = computed(() =>
+  blockingPrompt.value?.mists?.found
+    ? getCard(blockingPrompt.value.mists.found)
+    : null,
+);
+
 const revealSides = computed(() => {
   const prompt = blockingPrompt.value;
   if (!prompt || prompt.kind !== "info") return [];
@@ -1441,7 +1487,6 @@ function onSurrender() {
 function onNewGame() {
   resetGame();
 }
-
 </script>
 
 <style scoped>

@@ -171,7 +171,8 @@ function actor() {
 
 // Набір пулу: p1, p2, p1, p2. Вибір героя для гри: спершу p2, потім p1.
 function heroesActor() {
-  if (state.pool.length < POOL_SIZE) return state.pool.length % 2 === 0 ? "p1" : "p2";
+  if (state.pool.length < POOL_SIZE)
+    return state.pool.length % 2 === 0 ? "p1" : "p2";
   return state.heroes.p2 ? "p1" : "p2";
 }
 
