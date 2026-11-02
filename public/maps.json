@@ -1613,7 +1613,7 @@
     "id": 35,
     "name": "Technodrome",
     "set": "Teenage Mutant Ninja Turtles",
-    "image": "maps/technodrome.jpg",
+    "image": "maps/technodrome.webp",
     "favoredBy": [
       "Dracula",
       "The Genie",
@@ -1656,5 +1656,17 @@
       "Yennenga",
       "Geralt of Rivia"
     ]
+  },
+  {
+    "id": 36,
+    "name": "B.P.R.D. HQ",
+    "set": "Hellboy",
+    "image": "maps/b_p_r_d_hq.webp"
+  },
+  {
+    "id": 37,
+    "name": "Pandemonium",
+    "set": "Hellboy",
+    "image": "maps/pandemonium.webp"
   }
 ]
