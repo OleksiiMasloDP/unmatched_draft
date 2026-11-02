@@ -15,3 +15,11 @@ app.component("Header", Header);
 app.use(router);
 
 app.mount("#app");
+
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register(`${import.meta.env.BASE_URL}sw.js`)
+      .catch(() => {});
+  });
+}
