@@ -575,10 +575,10 @@
                   </template>
                 </div>
                 <img
-                  v-if="heroOf(side.player).image"
+                  v-if="side.fighterImage"
                   class="vs-avatar"
-                  :src="heroOf(side.player).image"
-                  :alt="heroOf(side.player).name"
+                  :src="side.fighterImage"
+                  :alt="side.fighterName || heroOf(side.player).name"
                 />
                 <PackCard
                   v-if="side.card"
@@ -1368,6 +1368,10 @@ const revealSides = computed(() => {
         fighter && fighter !== "hero"
           ? (kid?.name ?? heroOf(player).sidekick?.name)
           : null,
+      fighterImage:
+        fighter && fighter !== "hero"
+          ? (heroOf(player).sidekick?.image ?? heroOf(player).image)
+          : heroOf(player).image,
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,

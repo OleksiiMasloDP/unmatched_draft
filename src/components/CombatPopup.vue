@@ -39,10 +39,10 @@
         >
           <div class="combat-who">
             <img
-              v-if="heroOf(side.player).image"
+              v-if="side.fighter.image"
               class="combat-avatar"
-              :src="heroOf(side.player).image"
-              :alt="heroOf(side.player).name"
+              :src="side.fighter.image"
+              :alt="side.fighter.name"
             />
             <div class="combat-who-text">
               <div class="combat-role">
@@ -51,12 +51,12 @@
                 }}
                 · {{ playerLabel(side.player) }}
               </div>
-              <div class="combat-hero">{{ heroOf(side.player).name }}</div>
+              <div class="combat-hero">{{ side.fighter.name }}</div>
               <div class="combat-hp">
                 <span class="combat-heart">❤</span>
-                {{ players[side.player].hp }}
-                <span class="combat-hp-max"
-                  >/ {{ players[side.player].maxHp }}</span
+                {{ side.fighter.hp }}
+                <span v-if="side.fighter.maxHp > 1" class="combat-hp-max"
+                  >/ {{ side.fighter.maxHp }}</span
                 >
               </div>
             </div>
@@ -128,10 +128,35 @@ const heroOf = (player) => getHero(props.players[player].heroId);
 const playerLabel = (player) =>
   t(player === "p1" ? "packPlayer1" : "packPlayer2");
 
-const sides = computed(() => [
-  { role: "attacker", player: props.combat.attacker },
-  { role: "defender", player: props.combat.defender },
-]);
+// Хто саме б'ється: герой або помічник (combat.fighters[player]).
+function fighterOf(player) {
+  const unit = props.players[player];
+  const hero = heroOf(player);
+  const id = props.combat.fighters?.[player];
+  if (!id || id === "hero") {
+    return {
+      name: hero.name,
+      image: hero.image,
+      hp: unit.hp,
+      maxHp: unit.maxHp,
+    };
+  }
+  const kid = unit.sidekicks?.find((k) => k.id === id);
+  const base = hero.sidekick;
+  return {
+    name: kid?.name ?? base?.name ?? hero.name,
+    image: base?.image ?? hero.image,
+    hp: kid ? kid.hp : 0,
+    maxHp: kid?.maxHp ?? base?.hp ?? 0,
+  };
+}
+
+const sides = computed(() =>
+  [
+    { role: "attacker", player: props.combat.attacker },
+    { role: "defender", player: props.combat.defender },
+  ].map((side) => ({ ...side, fighter: fighterOf(side.player) })),
+);
 
 const previewFor = (side) =>
   side.role === "defender" &&
@@ -144,6 +169,7 @@ const previewFor = (side) =>
 function cardFor(side) {
   const id =
     props.combat.revealed[side.player] ||
+    props.combat.shown?.[side.player] ||
     (side.player === props.viewer ? props.combat.cardIds[side.player] : null) ||
     previewFor(side);
   return id ? getCard(id) : null;

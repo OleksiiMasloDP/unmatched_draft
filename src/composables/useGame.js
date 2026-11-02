@@ -842,6 +842,7 @@ function* mistsReplace(me, combat) {
   if (game.combat) {
     game.combat.cardIds[foe] = found ? found.id : null;
     game.combat.covers[foe] = found ? found.heroId : null;
+    if (game.combat.shown) game.combat.shown[foe] = found ? found.id : null;
   }
   if (found) {
     log("logMistsPlay", { player: foe, card: found.name, cardId: found.id });
@@ -1030,6 +1031,8 @@ function* attack(me) {
     cardIds: { [me]: attackCard.id, [foe]: null },
     covers: { [me]: attackCard.heroId, [foe]: null },
     revealed: { p1: null, p2: null, [me]: faceUp ? attackCard.id : null },
+    // Карти, відкриті обом з моменту вибору захисту (видно під час immediate/boost).
+    shown: { p1: null, p2: null },
     announcedValue: hero(foe).id === "spider-man" ? attackCard.value : null,
     boost: { p1: false, p2: false },
   };
@@ -1055,6 +1058,8 @@ function* attack(me) {
   game.combat.defense = defenseCard ? "card" : "none";
   game.combat.cardIds[foe] = defenseCard ? defenseCard.id : null;
   game.combat.covers[foe] = defenseCard ? defenseCard.heroId : null;
+  game.combat.shown[me] = attackCard.id;
+  game.combat.shown[foe] = defenseCard ? defenseCard.id : null;
   game.combat.stage = "immediate";
 
   const combat = {
