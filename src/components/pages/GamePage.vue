@@ -632,6 +632,9 @@
                   <span v-if="side.bonus" class="is-boost">
                     {{ t("gameBonusValue").replace("{n}", side.bonus) }}
                   </span>
+                  <span v-if="side.terrain" class="is-boost">
+                    {{ t("gameTerrainValue").replace("{n}", side.terrain) }}
+                  </span>
                   <strong>{{ side.total }}</strong>
                 </div>
                 <div v-if="side.boostCards.length" class="vs-boost">
@@ -1421,6 +1424,7 @@ const revealSides = computed(() => {
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
+      terrain: combat.attacker === player ? (combat.terrain ?? 0) : 0,
       total: combat.values[player],
     };
   });

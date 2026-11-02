@@ -203,6 +203,11 @@ function zoneCount(player) {
   return active.spaceById.get(spaceOf(player)).zones.length;
 }
 
+function stepsFrom(id) {
+  const space = active.spaceById.get(id);
+  return [...space.links, ...space.secret];
+}
+
 function reach(player, steps, through = false) {
   if (turnFlags.pinned[player]) return [];
   const start = spaceOf(player);
@@ -213,7 +218,7 @@ function reach(player, steps, through = false) {
   while (queue.length) {
     const current = queue.shift();
     if (seen.get(current) >= steps) continue;
-    for (const next of active.spaceById.get(current).links) {
+    for (const next of stepsFrom(current)) {
       if (foes.includes(next) || seen.has(next)) continue;
       seen.set(next, seen.get(current) + 1);
       queue.push(next);
@@ -634,7 +639,7 @@ function stepOptions(player, through = false, left = 1) {
     const current = queue.shift();
     const depth = seen.get(current);
     if (depth >= left) continue;
-    for (const next of active.spaceById.get(current).links) {
+    for (const next of stepsFrom(current)) {
       if (foes.includes(next) || seen.has(next)) continue;
       seen.set(next, depth + 1);
       if (busy.includes(next)) queue.push(next);
@@ -1049,6 +1054,11 @@ function* attack(me) {
     // Карти, відкриті обом з моменту вибору захисту (видно під час immediate/boost).
     shown: { p1: null, p2: null },
     announcedValue: hero(foe).id === "spider-man" ? attackCard.value : null,
+    terrain: active.spaceById
+      .get(fighterSpace(me, mine))
+      .bonusTo.includes(fighterSpace(foe, theirs))
+      ? 1
+      : 0,
     boost: { p1: false, p2: false },
   };
 
@@ -1179,7 +1189,8 @@ function* attack(me) {
     }
     combat.values[player] = total;
   }
-  combat.values[me] += turnFlags.attackBonus[me];
+  const terrain = game.combat.terrain;
+  combat.values[me] += turnFlags.attackBonus[me] + terrain;
 
   const raw = Math.max(0, combat.values[me] - combat.values[foe]);
   let dealt = raw;
@@ -1217,6 +1228,7 @@ function* attack(me) {
       boostCardLists: { p1: [...boostLists.p1], p2: [...boostLists.p2] },
       base: { ...baseValues },
       bonus: turnFlags.attackBonus[me],
+      terrain,
       dealt,
     },
   };

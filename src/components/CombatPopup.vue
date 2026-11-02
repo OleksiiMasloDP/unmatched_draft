@@ -85,6 +85,12 @@
             <span v-if="combat.revealed[side.player]" class="combat-tag">
               {{ t("combatFaceUp") }}
             </span>
+            <span
+              v-if="combat.terrain && combat.attacker === side.player"
+              class="combat-tag is-boost"
+            >
+              {{ t("combatTerrain") }}
+            </span>
             <span v-if="combat.boost[side.player]" class="combat-tag is-boost">
               ⚡ {{ t("combatBoosted") }}
             </span>
