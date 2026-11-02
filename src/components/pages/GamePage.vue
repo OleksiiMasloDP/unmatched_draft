@@ -359,6 +359,24 @@
             <span class="game-sidekick-name"> 🪙 {{ game.treasury }} </span>
             <span class="game-sidekick-hp">{{ t("gameTreasury") }}</span>
           </div>
+          <div
+            v-if="
+              heroOf(player).id === 'black-panther' &&
+              game.players[player].suit &&
+              game.players[player].suit.length
+            "
+            class="game-suit"
+          >
+            <span class="game-suit-title">{{ t("gameSuit") }}</span>
+            <span
+              v-for="id in game.players[player].suit"
+              :key="id"
+              class="game-suit-card"
+              :title="getCard(id).name"
+            >
+              {{ getCard(id).name }} <b>+{{ getCard(id).boost }}</b>
+            </span>
+          </div>
           <div class="game-counters">
             <div class="game-counter" :title="t('gameHand')">
               <span class="game-counter-icon">🖐</span>
@@ -457,6 +475,25 @@
           />
         </div>
       </div>
+
+      <template v-if="suitCards.length">
+        <h2 class="game-subtitle">{{ t("gameSuit") }}</h2>
+        <div class="row g-2 game-hand">
+          <div
+            v-for="card in suitCards"
+            :key="card.id"
+            class="col-4 col-md-3 col-lg-2"
+            :class="{ 'is-dim': handMode && !pickable(card.id) }"
+          >
+            <PackCard
+              :card="card"
+              :clickable="Boolean(handMode) && pickable(card.id)"
+              :selected="selection.includes(card.id)"
+              @select="onHandSelect"
+            />
+          </div>
+        </div>
+      </template>
 
       <div class="game-footer">
         <ReportBugButton section="game" class="game-bug" />
@@ -1118,7 +1155,6 @@ const waitingOpponent = computed(() => {
   return owner !== null && owner !== mySeat.value;
 });
 
-// Мулігана: хто ще не обрав (онлайн - лише я; локально - по черзі p1, p2).
 const mulliganTurn = computed(() => {
   const state = game.mulligan;
   if (game.phase !== "mulligan" || !state || state.reveal) return null;
@@ -1150,6 +1186,13 @@ const handCards = computed(() =>
     : [],
 );
 
+const suitCards = computed(() =>
+  game.players[viewer.value]?.suit &&
+  heroOf(viewer.value).id === "black-panther"
+    ? game.players[viewer.value].suit.map(getCard).filter(Boolean)
+    : [],
+);
+
 const promptCards = computed(() =>
   blockingPrompt.value?.kind === "cards"
     ? blockingPrompt.value.options.map(getCard)
@@ -1158,7 +1201,6 @@ const promptCards = computed(() =>
 
 const recentLog = computed(() => [...game.log].slice(-30).reverse());
 
-// Попап бою видно обом гравцям; поки відкрита модалка розкриття - ховаємо його.
 const showCombat = computed(
   () =>
     Boolean(game.combat) &&
@@ -1166,7 +1208,6 @@ const showCombat = computed(
     game.prompt?.kind !== "space",
 );
 
-// Карта, яку захисник обрав у руці, але ще не підтвердив: показуємо у зоні блоку.
 const blockPreview = computed(() =>
   handPrompt.value &&
   game.combat?.defense === "pending" &&
@@ -1175,7 +1216,6 @@ const blockPreview = computed(() =>
     : null,
 );
 
-// Вікно ефекту карти: показує, яка карта і що сталося; вибір - всередині вікна.
 const EFFECT_MIN_MS = 3000;
 const EFFECT_HIDE_MS = 8000;
 const effectShown = ref(null);
@@ -2335,6 +2375,30 @@ function onNewGame() {
 .game-player-passive p {
   margin: 6px 0 0;
   text-align: left;
+}
+
+.game-suit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.game-suit-title {
+  width: 100%;
+  color: var(--text-dim);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.game-suit-card {
+  padding: 1px 8px;
+  border: 1px solid var(--border-medium);
+  border-radius: 999px;
+  color: var(--text-light);
+  font-weight: 700;
 }
 
 .game-hand .is-dim {

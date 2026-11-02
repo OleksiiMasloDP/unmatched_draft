@@ -97,6 +97,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-7",
+      name: "Black Panther Deck",
+      heroId: "black-panther",
+      cardIds: allCards
+        .filter((card) => card.heroId === "black-panther")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

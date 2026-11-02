@@ -671,7 +671,47 @@ function* walk(
   }
 }
 
+const suitOf = (player) =>
+  hero(player).id === "black-panther" ? pl(player).suit || [] : [];
+
+const boostPool = (player) => [...pl(player).hand, ...suitOf(player)];
+
+function spendBoostCard(player, cardId) {
+  const suit = pl(player).suit || [];
+  const index = suit.indexOf(cardId);
+  if (index !== -1 && !pl(player).hand.includes(cardId)) {
+    suit.splice(index, 1);
+    pl(player).discard.push(cardId);
+    log("logDiscard", { player, card: getCard(cardId).name, cardId });
+    fx("discard", player, { cardId });
+    return getCard(cardId);
+  }
+  return discardFromHand(player, cardId);
+}
+
+function afterBoost(player) {
+  if (hero(player).id === "black-panther") draw(player, 1);
+}
+
+function storeInSuit(player, from, count) {
+  const target = pl(player);
+  if (!target.suit) target.suit = [];
+  for (let i = 0; i < count && pl(from).deck.length; i++) {
+    const id = pl(from).deck.shift();
+    target.suit.push(id);
+    log("logSuitStore", { player, card: getCard(id).name, cardId: id });
+  }
+}
+
+function sameZone(player, fighterA, fighterB) {
+  const a = active.spaceById.get(fighterSpace(player, fighterA)).zones;
+  const b = active.spaceById.get(fighterSpace(player, fighterB)).zones;
+  return a.some((zone) => b.includes(zone));
+}
+
 const api = {
+  storeInSuit,
+  sameZone,
   hero,
   log,
   draw,
@@ -942,11 +982,12 @@ function* maneuver(me) {
       );
       prompt.fighter = fighter;
       prompt.left = left;
-      prompt.boostOptions = !boosted && !started ? [...pl(me).hand] : [];
+      prompt.boostOptions = !boosted && !started ? boostPool(me) : [];
       prompt.undo = !boosted;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
-        boostSteps += discardFromHand(me, answer.boost).boost;
+        boostSteps += spendBoostCard(me, answer.boost).boost;
+        afterBoost(me);
         boosted = true;
         continue;
       }
@@ -1122,20 +1163,22 @@ function* attack(me) {
     if (
       card &&
       !combat.canceled[player] &&
-      effect?.canBoost?.(context(player, card, combat)) &&
-      pl(player).hand.length
+      effect?.canBoost?.(context(player, card, combat))
     ) {
-      const ids = yield askCards(player, "promptBoost", [...pl(player).hand], {
-        min: 0,
-        max: 1,
-        skip: "gameSkipBoost",
-      });
-      if (ids.length) {
-        const boostCard = discardFromHand(player, ids[0]);
+      const times = effect.maxBoosts?.(context(player, card, combat)) ?? 1;
+      for (let i = 0; i < times && boostPool(player).length; i++) {
+        const ids = yield askCards(player, "promptBoost", boostPool(player), {
+          min: 0,
+          max: 1,
+          skip: "gameSkipBoost",
+        });
+        if (!ids.length) break;
+        const boostCard = spendBoostCard(player, ids[0]);
         boosts[player] += boostCard.boost;
         boostCardIds[player] = boostCard.id;
         boostLists[player].push(boostCard.id);
         game.combat.boost[player] = true;
+        afterBoost(player);
       }
     }
     const blind = effect?.blindBoost?.(context(player, card, combat)) || 0;
@@ -1366,6 +1409,7 @@ function startGame(deckA, deckB, first = "p1") {
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],
+      suit: [],
     };
   };
 

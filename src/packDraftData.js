@@ -5,6 +5,7 @@ import {
   tomoeGozenCards,
   doctorStrangeCards,
   blackbeardCards,
+  blackPantherCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -130,6 +131,28 @@ export const packDraftHeroes = [
     },
     cards: blackbeardCards,
   },
+  {
+    id: "black-panther",
+    name: "Black Panther",
+    hp: 14,
+    move: 2,
+    attack: "melee",
+    image: "images/black_panther.webp",
+    passive: {
+      name: "Vibranium Suit",
+      text: {
+        en: "Whenever you BOOST, draw 1 card. Cards stored in your Vibranium Suit can only be used to BOOST.",
+        ua: "Щоразу, коли ви робите БУСТ, беріть 1 карту. Карти, що лежать у вашому Віброніумному костюмі, можна використовувати лише для БУСТУ.",
+      },
+    },
+    sidekick: {
+      name: "Shuri",
+      hp: 6,
+      attack: "range",
+      image: "images/shuri.webp",
+    },
+    cards: blackPantherCards,
+  },
 ];
 
 const CARD_IMAGES = {
@@ -232,6 +255,25 @@ const CARD_IMAGES = {
       parley: "versatile",
       queen_annes_revenge: "versatile",
       show_a_leg: "versatile",
+    },
+  },
+  "black-panther": {
+    dir: "Black Panther",
+    cover: false,
+    files: {
+      analyze_and_adjust: "versatile",
+      ancestral_insight: "attack",
+      anti_metal_claws: "attack",
+      cat_like_reflexes: "versatile",
+      evade: "defense",
+      feint: "versatile",
+      nanotriage_processor: "versatile",
+      regroup: "versatile",
+      stalking_panther: "scheme",
+      tactical_remote_scanning: "scheme",
+      wakanda_forever: "attack",
+      vibranium_shockwave: "attack",
+      microweave_mesh: "defense",
     },
   },
 };

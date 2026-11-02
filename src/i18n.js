@@ -1028,3 +1028,8 @@ export const translations = {
     packRoleCards: "лише карти",
   },
 };
+
+import { blackPantherText } from "./i18nBlackPanther.js";
+
+Object.assign(translations.en, blackPantherText.en);
+Object.assign(translations.ua, blackPantherText.ua);

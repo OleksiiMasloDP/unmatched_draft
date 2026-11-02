@@ -1,0 +1,570 @@
+diff --git a/src/components/pages/GamePage.vue b/src/components/pages/GamePage.vue
+index d2cac41..6063206 100644
+--- a/src/components/pages/GamePage.vue
++++ b/src/components/pages/GamePage.vue
+@@ -361,6 +361,24 @@
+             </span>
+             <span class="game-sidekick-hp">{{ t("gameTreasury") }}</span>
+           </div>
++          <div
++            v-if="
++              heroOf(player).id === 'black-panther' &&
++              game.players[player].suit &&
++              game.players[player].suit.length
++            "
++            class="game-suit"
++          >
++            <span class="game-suit-title">{{ t("gameSuit") }}</span>
++            <span
++              v-for="id in game.players[player].suit"
++              :key="id"
++              class="game-suit-card"
++              :title="getCard(id).name"
++            >
++              {{ getCard(id).name }} <b>+{{ getCard(id).boost }}</b>
++            </span>
++          </div>
+           <div class="game-counters">
+             <div class="game-counter" :title="t('gameHand')">
+               <span class="game-counter-icon">🖐</span>
+@@ -460,6 +478,25 @@
+         </div>
+       </div>
+ 
++      <template v-if="suitCards.length">
++        <h2 class="game-subtitle">{{ t("gameSuit") }}</h2>
++        <div class="row g-2 game-hand">
++          <div
++            v-for="card in suitCards"
++            :key="card.id"
++            class="col-4 col-md-3 col-lg-2"
++            :class="{ 'is-dim': handMode && !pickable(card.id) }"
++          >
++            <PackCard
++              :card="card"
++              :clickable="Boolean(handMode) && pickable(card.id)"
++              :selected="selection.includes(card.id)"
++              @select="onHandSelect"
++            />
++          </div>
++        </div>
++      </template>
++
+       <div class="game-footer">
+         <ReportBugButton section="game" class="game-bug" />
+         <button
+@@ -1111,6 +1148,12 @@ const handCards = computed(() =>
+     : [],
+ );
+ 
++const suitCards = computed(() =>
++  game.players[viewer.value]?.suit && heroOf(viewer.value).id === "black-panther"
++    ? game.players[viewer.value].suit.map(getCard).filter(Boolean)
++    : [],
++);
++
+ const promptCards = computed(() =>
+   blockingPrompt.value?.kind === "cards"
+     ? blockingPrompt.value.options.map(getCard)
+@@ -2284,6 +2327,30 @@ function onNewGame() {
+   text-align: left;
+ }
+ 
++.game-suit {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 4px;
++  margin-top: 6px;
++  font-size: 11px;
++}
++
++.game-suit-title {
++  width: 100%;
++  color: var(--text-dim);
++  font-weight: 800;
++  text-transform: uppercase;
++  letter-spacing: 0.5px;
++}
++
++.game-suit-card {
++  padding: 1px 8px;
++  border: 1px solid var(--border-medium);
++  border-radius: 999px;
++  color: var(--text-light);
++  font-weight: 700;
++}
++
+ .game-hand .is-dim {
+   opacity: 0.4;
+ }
+diff --git a/src/composables/useGame.js b/src/composables/useGame.js
+index a6f4053..01e36a2 100644
+--- a/src/composables/useGame.js
++++ b/src/composables/useGame.js
+@@ -668,7 +668,50 @@ function* walk(chooser, player, steps, title, { through = false, fighter } = {})
+   }
+ }
+ 
++// ----- Black Panther: Vibranium Suit -----
++// Карти в костюмі лежать відкрито і годяться лише для БУСТУ.
++const suitOf = (player) =>
++  hero(player).id === "black-panther" ? pl(player).suit || [] : [];
++
++const boostPool = (player) => [...pl(player).hand, ...suitOf(player)];
++
++function spendBoostCard(player, cardId) {
++  const suit = pl(player).suit || [];
++  const index = suit.indexOf(cardId);
++  if (index !== -1 && !pl(player).hand.includes(cardId)) {
++    suit.splice(index, 1);
++    pl(player).discard.push(cardId);
++    log("logDiscard", { player, card: getCard(cardId).name, cardId });
++    fx("discard", player, { cardId });
++    return getCard(cardId);
++  }
++  return discardFromHand(player, cardId);
++}
++
++// Особлива здатність Black Panther: щоразу, коли ви робите БУСТ, беріть 1 карту.
++function afterBoost(player) {
++  if (hero(player).id === "black-panther") draw(player, 1);
++}
++
++function storeInSuit(player, from, count) {
++  const target = pl(player);
++  if (!target.suit) target.suit = [];
++  for (let i = 0; i < count && pl(from).deck.length; i++) {
++    const id = pl(from).deck.shift();
++    target.suit.push(id);
++    log("logSuitStore", { player, card: getCard(id).name, cardId: id });
++  }
++}
++
++function sameZone(player, fighterA, fighterB) {
++  const a = active.spaceById.get(fighterSpace(player, fighterA)).zones;
++  const b = active.spaceById.get(fighterSpace(player, fighterB)).zones;
++  return a.some((zone) => b.includes(zone));
++}
++
+ const api = {
++  storeInSuit,
++  sameZone,
+   hero,
+   log,
+   draw,
+@@ -929,11 +972,12 @@ function* maneuver(me) {
+       );
+       prompt.fighter = fighter;
+       prompt.left = left;
+-      prompt.boostOptions = !boosted && !started ? [...pl(me).hand] : [];
++      prompt.boostOptions = !boosted && !started ? boostPool(me) : [];
+       prompt.undo = !boosted;
+       const answer = yield prompt;
+       if (answer && typeof answer === "object") {
+-        boostSteps += discardFromHand(me, answer.boost).boost;
++        boostSteps += spendBoostCard(me, answer.boost).boost;
++        afterBoost(me);
+         boosted = true;
+         continue;
+       }
+@@ -1100,20 +1144,22 @@ function* attack(me) {
+     if (
+       card &&
+       !combat.canceled[player] &&
+-      effect?.canBoost?.(context(player, card, combat)) &&
+-      pl(player).hand.length
++      effect?.canBoost?.(context(player, card, combat))
+     ) {
+-      const ids = yield askCards(player, "promptBoost", [...pl(player).hand], {
+-        min: 0,
+-        max: 1,
+-        skip: "gameSkipBoost",
+-      });
+-      if (ids.length) {
+-        const boostCard = discardFromHand(player, ids[0]);
++      const times = effect.maxBoosts?.(context(player, card, combat)) ?? 1;
++      for (let i = 0; i < times && boostPool(player).length; i++) {
++        const ids = yield askCards(player, "promptBoost", boostPool(player), {
++          min: 0,
++          max: 1,
++          skip: "gameSkipBoost",
++        });
++        if (!ids.length) break;
++        const boostCard = spendBoostCard(player, ids[0]);
+         boosts[player] += boostCard.boost;
+         boostCardIds[player] = boostCard.id;
+         boostLists[player].push(boostCard.id);
+         game.combat.boost[player] = true;
++        afterBoost(player);
+       }
+     }
+     const blind = effect?.blindBoost?.(context(player, card, combat)) || 0;
+@@ -1342,6 +1388,7 @@ function startGame(deckA, deckB, first = "p1") {
+       deck: shuffled.slice(START_HAND),
+       hand: shuffled.slice(0, START_HAND),
+       discard: [],
++      suit: [],
+     };
+   };
+ 
+diff --git a/src/gameDecks.js b/src/gameDecks.js
+index 800b8fb..cad9f61 100644
+--- a/src/gameDecks.js
++++ b/src/gameDecks.js
+@@ -97,6 +97,15 @@ function buildTestDecks() {
+         .map((card) => card.id),
+       isTest: true,
+     },
++    {
++      id: "test-deck-7",
++      name: "Black Panther Deck",
++      heroId: "black-panther",
++      cardIds: allCards
++        .filter((card) => card.heroId === "black-panther")
++        .map((card) => card.id),
++      isTest: true,
++    },
+   ];
+ }
+ 
+diff --git a/src/gameEffects.js b/src/gameEffects.js
+index 0c5770e..2fc2aa7 100644
+--- a/src/gameEffects.js
++++ b/src/gameEffects.js
+@@ -24,6 +24,91 @@ function* placeInZone(c) {
+ }
+ 
+ export const cardEffects = {
++  "analyze-and-adjust": {
++    *after(c) {
++      c.g.storeInSuit(c.me, c.foe, 1);
++    },
++  },
++
++  "ancestral-insight": {
++    *after(c) {
++      if (c.combat.won[c.me]) c.g.storeInSuit(c.me, c.foe, 1);
++    },
++  },
++
++  "anti-metal-claws": {
++    value: (c, value) => value + (c.combat.cards[c.foe]?.boost || 0),
++    canBoost: () => true,
++  },
++
++  "cat-like-reflexes": {
++    *after(c) {
++      if (!c.combat.won[c.me]) return;
++      const choice = yield c.g.askChoice(c.me, "promptMoveWho", [
++        { value: "mine", label: "gameMoveMine" },
++        { value: "foe", label: "gameMoveFoe" },
++      ]);
++      if (choice === "foe") {
++        yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
++        return;
++      }
++      const fighter = c.g.fighterOf(c.me);
++      yield* c.g.walk(
++        c.me,
++        c.me,
++        3,
++        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
++        { fighter },
++      );
++    },
++  },
++
++  evade: {
++    *after(c) {
++      c.g.draw(c.me, 1);
++    },
++  },
++
++  "microweave-mesh": {},
++
++  "nanotriage-processor": {
++    *after(c) {
++      const shuri = c.g.fighterOf(c.me);
++      c.g.heal(c.me, 1, shuri);
++      if (shuri !== "hero" && c.g.sameZone(c.me, "hero", shuri)) {
++        c.g.heal(c.me, 1, "hero");
++      }
++    },
++  },
++
++  regroup: {
++    *after(c) {
++      c.g.draw(c.me, c.combat.won[c.me] ? 2 : 1);
++    },
++  },
++
++  "stalking-panther": {
++    *scheme(c) {
++      yield* c.g.moveAll(c.me, 3, true);
++      c.g.gainAction(1);
++    },
++  },
++
++  "tactical-remote-scanning": {
++    *scheme(c) {
++      c.g.storeInSuit(c.me, c.foe, 2);
++    },
++  },
++
++  "vibranium-shockwave": {
++    canBoost: () => true,
++  },
++
++  "wakanda-forever": {
++    canBoost: () => true,
++    maxBoosts: () => 2,
++  },
++
+   "big-wind-up": {
+     canBoost: noSharedZones,
+   },
+diff --git a/src/i18n.js b/src/i18n.js
+index 53b40cc..981264a 100644
+--- a/src/i18n.js
++++ b/src/i18n.js
+@@ -1004,3 +1004,8 @@ export const translations = {
+     packPlayDeck: "Грати",
+   },
+ };
++
++import { blackPantherText } from "./i18nBlackPanther.js";
++
++Object.assign(translations.en, blackPantherText.en);
++Object.assign(translations.ua, blackPantherText.ua);
+diff --git a/src/i18nBlackPanther.js b/src/i18nBlackPanther.js
+new file mode 100644
+index 0000000..966d7b9
+--- /dev/null
++++ b/src/i18nBlackPanther.js
+@@ -0,0 +1,17 @@
++// Тексти для Black Panther (Vibranium Suit) - підключаються в кінці i18n.js.
++export const blackPantherText = {
++  en: {
++    gameSuit: "Vibranium Suit",
++    logSuitStore: "{player} stores {card} in the Vibranium Suit",
++    promptMoveWho: "Choose which fighter to move",
++    gameMoveMine: "Your fighter",
++    gameMoveFoe: "Opposing fighter",
++  },
++  ua: {
++    gameSuit: "Віброніумний костюм",
++    logSuitStore: "{player} кладе {card} у Віброніумний костюм",
++    promptMoveWho: "Оберіть, якого бійця перемістити",
++    gameMoveMine: "Ваш боєць",
++    gameMoveFoe: "Ворожий боєць",
++  },
++};
+diff --git a/src/packDraftCards.js b/src/packDraftCards.js
+index f58c16a..b283667 100644
+--- a/src/packDraftCards.js
++++ b/src/packDraftCards.js
+@@ -617,3 +617,137 @@ export const blackbeardCards = [
+     "hero",
+   ],
+ ];
++
++// kind: "hero" - Black Panther, "sidekick" - Shuri, "any" - будь-який боєць.
++export const blackPantherCards = [
++  [
++    3,
++    "Analyze and Adjust",
++    3,
++    3,
++    "After combat: Reveal the top card of your opponent's deck and store it in your Vibranium Suit.",
++    "Після бою: розкрийте верхню карту колоди вашого супротивника та покладіть її у ваш Віброніумний костюм.",
++    "any",
++    "versatile",
++  ],
++  [
++    3,
++    "Ancestral Insight",
++    4,
++    1,
++    "After combat: If you won the combat, reveal the top card of your opponent's deck and store it in your Vibranium Suit.",
++    "Після бою: якщо ви виграли бій, розкрийте верхню карту колоди вашого супротивника та покладіть її у ваш Віброніумний костюм.",
++    "hero",
++    "attack",
++  ],
++  [
++    2,
++    "Anti-Metal Claws",
++    1,
++    2,
++    "During combat: Add the BOOST value of the opposing fighter's card to this card's value. Then, You may BOOST this card.",
++    "Під час бою: додайте значення БУСТУ карти ворожого бійця до значення цієї карти. Потім ви можете зробити БУСТ цієї карти.",
++    "hero",
++    "attack",
++  ],
++  [
++    2,
++    "Cat-Like Reflexes",
++    3,
++    2,
++    "After combat: If you won the combat, move one of the fighters in the combat up to 3 spaces.",
++    "Після бою: якщо ви виграли бій, перемістіть одного з бійців, що брали участь у бою, на відстань до 3 клітинок.",
++    "any",
++    "versatile",
++  ],
++  [
++    2,
++    "Evade",
++    3,
++    2,
++    "After combat: Draw 1 card.",
++    "Після бою: візьміть 1 карту.",
++    "any",
++    "defense",
++  ],
++  [
++    2,
++    "Feint",
++    2,
++    1,
++    "Immediately: Cancel all effects on your opponent's card.",
++    "Одразу: скасуйте всі ефекти на карті вашого супротивника.",
++    "any",
++    "versatile",
++  ],
++  [
++    2,
++    "Nanotriage Processor",
++    2,
++    2,
++    "After combat: Shuri recovers 1 health. If Black Panther is in the same zone as Shuri, he also recovers 1 health.",
++    "Після бою: Shuri відновлює 1 здоров'я. Якщо Black Panther перебуває в одній зоні з Shuri, він також відновлює 1 здоров'я.",
++    "sidekick",
++    "versatile",
++  ],
++  [
++    2,
++    "Regroup",
++    1,
++    2,
++    "After combat: Draw 1 card. If you won the combat, draw 2 cards instead.",
++    "Після бою: візьміть 1 карту. Якщо ви виграли бій, натомість візьміть 2 карти.",
++    "any",
++    "versatile",
++  ],
++  [
++    3,
++    "Stalking Panther",
++    null,
++    2,
++    "Move each of your fighters up to 3 spaces. They may move through opposing fighters. Gain 1 action.",
++    "Перемістіть кожного вашого бійця на відстань до 3 клітинок. Вони можуть проходити крізь ворожих бійців. Отримайте 1 дію.",
++    "any",
++    "scheme",
++  ],
++  [
++    2,
++    "Tactical Remote Scanning",
++    null,
++    3,
++    "Choose an opponent. Reveal the top 2 cards of their deck and store them in your Vibranium Suit.",
++    "Оберіть супротивника. Розкрийте 2 верхні карти його колоди та покладіть їх у ваш Віброніумний костюм.",
++    "sidekick",
++    "scheme",
++  ],
++  [
++    3,
++    "Wakanda Forever!",
++    3,
++    3,
++    "During combat: You may BOOST this card up to two times. (Draw a card for Black Panther's special ability each time you BOOST.)",
++    "Під час бою: ви можете зробити БУСТ цієї карти до двох разів. (Беріть карту за особливу здатність Black Panther щоразу, коли робите БУСТ.)",
++    "hero",
++    "attack",
++  ],
++  [
++    2,
++    "Vibranium Shockwave",
++    2,
++    2,
++    "During combat: You may BOOST this card.",
++    "Під час бою: ви можете зробити БУСТ цієї карти.",
++    "hero",
++    "attack",
++  ],
++  [
++    2,
++    "Microweave Mesh",
++    2,
++    2,
++    "",
++    "",
++    "hero",
++    "defense",
++  ],
++];
+diff --git a/src/packDraftData.js b/src/packDraftData.js
+index d91ddaa..a6c4ac8 100644
+--- a/src/packDraftData.js
++++ b/src/packDraftData.js
+@@ -5,6 +5,7 @@ import {
+   tomoeGozenCards,
+   doctorStrangeCards,
+   blackbeardCards,
++  blackPantherCards,
+ } from "./packDraftCards.js";
+ 
+ export const PACK_DRAFT_CONFIG = {
+@@ -130,6 +131,28 @@ export const packDraftHeroes = [
+     },
+     cards: blackbeardCards,
+   },
++  {
++    id: "black-panther",
++    name: "Black Panther",
++    hp: 14,
++    move: 2,
++    attack: "melee",
++    image: "images/black_panther.webp",
++    passive: {
++      name: "Vibranium Suit",
++      text: {
++        en: "Whenever you BOOST, draw 1 card. Cards stored in your Vibranium Suit can only be used to BOOST.",
++        ua: "Щоразу, коли ви робите БУСТ, беріть 1 карту. Карти, що лежать у вашому Віброніумному костюмі, можна використовувати лише для БУСТУ.",
++      },
++    },
++    sidekick: {
++      name: "Shuri",
++      hp: 6,
++      attack: "range",
++      image: "images/shuri.webp",
++    },
++    cards: blackPantherCards,
++  },
+ ];
+ 
+ const CARD_IMAGES = {
+@@ -234,6 +257,25 @@ const CARD_IMAGES = {
+       show_a_leg: "versatile",
+     },
+   },
++  "black-panther": {
++    dir: "Black Panther",
++    cover: false,
++    files: {
++      analyze_and_adjust: "versatile",
++      ancestral_insight: "attack",
++      anti_metal_claws: "attack",
++      cat_like_reflexes: "versatile",
++      evade: "defense",
++      feint: "versatile",
++      nanotriage_processor: "versatile",
++      regroup: "versatile",
++      stalking_panther: "scheme",
++      tactical_remote_scanning: "scheme",
++      wakanda_forever: "attack",
++      vibranium_shockwave: "attack",
++      microweave_mesh: "defense",
++    },
++  },
+ };
+ 
+ const CARD_IMAGE_ALIASES = {

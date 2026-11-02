@@ -24,6 +24,91 @@ function* placeInZone(c) {
 }
 
 export const cardEffects = {
+  "analyze-and-adjust": {
+    *after(c) {
+      c.g.storeInSuit(c.me, c.foe, 1);
+    },
+  },
+
+  "ancestral-insight": {
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.storeInSuit(c.me, c.foe, 1);
+    },
+  },
+
+  "anti-metal-claws": {
+    value: (c, value) => value + (c.combat.cards[c.foe]?.boost || 0),
+    canBoost: () => true,
+  },
+
+  "cat-like-reflexes": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const choice = yield c.g.askChoice(c.me, "promptMoveWho", [
+        { value: "mine", label: "gameMoveMine" },
+        { value: "foe", label: "gameMoveFoe" },
+      ]);
+      if (choice === "foe") {
+        yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
+        return;
+      }
+      const fighter = c.g.fighterOf(c.me);
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        3,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { fighter },
+      );
+    },
+  },
+
+  evade: {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "microweave-mesh": {},
+
+  "nanotriage-processor": {
+    *after(c) {
+      const shuri = c.g.fighterOf(c.me);
+      c.g.heal(c.me, 1, shuri);
+      if (shuri !== "hero" && c.g.sameZone(c.me, "hero", shuri)) {
+        c.g.heal(c.me, 1, "hero");
+      }
+    },
+  },
+
+  regroup: {
+    *after(c) {
+      c.g.draw(c.me, c.combat.won[c.me] ? 2 : 1);
+    },
+  },
+
+  "stalking-panther": {
+    *scheme(c) {
+      yield* c.g.moveAll(c.me, 3, true);
+      c.g.gainAction(1);
+    },
+  },
+
+  "tactical-remote-scanning": {
+    *scheme(c) {
+      c.g.storeInSuit(c.me, c.foe, 2);
+    },
+  },
+
+  "vibranium-shockwave": {
+    canBoost: () => true,
+  },
+
+  "wakanda-forever": {
+    canBoost: () => true,
+    maxBoosts: () => 2,
+  },
+
   "big-wind-up": {
     canBoost: noSharedZones,
   },
