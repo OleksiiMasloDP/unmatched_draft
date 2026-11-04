@@ -89,7 +89,9 @@ export const cardEffects = {
     },
   },
 
-  "microweave-mesh": {},
+  "microweave-mesh": {
+    canBoost: () => true,
+  },
 
   "nanotriage-processor": {
     *after(c) {

@@ -739,7 +739,16 @@ export const blackPantherCards = [
     "hero",
     "attack",
   ],
-  [2, "Microweave Mesh", 2, 2, "", "", "hero", "defense"],
+  [
+    2,
+    "Microweave Mesh",
+    2,
+    2,
+    "During combat: You may BOOST this card.",
+    "Під час бою: ви можете зробити БУСТ цієї карти.",
+    "hero",
+    "defense",
+  ],
 ];
 
 export const houdiniCards = [
