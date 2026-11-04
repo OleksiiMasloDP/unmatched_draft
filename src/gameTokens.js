@@ -98,6 +98,39 @@ export const TOKENS = {
     kind: "boost",
     value: 1,
   },
+  "helium-balloons": {
+    map: "navy-pier",
+    image: "images/ms_marvel.webp",
+    kind: "scheme",
+  },
+  "xl-slushie": {
+    map: "navy-pier",
+    image: "images/spiderman.webp",
+    kind: "scheme",
+  },
+  zazoom: {
+    map: "navy-pier",
+    image: "images/tomoe.webp",
+    kind: "scheme",
+  },
+  "parking-meter": {
+    map: "navy-pier",
+    image: "images/winter_soldier.webp",
+    kind: "boost",
+    value: 2,
+  },
+  "snow-globe": {
+    map: "navy-pier",
+    image: "images/ms_marvel.webp",
+    kind: "boost",
+    value: 1,
+  },
+  "garbage-can-lid": {
+    map: "navy-pier",
+    image: "images/spiderman.webp",
+    kind: "boost",
+    value: 1,
+  },
 };
 
 export const tokenIds = (kind, mapId) =>

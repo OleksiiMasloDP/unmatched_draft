@@ -1308,6 +1308,41 @@ function* useSchemeToken(me, fighter) {
       log("logNoTarget");
     }
     removeToken(token);
+  } else if (token.id === "helium-balloons") {
+    removeToken(token);
+    cur[me] = fighter;
+    yield* walk(
+      me,
+      me,
+      2,
+      fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+      { fighter },
+    );
+    cur[me] = "hero";
+    gainAction(1);
+  } else if (token.id === "xl-slushie") {
+    heal(me, 3, fighter);
+    removeToken(token);
+  } else if (token.id === "zazoom") {
+    const who = yield askChoice(me, "promptZazoomDeck", [
+      { value: me, label: "gameZazoomOwn" },
+      { value: foe, label: "gameZazoomFoe" },
+    ]);
+    const target = pl(who);
+    const rest = target.deck.slice(0, 3);
+    const order = [];
+    while (rest.length > 1) {
+      const ids = yield askCards(me, "promptZazoom", [...rest], {
+        min: 1,
+        max: 1,
+      });
+      const id = ids[0] || rest[0];
+      rest.splice(rest.indexOf(id), 1);
+      order.push(id);
+    }
+    order.push(...rest);
+    target.deck = [...order, ...target.deck.slice(order.length)];
+    removeToken(token);
   } else if (token.id === "brazier") {
     const schemes = pl(me).deck.filter((id) => isScheme(getCard(id)));
     if (!schemes.length) {
