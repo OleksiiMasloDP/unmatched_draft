@@ -1860,7 +1860,7 @@ function placeSidekicks() {
   }
 }
 
-function startGame(deckA, deckB, first = "p1") {
+function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   game.notice = null;
   if (deckA.heroId === deckB.heroId) return;
   const setup = (deck, player) => {
@@ -1922,7 +1922,7 @@ function startGame(deckA, deckB, first = "p1") {
   game.startPick = null;
   game.phase = "mulligan";
   if (game.tokens.length) {
-    game.startPick = { order: [other(first), first], index: 0, taken: [] };
+    game.startPick = { order: [chooser], index: 0, taken: [] };
     game.phase = "startpick";
   }
   syncOut();
@@ -1931,7 +1931,7 @@ function startGame(deckA, deckB, first = "p1") {
 function startOptions() {
   const pick = game.startPick;
   if (!pick) return [];
-  return Object.values(active.map.starts).filter(
+  return [active.map.starts.p1, active.map.starts.p2].filter(
     (id) => !pick.taken.includes(id),
   );
 }
@@ -1941,8 +1941,10 @@ function applyStartPick(player, spaceId) {
   if (game.phase !== "startpick" || !pick) return;
   if (pick.order[pick.index] !== player) return;
   if (!startOptions().includes(spaceId)) return;
+  const rest = startOptions().find((id) => id !== spaceId);
   pl(player).space = spaceId;
-  pick.taken.push(spaceId);
+  pl(other(player)).space = rest;
+  pick.taken.push(spaceId, rest);
   pick.index += 1;
   if (pick.index >= pick.order.length) {
     placeSidekicks();
@@ -2269,7 +2271,12 @@ function applyOrder(player, goFirst) {
   if (game.phase !== "setup" || toss?.stage !== "order") return;
   if (player !== other(toss.winner) || typeof goFirst !== "boolean") return;
   if (!lobbyDecks.p1 || !lobbyDecks.p2) return;
-  startGame(lobbyDecks.p1, lobbyDecks.p2, goFirst ? player : toss.winner);
+  startGame(
+    lobbyDecks.p1,
+    lobbyDecks.p2,
+    goFirst ? player : toss.winner,
+    player,
+  );
 }
 
 function setMap(id) {

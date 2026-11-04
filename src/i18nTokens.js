@@ -17,7 +17,7 @@ export const tokensText = {
     "token_reinforced-gloves": "Reinforced Gloves",
     gameStartPickBanner: "Choose start spaces",
     gameStartPickYou:
-      "Choose your starting space. The map tokens are already placed",
+      "You lost the toss: choose start position 1 or 2. The opponent takes the other",
     gameStartPickWait: "{player} is choosing a starting space",
     "tokenDesc_rocket-pack": "Place your fighter in any space.",
     "tokenDesc_laser-turret": "Deal 2 damage to a fighter in your zone.",
@@ -93,7 +93,8 @@ export const tokensText = {
     "token_shield-blaster": "SHIELD-Issued Blaster",
     "token_reinforced-gloves": "Reinforced Gloves",
     gameStartPickBanner: "Вибір стартових клітинок",
-    gameStartPickYou: "Оберіть стартову клітинку. Токени мапи вже розставлені",
+    gameStartPickYou:
+      "Ви програли жереб: оберіть стартову позицію 1 або 2. Суперник займе іншу",
     gameStartPickWait: "{player} обирає стартову клітинку",
     "tokenDesc_rocket-pack": "Розмістіть свого бійця на будь-якій клітинці.",
     "tokenDesc_laser-turret": "Завдайте 2 шкоди бійцю у вашій зоні.",
