@@ -106,6 +106,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-8",
+      name: "Houdini Deck",
+      heroId: "harry-houdini",
+      cardIds: allCards
+        .filter((card) => card.heroId === "harry-houdini")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

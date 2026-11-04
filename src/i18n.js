@@ -1030,9 +1030,12 @@ export const translations = {
 };
 
 import { blackPantherText } from "./i18nBlackPanther.js";
-
 Object.assign(translations.en, blackPantherText.en);
 Object.assign(translations.ua, blackPantherText.ua);
+
+import { houdiniText } from "./i18nHoudini.js";
+Object.assign(translations.en, houdiniText.en);
+Object.assign(translations.ua, houdiniText.ua);
 
 import { tokensText } from "./i18nTokens.js";
 

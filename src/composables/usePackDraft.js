@@ -549,7 +549,7 @@ export function usePackDraft() {
   function isDeadCard(card, player) {
     if (card.kind !== "sidekick") return false;
     const sidekick = playerHeroes.value[player]?.sidekick;
-    return !sidekick || sidekick.name !== card.sidekick;
+    return !sidekick;
   }
 
   return {

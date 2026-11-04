@@ -132,6 +132,7 @@ const head = computed(() => {
     scheme: "effectHeadScheme",
     immediate: "effectHeadImmediate",
     after: "effectHeadAfter",
+    boosted: "effectHeadBoosted",
   };
   return t(keys[props.entry.kind] || "effectHeadAfter").replace(
     "{player}",

@@ -1,6 +1,26 @@
 const noSharedZones = (c) => !c.g.shared(c.me, c.foe);
 const redRoomOn = (c) => c.g.redRoomOn(c.me);
 
+const SECRETS_KEY = "a-magician-never-reveals-his-secrets";
+
+// Ефект дозволяє c.me переглянути руку c.foe. Якщо в суперника є карта
+// A Magician Never Reveals His Secrets, він може розкрити її й скасувати ефект.
+// Повертає true, якщо ефект діє далі.
+function* lookAtFoeHand(c) {
+  const secret = c.g
+    .handOf(c.foe)
+    .find((id) => c.g.cardKey(id) === SECRETS_KEY);
+  if (!secret) return true;
+  const reveal = yield c.g.askConfirm(c.foe, "promptSecretsReveal");
+  if (!reveal) return true;
+  c.g.log("logSecretsCancel", {
+    player: c.foe,
+    card: "A Magician Never Reveals His Secrets",
+    cardId: secret,
+  });
+  return false;
+}
+
 function cancelOpponentCard(c) {
   const target = c.foe;
   const targetCard = c.combat.cards[target];
@@ -409,7 +429,11 @@ export const cardEffects = {
   "confront-any-demon-or-god": {
     *after(c) {
       c.g.draw(c.me, 1);
-      if (c.combat.won[c.foe] && c.g.handSize(c.foe)) {
+      if (
+        c.combat.won[c.foe] &&
+        c.g.handSize(c.foe) &&
+        (yield* lookAtFoeHand(c))
+      ) {
         const ids = yield c.g.askCards(
           c.me,
           "promptConfrontPick",
@@ -643,6 +667,7 @@ export const cardEffects = {
     *immediate(c) {
       const paid = yield* c.g.ransom(c.me, 1, c.combat);
       if (paid || !c.g.handSize(c.foe)) return;
+      if (!(yield* lookAtFoeHand(c))) return;
       const ids = yield c.g.askCards(
         c.me,
         "promptChooseFoeDiscard",
@@ -693,6 +718,155 @@ export const cardEffects = {
         }
       }
       if (!(yield* c.g.ransom(c.me, 1, null))) c.g.gainAction(1);
+    },
+  },
+
+  // ---------------------------------------------------------------- Houdini
+  "vanishing-act": {
+    *after(c) {
+      const choice = yield c.g.askChoice(c.me, "promptMoveWho", [
+        { value: "mine", label: "gameMoveMine" },
+        { value: "foe", label: "gameMoveFoe" },
+      ]);
+      if (choice === "foe") {
+        yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe", { through: true });
+        return;
+      }
+      const fighter = c.g.fighterOf(c.me);
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        3,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { through: true, fighter },
+      );
+    },
+  },
+
+  "the-big-reveal": {
+    canBoost: () => true,
+    maxBoosts: () => 2,
+    *after(c) {
+      const used = c.combat.boostLists[c.me].filter((id) =>
+        c.g.discardOf(c.me).includes(id),
+      );
+      if (!used.length) return;
+      const ids = yield c.g.askCards(c.me, "promptReturnBoosted", used, {
+        min: 1,
+        max: 1,
+      });
+      if (ids.length) c.g.returnFromDiscard(c.me, ids[0]);
+    },
+  },
+
+  "smoke-and-mirrors": {
+    *immediate(c) {
+      const ok = yield c.g.askConfirm(c.me, "promptSmokeSwap");
+      if (ok) c.g.swapWithSidekick(c.me, c.combat);
+    },
+  },
+
+  "sleight-of-hand": {
+    *boosted(c) {
+      c.g.draw(c.me, 1);
+    },
+    *immediate(c) {
+      yield* c.g.swapPlayedCard(c.me, c.combat);
+    },
+  },
+
+  "set-the-stage": {
+    *scheme(c) {
+      c.g.draw(c.me, 3);
+      if (!c.g.handSize(c.me)) return;
+      const ids = yield c.g.askCards(
+        c.me,
+        "promptPutOnTop",
+        c.g.handOf(c.me),
+        { min: 1, max: 1 },
+      );
+      if (ids.length) c.g.putOnDeckTop(c.me, ids[0]);
+    },
+    *boosted(c) {
+      if (!c.g.handSize(c.foe)) return;
+      if (!(yield* lookAtFoeHand(c))) return;
+      const ids = yield c.g.askCards(
+        c.me,
+        "promptChooseFoeDiscard",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      if (ids.length) c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  misdirection: {
+    *boosted(c) {
+      yield* c.g.damageAny(c.me, 2);
+    },
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+  },
+
+  "grand-escape": {
+    canBoost: () => true,
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const options = c.g.anySpaces();
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+      if (space) c.g.place(c.me, space);
+    },
+  },
+
+  flourish: {
+    canBoost: () => true,
+    *boosted(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "an-illusion-of-my-own-design": {
+    canBoost: () => true,
+    *immediate(c) {
+      yield* c.g.offerBoost(c.foe, c.combat);
+    },
+  },
+
+  "all-part-of-the-show": {
+    uncancelable: true,
+    rescue: true,
+    *boosted(c) {
+      if (c.g.hero(c.me).id === "harry-houdini") c.g.heal(c.me, 2, "hero");
+    },
+    *after(c) {
+      if (!c.g.rescueFighter(c.me, 4)) return;
+      const options = c.g.anySpaces();
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+      if (space) c.g.place(c.me, space);
+    },
+  },
+
+  "a-magician-never-reveals-his-secrets": {
+    *scheme(c) {
+      c.g.draw(c.me, 2);
+      c.g.gainAction(1);
+    },
+  },
+
+  "for-my-next-trick": {
+    *after(c) {
+      yield* c.g.moveOne(c.me, 1);
+      c.g.draw(c.me, 1);
+      c.g.gainAction(1);
+    },
+  },
+
+  "and-the-beautiful-bess": {
+    *boosted(c) {
+      if (c.g.isTurnOf(c.me)) c.g.gainAction(1);
     },
   },
 };

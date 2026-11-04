@@ -6,6 +6,7 @@ import {
   doctorStrangeCards,
   blackbeardCards,
   blackPantherCards,
+  houdiniCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -153,6 +154,28 @@ export const packDraftHeroes = [
     },
     cards: blackPantherCards,
   },
+  {
+    id: "harry-houdini",
+    name: "Harry Houdini",
+    hp: 14,
+    move: 2,
+    attack: "melee",
+    image: "images/houdini.webp",
+    passive: {
+      name: "Escape Artist",
+      text: {
+        en: "When you take the maneuver action and BOOST, you may place Houdini in any space instead of moving. (Bess moves as normal.)",
+        ua: "Коли ви виконуєте дію маневру та робите БУСТ, ви можете поставити Houdini на будь-яку клітинку замість руху. (Bess рухається як зазвичай.)",
+      },
+    },
+    sidekick: {
+      name: "Bess",
+      hp: 5,
+      attack: "melee",
+      image: "images/bess.webp",
+    },
+    cards: houdiniCards,
+  },
 ];
 
 const CARD_IMAGES = {
@@ -255,6 +278,25 @@ const CARD_IMAGES = {
       parley: "versatile",
       queen_annes_revenge: "versatile",
       show_a_leg: "versatile",
+    },
+  },
+  "harry-houdini": {
+    dir: "Harry Houdini",
+    cover: false,
+    files: {
+      the_big_reveal: "attack",
+      sleight_of_hand: "attack",
+      misdirection: "defense",
+      set_the_stage: "scheme",
+      a_magician_never_reveals_his_secrets: "scheme",
+      all_part_of_the_show: "defense",
+      an_illusion_of_my_own_design: "attack",
+      and_the_beautiful_bess: "versatile",
+      flourish: "attack",
+      for_my_next_trick: "attack",
+      grand_escape: "defense",
+      smoke_and_mirrors: "versatile",
+      vanishing_act: "versatile",
     },
   },
   "black-panther": {
