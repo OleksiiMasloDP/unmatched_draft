@@ -652,8 +652,13 @@ export const cardEffects = {
     },
   },
 
-  "queen-annes-revenge": {
+  "queen-anne-s-revenge": {
     uncancelable: true,
+    *immediate(c) {
+      while (yield* c.g.ransom(c.me, 1, c.combat, "promptRansomQar")) {
+        if (c.combat.ransomPaid[c.me] * 2 >= 7) break;
+      }
+    },
     value: (c, value) =>
       Math.max(0, value - 2 * (c.combat.ransomPaid[c.me] || 0)),
   },

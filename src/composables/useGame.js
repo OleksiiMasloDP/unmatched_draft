@@ -505,12 +505,12 @@ function stealCoin(player) {
   }
 }
 
-function* ransom(owner, cost, combat) {
+function* ransom(owner, cost, combat, prompt) {
   if (hero(owner).id !== "blackbeard" || game.treasury < cost) return false;
   const payer = other(owner);
   const ok = yield askConfirm(
     payer,
-    cost === 2 ? "promptRansom2" : "promptRansom1",
+    prompt || (cost === 2 ? "promptRansom2" : "promptRansom1"),
   );
   if (!ok) return false;
   game.treasury -= cost;

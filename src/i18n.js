@@ -441,6 +441,8 @@ export const translations = {
       "Pay a ransom of 1 doubloon from the treasury to ignore this effect?",
     promptRansom2:
       "Pay a ransom of 2 doubloons from the treasury to ignore this effect?",
+    promptRansomQar:
+      "Pay 1 doubloon from the treasury to reduce this card's value by 2?",
     promptPayAction: "Pay 1 doubloon to gain 1 action?",
     promptChooseFoeDiscard: "Choose a card for your opponent to discard",
     promptSummon: "Choose a space to summon a Sea Dog",
@@ -956,6 +958,8 @@ export const translations = {
       "Сплатити викуп 1 дублон зі скарбниці, щоб проігнорувати цей ефект?",
     promptRansom2:
       "Сплатити викуп 2 дублони зі скарбниці, щоб проігнорувати цей ефект?",
+    promptRansomQar:
+      "Сплатити 1 дублон зі скарбниці, щоб зменшити значення цієї карти на 2?",
     promptPayAction: "Сплатити 1 дублон, щоб отримати 1 дію?",
     promptChooseFoeDiscard: "Оберіть карту, яку скине ваш супротивник",
     promptSummon: "Оберіть клітинку для призову Sea Dog",
