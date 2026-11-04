@@ -369,24 +369,18 @@
             <span class="game-sidekick-name"> 🪙 {{ game.treasury }} </span>
             <span class="game-sidekick-hp">{{ t("gameTreasury") }}</span>
           </div>
-          <div
-            v-if="
-              heroOf(player).id === 'black-panther' &&
-              game.players[player].suit &&
-              game.players[player].suit.length
-            "
+          <button
+            v-if="heroOf(player).id === 'black-panther'"
+            type="button"
             class="game-suit"
+            @click="suitView = player"
           >
+            <span class="game-suit-icon">🛡</span>
             <span class="game-suit-title">{{ t("gameSuit") }}</span>
-            <span
-              v-for="id in game.players[player].suit"
-              :key="id"
-              class="game-suit-card"
-              :title="getCard(id).name"
-            >
-              {{ getCard(id).name }} <b>+{{ getCard(id).boost }}</b>
+            <span class="game-suit-count">
+              {{ (game.players[player].suit || []).length }}
             </span>
-          </div>
+          </button>
           <div class="game-counters">
             <div class="game-counter" :title="t('gameHand')">
               <span class="game-counter-icon">🖐</span>
@@ -738,6 +732,14 @@
         @click.self="discardView = null"
       >
         <div class="game-modal-box is-discard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="discardView = null"
+          >
+            ✕
+          </button>
           <h3 class="game-modal-title">
             {{ replacePlayer("gameDiscardOf", discardView) }}
             ({{ discardCount }})
@@ -770,6 +772,55 @@
             <button
               class="btn btn-primary btn-sm action-btn"
               @click="discardView = null"
+            >
+              {{ t("combatHide") }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="suitView" class="game-modal" @click.self="suitView = null">
+        <div class="game-modal-box is-discard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="suitView = null"
+          >
+            ✕
+          </button>
+          <h3 class="game-modal-title">
+            {{ replacePlayer("gameSuitOf", suitView) }}
+            ({{ suitGroups.reduce((n, g) => n + g.cards.length, 0) }})
+          </h3>
+          <p v-if="!suitGroups.length" class="game-hint-empty">
+            {{ t("gameSuitEmpty") }}
+          </p>
+          <div v-else class="discard-grid">
+            <div
+              v-for="group in suitGroups"
+              :key="group.key"
+              class="discard-stack"
+              :style="{ '--n': group.cards.length }"
+              :title="group.cards[0].name"
+            >
+              <div
+                v-for="(card, index) in group.cards"
+                :key="card.id"
+                class="discard-stack-card"
+                :style="{ '--i': index }"
+              >
+                <PackCard :card="card" />
+              </div>
+              <span v-if="group.cards.length > 1" class="discard-count">
+                ×{{ group.cards.length }}
+              </span>
+            </div>
+          </div>
+          <div class="game-modal-actions">
+            <button
+              class="btn btn-primary btn-sm action-btn"
+              @click="suitView = null"
             >
               {{ t("combatHide") }}
             </button>
@@ -1408,10 +1459,23 @@ const discardGroups = computed(() => {
   return [...groups.values()].sort((a, b) => b.cards.length - a.cards.length);
 });
 
+const suitView = ref(null);
+const suitGroups = computed(() => {
+  const groups = new Map();
+  const ids = suitView.value ? game.players[suitView.value].suit || [] : [];
+  for (const card of ids.map((id) => getCard(id)).filter(Boolean)) {
+    const key = `${card.heroId}:${card.key}`;
+    if (!groups.has(key)) groups.set(key, { key, cards: [] });
+    groups.get(key).cards.push(card);
+  }
+  return [...groups.values()];
+});
+
 watch(
   () => game.phase,
   () => {
     discardView.value = null;
+    suitView.value = null;
   },
 );
 
@@ -2423,27 +2487,66 @@ function onNewGame() {
 }
 
 .game-suit {
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
-  font-size: 11px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-warning);
+  border-radius: 10px;
+  background: rgba(var(--bg-slate-rgb), 0.6);
+  color: var(--text-light);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+.game-suit:hover {
+  background: rgba(var(--bg-slate-rgb), 0.9);
 }
 
 .game-suit-title {
-  width: 100%;
-  color: var(--text-dim);
-  font-weight: 800;
+  flex: 1;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.game-suit-card {
+.game-suit-count {
+  min-width: 26px;
   padding: 1px 8px;
-  border: 1px solid var(--border-medium);
   border-radius: 999px;
-  color: var(--text-light);
-  font-weight: 700;
+  background: var(--color-warning);
+  color: #111827;
+  text-align: center;
+}
+
+.game-modal-box {
+  position: relative;
+}
+
+.game-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-medium);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--text-white);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.game-modal-close:hover {
+  background: var(--color-warning);
+  color: #111827;
 }
 
 .game-hand .is-dim {
