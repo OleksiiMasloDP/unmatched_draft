@@ -52,9 +52,35 @@
       </template>
     </defs>
 
+    <g
+      v-for="token in tokenViews"
+      :key="token.id"
+      class="board-token"
+      @mouseenter="hoverToken = token.id"
+      @mouseleave="hoverToken = null"
+      @click.stop="pinToken = pinToken === token.id ? null : token.id"
+    >
+      <rect
+        class="board-token-box"
+        :x="token.x - 36"
+        :y="token.y - 36"
+        width="72"
+        height="72"
+        rx="10"
+      />
+      <image
+        :href="token.image"
+        :x="token.x - 34"
+        :y="token.y - 34"
+        width="68"
+        height="68"
+        preserveAspectRatio="xMidYMid slice"
+      />
+    </g>
+
     <g v-for="player in ['p1', 'p2']" :key="player">
       <g
-        v-if="players[player]"
+        v-if="players[player] && !hideHeroes"
         class="board-hero"
         :class="[
           'is-' + player,
@@ -100,7 +126,7 @@
       </g>
     </g>
 
-    <g v-for="player in ['p1', 'p2']" :key="'sk-' + player">
+    <g v-for="player in ['p1', 'p2']" v-if="!hideHeroes" :key="'sk-' + player">
       <g
         v-for="kid in players[player] ? players[player].sidekicks : []"
         :key="kid.id"
@@ -158,12 +184,30 @@
     >
       <text class="board-float-text" text-anchor="middle">{{ item.text }}</text>
     </g>
+    <foreignObject
+      v-if="tokenInfo"
+      class="board-token-info"
+      :x="tokenInfo.x"
+      :y="tokenInfo.y"
+      width="280"
+      height="170"
+    >
+      <div class="token-info">
+        <strong>{{ tokenInfo.name }}</strong>
+        <span class="token-info-kind">{{ tokenInfo.kindLabel }}</span>
+        <p>{{ tokenInfo.text }}</p>
+      </div>
+    </foreignObject>
   </svg>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { getHero } from "../gameDecks";
+import { useDraftState } from "../composables/useDraftState";
+import { TOKENS } from "../gameTokens";
+
+const { t } = useDraftState();
 
 const props = defineProps({
   map: {
@@ -186,7 +230,60 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  tokens: {
+    type: Array,
+    default: () => [],
+  },
+  hideHeroes: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const hoverToken = ref(null);
+const pinToken = ref(null);
+
+const tokenViews = computed(() =>
+  props.tokens
+    .map((token) => {
+      const slot = props.map.tokenSlots?.find(
+        (item) => item.space === token.space && item.kind === token.kind,
+      );
+      if (!slot) return null;
+      return {
+        id: token.id,
+        kind: token.kind,
+        x: slot.x,
+        y: slot.y,
+        image: TOKENS[token.id]?.image,
+      };
+    })
+    .filter(Boolean),
+);
+
+const tokenInfo = computed(() => {
+  const id = hoverToken.value || pinToken.value;
+  const token = tokenViews.value.find((item) => item.id === id);
+  if (!token) return null;
+  return {
+    x: Math.min(Math.max(token.x - 140, 6), props.map.width - 286),
+    y:
+      token.y + 44 + 170 > props.map.height ? token.y - 44 - 170 : token.y + 44,
+    name: t("token_" + token.id),
+    kindLabel: t(
+      token.kind === "scheme" ? "tokenKindScheme" : "tokenKindBoost",
+    ),
+    text: t("tokenDesc_" + token.id),
+  };
+});
+
+watch(
+  () => props.tokens.map((token) => token.id).join(","),
+  () => {
+    hoverToken.value = null;
+    pinToken.value = null;
+  },
+);
 
 const emit = defineEmits(["select"]);
 
@@ -297,6 +394,41 @@ const initials = (heroId) =>
   stroke: var(--color-proceed);
   stroke-width: 6;
   stroke-dasharray: 14 8;
+}
+
+.board-token {
+  cursor: pointer;
+}
+
+.board-token-box {
+  fill: rgba(0, 0, 0, 0.78);
+  stroke: var(--color-warning);
+  stroke-width: 2;
+}
+
+.board-token-info {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.token-info {
+  background: rgba(0, 0, 0, 0.88);
+  border: 2px solid var(--color-warning);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1.3;
+  padding: 10px 14px;
+}
+
+.token-info p {
+  margin: 6px 0 0;
+}
+
+.token-info-kind {
+  display: block;
+  font-size: 15px;
+  opacity: 0.7;
 }
 
 .board-hero {

@@ -204,6 +204,9 @@
           <template v-else-if="game.phase === 'mulligan'">
             {{ t("mulliganBanner") }}
           </template>
+          <template v-else-if="game.phase === 'startpick'">
+            {{ t("gameStartPickBanner") }}
+          </template>
           <template v-else>
             {{ replacePlayer("gameTurnOf", game.turn) }} ·
             {{ t("gameActionsLeft").replace("{n}", game.actions) }}
@@ -252,7 +255,14 @@
         </div>
       </div>
 
-      <p v-if="waitingOpponent" class="game-prompt-line">
+      <p v-if="game.phase === 'startpick'" class="game-prompt-line">
+        {{
+          startPickMine
+            ? t("gameStartPickYou")
+            : replacePlayer("gameStartPickWait", startPickTurn)
+        }}
+      </p>
+      <p v-else-if="waitingOpponent" class="game-prompt-line">
         {{ t("onlineWaitMove") }}
       </p>
       <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
@@ -429,10 +439,14 @@
           <GameBoard
             :map="map"
             :players="game.players"
-            :options="spacePrompt && !boostOpen ? spacePrompt.options : []"
+            :options="
+              spacePrompt && !boostOpen ? spacePrompt.options : startPickOptions
+            "
             :active="activeFighter"
             :fx="game.fx"
-            @select="answerPrompt"
+            :tokens="game.tokens"
+            :hide-heroes="game.phase === 'startpick'"
+            @select="onBoardSelect"
           />
 
           <div class="game-log" :class="{ 'is-open': logOpen }">
@@ -665,6 +679,9 @@
                   </span>
                   <span v-if="side.boost" class="is-boost">
                     {{ t("gameBoostValue").replace("{n}", side.boost) }}
+                  </span>
+                  <span v-if="side.tokenName" class="is-boost">
+                    {{ t("token_" + side.tokenName) }}
                   </span>
                   <span v-if="side.bonus" class="is-boost">
                     {{ t("gameBonusValue").replace("{n}", side.bonus) }}
@@ -941,6 +958,7 @@ const {
   surrender,
   availableActions,
   heroOf,
+  pickStart,
 } = useGame();
 const { savedDecks } = useSavedDecks();
 const {
@@ -1154,6 +1172,31 @@ const waitingOpponent = computed(() => {
   const owner = game.prompt ? game.prompt.player : game.turn;
   return owner !== null && owner !== mySeat.value;
 });
+
+const startPickTurn = computed(() =>
+  game.phase === "startpick" && game.startPick
+    ? game.startPick.order[game.startPick.index]
+    : null,
+);
+
+const startPickMine = computed(
+  () =>
+    startPickTurn.value !== null &&
+    (!online.value || startPickTurn.value === mySeat.value),
+);
+
+const startPickOptions = computed(() =>
+  startPickMine.value
+    ? Object.values(map.value.starts).filter(
+        (id) => !game.startPick.taken.includes(id),
+      )
+    : [],
+);
+
+function onBoardSelect(space) {
+  if (game.phase === "startpick") pickStart(space, startPickTurn.value);
+  else answerPrompt(space);
+}
 
 const mulliganTurn = computed(() => {
   const state = game.mulligan;
@@ -1463,6 +1506,7 @@ const revealSides = computed(() => {
           : heroOf(player).image,
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
+      tokenName: combat.tokenBoost?.[player] ?? null,
       bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
       terrain: combat.attacker === player ? (combat.terrain ?? 0) : 0,
       total: combat.values[player],
@@ -1477,6 +1521,7 @@ function formatLog(entry) {
     if (["player", "attacker", "defender"].includes(name)) {
       shown = playerLabel(value);
     }
+    if (name === "token") shown = t("token_" + value);
     text = text.replace(`{${name}}`, shown);
   }
   return text;

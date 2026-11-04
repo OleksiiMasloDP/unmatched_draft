@@ -1033,3 +1033,8 @@ import { blackPantherText } from "./i18nBlackPanther.js";
 
 Object.assign(translations.en, blackPantherText.en);
 Object.assign(translations.ua, blackPantherText.ua);
+
+import { tokensText } from "./i18nTokens.js";
+
+Object.assign(translations.en, tokensText.en);
+Object.assign(translations.ua, tokensText.ua);

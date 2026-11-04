@@ -2,6 +2,7 @@ import { reactive, computed } from "vue";
 import { gameMaps, getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { cardEffects } from "../gameEffects.js";
+import { TOKENS, tokenIds } from "../gameTokens.js";
 import { useOnline } from "./useOnline.js";
 
 const HAND_LIMIT = 7;
@@ -70,6 +71,8 @@ const game = reactive({
   winner: null,
   mulligan: null,
   toss: null,
+  tokens: [],
+  startPick: null,
 });
 
 let flow = null;
@@ -81,12 +84,14 @@ const turnFlags = {
   noDraw: { p1: false, p2: false },
   attackBonus: { p1: 0, p2: 0 },
   pinned: { p1: false, p2: false },
+  anyRange: { p1: false, p2: false },
 };
 
 function resetTurnFlags() {
   turnFlags.noDraw = { p1: false, p2: false };
   turnFlags.attackBonus = { p1: 0, p2: 0 };
   turnFlags.pinned = { p1: false, p2: false };
+  turnFlags.anyRange = { p1: false, p2: false };
 }
 
 let activeCard = null;
@@ -126,6 +131,22 @@ const fightersOf = (player) => [
 const occupiedBy = (player) =>
   fightersOf(player).map((fighter) => fighterSpace(player, fighter));
 const occupied = () => [...occupiedBy("p1"), ...occupiedBy("p2")];
+const tokenAt = (spaceId, kind) => {
+  return game.tokens.find(
+    (token) => token.space === spaceId && (!kind || token.kind === kind),
+  );
+};
+
+const removeToken = (token) => {
+  game.tokens = game.tokens.filter((item) => item !== token);
+};
+
+const tokenFighters = (player, kind) => {
+  return fightersOf(player).filter((fighter) =>
+    tokenAt(fighterSpace(player, fighter), kind),
+  );
+};
+
 const fighterName = (player, fighter) =>
   fighter === "hero" ? hero(player).name : kidOf(player, fighter).name;
 
@@ -240,6 +261,7 @@ function zoneSpaces(player) {
 }
 
 function inRange(player, mine = "hero", theirs = "hero") {
+  if (turnFlags.anyRange[player]) return true;
   const foe = other(player);
   return withFighter(player, mine, () =>
     withFighter(foe, theirs, () => {
@@ -1002,9 +1024,135 @@ function* maneuver(me) {
   return true;
 }
 
+function* useSchemeToken(me, fighter) {
+  const token = tokenAt(fighterSpace(me, fighter), "scheme");
+  const foe = other(me);
+  log("logToken", { player: me, token: token.id });
+  if (token.id === "rocket-pack") {
+    const options = active.map.spaces
+      .map((space) => space.id)
+      .filter((id) => !occupied().includes(id));
+    if (!options.length) return;
+    const space = yield askSpace(me, "promptRocketPack", options);
+    if (!space) return;
+    withFighter(me, fighter, () => place(me, space));
+    removeToken(token);
+  } else if (token.id === "laser-turret") {
+    const zones = active.spaceById.get(fighterSpace(me, fighter)).zones;
+    const targets = fightersOf(foe).filter((target) =>
+      active.spaceById
+        .get(fighterSpace(foe, target))
+        .zones.some((zone) => zones.includes(zone)),
+    );
+    if (!targets.length) {
+      log("logNoTarget");
+      return;
+    }
+    const target = yield* pickTarget(me, foe, targets);
+    if (!target) return;
+    damage(foe, 2, target);
+    removeToken(token);
+  } else if (token.id === "first-aid-kit") {
+    heal(me, 2, fighter);
+    draw(me, 1);
+    removeToken(token);
+  } else if (token.id === "map-token") {
+    turnFlags.anyRange[me] = true;
+    removeToken(token);
+  } else if (token.id === "payphone") {
+    const pile = [...pl(me).discard];
+    if (pile.length) {
+      const ids = yield askCards(me, "promptPayphone", pile, {
+        min: 1,
+        max: 1,
+      });
+      for (const id of ids) {
+        pl(me).discard.splice(pl(me).discard.indexOf(id), 1);
+        pl(me).hand.push(id);
+      }
+    } else {
+      log("logNoTarget");
+    }
+    removeToken(token);
+  } else if (token.id === "brazier") {
+    const schemes = pl(me).deck.filter((id) => isScheme(getCard(id)));
+    if (!schemes.length) {
+      log("logNoTarget");
+    } else {
+      const ids = yield askCards(me, "promptBrazier", schemes, {
+        min: 1,
+        max: 1,
+      });
+      if (ids.length) {
+        const card = getCard(ids[0]);
+        pl(me).deck.splice(pl(me).deck.indexOf(card.id), 1);
+        pl(me).deck = shuffle(pl(me).deck);
+        log("logScheme", { player: me, card: card.name });
+        removeToken(token);
+        yield* runEffect(me, card, "scheme", null);
+        pl(me).discard.push(card.id);
+        return;
+      }
+    }
+    removeToken(token);
+  } else if (token.id === "daily-bugle") {
+    draw(me, 3);
+    const hand = [...pl(me).hand];
+    if (hand.length) {
+      const ids = yield askCards(me, "promptDailyBugle", hand, {
+        min: 1,
+        max: 1,
+      });
+      for (const id of ids) {
+        pl(me).hand.splice(pl(me).hand.indexOf(id), 1);
+        pl(me).deck.push(id);
+      }
+    }
+    removeToken(token);
+  } else if (token.id === "astral-ring") {
+    removeToken(token);
+    yield* moveAll(me, 1, false);
+    yield* moveAll(foe, 1, false);
+  } else if (token.id === "emp-pulse-array") {
+    for (const player of [me, foe]) {
+      const hand = [...pl(player).hand];
+      const count = Math.min(2, hand.length);
+      if (!count) continue;
+      const ids = yield askCards(player, "promptEmpDiscard", hand, {
+        min: count,
+        max: count,
+      });
+      for (const id of ids) discardFromHand(player, id);
+      removeToken(token);
+    }
+  }
+}
+
 function* scheme(me) {
   const options = pl(me).hand.filter((id) => isScheme(getCard(id)));
-  if (!options.length) return false;
+  const carriers = tokenFighters(me, "scheme");
+  if (!options.length && !carriers.length) return false;
+  let source = "card";
+  if (carriers.length && options.length) {
+    source = yield askChoice(me, "promptSchemeSource", [
+      { value: "card", label: "gameSchemeCard" },
+      { value: "token", label: "gameSchemeToken" },
+      { value: "cancel", label: "gameCancel" },
+    ]);
+    if (source === "cancel") return false;
+  } else if (!options.length) {
+    source = "token";
+  }
+  if (source === "token") {
+    let fighter = carriers[0];
+    if (carriers.length > 1) {
+      fighter = yield* pickFighter(me, "promptTokenFighter", carriers);
+      if (!fighter) return false;
+    }
+    spendAction();
+    yield* useSchemeToken(me, fighter);
+    return true;
+  }
   const ids = yield askCards(me, "promptSchemeCard", options, {
     min: 0,
     max: 1,
@@ -1078,6 +1226,7 @@ function* attack(me) {
   }
 
   spendAction();
+  turnFlags.anyRange[me] = false;
   const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
   log("logAttack", { player: me });
@@ -1203,6 +1352,22 @@ function* attack(me) {
     }
   }
 
+  const tokenBoost = { p1: null, p2: null };
+  for (const player of players) {
+    const token = tokenAt(
+      fighterSpace(player, combat.fighters[player]),
+      "boost",
+    );
+    if (!token) continue;
+    const use = yield askConfirm(player, "promptBoostToken");
+    if (!use) continue;
+    boosts[player] += TOKENS[token.id].value;
+    tokenBoost[player] = token.id;
+    removeToken(token);
+    game.combat.boost[player] = true;
+    log("logToken", { player, token: token.id });
+  }
+
   const ignored = { p1: false, p2: false };
   for (const player of players) {
     const card = combat.cards[player];
@@ -1269,6 +1434,7 @@ function* attack(me) {
       boosts: { ...boosts },
       boostCardIds: { ...boostCardIds },
       boostCardLists: { p1: [...boostLists.p1], p2: [...boostLists.p2] },
+      tokenBoost: { ...tokenBoost },
       base: { ...baseValues },
       bonus: turnFlags.attackBonus[me],
       terrain,
@@ -1377,6 +1543,33 @@ function run(generator) {
 const canAct = () =>
   game.phase === "play" && !game.prompt && !flow && game.actions > 0;
 
+function placeTokens() {
+  const result = [];
+  for (const kind of ["scheme", "boost"]) {
+    const slots = active.map.tokenSlots.filter((slot) => slot.kind === kind);
+    const ids = shuffle(tokenIds(kind, active.map.id));
+    slots.forEach((slot, index) => {
+      if (ids[index]) result.push({ id: ids[index], kind, space: slot.space });
+    });
+  }
+  return result;
+}
+
+function placeSidekicks() {
+  for (const player of ["p1", "p2"]) {
+    for (const kid of pl(player).sidekicks) kid.space = null;
+  }
+  const taken = new Set(occupiedBy("p1").concat(occupiedBy("p2")));
+  for (const player of ["p1", "p2"]) {
+    const home = pl(player).space;
+    for (const kid of pl(player).sidekicks) {
+      const links = active.spaceById.get(home).links;
+      kid.space = links.find((id) => !taken.has(id)) || home;
+      taken.add(kid.space);
+    }
+  }
+}
+
 function startGame(deckA, deckB, first = "p1") {
   game.notice = null;
   if (deckA.heroId === deckB.heroId) return;
@@ -1416,15 +1609,8 @@ function startGame(deckA, deckB, first = "p1") {
   useMapId(game.mapId);
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
-  const taken = new Set([active.map.starts.p1, active.map.starts.p2]);
-  for (const player of ["p1", "p2"]) {
-    const home = active.map.starts[player];
-    for (const kid of pl(player).sidekicks) {
-      const links = active.spaceById.get(home).links;
-      kid.space = links.find((id) => !taken.has(id)) || home;
-      taken.add(kid.space);
-    }
-  }
+  game.tokens = placeTokens();
+  placeSidekicks();
   game.treasury = [deckA, deckB].some((deck) => deck.heroId === "blackbeard")
     ? 1
     : 0;
@@ -1443,8 +1629,36 @@ function startGame(deckA, deckB, first = "p1") {
   game.redRoomIgnored = { p1: false, p2: false };
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = { decided: { p1: false, p2: false }, reveal: null };
+  game.startPick = null;
   game.phase = "mulligan";
+  if (game.tokens.length) {
+    game.startPick = { order: [other(first), first], index: 0, taken: [] };
+    game.phase = "startpick";
+  }
   syncOut();
+}
+
+function startOptions() {
+  const pick = game.startPick;
+  if (!pick) return [];
+  return Object.values(active.map.starts).filter(
+    (id) => !pick.taken.includes(id),
+  );
+}
+
+function applyStartPick(player, spaceId) {
+  const pick = game.startPick;
+  if (game.phase !== "startpick" || !pick) return;
+  if (pick.order[pick.index] !== player) return;
+  if (!startOptions().includes(spaceId)) return;
+  pl(player).space = spaceId;
+  pick.taken.push(spaceId);
+  pick.index += 1;
+  if (pick.index >= pick.order.length) {
+    placeSidekicks();
+    game.startPick = null;
+    game.phase = "mulligan";
+  }
 }
 
 function beginPlay() {
@@ -1495,6 +1709,8 @@ function resetGame(clearNotice = true) {
   lobbyDecks = { p1: null, p2: null };
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = null;
+  game.tokens = [];
+  game.startPick = null;
   game.lobby = { p1: null, p2: null };
   game.toss = null;
   game.phase = "setup";
@@ -1607,6 +1823,7 @@ function takeSnapshot() {
     redRoomIgnored: game.redRoomIgnored,
     logLength: game.log.length,
     flags: turnFlags,
+    tokens: game.tokens,
   });
 }
 
@@ -1622,6 +1839,8 @@ function undoAction(seat) {
   turnFlags.noDraw = snap.flags.noDraw;
   turnFlags.attackBonus = snap.flags.attackBonus;
   turnFlags.pinned = snap.flags.pinned;
+  turnFlags.anyRange = snap.flags.anyRange;
+  game.tokens = snap.tokens;
   flow = null;
   game.prompt = null;
   undoPoint = null;
@@ -1651,6 +1870,11 @@ function answerPrompt(answer) {
     return;
   }
   applyAnswer(answer, seatFor());
+}
+
+function pickStart(spaceId, player) {
+  if (net.isGuest.value) send({ type: "startPick", spaceId });
+  else applyStartPick(net.isHost.value ? "p1" : player, spaceId);
 }
 
 function chooseMulligan(redraw, player) {
@@ -1788,7 +2012,10 @@ function availableActions() {
   const hand = pl(me).hand.map(getCard);
   return {
     maneuver: idle && game.actions > 0,
-    scheme: idle && game.actions > 0 && hand.some(isScheme),
+    scheme:
+      idle &&
+      game.actions > 0 &&
+      (hand.some(isScheme) || tokenFighters(me, "scheme").length > 0),
     attack: idle && game.actions > 0 && attackChoices(me).length > 0,
   };
 }
@@ -1804,6 +2031,7 @@ net.on("game:cmd", (message) => {
   if (message.type === "answer") applyAnswer(message.answer, "p2");
   else if (message.type === "deck") setLobbyDeck("p2", message.deck);
   else if (message.type === "surrender") applySurrender("p2");
+  else if (message.type === "startPick") applyStartPick("p2", message.spaceId);
   else if (message.type === "mulligan") applyMulligan("p2", message.redraw);
   else if (message.type === "mulliganContinue") applyMulliganContinue();
   else if (message.type === "map") applyMap("p2", message.id);
@@ -1848,5 +2076,6 @@ export function useGame() {
     other,
     confirmMap,
     chooseOrder,
+    pickStart,
   };
 }
