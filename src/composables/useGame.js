@@ -4,6 +4,7 @@ import { getCard, getHero } from "../gameDecks.js";
 import { cardEffects } from "../gameEffects.js";
 import { TOKENS, tokenIds } from "../gameTokens.js";
 import { useOnline } from "./useOnline.js";
+import "../i18nSanta.js";
 
 const HAND_LIMIT = 7;
 const START_HAND = 5;
@@ -1164,6 +1165,39 @@ function* startTurn() {
   }
 }
 
+function* conveyor() {
+  const belt = active.map.conveyor;
+  if (!belt) return;
+  const { path, launchZone } = belt;
+  const nameOf = (player, fighter) =>
+    fighter === "hero" ? hero(player).name : kidOf(player, fighter).name;
+  for (let i = path.length - 1; i >= 0; i--) {
+    for (const player of [game.turn, other(game.turn)]) {
+      for (const fighter of fightersOf(player)) {
+        if (fighterSpace(player, fighter) !== path[i]) continue;
+        if (i === path.length - 1) {
+          const options = active.map.spaces
+            .filter((space) => space.zones.includes(launchZone))
+            .map((space) => space.id)
+            .filter((id) => !occupied().includes(id));
+          if (!options.length) continue;
+          const prompt = askSpace(player, "promptLaunch", options);
+          prompt.fighter = fighter;
+          const target = yield prompt;
+          if (!target) continue;
+          setSpace(player, fighter, target);
+          log("logLaunch", { who: nameOf(player, fighter), space: target });
+        } else {
+          const next = path[i + 1];
+          if (occupied().includes(next)) continue;
+          setSpace(player, fighter, next);
+          log("logConveyor", { who: nameOf(player, fighter), space: next });
+        }
+      }
+    }
+  }
+}
+
 function* endTurn() {
   const me = game.turn;
   const excess = pl(me).hand.length - HAND_LIMIT;
@@ -1175,6 +1209,7 @@ function* endTurn() {
     for (const id of ids) discardFromHand(me, id);
   }
   game.redRoomIgnored[me] = false;
+  yield* conveyor();
   game.turn = other(me);
   yield* startTurn();
 }
@@ -1871,7 +1906,11 @@ function placeSidekicks() {
     const home = pl(player).space;
     for (const kid of pl(player).sidekicks) {
       const links = active.spaceById.get(home).links;
-      kid.space = links.find((id) => !taken.has(id)) || home;
+      const belt = active.map.conveyor?.path || [];
+      kid.space =
+        links.find((id) => !taken.has(id) && !belt.includes(id)) ||
+        links.find((id) => !taken.has(id)) ||
+        home;
       taken.add(kid.space);
     }
   }
