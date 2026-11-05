@@ -1464,6 +1464,16 @@ function* pickTarget(me, foe, fighters) {
   return fighters.find((fighter) => fighterSpace(foe, fighter) === space);
 }
 
+function* offerBoostToken(player, fighter) {
+  const token = tokenAt(fighterSpace(player, fighter), "boost");
+  if (!token) return null;
+  const use = yield askConfirm(player, "promptBoostToken");
+  if (!use) return null;
+  removeToken(token);
+  log("logToken", { player, token: token.id });
+  return token.id;
+}
+
 function* attack(me) {
   const foe = other(me);
   const choices = attackChoices(me);
@@ -1499,6 +1509,7 @@ function* attack(me) {
   const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
   log("logAttack", { player: me });
+  const attackToken = yield* offerBoostToken(me, mine);
 
   const faceUp = Boolean(cardEffects[attackCard.key]?.faceUp);
   game.combat = {
@@ -1519,6 +1530,7 @@ function* attack(me) {
       ? 1
       : 0,
     boost: { p1: false, p2: false },
+    token: { p1: null, p2: null, [me]: attackToken },
     rescue: { p1: false, p2: false },
     pending: { p1: false, p2: false },
   };
@@ -1533,6 +1545,12 @@ function* attack(me) {
     max: 1,
     skip: "gameNoDefense",
   });
+  if (attackToken) {
+    defensePrompt.hint = {
+      key: "promptAttackToken",
+      n: TOKENS[attackToken].value,
+    };
+  }
   if (hero(foe).id === "spider-man") {
     defensePrompt.hint = { key: "promptSpideySense", n: attackCard.value };
   }
@@ -1541,6 +1559,8 @@ function* attack(me) {
     defenseCard = getCard(defenseIds[0]);
     pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
   }
+  const defenseToken = defenseCard ? yield* offerBoostToken(foe, theirs) : null;
+  game.combat.token[foe] = defenseToken;
   game.combat.defense = defenseCard ? "card" : "none";
   game.combat.cardIds[foe] = defenseCard ? defenseCard.id : null;
   game.combat.covers[foe] = defenseCard ? defenseCard.heroId : null;
@@ -1636,18 +1656,15 @@ function* attack(me) {
 
   const tokenBoost = { p1: null, p2: null };
   for (const player of players) {
-    const token = tokenAt(
-      fighterSpace(player, combat.fighters[player]),
-      "boost",
-    );
-    if (!token) continue;
-    const use = yield askConfirm(player, "promptBoostToken");
-    if (!use) continue;
-    boosts[player] += TOKENS[token.id].value;
-    tokenBoost[player] = token.id;
-    removeToken(token);
+    const id = game.combat.token[player];
+    if (!id) continue;
+    if (combat.canceled[player]) {
+      log("logTokenCanceled", { token: id });
+      continue;
+    }
+    boosts[player] += TOKENS[id].value;
+    tokenBoost[player] = id;
     game.combat.boost[player] = true;
-    log("logToken", { player, token: token.id });
   }
 
   if (game.phase !== "play" || !game.combat) return true;
@@ -1899,6 +1916,10 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   useMapId(game.mapId);
   game.players.p1 = setup(deckA, "p1");
   game.players.p2 = setup(deckB, "p2");
+  if (!active.map.tokenSlots.length) {
+    pl(first).space = active.map.starts.p1;
+    pl(other(first)).space = active.map.starts.p2;
+  }
   game.tokens = placeTokens();
   placeSidekicks();
   game.treasury = [deckA, deckB].some((deck) => deck.heroId === "blackbeard")

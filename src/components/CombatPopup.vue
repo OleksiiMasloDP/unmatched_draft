@@ -95,6 +95,14 @@
               ⚡ {{ t("combatBoosted") }}
             </span>
             <span
+              v-if="combat.token && combat.token[side.player]"
+              class="combat-tag is-boost"
+            >
+              🎯 {{ t("token_" + combat.token[side.player]) }} +{{
+                TOKENS[combat.token[side.player]].value
+              }}
+            </span>
+            <span
               v-if="previewFor(side) && !combat.cardIds[side.player]"
               class="combat-tag is-pick"
             >
@@ -116,6 +124,7 @@ import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { getCard, getHero } from "../gameDecks";
 import { coverImage } from "../packDraftData";
+import { TOKENS } from "../gameTokens";
 import PackCard from "./PackCard.vue";
 
 const props = defineProps({
