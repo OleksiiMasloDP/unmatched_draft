@@ -265,6 +265,23 @@
       <p v-else-if="waitingOpponent" class="game-prompt-line">
         {{ t("onlineWaitMove") }}
       </p>
+      <p v-else-if="placingKid" class="game-prompt-line">
+        {{ kidPending ? t("promptPlaceKidConfirm") : promptTitle(spacePrompt) }}
+        <button
+          v-if="kidPending"
+          class="btn btn-success btn-sm action-btn"
+          @click="confirmKid"
+        >
+          {{ t("gameConfirm") }}
+        </button>
+        <button
+          v-if="kidPending"
+          class="btn btn-sm btn-outline-light action-btn"
+          @click="kidPending = null"
+        >
+          {{ t("gameCancel") }}
+        </button>
+      </p>
       <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
         {{ t("promptBoostMove") }}
         <button
@@ -440,6 +457,8 @@
             :fx="game.fx"
             :tokens="game.tokens"
             :hide-heroes="game.phase === 'startpick'"
+            :ghost="kidGhost"
+            :pending="kidPending"
             @select="onBoardSelect"
           />
 
@@ -1252,8 +1271,39 @@ const startPickOptions = computed(() =>
     : [],
 );
 
+const kidPending = ref(null);
+
+const placingKid = computed(
+  () => spacePrompt.value?.title === "promptPlaceKid",
+);
+
+const kidGhost = computed(() => {
+  if (!placingKid.value) return null;
+  const heroId = game.players[spacePrompt.value.player]?.heroId;
+  return { image: getHero(heroId)?.sidekick?.image || null };
+});
+
+function confirmKid() {
+  const space = kidPending.value;
+  kidPending.value = null;
+  if (space) answerPrompt(space);
+}
+
+watch(
+  () =>
+    JSON.stringify([
+      game.prompt?.title,
+      game.prompt?.player,
+      game.prompt?.options,
+    ]),
+  () => {
+    kidPending.value = null;
+  },
+);
+
 function onBoardSelect(space) {
   if (game.phase === "startpick") pickStart(space, startPickTurn.value);
+  else if (placingKid.value) kidPending.value = space;
   else answerPrompt(space);
 }
 

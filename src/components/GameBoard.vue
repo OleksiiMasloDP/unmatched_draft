@@ -13,6 +13,8 @@
       class="board-space"
       :class="{ 'is-option': options.includes(space.id) }"
       @click="options.includes(space.id) && emit('select', space.id)"
+      @mouseenter="hoverId = space.id"
+      @mouseleave="hoverId = null"
     >
       <circle class="space-hit" :cx="space.x" :cy="space.y" :r="map.radius" />
       <circle
@@ -25,6 +27,9 @@
     </g>
 
     <defs>
+      <clipPath v-if="ghostSpace" id="ghost-clip">
+        <circle :cx="ghostSpace.x" :cy="ghostSpace.y" r="30" />
+      </clipPath>
       <clipPath
         v-for="player in ['p1', 'p2']"
         :id="`token-${player}`"
@@ -128,7 +133,7 @@
 
     <g v-for="player in ['p1', 'p2']" v-if="!hideHeroes" :key="'sk-' + player">
       <g
-        v-for="kid in players[player] ? players[player].sidekicks : []"
+        v-for="kid in visibleKids(player)"
         :key="kid.id"
         class="board-hero board-sidekick"
         :class="[
@@ -173,6 +178,20 @@
           </text>
         </g>
       </g>
+    </g>
+
+    <g v-if="ghostSpace" class="board-ghost">
+      <circle :cx="ghostSpace.x" :cy="ghostSpace.y" r="30" />
+      <image
+        v-if="ghost.image"
+        :href="ghost.image"
+        :x="ghostSpace.x - 30"
+        :y="ghostSpace.y - 30"
+        width="60"
+        height="60"
+        preserveAspectRatio="xMidYMin slice"
+        clip-path="url(#ghost-clip)"
+      />
     </g>
 
     <g
@@ -238,7 +257,28 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  ghost: {
+    type: Object,
+    default: null,
+  },
+  pending: {
+    type: String,
+    default: null,
+  },
 });
+
+const hoverId = ref(null);
+
+const ghostSpace = computed(() => {
+  if (!props.ghost) return null;
+  const id =
+    props.pending ||
+    (props.options.includes(hoverId.value) ? hoverId.value : null);
+  return id ? byId.value.get(id) : null;
+});
+
+const visibleKids = (player) =>
+  (props.players[player]?.sidekicks || []).filter((kid) => !kid.unplaced);
 
 const hoverToken = ref(null);
 const pinToken = ref(null);
@@ -398,6 +438,18 @@ const initials = (heroId) =>
 
 .board-token {
   cursor: pointer;
+}
+
+.board-ghost {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.board-ghost circle {
+  fill: rgba(255, 255, 255, 0.15);
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-dasharray: 6 5;
 }
 
 .board-token-box {

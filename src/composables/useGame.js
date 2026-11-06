@@ -1979,7 +1979,10 @@ function placeTokens() {
 
 function placeSidekicks() {
   for (const player of ["p1", "p2"]) {
-    for (const kid of pl(player).sidekicks) kid.space = null;
+    for (const kid of pl(player).sidekicks) {
+      kid.space = null;
+      kid.unplaced = true;
+    }
   }
   const taken = new Set(occupiedBy("p1").concat(occupiedBy("p2")));
   for (const player of ["p1", "p2"]) {
@@ -2093,12 +2096,48 @@ function applyStartPick(player, spaceId) {
   }
 }
 
+function* placeKidsFlow() {
+  const first = game.turn;
+  const taken = new Set(["p1", "p2"].map((player) => pl(player).space));
+  for (const player of [first, other(first)]) {
+    const home = pl(player).space;
+    const zones = active.spaceById.get(home).zones;
+    const dist = active.distances.get(home);
+    for (const kid of pl(player).sidekicks.filter((item) => !item.down)) {
+      const free = active.map.spaces.filter((space) => !taken.has(space.id));
+      let options = free
+        .filter((space) => space.zones.some((zone) => zones.includes(zone)))
+        .map((space) => space.id);
+      if (!options.length) {
+        const nearest = Math.min(...free.map((space) => dist.get(space.id)));
+        options = free
+          .filter((space) => dist.get(space.id) === nearest)
+          .map((space) => space.id);
+      }
+      let chosen = options[0];
+      if (options.length > 1) {
+        const prompt = askSpace(player, "promptPlaceKid", options);
+        prompt.undo = false;
+        chosen = (yield prompt) || options[0];
+      }
+      kid.space = chosen;
+      kid.unplaced = false;
+      taken.add(chosen);
+    }
+  }
+}
+
+function* openingFlow() {
+  yield* placeKidsFlow();
+  yield* startTurn();
+}
+
 function beginPlay() {
   game.mulligan = null;
   game.viewer = "p1";
   game.phase = "play";
   log("logStart");
-  run(startTurn());
+  run(openingFlow());
   syncOut();
 }
 
