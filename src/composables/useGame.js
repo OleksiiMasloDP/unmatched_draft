@@ -468,16 +468,33 @@ function summon(player, spaceId) {
   log("logSummon", { who: kidData.name, space: spaceId });
 }
 
-function* chooseMover(player, remaining, canMove) {
-  const able = remaining.filter((fighter) => {
-    if (!fightersOf(player).includes(fighter)) return false;
-    cur[player] = fighter;
-    return canMove();
-  });
-  if (!able.length) return null;
-  if (able.length === 1) return able[0];
-  const picked = yield* pickFighter(player, "promptMoveWith", able);
-  return picked || able[0];
+function* chooseMover(player, remaining, canMove, booster = null) {
+  for (;;) {
+    const able = remaining.filter((fighter) => {
+      if (!fightersOf(player).includes(fighter)) return false;
+      cur[player] = fighter;
+      return canMove();
+    });
+    if (!able.length) return null;
+    if (able.length === 1) return able[0];
+    const prompt = askSpace(
+      player,
+      "promptMoveWith",
+      able.map((fighter) => fighterSpace(player, fighter)),
+    );
+    prompt.undo = true;
+    prompt.boostOptions = booster ? booster.pool() : [];
+    const answer = yield prompt;
+    if (answer && typeof answer === "object") {
+      yield* booster.use(answer.boost);
+      continue;
+    }
+    if (!answer) return able[0];
+    return (
+      able.find((fighter) => fighterSpace(player, fighter) === answer) ||
+      able[0]
+    );
+  }
 }
 
 function* moveAll(player, steps, through) {
@@ -1258,6 +1275,16 @@ function* maneuver(me) {
       () =>
         escapeReady(me, boosted) ||
         stepOptions(me, false, hero(me).move + boostSteps).size > 0,
+      {
+        pool: () => (!boosted && !started ? boostPool(me) : []),
+        *use(cardId) {
+          const boostCard = spendBoostCard(me, cardId);
+          boostSteps += boostCard.boost;
+          afterBoost(me);
+          boosted = true;
+          yield* boostedWith(me, boostCard);
+        },
+      },
     );
     if (!fighter) break;
     remaining.splice(remaining.indexOf(fighter), 1);
