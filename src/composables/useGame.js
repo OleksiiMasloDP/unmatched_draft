@@ -56,6 +56,7 @@ const game = reactive({
   mapId: gameMaps[0].id,
   players: { p1: null, p2: null },
   turn: "p1",
+  turnNo: 0,
   actions: 0,
   turnStart: null,
   redRoomIgnored: { p1: false, p2: false },
@@ -96,6 +97,7 @@ function resetTurnFlags() {
 }
 
 let activeCard = null;
+let damageSrc = null;
 
 const cur = { p1: "hero", p2: "hero" };
 
@@ -315,13 +317,19 @@ function finalizeDefeat(player, fighter) {
   log("logSidekickDown", { who: kid.name });
 }
 
+const source = () => activeCard || damageSrc;
+
 function damage(player, amount, fighter = cur[player]) {
   if (amount <= 0 || game.phase !== "play") return;
   if (fighter !== "hero") {
     const kid = kidOf(player, fighter);
     if (!kid || kid.down) return;
     kid.hp = Math.max(0, kid.hp - amount);
-    log("logDamageSk", { who: kid.name, n: amount });
+    log(source() ? "logDamageSkSrc" : "logDamageSk", {
+      who: kid.name,
+      n: amount,
+      src: source(),
+    });
     fx("damage", player, { n: amount, src: activeCard, fighter });
     if (kid.hp === 0 && defeatDeferred(player, fighter)) {
       game.combat.pending[player] = true;
@@ -338,7 +346,11 @@ function damage(player, amount, fighter = cur[player]) {
   }
   const target = pl(player);
   target.hp = Math.max(0, target.hp - amount);
-  log("logDamage", { player, n: amount });
+  log(source() ? "logDamageSrc" : "logDamage", {
+    player,
+    n: amount,
+    src: source(),
+  });
   fx("damage", player, { n: amount, src: activeCard, fighter: "hero" });
   if (target.hp === 0 && defeatDeferred(player, "hero")) {
     game.combat.pending[player] = true;
@@ -1154,7 +1166,8 @@ function* startTurn() {
   game.actions = ACTIONS_PER_TURN;
   game.turnStart = spaceOf(me);
   game.redRoomIgnored[me] = false;
-  log("logTurn", { player: me });
+  game.turnNo += 1;
+  log("logTurn", { player: me, n: game.turnNo, hero: hero(me).name });
   cur[me] = "hero";
   if (hero(me).id === "blackbeard" && pl(me).coins > 0) {
     const ok = yield askConfirm(me, "promptPayAction");
@@ -1394,7 +1407,7 @@ function* useSchemeToken(me, fighter) {
         const card = getCard(ids[0]);
         pl(me).deck.splice(pl(me).deck.indexOf(card.id), 1);
         pl(me).deck = shuffle(pl(me).deck);
-        log("logScheme", { player: me, card: card.name });
+        log("logScheme", { player: me, card: card.name, cardId: card.id });
         removeToken(token);
         yield* runEffect(me, card, "scheme", null);
         pl(me).discard.push(card.id);
@@ -1470,7 +1483,7 @@ function* scheme(me) {
   spendAction();
   const card = getCard(ids[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(card.id), 1);
-  log("logScheme", { player: me, card: card.name });
+  log("logScheme", { player: me, card: card.name, cardId: card.id });
   yield* runEffect(me, card, "scheme", null);
   pl(me).discard.push(card.id);
   return true;
@@ -1749,6 +1762,34 @@ function* attack(me) {
   combat.taken[foe] = dealt;
   combat.won[me] = raw > 0;
   combat.won[foe] = raw === 0;
+  const blindIds = new Set(
+    game.log
+      .filter((entry) => entry.key === "logBlindBoost")
+      .map((entry) => entry.params.cardId),
+  );
+  for (const player of [me, foe]) {
+    const card = combat.cards[player];
+    if (!card) {
+      log("logRevealNoDefense", { player });
+      continue;
+    }
+    log(player === me ? "logRevealAttack" : "logRevealDefense", {
+      player,
+      card: card.name,
+      cardId: card.id,
+      n: baseValues[player],
+    });
+    if (combat.canceled[player]) log("logRevealCanceled", { player });
+    for (const id of boostLists[player]) {
+      if (blindIds.has(id)) continue;
+      log("logRevealBoost", {
+        player,
+        card: getCard(id).name,
+        cardId: id,
+        n: getCard(id).boost,
+      });
+    }
+  }
   log("logCombat", {
     attacker: me,
     a: combat.values[me],
@@ -1781,8 +1822,11 @@ function* attack(me) {
     },
   };
 
-  if (dealt > 0) damage(foe, dealt);
-  else log("logNoDamage");
+  if (dealt > 0) {
+    damageSrc = combat.cards[me] ? combat.cards[me].name : null;
+    damage(foe, dealt);
+    damageSrc = null;
+  } else log("logNoDamage");
   if (
     dealt > 0 &&
     game.phase === "play" &&
@@ -2065,6 +2109,7 @@ function resetGame(clearNotice = true) {
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = null;
   game.tokens = [];
+  game.turnNo = 0;
   game.startPick = null;
   game.lobby = { p1: null, p2: null };
   game.toss = null;

@@ -457,8 +457,16 @@
                 v-for="(entry, index) in recentLog"
                 :key="index"
                 class="game-log-line"
+                :class="logClass(entry)"
               >
-                {{ formatLog(entry) }}
+                <img
+                  v-if="entry.params.cardId && logCard(entry)"
+                  class="game-log-card"
+                  :src="logCard(entry).image"
+                  :alt="logCard(entry).name"
+                  :title="logCard(entry).name"
+                />
+                <span>{{ formatLog(entry) }}</span>
               </div>
             </div>
           </div>
@@ -1293,7 +1301,15 @@ const promptCards = computed(() =>
     : [],
 );
 
-const recentLog = computed(() => [...game.log].slice(-30).reverse());
+const recentLog = computed(() => [...game.log].slice(-80).reverse());
+
+const logCard = (entry) => getCard(entry.params.cardId);
+
+const logClass = (entry) => ({
+  "is-turn": entry.key === "logTurn",
+  "is-damage": entry.key.startsWith("logDamage"),
+  "is-reveal": entry.key.startsWith("logReveal"),
+});
 
 const showCombat = computed(
   () =>
@@ -2144,15 +2160,48 @@ function onNewGame() {
 }
 
 .game-log-body {
-  max-height: 220px;
+  max-height: 380px;
   overflow-y: auto;
   padding: 0 14px 12px;
 }
 
 .game-log-line {
-  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 0;
   color: var(--text-muted);
+  font-size: 13px;
+}
+
+.game-log-line.is-reveal {
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.game-log-line.is-damage {
+  color: #f87171;
+  font-weight: 700;
+}
+
+.game-log-line.is-turn {
+  margin-top: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border-medium);
+  color: var(--color-warning);
   font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.game-log-card {
+  flex: none;
+  width: 34px;
+  height: 48px;
+  border: 1px solid var(--color-warning);
+  border-radius: 5px;
+  object-fit: cover;
 }
 
 .game-modal,
