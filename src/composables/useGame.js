@@ -535,6 +535,9 @@ function draw(player, count) {
     } else {
       log("logExhaust", { player, n: EXHAUSTION_DAMAGE });
       damage(player, EXHAUSTION_DAMAGE, "hero");
+      for (const kid of [...target.sidekicks]) {
+        damage(player, EXHAUSTION_DAMAGE, kid.id);
+      }
     }
   }
   if (drawn) {

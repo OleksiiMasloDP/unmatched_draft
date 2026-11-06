@@ -523,6 +523,7 @@ export const translations = {
       "The pool is set: the cards of these four characters will be drafted. Choose the character you play: Player 2 first, then Player 1.",
     packRolePlays: "plays",
     packRoleCards: "cards only",
+    promptPlaceSidekick: "Place your sidekick in a space adjacent to your hero",
   },
   ua: {
     navigation: "Навігація",
@@ -1050,6 +1051,7 @@ export const translations = {
       "Пул зібрано: драфтитимуться карти цих чотирьох персонажів. Оберіть персонажа, за якого граєте: спершу гравець 2, потім гравець 1.",
     packRolePlays: "грає",
     packRoleCards: "лише карти",
+    promptPlaceSidekick: "Поставте помічника на клітинку поруч зі своїм героєм",
   },
 };
 
