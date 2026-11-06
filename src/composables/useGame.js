@@ -820,9 +820,13 @@ function* damageAny(player, amount) {
   if (target) damage(target.owner, amount, target.fighter);
 }
 
-// Houdini і Bess міняються місцями; той, хто лишився, тепер б'ється замість першого.
+const swapKid = (player) =>
+  pl(player).sidekicks.find((item) => !item.down && item.hp > 0);
+
+const canSwapWithSidekick = (player) => Boolean(swapKid(player));
+
 function swapWithSidekick(player, combat) {
-  const kid = pl(player).sidekicks.find((item) => !item.down);
+  const kid = swapKid(player);
   if (!kid) return false;
   const heroSpace = pl(player).space;
   pl(player).space = kid.space;
@@ -1030,6 +1034,7 @@ const api = {
   offerBoost,
   damageAny,
   swapWithSidekick,
+  canSwapWithSidekick,
   swapPlayedCard,
   returnFromDiscard,
   rescueFighter,

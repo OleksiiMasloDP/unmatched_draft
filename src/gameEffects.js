@@ -768,6 +768,7 @@ export const cardEffects = {
 
   "smoke-and-mirrors": {
     *immediate(c) {
+      if (!c.g.canSwapWithSidekick(c.me)) return;
       const ok = yield c.g.askConfirm(c.me, "promptSmokeSwap");
       if (ok) c.g.swapWithSidekick(c.me, c.combat);
     },
@@ -786,12 +787,10 @@ export const cardEffects = {
     *scheme(c) {
       c.g.draw(c.me, 3);
       if (!c.g.handSize(c.me)) return;
-      const ids = yield c.g.askCards(
-        c.me,
-        "promptPutOnTop",
-        c.g.handOf(c.me),
-        { min: 1, max: 1 },
-      );
+      const ids = yield c.g.askCards(c.me, "promptPutOnTop", c.g.handOf(c.me), {
+        min: 1,
+        max: 1,
+      });
       if (ids.length) c.g.putOnDeckTop(c.me, ids[0]);
     },
     *boosted(c) {
