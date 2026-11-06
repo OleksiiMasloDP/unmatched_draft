@@ -468,7 +468,7 @@ function summon(player, spaceId) {
   log("logSummon", { who: kidData.name, space: spaceId });
 }
 
-function* chooseMover(player, remaining, canMove, booster = null) {
+function* chooseMover(player, remaining, canMove, booster = null, undo = true) {
   for (;;) {
     const able = remaining.filter((fighter) => {
       if (!fightersOf(player).includes(fighter)) return false;
@@ -482,7 +482,7 @@ function* chooseMover(player, remaining, canMove, booster = null) {
       "promptMoveWith",
       able.map((fighter) => fighterSpace(player, fighter)),
     );
-    prompt.undo = true;
+    prompt.undo = undo;
     prompt.boostOptions = booster ? booster.pool() : [];
     const answer = yield prompt;
     if (answer && typeof answer === "object") {
@@ -1285,6 +1285,7 @@ function* maneuver(me) {
           yield* boostedWith(me, boostCard);
         },
       },
+      false,
     );
     if (!fighter) break;
     remaining.splice(remaining.indexOf(fighter), 1);
@@ -1306,7 +1307,7 @@ function* maneuver(me) {
       prompt.fighter = fighter;
       prompt.left = left;
       prompt.boostOptions = !boosted && !started ? boostPool(me) : [];
-      prompt.undo = !boosted;
+      prompt.undo = false;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
         const boostCard = spendBoostCard(me, answer.boost);
