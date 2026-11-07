@@ -1660,11 +1660,7 @@ export const kingSolomonsMine = makeMap({
   radius: 65,
   spaces: SOLOMON_SPACES,
   links: SOLOMON_LINKS,
-  locks: [
-    ["M1", "M2"],
-    ["M15", "M18"],
-    ["M13", "M26"],
-  ],
+  locks: ["M1", "M2", "M13", "M15", "M18", "M26"],
   starts: { p1: "M17", p2: "M10" },
 });
 
