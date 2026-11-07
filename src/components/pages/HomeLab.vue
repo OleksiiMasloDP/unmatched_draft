@@ -226,7 +226,7 @@
             v-for="l in betaLinks"
             :key="l.route"
             :to="{ name: l.route }"
-            >🔒 {{ l.label }}</router-link
+            >{{ l.label }}</router-link
           >
         </nav>
         <nav class="fb-col">
@@ -305,7 +305,7 @@ const T = computed(() =>
         heroes: "героїв",
         mapsWord: "мап",
         tools: "Інструменти",
-        beta: "Закрита бета",
+        beta: "Грати",
         project: "Проєкт",
         report: "Повідомити про баг",
         disclaimer: "Фанатський проєкт, не пов'язаний з видавцями гри",
@@ -320,7 +320,7 @@ const T = computed(() =>
         heroes: "heroes",
         mapsWord: "maps",
         tools: "Tools",
-        beta: "Closed beta",
+        beta: "Play",
         project: "Project",
         report: "Report a bug",
         disclaimer: "Fan-made, not affiliated with the game's publishers",

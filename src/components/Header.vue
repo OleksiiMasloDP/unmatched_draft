@@ -102,10 +102,10 @@
       </nav>
 
       <div class="header-right">
-        <button type="button" class="desk-report" @click="openReport">
-          <svg class="desk-icon" viewBox="0 0 24 24" v-html="icons.bug"></svg>
+        <button type="button" class="desk-report" @click="openSupportModal">
+          <svg class="desk-icon" viewBox="0 0 24 24" v-html="icons.heart"></svg>
           <span>{{
-            lang === "ua" ? "Повідомити про баг" : "Report a bug"
+            lang === "ua" ? "Підтримати розробника" : "Support the developer"
           }}</span>
         </button>
         <div class="lang-switcher">
@@ -146,15 +146,17 @@
             <button
               type="button"
               class="menu-item menu-feedback"
-              @click="openReport"
+              @click="openSupportModal"
             >
               <svg
                 class="menu-icon"
                 viewBox="0 0 24 24"
-                v-html="icons.bug"
+                v-html="icons.heart"
               ></svg>
               <span>{{
-                lang === "ua" ? "Повідомити про баг" : "Report a bug"
+                lang === "ua"
+                  ? "Підтримати розробника"
+                  : "Support the developer"
               }}</span>
             </button>
           </li>
@@ -173,7 +175,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useFeedback } from "../composables/useFeedback";
+import { useSupport } from "../composables/useSupport";
 
 const props = defineProps({
   lang: {
@@ -190,7 +192,7 @@ const emit = defineEmits(["update:lang"]);
 const route = useRoute();
 const isMenuOpen = ref(false);
 const openMenu = ref(null);
-const { openFeedback } = useFeedback();
+const { openSupport } = useSupport();
 
 const stroke =
   'fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
@@ -205,7 +207,7 @@ const icons = {
   game: `<g ${stroke}><path d="M14.5 17.5 3 6V3h3l11.5 11.5" /><path d="m13 19 6-6" /><path d="m16 16 4 4" /><path d="m19 21 2-2" /></g>`,
   library: `<g ${stroke}><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M4 19.5A2 2 0 0 0 6 21h13" /></g>`,
   play: `<g ${stroke}><polygon points="6 4 20 12 6 20 6 4" /></g>`,
-  bug: `<g ${stroke}><path d="m8 2 1.9 1.9" /><path d="M14.1 3.9 16 2" /><path d="M9 7.13v-1a3 3 0 1 1 6 0v1" /><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" /><path d="M12 20v-9" /><path d="M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.97 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4" /></g>`,
+  heart: `<g ${stroke}><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z" /></g>`,
 };
 
 const nav = computed(() => {
@@ -258,13 +260,11 @@ const nav = computed(() => {
           name: "pack-draft",
           icon: "pack",
           label: props.t("packDraftTitle"),
-          beta: true,
         },
         {
           name: "game",
           icon: "game",
           label: props.t("gameTitle"),
-          beta: true,
         },
       ],
     },
@@ -284,9 +284,9 @@ function closeAll() {
   openMenu.value = null;
 }
 
-function openReport() {
+function openSupportModal() {
   closeAll();
-  openFeedback();
+  openSupport();
 }
 
 const changeLang = (newLang) => {
@@ -468,17 +468,6 @@ onBeforeUnmount(() => {
   letter-spacing: 1.5px;
   color: #64748b;
   padding: 4px 16px 8px;
-}
-
-.menu-beta {
-  margin-left: auto;
-  padding: 1px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(var(--color-info-rgb), 0.5);
-  color: var(--color-info);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
 }
 
 .menu-item {

@@ -28,9 +28,8 @@ export const routes = [
     path: "/pack-draft",
     name: "pack-draft",
     component: PackDraftPage,
-    meta: { beta: true },
   },
-  { path: "/game", name: "game", component: GamePage, meta: { beta: true } },
+  { path: "/game", name: "game", component: GamePage },
   { path: "/map-editor", name: "map-editor", component: MapEditor },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];

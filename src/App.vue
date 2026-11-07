@@ -6,16 +6,14 @@
     <Header :lang="lang" :t="t" @update:lang="lang = $event" />
 
     <main class="content">
-      <router-view v-slot="{ Component, route }">
-        <BetaGate v-if="route.meta.beta">
-          <component :is="Component" />
-        </BetaGate>
-        <component :is="Component" v-else />
+      <router-view v-slot="{ Component }">
+        <component :is="Component" />
       </router-view>
     </main>
 
     <ScrollToTop />
     <FeedbackModal />
+    <SupportModal />
   </div>
 </template>
 
@@ -24,8 +22,8 @@ import { onMounted, ref, nextTick } from "vue";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
-import BetaGate from "./components/BetaGate.vue";
 import FeedbackModal from "./components/FeedbackModal.vue";
+import SupportModal from "./components/SupportModal.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();

@@ -62,7 +62,7 @@
           <div>{{ t("onlineWaiting") }}</div>
           <div class="online-share">
             <span class="online-room">{{ net.code }}</span>
-            <button class="btn btn-sm action-btn" @click="copyLink">
+            <button class="btn btn-sm action-btn online-copy" @click="copyLink">
               {{ copied ? t("onlineCopied") : t("onlineCopyLink") }}
             </button>
           </div>
@@ -250,6 +250,18 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 6px;
+}
+
+.online-copy {
+  color: var(--text-light);
+  background: transparent;
+  border: 1px solid var(--border-strong) !important;
+}
+
+.online-copy:hover {
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--text-muted);
 }
 
 .online-room {

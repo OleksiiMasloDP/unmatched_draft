@@ -160,7 +160,6 @@
           :key="f.route"
           :to="{ name: f.route }"
           class="home-card"
-          :class="{ 'is-beta': f.beta }"
           data-reveal
           :style="{ '--d': (i % 3) * 100 + 'ms' }"
           @pointermove="cardMove"
@@ -176,22 +175,11 @@
           />
           <div class="home-card-body">
             <span class="home-card-icon">{{ f.icon }}</span>
-            <span v-if="f.beta" class="home-card-badge">
-              🔒 {{ L.betaBadge }}
-            </span>
             <h3>{{ L.features[f.key].title }}</h3>
             <p>{{ L.features[f.key].text }}</p>
             <span class="home-card-link">{{ L.open }} →</span>
           </div>
         </router-link>
-      </div>
-    </section>
-
-    <!-- ================= BETA NOTICE ================= -->
-    <section class="home-section">
-      <div class="home-beta" data-reveal>
-        <h2>{{ L.betaTitle }}</h2>
-        <p>{{ L.betaText }}</p>
       </div>
     </section>
 
@@ -254,7 +242,6 @@ const dict = {
     ],
     featuresTitle: "What's inside",
     open: "Open",
-    betaBadge: "Beta",
     features: {
       draft: {
         title: "Draft simulator",
@@ -285,9 +272,6 @@ const dict = {
         text: "Play your drafted decks on one screen or online with a room code: hand, deck, attacks, maneuvers and a battle log.",
       },
     },
-    betaTitle: "Pack Draft and Game are in closed beta",
-    betaText:
-      "These two sections are available to testers only. If the author gave you a password, open either of them and enter it once — the browser will remember it. Everything else on the site is open to everyone.",
   },
   ua: {
     eyebrow: "Драфт-симулятор для настільної гри Unmatched",
@@ -327,7 +311,6 @@ const dict = {
     ],
     featuresTitle: "Що всередині",
     open: "Відкрити",
-    betaBadge: "Бета",
     features: {
       draft: {
         title: "Драфт-симулятор",
@@ -358,9 +341,6 @@ const dict = {
         text: "Грайте задрафтовані колоди на одному екрані або онлайн за кодом кімнати: рука, колода, атаки, маневри та журнал бою.",
       },
     },
-    betaTitle: "Pack Draft і Гра — закрита бета",
-    betaText:
-      "Ці два розділи доступні лише тестерам. Якщо автор дав вам пароль, відкрийте будь-який із них і введіть його один раз — браузер запам'ятає. Решта сайту відкрита для всіх.",
   },
 };
 
@@ -377,9 +357,8 @@ const features = [
     route: "pack-draft",
     icon: "🎴",
     art: "map",
-    beta: true,
   },
-  { key: "game", route: "game", icon: "🎮", art: "hero", beta: true },
+  { key: "game", route: "game", icon: "🎮", art: "hero" },
 ];
 
 const abs = (path) => new URL(path, document.baseURI).href;
@@ -1170,20 +1149,9 @@ onBeforeUnmount(() => {
   );
   transition: opacity 0.25s ease;
 }
-.home-card.is-beta::before {
-  background: radial-gradient(
-    260px circle at var(--x) var(--y),
-    rgba(250, 204, 21, 0.22),
-    transparent 70%
-  );
-}
 .home-card:hover {
   border-color: rgba(var(--color-player-rgb, 79, 124, 255), 0.6);
   box-shadow: 0 18px 44px rgba(var(--color-player-rgb, 79, 124, 255), 0.2);
-}
-.home-card.is-beta:hover {
-  border-color: rgba(250, 204, 21, 0.6);
-  box-shadow: 0 18px 44px rgba(250, 204, 21, 0.14);
 }
 .home-card:hover::before {
   opacity: 1;
@@ -1263,25 +1231,6 @@ onBeforeUnmount(() => {
   color: var(--color-player, #4f7cff);
 }
 
-.home-beta {
-  padding: 22px;
-  text-align: center;
-  background: rgba(250, 204, 21, 0.06);
-  border: 1px solid rgba(250, 204, 21, 0.35);
-  border-radius: 16px;
-}
-.home-beta h2 {
-  margin: 0 0 8px;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--color-warning, #facc15);
-}
-.home-beta p {
-  max-width: 680px;
-  margin: 0 auto;
-  font-size: 0.95rem;
-  color: var(--text-muted, #cbd5e1);
-}
 @media (max-width: 720px) {
   .home-steps {
     grid-template-columns: 1fr;
