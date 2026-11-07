@@ -9,6 +9,7 @@ import {
   houdiniCards,
   wyattEarpCards,
   robinHoodCards,
+  jillTrentCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -155,6 +156,28 @@ export const packDraftHeroes = [
       image: "images/shuri.webp",
     },
     cards: blackPantherCards,
+  },
+  {
+    id: "jill-trent",
+    name: "Dr. Jill Trent",
+    hp: 13,
+    move: 2,
+    attack: "melee",
+    image: "images/jill_trent.webp",
+    passive: {
+      name: "Gadgetology",
+      text: {
+        en: "At the start of your turn, activate one of your gadgets. Whenever Jill Trent attacks, resolve the active gadget's effect. Hypnoray Blaster: during combat, if your card's printed value is lower than your opponent's, reveal the top card of your opponent's deck and increase the value of your attack by its BOOST value. Ultrabiotic Tonic: after combat, if your card's printed value is higher than your opponent's, Jill Trent recovers 1 health.",
+        ua: "На початку вашого ходу активуйте один зі своїх гаджетів. Щоразу, коли Jill Trent атакує, застосуйте ефект активного гаджета. Hypnoray Blaster: під час бою, якщо надруковане значення вашої карти менше, ніж у супротивника, розкрийте верхню карту його колоди й збільште значення атаки на її значення БУСТУ. Ultrabiotic Tonic: після бою, якщо надруковане значення вашої карти більше, ніж у супротивника, Jill Trent відновлює 1 здоров'я.",
+      },
+    },
+    sidekick: {
+      name: "Daisy",
+      hp: 6,
+      attack: "melee",
+      image: "images/daisy.webp",
+    },
+    cards: jillTrentCards,
   },
   {
     id: "robin-hood",

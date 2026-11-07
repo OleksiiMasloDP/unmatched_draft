@@ -374,6 +374,21 @@
               {{ heroOf(player).sidekick.summon ? "—" : "✝" }}
             </span>
           </div>
+          <div
+            v-if="heroOf(player).id === 'jill-trent' && game.gadget?.[player]"
+            class="game-sidekick"
+          >
+            <span class="game-sidekick-name">
+              ⚙
+              {{
+                t(
+                  game.gadget[player] === "tonic"
+                    ? "gadgetTonic"
+                    : "gadgetHypnoray",
+                )
+              }}
+            </span>
+          </div>
           <div v-if="heroOf(player).id === 'blackbeard'" class="game-sidekick">
             <span class="game-sidekick-name">
               🪙 {{ game.players[player].coins }}
@@ -1765,6 +1780,9 @@ function formatLog(entry) {
       shown = playerLabel(value);
     }
     if (name === "token") shown = t("token_" + value);
+    if (name === "gadget") {
+      shown = t(value === "tonic" ? "gadgetTonic" : "gadgetHypnoray");
+    }
     text = text.replace(`{${name}}`, shown);
   }
   return text;

@@ -105,6 +105,24 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-7",
+      name: "Dr. Jill Trent Deck",
+      heroId: "jill-trent",
+      cardIds: allCards
+        .filter((card) => card.heroId === "jill-trent")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-8",
+      name: "Dr. Jill Trent Deck",
+      heroId: "jill-trent",
+      cardIds: allCards
+        .filter((card) => card.heroId === "jill-trent")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

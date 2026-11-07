@@ -61,6 +61,7 @@ const game = reactive({
   freeAttacks: [],
   turnStart: null,
   redRoomIgnored: { p1: false, p2: false },
+  gadget: { p1: null, p2: null },
   viewer: "p1",
   lobby: { p1: null, p2: null },
   prompt: null,
@@ -322,8 +323,17 @@ function finalizeDefeat(player, fighter) {
 
 const source = () => activeCard || damageSrc;
 
+let combatHit = false;
+
 function damage(player, amount, fighter = cur[player]) {
   if (amount <= 0 || game.phase !== "play") return;
+  if (
+    !combatHit &&
+    game.combat?.immune?.[player] &&
+    game.combat.fighters[player] === fighter
+  ) {
+    return;
+  }
   if (fighter !== "hero") {
     const kid = kidOf(player, fighter);
     if (!kid || kid.down) return;
@@ -1074,6 +1084,21 @@ const api = {
     const kid = kidOf(owner, fighter);
     return !kid || kid.down || kid.hp <= 0;
   },
+  cardKind: (id) => getCard(id).kind,
+  gadgetOf: (player) => game.gadget[player],
+  setImmune: (player) => {
+    if (game.combat) game.combat.immune[player] = true;
+  },
+  topCards: (player, count) => pl(player).deck.slice(0, count),
+  reorderTop: (player, count, bottomId, order) => {
+    const deck = pl(player).deck;
+    deck.splice(0, count);
+    deck.unshift(...order);
+    if (bottomId) deck.push(bottomId);
+  },
+  discardOf: (player) => [...pl(player).discard],
+  logRevealOwn: (player, id) =>
+    log("logRevealOwn", { player, card: getCard(id).name, cardId: id }),
   foeFighterIds: (player) => fightersOf(other(player)),
   peekTop: (player) => pl(player).deck[0] || null,
   topToBottom: (player) => {
@@ -1276,6 +1301,28 @@ function* startTurn() {
   if (hero(me).id === "ms-marvel") {
     yield* walk(me, me, 1, "promptStretchy");
   }
+  if (hero(me).id === "jill-trent") {
+    const pick = yield askChoice(me, "promptGadget", [
+      { value: "hypnoray", label: "gadgetHypnoray" },
+      { value: "tonic", label: "gadgetTonic" },
+    ]);
+    game.gadget[me] = pick || "hypnoray";
+    log("logGadget", { player: me, gadget: game.gadget[me] });
+  }
+}
+
+function gadgetFor(player, fighter, card, combat) {
+  if (hero(player).id !== "jill-trent" || !game.gadget[player]) return null;
+  if (fighter === "hero") return game.gadget[player];
+  const kid = kidOf(player, fighter);
+  if (
+    card?.key === "sisters-in-arms" &&
+    kid &&
+    active.spaceById.get(pl(player).space).links.includes(kid.space)
+  ) {
+    return game.gadget[player];
+  }
+  return null;
 }
 
 function* conveyor() {
@@ -1698,6 +1745,7 @@ function* attack(me) {
     token: { p1: null, p2: null, [me]: attackToken },
     rescue: { p1: false, p2: false },
     pending: { p1: false, p2: false },
+    immune: { p1: false, p2: false },
   };
 
   let defenseCard = null;
@@ -1834,10 +1882,33 @@ function* attack(me) {
 
   if (game.phase !== "play" || !game.combat) return true;
 
+  const gadget = gadgetFor(me, mine, combat.cards[me], combat);
+  if (gadget === "hypnoray" && combat.cards[me]) {
+    const foeValue = combat.cards[foe] ? combat.cards[foe].value : 0;
+    const top = pl(foe).deck[0];
+    if (combat.cards[me].value < foeValue && top) {
+      log("logRevealTop", {
+        player: me,
+        card: getCard(top).name,
+        cardId: top,
+      });
+      boosts[me] += getCard(top).boost;
+      game.combat.boost[me] = true;
+    }
+  }
+
+  const locked = { p1: false, p2: false };
   const ignored = { p1: false, p2: false };
   for (const player of players) {
     const card = combat.cards[player];
     const effect = card && cardEffects[card.key];
+    if (
+      effect?.lockFoeValue &&
+      !combat.canceled[player] &&
+      effect.lockFoeValue(context(player, card, combat))
+    ) {
+      locked[other(player)] = true;
+    }
     if (
       effect?.ignoreFoeValue &&
       !combat.canceled[player] &&
@@ -1855,12 +1926,14 @@ function* attack(me) {
     if (effect?.value && !combat.canceled[player]) {
       value = effect.value(context(player, card, combat), value);
     }
+    if (locked[player]) value = card.value;
     if (ignored[player]) value = 0;
     baseValues[player] = value;
     let total = value + boosts[player];
     if (effect?.finalValue && !combat.canceled[player]) {
       total = effect.finalValue(context(player, card, combat), total);
     }
+    if (locked[player]) total = ignored[player] ? 0 : card.value;
     combat.values[player] = total;
   }
   const terrain = game.combat.terrain;
@@ -1938,7 +2011,9 @@ function* attack(me) {
 
   if (dealt > 0) {
     damageSrc = combat.cards[me] ? combat.cards[me].name : null;
+    combatHit = true;
     damage(foe, dealt);
+    combatHit = false;
     damageSrc = null;
   } else log("logNoDamage");
   if (
@@ -1956,6 +2031,15 @@ function* attack(me) {
     if (card && !combat.canceled[player] && game.phase === "play") {
       yield* runEffect(player, card, "after", combat);
     }
+  }
+
+  if (
+    game.phase === "play" &&
+    gadget === "tonic" &&
+    combat.cards[me] &&
+    combat.cards[me].value > (combat.cards[foe] ? combat.cards[foe].value : 0)
+  ) {
+    heal(me, 1, "hero");
   }
 
   for (const player of players) {
@@ -2178,6 +2262,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   }
   game.tokens = placeTokens();
   placeSidekicks();
+  game.gadget = { p1: null, p2: null };
   game.treasury = [deckA, deckB].some((deck) => deck.heroId === "blackbeard")
     ? 1
     : 0;

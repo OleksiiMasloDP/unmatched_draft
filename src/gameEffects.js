@@ -1052,4 +1052,141 @@ export const cardEffects = {
       }
     },
   },
+  // -------------------------------------------------------- Dr. Jill Trent
+  "energizing-spray": {
+    *after(c) {
+      c.g.gainAction(1);
+    },
+  },
+
+  "battle-of-wits": {
+    *after(c) {
+      const mine = c.g.peekTop(c.me);
+      const theirs = c.g.peekTop(c.foe);
+      if (mine) c.g.logRevealOwn(c.me, mine);
+      if (theirs) c.g.logRevealTop(c.me, theirs);
+      if (!mine) return;
+      const foeBoost = theirs ? c.g.cardBoost(theirs) : 0;
+      if (c.g.cardBoost(mine) > foeBoost) c.g.damage(c.foe, 3);
+    },
+  },
+
+  "ace-fighter": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "gyroscopic-jetpack": {
+    *after(c) {
+      const fighter = c.combat.fighters[c.me];
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        2,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { through: true, fighter },
+      );
+    },
+  },
+
+  "utility-belt": {
+    *after(c) {
+      const pick = yield c.g.askChoice(c.me, "promptUtilityBelt", [
+        { value: "heal", label: "gameBelt_heal" },
+        { value: "move", label: "gameBelt_move" },
+        { value: "draw", label: "gameBelt_draw" },
+      ]);
+      if (pick === "heal") c.g.heal(c.me, 1, "hero");
+      else if (pick === "draw") c.g.draw(c.me, 1);
+      else {
+        const previous = c.combat.fighters[c.me];
+        c.g.setFighter(c.me, "hero");
+        yield* c.g.walk(c.me, c.me, 1, "promptMoveSpace", {
+          fighter: "hero",
+        });
+        c.g.setFighter(c.me, previous);
+      }
+    },
+  },
+
+  "insightful-deduction": {
+    *after(c) {
+      const top = c.g.topCards(c.foe, 3);
+      if (!top.length) return;
+      for (const id of top) c.g.logRevealTop(c.me, id);
+      const [bottom] = yield c.g.askCards(c.me, "promptDeductionBottom", top, {
+        min: 1,
+        max: 1,
+      });
+      const rest = top.filter((id) => id !== bottom);
+      const order = [];
+      while (rest.length > 1) {
+        const [first] = yield c.g.askCards(c.me, "promptDeductionTop", rest, {
+          min: 1,
+          max: 1,
+        });
+        order.push(first);
+        rest.splice(rest.indexOf(first), 1);
+      }
+      order.push(...rest);
+      c.g.reorderTop(c.foe, top.length, bottom, order);
+    },
+  },
+
+  "sisters-in-arms": { uncancelable: true },
+
+  "stasis-diffuser": {
+    lockFoeValue: () => true,
+  },
+
+  "laser-pen": {
+    *after(c) {
+      c.g.damage(c.foe, 1);
+    },
+  },
+
+  "caught-red-handed": {
+    *after(c) {
+      const count = Math.min(c.combat.won[c.me] ? 2 : 1, c.g.handSize(c.foe));
+      for (let i = 0; i < count; i++) {
+        const [id] = yield c.g.askCards(
+          c.foe,
+          "promptDiscardOne",
+          c.g.handOf(c.foe),
+          { min: 1, max: 1 },
+        );
+        c.g.discardFromHand(c.foe, id);
+      }
+    },
+  },
+
+  "indestructible-cloth": {
+    *immediate(c) {
+      c.g.setImmune(c.me);
+    },
+  },
+
+  hypnotist: {
+    *immediate(c) {
+      if (c.g.gadgetOf(c.me) === "hypnoray") cancelOpponentCard(c);
+    },
+  },
+
+  "helpful-assistant": {
+    *scheme(c) {
+      const pool = c.g
+        .discardOf(c.me)
+        .filter((id) => c.g.cardKind(id) === "hero");
+      if (pool.length) {
+        const ids = yield c.g.askCards(c.me, "promptHelpfulAssistant", pool, {
+          min: 0,
+          max: 3,
+          skip: "gameSkip",
+        });
+        if (ids.length) c.g.shuffleIntoDeck(c.me, ids);
+      }
+      c.g.draw(c.me, 1);
+    },
+  },
 };
