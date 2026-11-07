@@ -657,9 +657,9 @@ function place(player, spaceId) {
   const from = spaceOf(player);
   setSpace(player, cur[player], spaceId);
   if (cur[player] !== "hero") {
-    log("logMoveSk", { who: kidOf(player, cur[player]).name, space: spaceId });
+    log("logMove", { player, who: kidOf(player, cur[player]).name });
   } else {
-    log("logMove", { player, space: spaceId });
+    log("logMove", { player, who: hero(player).name });
   }
   if (from !== spaceId) attackOfOpportunity(player, from);
 }
@@ -1260,7 +1260,7 @@ const escapeReady = (player, boosted) =>
 
 function* maneuver(me) {
   spendAction();
-  log("logManeuver", { player: me });
+  log("logManeuver", { player: me, act: 1 });
   draw(me, 1);
   if (game.phase !== "play") return true;
 
@@ -1516,7 +1516,12 @@ function* scheme(me) {
   spendAction();
   const card = getCard(ids[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(card.id), 1);
-  log("logScheme", { player: me, card: card.name, cardId: card.id });
+  log("logScheme", {
+    player: me,
+    card: card.name,
+    cardId: card.id,
+    act: 1,
+  });
   yield* runEffect(me, card, "scheme", null);
   pl(me).discard.push(card.id);
   return true;
@@ -1592,7 +1597,7 @@ function* attack(me) {
   turnFlags.anyRange[me] = false;
   const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
-  log("logAttack", { player: me });
+  log("logAttack", { player: me, act: 1 });
   const attackToken = yield* offerBoostToken(me, mine);
 
   const faceUp = Boolean(cardEffects[attackCard.key]?.faceUp);

@@ -473,19 +473,47 @@
             </button>
             <div v-if="logOpen" class="game-log-body">
               <div
-                v-for="(entry, index) in recentLog"
-                :key="index"
-                class="game-log-line"
-                :class="logClass(entry)"
+                v-for="block in logBlocks"
+                :key="block.key"
+                class="game-log-block"
               >
-                <img
-                  v-if="entry.params.cardId && logCard(entry)"
-                  class="game-log-card"
-                  :src="logCard(entry).image"
-                  :alt="logCard(entry).name"
-                  :title="logCard(entry).name"
-                />
-                <span>{{ formatLog(entry) }}</span>
+                <div
+                  v-for="(group, gi) in block.groups"
+                  :key="gi"
+                  class="game-log-group"
+                  :class="group.cls"
+                >
+                  <div v-if="group.title" class="game-log-group-title">
+                    {{ group.title }}
+                  </div>
+                  <div
+                    v-for="(entry, index) in group.entries"
+                    :key="index"
+                    class="game-log-line"
+                    :class="logClass(entry)"
+                  >
+                    <button
+                      v-if="entry.params.cardId && logCard(entry)"
+                      type="button"
+                      class="game-log-card"
+                      :title="logCard(entry).name"
+                      @click="logCardView = logCard(entry)"
+                    >
+                      <img
+                        :src="logCard(entry).image"
+                        :alt="logCard(entry).name"
+                      />
+                    </button>
+                    <span>
+                      <span
+                        v-for="(part, pi) in logParts(entry)"
+                        :key="pi"
+                        :class="part.cls"
+                        >{{ part.text }}</span
+                      >
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -750,6 +778,24 @@
               </button>
             </div>
           </template>
+        </div>
+      </div>
+
+      <div
+        v-if="logCardView"
+        class="game-modal"
+        @click.self="logCardView = null"
+      >
+        <div class="game-modal-box is-logcard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="logCardView = null"
+          >
+            ✕
+          </button>
+          <PackCard :card="logCardView" />
         </div>
       </div>
 
@@ -1093,6 +1139,7 @@ const canPickMap = computed(
       game.toss.winner === mySeat.value),
 );
 const logOpen = ref(false);
+const logCardView = ref(null);
 const surrenderOpen = ref(false);
 
 const players = ["p1", "p2"];
@@ -1351,11 +1398,77 @@ const promptCards = computed(() =>
     : [],
 );
 
-const recentLog = computed(() => [...game.log].slice(-80).reverse());
+const ACTION_KEYS = new Set(["logManeuver", "logAttack", "logScheme"]);
+
+const logBlocks = computed(() => {
+  const blocks = [];
+  let block = null;
+  let group = null;
+  let actionNo = 0;
+  const entries = game.log.slice(-120);
+  entries.forEach((entry, index) => {
+    if (entry.key === "logTurn" || !block) {
+      actionNo = 0;
+      block = { key: index, groups: [] };
+      blocks.push(block);
+      group = null;
+      if (entry.key === "logTurn") {
+        group = {
+          cls: ["is-turn-head", "is-" + entry.params.player],
+          entries: [entry],
+        };
+        block.groups.push(group);
+        group = null;
+        return;
+      }
+    }
+    if (entry.params.act && ACTION_KEYS.has(entry.key)) {
+      actionNo += 1;
+      group = {
+        cls: ["is-action", "is-" + entry.params.player],
+        title: t("logActionNo").replace("{n}", actionNo),
+        entries: [],
+      };
+      block.groups.push(group);
+    } else if (!group) {
+      group = { cls: ["is-misc"], entries: [] };
+      block.groups.push(group);
+    }
+    group.entries.push(entry);
+  });
+  return blocks.reverse();
+});
 
 const logCard = (entry) => getCard(entry.params.cardId);
 
+const LOG_PARTS = /(\{[a-zA-Z]+\})/;
+
+function logParts(entry) {
+  const parts = [];
+  for (const piece of t(entry.key).split(LOG_PARTS)) {
+    const match = piece.match(/^\{([a-zA-Z]+)\}$/);
+    if (!match) {
+      if (piece) parts.push({ text: piece });
+      continue;
+    }
+    const name = match[1];
+    const value = entry.params[name];
+    if (["player", "attacker", "defender"].includes(name)) {
+      parts.push({ text: playerLabel(value), cls: "log-" + value });
+    } else if (name === "token") {
+      parts.push({ text: t("token_" + value), cls: "log-name" });
+    } else if (["card", "who", "hero", "src"].includes(name)) {
+      parts.push({ text: String(value), cls: "log-name" });
+    } else {
+      parts.push({ text: String(value), cls: "log-num" });
+    }
+  }
+  return parts;
+}
+
 const logClass = (entry) => ({
+  "is-move": entry.key === "logMove",
+  "is-action-start": Boolean(entry.params.act),
   "is-turn": entry.key === "logTurn",
   "is-damage": entry.key.startsWith("logDamage"),
   "is-reveal": entry.key.startsWith("logReveal"),
@@ -2235,9 +2348,7 @@ function onNewGame() {
 }
 
 .game-log-line.is-turn {
-  margin-top: 8px;
-  padding: 6px 0;
-  border-top: 1px solid var(--border-medium);
+  padding: 2px 0;
   color: var(--color-warning);
   font-size: 12px;
   font-weight: 800;
@@ -2247,11 +2358,86 @@ function onNewGame() {
 
 .game-log-card {
   flex: none;
-  width: 34px;
-  height: 48px;
+  width: 56px;
+  height: 78px;
+  padding: 0;
   border: 1px solid var(--color-warning);
-  border-radius: 5px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.game-log-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+.game-log-block {
+  margin-top: 14px;
+}
+
+.game-log-group {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--border-medium);
+  border-radius: 0 8px 8px 0;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.game-log-group.is-p1 {
+  border-left-color: var(--color-player);
+}
+
+.game-log-group.is-p2 {
+  border-left-color: var(--color-opponent);
+}
+
+.game-log-group.is-turn-head {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.game-log-group-title {
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.game-log-line > span {
+  white-space: pre-wrap;
+}
+
+.game-log-line.is-action-start {
+  color: var(--text-white);
+  font-weight: 800;
+}
+
+.log-p1 {
+  color: var(--color-player);
+  font-weight: 800;
+}
+
+.log-p2 {
+  color: var(--color-opponent);
+  font-weight: 800;
+}
+
+.log-name {
+  color: var(--color-warning);
+  font-weight: 700;
+}
+
+.log-num {
+  color: var(--text-white);
+  font-weight: 800;
+}
+
+.game-modal-box.is-logcard {
+  width: min(340px, 90vw);
 }
 
 .game-modal,
