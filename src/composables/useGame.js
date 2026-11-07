@@ -323,6 +323,15 @@ function finalizeDefeat(player, fighter) {
 
 const source = () => activeCard || damageSrc;
 
+function buryKids(player) {
+  const target = pl(player);
+  if (!target.fallen) target.fallen = [];
+  for (const kid of target.sidekicks.filter((item) => item.down)) {
+    target.fallen.push(kid);
+  }
+  target.sidekicks = target.sidekicks.filter((kid) => !kid.down);
+}
+
 let combatHit = false;
 function noteReveal(player, id) {
   if (game.combat?.reveals) game.combat.reveals.push({ player, cardId: id });
@@ -354,9 +363,7 @@ function damage(player, amount, fighter = cur[player]) {
     if (kid.hp === 0) {
       kid.down = true;
       log("logSidekickDown", { who: kid.name });
-      if (!game.combat) {
-        pl(player).sidekicks = pl(player).sidekicks.filter((k) => !k.down);
-      }
+      if (!game.combat) buryKids(player);
     }
     return;
   }
@@ -1132,11 +1139,19 @@ const api = {
       )
       .map((space) => space.id);
   },
-  hasDefeatedKid: (player) => pl(player).sidekicks.some((kid) => kid.down),
+  hasDefeatedKid: (player) =>
+    Boolean(pl(player).fallen?.length) ||
+    pl(player).sidekicks.some((kid) => kid.down),
   reviveKid: (player, spaceId) => {
-    const kid = pl(player).sidekicks.find((item) => item.down);
+    const target = pl(player);
+    let kid = target.sidekicks.find((item) => item.down);
+    if (!kid && target.fallen?.length) {
+      kid = target.fallen.shift();
+      target.sidekicks.push(kid);
+    }
     if (!kid) return;
     kid.down = false;
+    kid.unplaced = false;
     kid.hp = kid.maxHp;
     kid.space = spaceId;
     log("logSummon", { who: kid.name, space: spaceId });
@@ -2142,9 +2157,7 @@ function* attack(me) {
   };
   finish(me, combat.cards[me]);
   finish(foe, combat.cards[foe]);
-  for (const player of ["p1", "p2"]) {
-    pl(player).sidekicks = pl(player).sidekicks.filter((kid) => !kid.down);
-  }
+  for (const player of ["p1", "p2"]) buryKids(player);
   game.combat = null;
   resetFighters();
   return true;
@@ -2255,6 +2268,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
             }),
           )
         : [],
+      fallen: [],
       coins: data.id === "blackbeard" ? 2 : 0,
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
