@@ -8,6 +8,7 @@ import {
   blackPantherCards,
   houdiniCards,
   wyattEarpCards,
+  robinHoodCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -154,6 +155,29 @@ export const packDraftHeroes = [
       image: "images/shuri.webp",
     },
     cards: blackPantherCards,
+  },
+  {
+    id: "robin-hood",
+    name: "Robin Hood",
+    hp: 13,
+    move: 2,
+    attack: "range",
+    image: "images/robin_hood.webp",
+    passive: {
+      name: "Special Ability",
+      text: {
+        en: "After you attack, you may move your attacking fighter up to 2 spaces.",
+        ua: "Після вашої атаки ви можете перемістити бійця, що атакував, до 2 клітинок.",
+      },
+    },
+    sidekick: {
+      name: "Outlaws",
+      hp: 1,
+      attack: "melee",
+      image: "images/outlaws.webp",
+      count: 4,
+    },
+    cards: robinHoodCards,
   },
   {
     id: "wyatt-earp",
@@ -357,6 +381,22 @@ const CARD_IMAGES = {
       wakanda_forever: "versatile",
       vibranium_shockwave: "attack",
       microweave_mesh: "defense",
+    },
+  },
+  "robin-hood": {
+    dir: "Robin Hood",
+    files: {
+      a_hunters_eye: "attack",
+      ambush: "attack",
+      defenders_of_sherwood: "defense",
+      disarming_shot: "attack",
+      feint: "versatile",
+      highway_robbery: "attack",
+      piercing_shot: "attack",
+      snark: "versatile",
+      regroup: "versatile",
+      steal_from_the_rich: "scheme",
+      wily_fighting: "versatile",
     },
   },
 };

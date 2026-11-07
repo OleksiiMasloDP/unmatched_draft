@@ -1089,6 +1089,26 @@ const api = {
   setFighter: (player, fighter) => {
     cur[player] = fighter;
   },
+  reviveSpaces: (player) => {
+    const zones = active.spaceById.get(pl(player).space).zones;
+    const busy = occupied();
+    return active.map.spaces
+      .filter(
+        (space) =>
+          !busy.includes(space.id) &&
+          space.zones.some((zone) => zones.includes(zone)),
+      )
+      .map((space) => space.id);
+  },
+  hasDefeatedKid: (player) => pl(player).sidekicks.some((kid) => kid.down),
+  reviveKid: (player, spaceId) => {
+    const kid = pl(player).sidekicks.find((item) => item.down);
+    if (!kid) return;
+    kid.down = false;
+    kid.hp = kid.maxHp;
+    kid.space = spaceId;
+    log("logSummon", { who: kid.name, space: spaceId });
+  },
   swapWithSidekick,
   canSwapWithSidekick,
   swapPlayedCard,
@@ -1971,6 +1991,20 @@ function* attack(me) {
     }
   }
 
+  if (game.phase === "play" && hero(me).id === "robin-hood") {
+    const fighter = cur[me];
+    const alive = fighter === "hero" || !kidOf(me, fighter)?.down;
+    if (alive) {
+      yield* walk(
+        me,
+        me,
+        2,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { fighter },
+      );
+    }
+  }
+
   if (
     game.phase === "play" &&
     combat.won[me] &&
@@ -2112,7 +2146,9 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
       sidekicks: data.sidekick
         ? Array.from(
             {
-              length: data.sidekick.summon ? (data.sidekick.start ?? 0) : 1,
+              length: data.sidekick.summon
+                ? (data.sidekick.start ?? 0)
+                : (data.sidekick.count ?? 1),
             },
             (_, i) => ({
               id: "sk" + (i + 1),

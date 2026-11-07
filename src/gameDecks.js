@@ -52,35 +52,7 @@ function buildTestDecks() {
 
   return [
     {
-      id: "test-deck-1",
-      name: "Test deck 1",
-      heroId: "ms-marvel",
-      cardIds: marvelCards,
-      isTest: true,
-    },
-    {
-      id: "test-deck-2",
-      name: "Test deck 2",
-      heroId: "winter-soldier",
-      cardIds: soldierCards,
-      isTest: true,
-    },
-    {
-      id: "test-deck-3",
-      name: "Test deck 3",
-      heroId: "tomoe-gozen",
-      cardIds: tomoeCards,
-      isTest: true,
-    },
-    {
-      id: "test-deck-4",
-      name: "Test deck 4",
-      heroId: "spider-man",
-      cardIds: spiderCards,
-      isTest: true,
-    },
-    {
-      id: "tesst-deck-5",
+      id: "tesst-deck-1",
       name: "Strange Deck",
       heroId: "doctor-strange",
       cardIds: allCards
@@ -89,7 +61,7 @@ function buildTestDecks() {
       isTest: true,
     },
     {
-      id: "test-deck-6",
+      id: "test-deck-2",
       name: "Blackbeard Deck",
       heroId: "blackbeard",
       cardIds: allCards
@@ -98,7 +70,7 @@ function buildTestDecks() {
       isTest: true,
     },
     {
-      id: "test-deck-7",
+      id: "test-deck-3",
       name: "Black Panther Deck",
       heroId: "black-panther",
       cardIds: allCards
@@ -107,7 +79,7 @@ function buildTestDecks() {
       isTest: true,
     },
     {
-      id: "test-deck-8",
+      id: "test-deck-4",
       name: "Houdini Deck",
       heroId: "harry-houdini",
       cardIds: allCards
@@ -116,11 +88,20 @@ function buildTestDecks() {
       isTest: true,
     },
     {
-      id: "test-deck-9",
+      id: "test-deck-5",
       name: "Wyatt Earp Deck",
       heroId: "wyatt-earp",
       cardIds: allCards
         .filter((card) => card.heroId === "wyatt-earp")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-6",
+      name: "Robin Hood Deck",
+      heroId: "robin-hood",
+      cardIds: allCards
+        .filter((card) => card.heroId === "robin-hood")
         .map((card) => card.id),
       isTest: true,
     },

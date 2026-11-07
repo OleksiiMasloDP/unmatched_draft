@@ -298,7 +298,9 @@ export const cardEffects = {
 
   "wily-fighting": {
     *after(c) {
-      if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
+      for (const { owner, fighter } of c.g.adjacentFightersOf(c.me)) {
+        if (owner === c.foe) c.g.damage(owner, 1, fighter);
+      }
     },
   },
 
@@ -995,6 +997,59 @@ export const cardEffects = {
       yield* c.g.walk(c.me, c.foe, 1, "promptMoveFoe", { fighter: target });
       c.g.setFighter(c.foe, "hero");
       c.g.gainAttackAction(target);
+    },
+  },
+  // ------------------------------------------------------------ Robin Hood
+  "a-hunter-s-eye": {},
+
+  "highway-robbery": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    ignoreFoeValue: () => true,
+  },
+
+  ambush: {
+    *immediate(c) {
+      const hand = c.g.handOf(c.foe);
+      if (!hand.length) return;
+      const id = hand[Math.floor(Math.random() * hand.length)];
+      c.g.discardFromHand(c.foe, id);
+      c.combat.ambush = c.combat.ambush || {};
+      c.combat.ambush[c.me] = c.g.cardBoost(id);
+    },
+    value: (c, value) => value + (c.combat.ambush?.[c.me] || 0),
+  },
+
+  "defenders-of-sherwood": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+      if (!c.g.hasDefeatedKid(c.me)) return;
+      const options = c.g.reviveSpaces(c.me);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptReviveKid", options);
+      c.g.reviveKid(c.me, space || options[0]);
+    },
+  },
+
+  "steal-from-the-rich": {
+    *scheme(c) {
+      c.g.draw(c.me, 1);
+      let paid = false;
+      if (c.g.handSize(c.foe)) {
+        paid = yield c.g.askConfirm(c.foe, "promptStealDiscard");
+      }
+      if (paid) {
+        const ids = yield c.g.askCards(
+          c.foe,
+          "promptDiscardOne",
+          c.g.handOf(c.foe),
+          { min: 1, max: 1 },
+        );
+        c.g.discardFromHand(c.foe, ids[0]);
+      } else {
+        c.g.draw(c.me, 1);
+      }
     },
   },
 };
