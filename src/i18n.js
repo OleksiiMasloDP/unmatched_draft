@@ -1083,6 +1083,9 @@ Object.assign(translations.ua, blackPantherText.ua);
 import { houdiniText } from "./i18nHoudini.js";
 Object.assign(translations.en, houdiniText.en);
 Object.assign(translations.ua, houdiniText.ua);
+import { wyattText } from "./i18nWyatt.js";
+Object.assign(translations.en, wyattText.en);
+Object.assign(translations.ua, wyattText.ua);
 
 import { tokensText } from "./i18nTokens.js";
 

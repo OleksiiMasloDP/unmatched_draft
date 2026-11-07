@@ -7,6 +7,7 @@ import {
   blackbeardCards,
   blackPantherCards,
   houdiniCards,
+  wyattEarpCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -155,6 +156,28 @@ export const packDraftHeroes = [
     cards: blackPantherCards,
   },
   {
+    id: "wyatt-earp",
+    name: "Wyatt Earp",
+    hp: 15,
+    move: 2,
+    attack: "range",
+    image: "images/wyatt_earp.webp",
+    passive: {
+      name: "Showdown",
+      text: {
+        en: "After you attack and win combat, choose one effect. You cannot choose the same effect twice in a turn. Draw 1 card. Gain 1 free action to attack. Move your fighter up to 1 space.",
+        ua: "Після того як ви атакували й виграли бій, оберіть один ефект. Не можна обирати той самий ефект двічі за хід. Візьміть 1 карту. Отримайте 1 вільну дію атаки. Перемістіть вашого бійця до 1 клітинки.",
+      },
+    },
+    sidekick: {
+      name: "Doc Holliday",
+      hp: 8,
+      attack: "range",
+      image: "images/doc_holliday.webp",
+    },
+    cards: wyattEarpCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -299,6 +322,24 @@ const CARD_IMAGES = {
       vanishing_act: "versatile",
     },
   },
+  "wyatt-earp": {
+    dir: "Wyatt Earp",
+    cover: false,
+    files: {
+      a_marshal_and_an_outlaw: "versatile",
+      you_just_gonna_stand_there_and_bleed: "attack",
+      youre_a_daisy: "versatile",
+      better_swear_me_in: "versatile",
+      bring_em_to_justice: "defense",
+      fan_the_hammer: "attack",
+      gunfight_at_the_ok_corral: "versatile",
+      i_have_two_guns_one_for_each_of_you: "attack",
+      im_your_huckleberry: "versatile",
+      in_vino_veritas: "scheme",
+      second_shot: "attack",
+      you_die_first: "scheme",
+    },
+  },
   "black-panther": {
     dir: "Black Panther",
     cover: false,
@@ -323,6 +364,7 @@ const CARD_IMAGES = {
 const CARD_IMAGE_ALIASES = {
   "tomoe-gozen": { "confront any demon or god": "demon" },
   blackbeard: { "queen anne's revenge": "queen_annes_revenge" },
+  "wyatt-earp": { "you're a daisy if you do": "youre_a_daisy" },
 };
 
 const squash = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, "");

@@ -58,6 +58,7 @@ const game = reactive({
   turn: "p1",
   turnNo: 0,
   actions: 0,
+  freeAttacks: [],
   turnStart: null,
   redRoomIgnored: { p1: false, p2: false },
   viewer: "p1",
@@ -87,6 +88,7 @@ const turnFlags = {
   attackBonus: { p1: 0, p2: 0 },
   pinned: { p1: false, p2: false },
   anyRange: { p1: false, p2: false },
+  showdown: { p1: [], p2: [] },
 };
 
 function resetTurnFlags() {
@@ -94,6 +96,7 @@ function resetTurnFlags() {
   turnFlags.attackBonus = { p1: 0, p2: 0 };
   turnFlags.pinned = { p1: false, p2: false };
   turnFlags.anyRange = { p1: false, p2: false };
+  turnFlags.showdown = { p1: [], p2: [] };
 }
 
 let activeCard = null;
@@ -687,6 +690,21 @@ function gainAction(count) {
   log("logAction", { n: count });
 }
 
+const regularActions = () =>
+  Math.max(0, game.actions - game.freeAttacks.length);
+
+function gainAttackAction(target = null) {
+  game.actions += 1;
+  game.freeAttacks.push(target);
+  log("logAttackAction");
+}
+
+function useFreeAttack(target) {
+  let index = game.freeAttacks.findIndex((item) => item === target);
+  if (index === -1) index = game.freeAttacks.findIndex((item) => item === null);
+  if (index !== -1) game.freeAttacks.splice(index, 1);
+}
+
 const askConfirm = (player, title) => ({ kind: "confirm", player, title });
 const askSpace = (player, title, options) => ({
   kind: "space",
@@ -819,7 +837,7 @@ const anySpaces = () =>
     .filter((id) => !occupied().includes(id));
 
 // Завдати шкоди будь-якому бійцю на мапі (обирає player).
-function* damageAny(player, amount) {
+function* damageAny(player, amount, title = "promptDamageAny") {
   const targets = [];
   for (const owner of ["p1", "p2"]) {
     for (const fighter of fightersOf(owner)) {
@@ -830,7 +848,7 @@ function* damageAny(player, amount) {
   if (!targets.length) return;
   const space = yield askSpace(
     player,
-    "promptDamageAny",
+    title,
     targets.map((target) => target.space),
   );
   const target = targets.find((item) => item.space === space);
@@ -1050,6 +1068,27 @@ const api = {
   boostedWith,
   offerBoost,
   damageAny,
+  gainAttackAction: (target) => gainAttackAction(target),
+  fighterDefeated: (owner, fighter) => {
+    if (fighter === "hero") return pl(owner).hp <= 0;
+    const kid = kidOf(owner, fighter);
+    return !kid || kid.down || kid.hp <= 0;
+  },
+  foeFighterIds: (player) => fightersOf(other(player)),
+  peekTop: (player) => pl(player).deck[0] || null,
+  topToBottom: (player) => {
+    const deck = pl(player).deck;
+    if (deck.length > 1) deck.push(deck.shift());
+  },
+  logRevealTop: (player, id) =>
+    log("logRevealTop", {
+      player,
+      card: getCard(id).name,
+      cardId: id,
+    }),
+  setFighter: (player, fighter) => {
+    cur[player] = fighter;
+  },
   swapWithSidekick,
   canSwapWithSidekick,
   swapPlayedCard,
@@ -1062,7 +1101,7 @@ const api = {
   handSize: (player) => pl(player).hand.length,
   handOf: (player) => [...pl(player).hand],
   discardOf: (player) => [...pl(player).discard],
-  actionsLeft: () => game.actions,
+  actionsLeft: regularActions,
   movedThisTurn: (player) => spaceOf(player) !== game.turnStart,
   redRoomOn: (player) => !game.redRoomIgnored[player],
   ignoreRedRoom: (player) => {
@@ -1086,9 +1125,24 @@ const attackCardsFor = (player, fighter) =>
   pl(player).hand.filter((id) => attackPlayable(player, getCard(id), fighter));
 
 function attackChoices(player) {
-  return attackPairs(player).filter(
+  const found = attackPairs(player).filter(
     ({ mine }) => attackCardsFor(player, mine).length,
   );
+  if (game.turn !== player || regularActions() > 0) return found;
+  return found.filter(({ theirs }) =>
+    game.freeAttacks.some((target) => target === null || target === theirs),
+  );
+}
+
+function pruneFreeAttacks() {
+  if (game.phase !== "play" || !game.freeAttacks.length) return;
+  if (regularActions() > 0) return;
+  const me = game.turn;
+  const choices = attackChoices(me);
+  game.freeAttacks = game.freeAttacks.filter((target) =>
+    choices.some(({ theirs }) => target === null || target === theirs),
+  );
+  game.actions = game.freeAttacks.length;
 }
 
 function context(player, card, combat = null) {
@@ -1186,6 +1240,7 @@ function* startTurn() {
   const me = game.turn;
   resetTurnFlags();
   game.actions = ACTIONS_PER_TURN;
+  game.freeAttacks = [];
   game.turnStart = spaceOf(me);
   game.redRoomIgnored[me] = false;
   game.turnNo += 1;
@@ -1594,6 +1649,7 @@ function* attack(me) {
   }
 
   spendAction();
+  useFreeAttack(theirs);
   turnFlags.anyRange[me] = false;
   const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
@@ -1915,6 +1971,42 @@ function* attack(me) {
     }
   }
 
+  if (
+    game.phase === "play" &&
+    combat.won[me] &&
+    hero(me).id === "wyatt-earp" &&
+    combat.cards[me]
+  ) {
+    const used = turnFlags.showdown[me];
+    const choices = ["draw", "attack", "move"].filter(
+      (item) => !used.includes(item),
+    );
+    if (choices.length) {
+      beginAnnounce(me, combat.cards[me], "after");
+      const pick = yield askChoice(
+        me,
+        "promptShowdown",
+        choices.map((item) => ({ value: item, label: "gameShowdown_" + item })),
+      );
+      used.push(pick);
+      activeCard = hero(me).passive.name;
+      if (pick === "draw") draw(me, 1);
+      else if (pick === "attack") gainAttackAction(null);
+      else {
+        const fighter = cur[me];
+        yield* walk(
+          me,
+          me,
+          1,
+          fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+          { fighter },
+        );
+      }
+      activeCard = null;
+      endAnnounce();
+    }
+  }
+
   const finish = (player, card) => {
     if (!card || combat.kept[player]) return;
     if (combat.returnToHand[player]) pl(player).hand.push(card.id);
@@ -1953,6 +2045,7 @@ function advance(answer) {
     answer = undefined;
     if (step.done) {
       flow = null;
+      pruneFreeAttacks();
       if (game.phase === "play" && game.actions <= 0) run(endTurn());
       return;
     }
@@ -2296,6 +2389,7 @@ function takeSnapshot() {
   undoPoint = JSON.stringify({
     players: game.players,
     actions: game.actions,
+    freeAttacks: game.freeAttacks,
     turnStart: game.turnStart,
     redRoomIgnored: game.redRoomIgnored,
     logLength: game.log.length,
@@ -2310,6 +2404,7 @@ function undoAction(seat) {
   const snap = JSON.parse(undoPoint);
   game.players = snap.players;
   game.actions = snap.actions;
+  game.freeAttacks = snap.freeAttacks;
   game.turnStart = snap.turnStart;
   game.redRoomIgnored = snap.redRoomIgnored;
   game.log.length = snap.logLength;
@@ -2317,6 +2412,7 @@ function undoAction(seat) {
   turnFlags.attackBonus = snap.flags.attackBonus;
   turnFlags.pinned = snap.flags.pinned;
   turnFlags.anyRange = snap.flags.anyRange;
+  turnFlags.showdown = snap.flags.showdown;
   game.tokens = snap.tokens;
   flow = null;
   game.prompt = null;
@@ -2326,11 +2422,12 @@ function undoAction(seat) {
 function applyAction(type, seat) {
   if (game.phase !== "play" || (seat && seat !== game.turn)) return;
   if (type === "undo") undoAction(seat);
-  else if (type === "maneuver" && canAct()) {
+  else if (type === "maneuver" && canAct() && regularActions() > 0) {
     takeSnapshot();
     run(maneuver(game.turn));
-  } else if (type === "scheme" && canAct()) run(scheme(game.turn));
-  else if (type === "attack" && canAct() && attackChoices(game.turn).length) {
+  } else if (type === "scheme" && canAct() && regularActions() > 0) {
+    run(scheme(game.turn));
+  } else if (type === "attack" && canAct() && attackChoices(game.turn).length) {
     takeSnapshot();
     run(attack(game.turn));
   }
@@ -2493,10 +2590,10 @@ function availableActions() {
   const idle = !game.prompt && !flow;
   const hand = pl(me).hand.map(getCard);
   return {
-    maneuver: idle && game.actions > 0,
+    maneuver: idle && regularActions() > 0,
     scheme:
       idle &&
-      game.actions > 0 &&
+      regularActions() > 0 &&
       (hand.some(isScheme) || tokenFighters(me, "scheme").length > 0),
     attack: idle && game.actions > 0 && attackChoices(me).length > 0,
   };

@@ -115,6 +115,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-9",
+      name: "Wyatt Earp Deck",
+      heroId: "wyatt-earp",
+      cardIds: allCards
+        .filter((card) => card.heroId === "wyatt-earp")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

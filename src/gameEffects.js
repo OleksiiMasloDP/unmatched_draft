@@ -43,6 +43,16 @@ function* placeInZone(c) {
   if (space) c.g.place(c.me, space);
 }
 
+function* pickFoeFighter(c, targets, title = "promptAttackTarget") {
+  if (!targets.length) return null;
+  if (targets.length === 1) return targets[0];
+  const spaces = targets.map((f) => c.g.fighterSpace(c.foe, f));
+  const space = yield c.g.askSpace(c.me, title, spaces);
+  return (
+    targets.find((f) => c.g.fighterSpace(c.foe, f) === space) || targets[0]
+  );
+}
+
 export const cardEffects = {
   "analyze-and-adjust": {
     *after(c) {
@@ -873,6 +883,118 @@ export const cardEffects = {
   "and-the-beautiful-bess": {
     *boosted(c) {
       if (c.g.isTurnOf(c.me)) c.g.gainAction(1);
+    },
+  },
+  // ------------------------------------------------------------ Wyatt Earp
+  "you-just-gonna-stand-there-and-bleed": {},
+
+  "i-have-two-guns-one-for-each-of-you": {
+    *after(c) {
+      const played = c.combat.cards[c.foe];
+      if (!played || !played.value) return;
+      const used = c.combat.fighters[c.foe];
+      const targets = c.g.foeFightersInZone(c.me).filter((f) => f !== used);
+      const target = yield* pickFoeFighter(c, targets);
+      if (target) c.g.damage(c.foe, played.value, target);
+    },
+  },
+
+  "second-shot": {
+    canBoost: () => true,
+  },
+
+  "fan-the-hammer": {
+    *after(c) {
+      if (c.g.fighterDefeated(c.foe, c.combat.fighters[c.foe])) {
+        c.combat.returnToHand[c.me] = true;
+      }
+    },
+  },
+
+  "you-re-a-daisy-if-you-do": {
+    *after(c) {
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "a-marshal-and-an-outlaw": {
+    *after(c) {
+      if (c.combat.defender === c.me) {
+        c.g.draw(c.me, 1);
+        return;
+      }
+      if (!c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.foe,
+        "promptDiscardOne",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "i-m-your-huckleberry": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const target = yield* pickFoeFighter(c, c.g.foeFightersInZone(c.me));
+      if (target) c.g.damage(c.foe, 1, target);
+    },
+  },
+
+  "gunfight-at-the-o-k-corral": {
+    *after(c) {
+      yield* c.g.damageAny(c.me, 1, "promptDamageOne");
+      yield* c.g.damageAny(c.foe, 1, "promptDamageOne");
+      yield* c.g.damageAny(c.me, 1, "promptDamageOne");
+      yield* c.g.damageAny(c.foe, 1, "promptDamageOne");
+    },
+  },
+
+  "better-swear-me-in": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    *after(c) {
+      const top = c.g.peekTop(c.foe);
+      if (!top) return;
+      c.g.logRevealTop(c.me, top);
+      const ids = yield c.g.askCards(c.me, "promptSwearBottom", [top], {
+        min: 0,
+        max: 1,
+        skip: "gameKeepOnTop",
+      });
+      if (ids.length) c.g.topToBottom(c.foe);
+    },
+  },
+
+  "bring-em-to-justice": {
+    *immediate(c) {
+      const top = c.g.peekTop(c.foe);
+      if (!top) return;
+      c.g.logRevealTop(c.me, top);
+      c.combat.justice = c.combat.justice || {};
+      c.combat.justice[c.me] = 2 * c.g.cardBoost(top);
+    },
+    value: (c, value) => value + (c.combat.justice?.[c.me] || 0),
+  },
+
+  "in-vino-veritas": {
+    *scheme(c) {
+      c.g.drawUntil(c.me, 4);
+      c.g.gainAttackAction(null);
+    },
+  },
+
+  "you-die-first": {
+    *scheme(c) {
+      const targets = c.g.foeFighterIds(c.me);
+      const target = yield* pickFoeFighter(c, targets, "promptMoveFoeFighter");
+      if (!target) return;
+      c.g.setFighter(c.foe, target);
+      yield* c.g.walk(c.me, c.foe, 1, "promptMoveFoe", { fighter: target });
+      c.g.setFighter(c.foe, "hero");
+      c.g.gainAttackAction(target);
     },
   },
 };
