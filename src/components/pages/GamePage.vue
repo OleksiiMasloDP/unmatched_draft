@@ -375,18 +375,22 @@
             </span>
           </div>
           <div
-            v-if="heroOf(player).id === 'jill-trent' && game.gadget?.[player]"
-            class="game-sidekick"
+            v-if="
+              heroOf(player).id === 'dr-jill-trent' && game.gadget?.[player]
+            "
+            class="game-gadget"
+            role="button"
+            tabindex="0"
+            @click="gadgetView = game.gadget[player]"
+            @keydown.enter="gadgetView = game.gadget[player]"
           >
-            <span class="game-sidekick-name">
-              ⚙
-              {{
-                t(
-                  game.gadget[player] === "tonic"
-                    ? "gadgetTonic"
-                    : "gadgetHypnoray",
-                )
-              }}
+            <img
+              class="game-gadget-img"
+              :src="gadgetImage(game.gadget[player])"
+              :alt="gadgetName(game.gadget[player])"
+            />
+            <span class="game-gadget-name">
+              {{ gadgetName(game.gadget[player]) }}
             </span>
           </div>
           <div v-if="heroOf(player).id === 'blackbeard'" class="game-sidekick">
@@ -824,6 +828,35 @@
             ✕
           </button>
           <PackCard :card="logCardView" />
+        </div>
+      </div>
+
+      <div v-if="gadgetView" class="game-modal" @click.self="gadgetView = null">
+        <div class="game-modal-box is-logcard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="gadgetView = null"
+          >
+            ✕
+          </button>
+          <img
+            class="game-gadget-full"
+            :src="gadgetImage(gadgetView)"
+            :alt="gadgetName(gadgetView)"
+          />
+          <div class="game-modal-actions is-center">
+            <button
+              type="button"
+              class="action-btn"
+              @click="
+                gadgetView = gadgetView === 'tonic' ? 'hypnoray' : 'tonic'
+              "
+            >
+              ⇄ {{ t("gadgetFlip") }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1811,6 +1844,13 @@ function formatLog(entry) {
 }
 
 const findDeck = (id) => allDecks.value.find((deck) => deck.id === id);
+const gadgetView = ref(null);
+const gadgetImage = (value) =>
+  value === "tonic"
+    ? "images/tokens/tonic.webp"
+    : "images/tokens/hypnoblaster.webp";
+const gadgetName = (value) =>
+  t(value === "tonic" ? "gadgetTonic" : "gadgetHypnoray");
 const opponentOf = (player) => (player === "p1" ? "p2" : "p1");
 
 const takenBy = (player, deck) =>
@@ -2131,6 +2171,45 @@ function onNewGame() {
 
 .game-player {
   position: relative;
+}
+
+.game-gadget {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.game-gadget {
+  cursor: pointer;
+}
+
+.game-gadget-full {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.game-gadget-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.game-gadget-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .game-player.is-active {
@@ -2976,7 +3055,6 @@ function onNewGame() {
 
 .game-layout .game-player.is-active {
   z-index: 2;
-  transform: scale(1.05);
 }
 
 .game-layout .game-player.is-idle {

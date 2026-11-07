@@ -25,6 +25,7 @@ export const wyattText = {
     promptHelpfulAssistant:
       "Choose up to 3 Jill Trent cards to shuffle into your deck",
     gameGadget: "Gadget",
+    gadgetFlip: "Flip",
     promptReviveKid:
       "Return the defeated Outlaw to a space in Robin Hood's zone",
     promptStealDiscard:
@@ -57,6 +58,7 @@ export const wyattText = {
     promptHelpfulAssistant:
       "Оберіть до 3 карт Jill Trent, щоб перетасувати в колоду",
     gameGadget: "Гаджет",
+    gadgetFlip: "Перевернути",
     promptReviveKid:
       "Поверніть переможеного Outlaw на клітинку в зоні Robin Hood",
     promptStealDiscard: "Скинути 1 карту? Якщо ні, супротивник бере ще 1 карту",

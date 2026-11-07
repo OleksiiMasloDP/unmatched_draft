@@ -158,7 +158,7 @@ export const packDraftHeroes = [
     cards: blackPantherCards,
   },
   {
-    id: "jill-trent",
+    id: "dr-jill-trent",
     name: "Dr. Jill Trent",
     hp: 13,
     move: 2,
@@ -420,6 +420,24 @@ const CARD_IMAGES = {
       regroup: "versatile",
       steal_from_the_rich: "scheme",
       wily_fighting: "versatile",
+    },
+  },
+  "dr-jill-trent": {
+    dir: "Dr. Jill Trent",
+    files: {
+      ace_fighter: "versatile",
+      battle_of_wits: "attack",
+      caught_redhanded: "versatile",
+      energizing_spray: "attack",
+      gyroscopic_jetpack: "versatile",
+      helpful_assistant: "scheme",
+      hypnotist: "defense",
+      indestructible_cloth: "defense",
+      insightful_deduction: "versatile",
+      laser_pen: "versatile",
+      sisters_in_arms: "versatile",
+      stasis_diffuser: "versatile",
+      utility_belt: "versatile",
     },
   },
 };

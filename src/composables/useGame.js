@@ -1323,7 +1323,7 @@ function* startTurn() {
   if (hero(me).id === "ms-marvel") {
     yield* walk(me, me, 1, "promptStretchy");
   }
-  if (hero(me).id === "jill-trent") {
+  if (hero(me).id === "dr-jill-trent") {
     const pick = yield askChoice(me, "promptGadget", [
       { value: "hypnoray", label: "gadgetHypnoray" },
       { value: "tonic", label: "gadgetTonic" },
@@ -1334,7 +1334,7 @@ function* startTurn() {
 }
 
 function gadgetFor(player, fighter, card, combat) {
-  if (hero(player).id !== "jill-trent" || !game.gadget[player]) return null;
+  if (hero(player).id !== "dr-jill-trent" || !game.gadget[player]) return null;
   if (fighter === "hero") return game.gadget[player];
   const kid = kidOf(player, fighter);
   if (
