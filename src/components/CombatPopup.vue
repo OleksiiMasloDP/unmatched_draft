@@ -112,6 +112,22 @@
         </div>
       </div>
 
+      <div v-if="combat.reveals?.length" class="combat-reveals">
+        <div class="combat-reveals-label">{{ t("combatRevealed") }}</div>
+        <div class="combat-reveals-row">
+          <div
+            v-for="(item, index) in combat.reveals"
+            :key="index"
+            class="combat-reveal"
+          >
+            <PackCard :card="getCard(item.cardId)" />
+            <div class="combat-reveal-owner">
+              {{ playerLabel(item.player) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <p v-if="combat.announcedValue !== null" class="combat-spidey">
         {{ t("combatSpidey").replace("{n}", combat.announcedValue) }}
       </p>
@@ -509,6 +525,45 @@ const stageText = computed(() => {
 .combat-tag.is-pick {
   border-color: var(--color-warning);
   color: var(--color-warning);
+}
+
+.combat-reveals {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-medium);
+}
+
+.combat-reveals-label {
+  margin-bottom: 6px;
+  color: var(--color-warning);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.combat-reveals-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.combat-reveal {
+  width: 96px;
+}
+
+.combat-reveal :deep(.pack-card) {
+  width: 100%;
+}
+
+.combat-reveal-owner {
+  margin-top: 3px;
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .combat-spidey {

@@ -784,6 +784,19 @@
                 </div>
               </div>
             </div>
+            <div v-if="revealedCards.length" class="vs-reveals">
+              <div class="vs-reveals-label">{{ t("combatRevealed") }}</div>
+              <div class="vs-reveals-row">
+                <div
+                  v-for="(item, index) in revealedCards"
+                  :key="index"
+                  class="vs-reveal"
+                >
+                  <PackCard :card="item.card" />
+                  <div class="vs-reveal-owner">{{ item.label }}</div>
+                </div>
+              </div>
+            </div>
             <div class="game-modal-actions">
               <button
                 class="btn btn-success btn-sm action-btn"
@@ -1771,6 +1784,15 @@ const revealSides = computed(() => {
     };
   });
 });
+
+const revealedCards = computed(() =>
+  (blockingPrompt.value?.combat?.reveals || [])
+    .map((item) => ({
+      card: getCard(item.cardId),
+      label: playerLabel(item.player),
+    }))
+    .filter((item) => item.card),
+);
 
 function formatLog(entry) {
   let text = t(entry.key);
@@ -3059,6 +3081,45 @@ function onNewGame() {
 
 .vs-side.is-p2 .vs-avatar {
   border-color: var(--color-opponent);
+}
+
+.vs-reveals {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-medium);
+}
+
+.vs-reveals-label {
+  margin-bottom: 8px;
+  color: var(--color-warning);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.vs-reveals-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.vs-reveal {
+  width: 110px;
+}
+
+.vs-reveal :deep(.pack-card) {
+  width: 100%;
+}
+
+.vs-reveal-owner {
+  margin-top: 4px;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .vs-grid .reveal-card {

@@ -29,6 +29,7 @@ export const wyattText = {
       "Return the defeated Outlaw to a space in Robin Hood's zone",
     promptStealDiscard:
       "Discard 1 card? If you do not, the opponent draws 1 more card",
+    combatRevealed: "Revealed",
   },
   ua: {
     promptShowdown: "Showdown: оберіть один ефект",
@@ -59,5 +60,6 @@ export const wyattText = {
     promptReviveKid:
       "Поверніть переможеного Outlaw на клітинку в зоні Robin Hood",
     promptStealDiscard: "Скинути 1 карту? Якщо ні, супротивник бере ще 1 карту",
+    combatRevealed: "Розкрито",
   },
 };

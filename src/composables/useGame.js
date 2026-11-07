@@ -324,6 +324,9 @@ function finalizeDefeat(player, fighter) {
 const source = () => activeCard || damageSrc;
 
 let combatHit = false;
+function noteReveal(player, id) {
+  if (game.combat?.reveals) game.combat.reveals.push({ player, cardId: id });
+}
 
 function damage(player, amount, fighter = cur[player]) {
   if (amount <= 0 || game.phase !== "play") return;
@@ -1097,20 +1100,24 @@ const api = {
     if (bottomId) deck.push(bottomId);
   },
   discardOf: (player) => [...pl(player).discard],
-  logRevealOwn: (player, id) =>
-    log("logRevealOwn", { player, card: getCard(id).name, cardId: id }),
+  logRevealOwn: (player, id) => {
+    noteReveal(player, id);
+    log("logRevealOwn", { player, card: getCard(id).name, cardId: id });
+  },
   foeFighterIds: (player) => fightersOf(other(player)),
   peekTop: (player) => pl(player).deck[0] || null,
   topToBottom: (player) => {
     const deck = pl(player).deck;
     if (deck.length > 1) deck.push(deck.shift());
   },
-  logRevealTop: (player, id) =>
+  logRevealTop: (player, id) => {
+    noteReveal(player, id);
     log("logRevealTop", {
       player,
       card: getCard(id).name,
       cardId: id,
-    }),
+    });
+  },
   setFighter: (player, fighter) => {
     cur[player] = fighter;
   },
@@ -1746,6 +1753,7 @@ function* attack(me) {
     rescue: { p1: false, p2: false },
     pending: { p1: false, p2: false },
     immune: { p1: false, p2: false },
+    reveals: [],
   };
 
   let defenseCard = null;
@@ -1887,6 +1895,7 @@ function* attack(me) {
     const foeValue = combat.cards[foe] ? combat.cards[foe].value : 0;
     const top = pl(foe).deck[0];
     if (combat.cards[me].value < foeValue && top) {
+      noteReveal(me, top);
       log("logRevealTop", {
         player: me,
         card: getCard(top).name,
@@ -2001,6 +2010,7 @@ function* attack(me) {
       boosts: { ...boosts },
       boostCardIds: { ...boostCardIds },
       boostCardLists: { p1: [...boostLists.p1], p2: [...boostLists.p2] },
+      reveals: [...(game.combat?.reveals || [])],
       tokenBoost: { ...tokenBoost },
       base: { ...baseValues },
       bonus: turnFlags.attackBonus[me],
