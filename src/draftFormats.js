@@ -60,7 +60,7 @@ export const PICK_ORDER_SNAKE = "snake";
 export const PICK_ORDER_ALTERNATE = "alternate";
 export const DEFAULT_PICK_ORDER = PICK_ORDER_SNAKE;
 
-export function buildSequence(bans, picks) {
+export function buildSequence(bans, picks, pickOrder = DEFAULT_PICK_ORDER) {
   const sequence = [];
   for (let i = 0; i < bans * 2; i++) {
     sequence.push({ type: "ban", p1: i % 2 === 0 });
