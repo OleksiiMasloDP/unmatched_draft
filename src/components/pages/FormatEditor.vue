@@ -42,21 +42,44 @@
           </div>
 
           <div class="editor-field">
-            <label class="editor-label" for="format-preset">
-              {{ t("formatBanPresetLabel") }}
+            <label class="editor-label" for="format-mode">
+              {{ t("formatModeLabel") }}
             </label>
             <div class="custom-select-wrapper">
-              <select id="format-preset" v-model="draft.banPreset">
-                <option
-                  v-for="(preset, key) in banPresets"
-                  :key="key"
-                  :value="key"
-                >
-                  {{ preset.name }}
-                </option>
+              <select id="format-mode" v-model="draft.mode">
+                <option value="turns">{{ t("formatModeTurns") }}</option>
+                <option value="ladder">{{ t("formatModeLadder") }}</option>
               </select>
             </div>
           </div>
+
+          <template v-if="draft.mode === 'turns'">
+            <div class="editor-field">
+              <label class="editor-label" for="format-bans">
+                {{ t("formatBansLabel") }}
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="format-bans" v-model.number="draft.bans">
+                  <option v-for="n in banOptions" :key="n" :value="n">
+                    {{ n === 0 ? t("formatNoBans") : n }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="editor-field">
+              <label class="editor-label" for="format-picks">
+                {{ t("formatPicksLabel") }}
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="format-picks" v-model.number="draft.picks">
+                  <option v-for="n in pickOptions" :key="n" :value="n">
+                    {{ n }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </template>
         </div>
 
         <div class="editor-label">{{ t("formatHeroesLabel") }}</div>
@@ -221,7 +244,12 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { useDraftState } from "../../composables/useDraftState.js";
 import { useFormatDraft } from "../../composables/useFormatDraft.js";
-import { banPresets, getRequiredHeroCount } from "../../draftFormats.js";
+import {
+  MAX_BANS,
+  MAX_PICKS,
+  getRequiredHeroCountFor,
+} from "../../draftFormats.js";
+import "../../i18nFormats.js";
 
 const props = defineProps({
   // id приходить з маршруту /formats/:id; для /formats/new його немає
@@ -268,7 +296,17 @@ const shownMaps = computed(() =>
   filterByName(sortedMaps.value, mapSearch.value),
 );
 
-const requiredHeroes = computed(() => getRequiredHeroCount(draft.banPreset));
+// Бани: від 0 (без банів) до MAX_BANS, піки: від 1 до MAX_PICKS
+const banOptions = Array.from({ length: MAX_BANS + 1 }, (_, n) => n);
+const pickOptions = Array.from({ length: MAX_PICKS }, (_, n) => n + 1);
+
+const requiredHeroes = computed(() =>
+  getRequiredHeroCountFor({
+    mode: draft.mode === "ladder" ? "simultaneous" : "turns",
+    bans: draft.bans,
+    picks: draft.picks,
+  }),
+);
 const nameValid = computed(() => draft.name.trim().length > 0);
 const enoughHeroes = computed(() => draft.heroIds.size >= requiredHeroes.value);
 const enoughMaps = computed(() => draft.mapIds.size >= 1);
@@ -309,7 +347,9 @@ function save() {
   saveCustomFormat({
     id: draft.editingId || undefined,
     name: draft.name.trim(),
-    banPreset: draft.banPreset,
+    banPreset: draft.mode === "ladder" ? "ladder" : "custom",
+    bans: draft.bans,
+    picks: draft.picks,
     allowedHeroIds: sortedIds(draft.heroIds),
     allowedMapIds: sortedIds(draft.mapIds),
   });

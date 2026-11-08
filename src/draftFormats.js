@@ -54,6 +54,33 @@ export const banPresets = {
   },
 };
 
+export const MAX_BANS = 5;
+export const MAX_PICKS = 6;
+export const DEFAULT_BANS = 3;
+export const DEFAULT_PICKS = 5;
+
+export function buildSequence(bans, picks) {
+  const sequence = [];
+  for (let i = 0; i < bans * 2; i++) {
+    sequence.push({ type: "ban", p1: i % 2 === 0 });
+  }
+  for (let i = 0; i < picks * 2; i++) {
+    const p1 = i === 0 ? true : Math.floor((i - 1) / 2) % 2 === 1;
+    sequence.push({ type: "pick", p1 });
+  }
+  return sequence;
+}
+
+const LEGACY_COUNTS = {
+  three_bans_five_picks: { bans: 3, picks: 5 },
+  two_bans_four_picks: { bans: 2, picks: 4 },
+};
+
+const clampInt = (value, min, max, fallback) => {
+  const n = Number(value);
+  return Number.isInteger(n) ? Math.min(max, Math.max(min, n)) : fallback;
+};
+
 export const MODE_TURNS = "turns";
 export const MODE_SIMULTANEOUS = "simultaneous";
 
@@ -76,24 +103,62 @@ export function getRequiredHeroCount(presetKey) {
 export const CUSTOM_FORMATS_STORAGE_KEY = "unmatched_draft_custom_formats_v1";
 export const CUSTOM_FORMAT_PREFIX = "custom_";
 
-export function buildCustomFormat(raw) {
-  const presetKey = banPresets[raw.banPreset]
-    ? raw.banPreset
-    : DEFAULT_BAN_PRESET;
+export const LADDER_KEY = "ladder";
+export const CUSTOM_SCHEME_KEY = "custom";
 
-  return {
+// Потрібна кількість героїв для довільної схеми: кожен бан і кожен пік -
+// окремий герой, у Ladder достатньо двох.
+export function getRequiredHeroCountFor({ mode, bans, picks }) {
+  if (mode === MODE_SIMULTANEOUS) return banPresets[LADDER_KEY].minHeroes;
+  return (bans + picks) * 2;
+}
+
+export function buildCustomFormat(raw) {
+  const key = raw.banPreset;
+  const legacy = LEGACY_COUNTS[key];
+  // Власна схема (бани/піки), стара схема за ключем або явні кількості;
+  // усе інше (включно з невідомим ключем) - Ladder, як і раніше.
+  const isTurns =
+    key === CUSTOM_SCHEME_KEY ||
+    Boolean(legacy) ||
+    (raw.bans != null && key !== LADDER_KEY);
+  const isLadder = !isTurns;
+
+  const base = {
     id: raw.id,
     name: raw.name,
     isCustom: true,
-    banPreset: presetKey,
-    mode: getPresetMode(presetKey),
     allowedHeroIds: Array.isArray(raw.allowedHeroIds) ? raw.allowedHeroIds : [],
     // Формати, збережені до появи вибору мап, не мають allowedMapIds => всі мапи
     allowedMapIds:
       Array.isArray(raw.allowedMapIds) && raw.allowedMapIds.length
         ? raw.allowedMapIds
         : ["all"],
-    sequence: banPresets[presetKey].sequence,
+  };
+
+  if (isLadder) {
+    return {
+      ...base,
+      banPreset: LADDER_KEY,
+      mode: MODE_SIMULTANEOUS,
+      sequence: banPresets[LADDER_KEY].sequence,
+    };
+  }
+
+  const bans = clampInt(raw.bans ?? legacy?.bans, 0, MAX_BANS, DEFAULT_BANS);
+  const picks = clampInt(
+    raw.picks ?? legacy?.picks,
+    1,
+    MAX_PICKS,
+    DEFAULT_PICKS,
+  );
+  return {
+    ...base,
+    banPreset: CUSTOM_SCHEME_KEY,
+    mode: MODE_TURNS,
+    bans,
+    picks,
+    sequence: buildSequence(bans, picks),
   };
 }
 
@@ -115,6 +180,8 @@ export function persistCustomFormats(list) {
     id: f.id,
     name: f.name,
     banPreset: f.banPreset,
+    bans: f.bans,
+    picks: f.picks,
     allowedHeroIds: f.allowedHeroIds,
     allowedMapIds: f.allowedMapIds,
   }));

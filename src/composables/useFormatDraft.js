@@ -1,15 +1,18 @@
 import { reactive, computed } from "vue";
-import { DEFAULT_BAN_PRESET } from "../draftFormats.js";
+import {
+  DEFAULT_BANS,
+  DEFAULT_BAN_PRESET,
+  DEFAULT_PICKS,
+  LADDER_KEY,
+} from "../draftFormats.js";
 
-// Чернетка власного формату, яку користувач заповнює у два кроки
-// (1 — назва, схема банів і герої, 2 — мапи). Живе лише в памʼяті:
-// між кроками дані зберігаються, а при виході зі сторінки (за згодою
-// користувача) або після збереження — повністю очищаються.
 const draft = reactive({
   step: 1,
   editingId: null,
   name: "",
-  banPreset: DEFAULT_BAN_PRESET,
+  mode: DEFAULT_BAN_PRESET === LADDER_KEY ? "ladder" : "turns",
+  bans: DEFAULT_BANS,
+  picks: DEFAULT_PICKS,
   heroIds: new Set(),
   mapIds: new Set(),
   initialSnapshot: "",
@@ -18,7 +21,9 @@ const draft = reactive({
 function snapshot() {
   return JSON.stringify({
     name: draft.name,
-    banPreset: draft.banPreset,
+    mode: draft.mode,
+    bans: draft.bans,
+    picks: draft.picks,
     heroIds: [...draft.heroIds].sort((a, b) => a - b),
     mapIds: [...draft.mapIds].sort((a, b) => a - b),
   });
@@ -30,14 +35,14 @@ function resetFields() {
   draft.step = 1;
   draft.editingId = null;
   draft.name = "";
-  draft.banPreset = DEFAULT_BAN_PRESET;
+  draft.mode = DEFAULT_BAN_PRESET === LADDER_KEY ? "ladder" : "turns";
+  draft.bans = DEFAULT_BANS;
+  draft.picks = DEFAULT_PICKS;
   draft.heroIds = new Set();
   draft.mapIds = new Set();
 }
 
 export function useFormatDraft() {
-  // existing — збережений формат (редагування) або null (створення).
-  // allMapIds потрібен, щоб розгорнути старі формати з allowedMapIds: ["all"].
   function startDraft(existing, allMapIds) {
     resetFields();
 
@@ -45,7 +50,9 @@ export function useFormatDraft() {
       const maps = existing.allowedMapIds;
       draft.editingId = existing.id;
       draft.name = existing.name;
-      draft.banPreset = existing.banPreset;
+      draft.mode = existing.banPreset === LADDER_KEY ? "ladder" : "turns";
+      draft.bans = existing.bans ?? DEFAULT_BANS;
+      draft.picks = existing.picks ?? DEFAULT_PICKS;
       draft.heroIds = new Set(existing.allowedHeroIds);
       draft.mapIds = new Set(maps.includes("all") ? allMapIds : maps);
     }
@@ -53,7 +60,6 @@ export function useFormatDraft() {
     draft.initialSnapshot = snapshot();
   }
 
-  // Повне очищення пам'яті: поля, крок і знімок для порівняння
   function clearDraft() {
     resetFields();
     draft.initialSnapshot = snapshot();

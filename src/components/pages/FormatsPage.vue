@@ -24,7 +24,7 @@
         <div class="format-info">
           <div class="format-name">{{ format.name }}</div>
           <div class="format-meta">
-            {{ banPresets[format.banPreset].name }} ·
+            {{ schemeText(format) }} ·
             {{ format.allowedHeroIds.length }} {{ t("formatsHeroesWord") }} ·
             {{ mapsCount(format) }} {{ t("formatsMapsWord") }}
           </div>
@@ -65,6 +65,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useDraftState } from "../../composables/useDraftState.js";
 import { banPresets } from "../../draftFormats.js";
+import "../../i18nFormats.js";
 
 const router = useRouter();
 const {
@@ -92,6 +93,15 @@ function applyFormat(id) {
   currentFormat.value = id;
   saveToStorage();
   router.push({ name: "main" });
+}
+
+// Підпис схеми у списку: "3 bans / 5 picks", "No bans / 4 picks" або Ladder
+function schemeText(format) {
+  if (format.banPreset === "ladder") return banPresets.ladder.name;
+  const key = format.bans ? "formatsSchemeBansPicks" : "formatsSchemeNoBans";
+  return t(key)
+    .replace("{bans}", format.bans)
+    .replace("{picks}", format.picks);
 }
 
 function mapsCount(format) {

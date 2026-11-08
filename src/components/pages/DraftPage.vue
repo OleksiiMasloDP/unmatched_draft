@@ -369,8 +369,12 @@ function onOpponentSelect(char) {
   opponentPickerOpen.value = false;
 }
 
+// Блок банів ховаємо у форматах без банів
 const showBans = computed(
-  () => currentStep.value === "characters" && !isSimultaneous.value,
+  () =>
+    currentStep.value === "characters" &&
+    !isSimultaneous.value &&
+    (playerBansCount.value > 0 || opponentBansCount.value > 0),
 );
 
 let bsModalInstance = null;
