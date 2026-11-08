@@ -1021,6 +1021,122 @@ export const cardEffects = {
     value: (c, value) => value + (c.combat.ambush?.[c.me] || 0),
   },
 
+  disengage: {
+    *after(c) {
+      const fighter = c.g.fighterOf(c.me);
+      if (c.g.fighterDefeated(c.me, fighter)) return;
+      const options = c.g.zoneSpaces(c.me);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceZone", options);
+      if (space) c.g.place(c.me, space);
+    },
+  },
+
+  "pack-hunters": {
+    *after(c) {
+      const foeFighter = c.g.fighterOf(c.foe);
+      if (!c.combat.won[c.me] || c.g.fighterDefeated(c.foe, foeFighter)) return;
+      const n = c.g.packNearFoe(c.me);
+      if (n > 0) c.g.damage(c.foe, n, foeFighter);
+    },
+  },
+
+  "clever-girl": {
+    *after(c) {
+      if (c.g.packNearFoe(c.me) > 0) c.g.gainAction(1);
+    },
+  },
+
+  "they-remember": {
+    *after(c) {
+      c.g.gainAction(1);
+    },
+  },
+
+  "eaten-alive": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const targets = c.g
+        .adjacentFightersOf(c.me)
+        .filter(
+          (item) =>
+            item.owner === c.foe && !c.g.fighterDefeated(c.foe, item.fighter),
+        )
+        .map((item) => item.fighter);
+      const target = yield* pickFoeFighter(c, targets, "promptDamageOne");
+      if (target) c.g.damage(c.foe, 1, target);
+    },
+  },
+
+  decoy: {
+    *immediate(c) {
+      const current = c.g.fighterOf(c.me);
+      const others = c.g
+        .friends(c.me)
+        .filter(
+          (fighter) =>
+            fighter !== current && !c.g.fighterDefeated(c.me, fighter),
+        );
+      if (!others.length) return;
+      let chosen = others[0];
+      if (others.length > 1) {
+        const picked = yield c.g.askSpace(
+          c.me,
+          "promptChooseRaptor",
+          others.map((fighter) => c.g.fighterSpace(c.me, fighter)),
+        );
+        chosen =
+          others.find(
+            (fighter) => c.g.fighterSpace(c.me, fighter) === picked,
+          ) || chosen;
+      }
+      const home = c.g.fighterSpace(c.me, chosen);
+      const near = c.g.freeSpacesNearFoe(c.me);
+      if (!near.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceRaptor", [
+        home,
+        ...near,
+      ]);
+      if (space && space !== home) c.g.placeFighter(c.me, chosen, space);
+    },
+  },
+
+  "working-things-out": {
+    *scheme(c) {
+      yield* c.g.moveAll(c.me, 3, true);
+      c.g.gainAction(1);
+    },
+  },
+
+  "coordinated-attack-pattern": {
+    *scheme(c) {
+      const fighters = c.g.friends(c.me);
+      let chosen = fighters[0];
+      if (fighters.length > 1) {
+        const picked = yield c.g.askSpace(
+          c.me,
+          "promptChooseRaptor",
+          fighters.map((fighter) => c.g.fighterSpace(c.me, fighter)),
+        );
+        chosen =
+          fighters.find(
+            (fighter) => c.g.fighterSpace(c.me, fighter) === picked,
+          ) || chosen;
+      }
+      for (const fighter of fighters) {
+        if (fighter === chosen) continue;
+        const home = c.g.fighterSpace(c.me, fighter);
+        const options = c.g.zoneSpacesFor(c.me, chosen);
+        if (!options.length) continue;
+        const space = yield c.g.askSpace(c.me, "promptPlaceRaptor", [
+          home,
+          ...options,
+        ]);
+        if (space && space !== home) c.g.placeFighter(c.me, fighter, space);
+      }
+    },
+  },
+
   "defenders-of-sherwood": {
     *after(c) {
       c.g.draw(c.me, 1);

@@ -310,9 +310,29 @@ const defeatDeferred = (player, fighter) =>
     game.combat?.rescue?.[player] && game.combat.fighters[player] === fighter,
   );
 
+function fallHero(player) {
+  const target = pl(player);
+  if (game.phase !== "play" || target.hp > 0) return;
+  const kid = hero(player).team
+    ? target.sidekicks.find((item) => !item.down)
+    : null;
+  if (!kid) {
+    setOver(other(player));
+    return;
+  }
+  log("logSidekickDown", { who: kid.name });
+  target.hp = kid.hp;
+  target.maxHp = kid.maxHp;
+  target.space = kid.space;
+  target.skin = kid.image;
+  kid.down = true;
+  kid.hp = 0;
+  if (!game.combat) buryKids(player);
+}
+
 function finalizeDefeat(player, fighter) {
   if (fighter === "hero") {
-    setOver(other(player));
+    fallHero(player);
     return;
   }
   const kid = kidOf(player, fighter);
@@ -379,7 +399,7 @@ function damage(player, amount, fighter = cur[player]) {
     game.combat.pending[player] = true;
     return;
   }
-  if (target.hp === 0) setOver(other(player));
+  if (target.hp === 0 && !game.combat) fallHero(player);
 }
 
 function heal(player, amount, fighter = cur[player]) {
@@ -434,6 +454,19 @@ function foeFightersInZone(player) {
   );
 }
 
+function raptorPack(me, combat) {
+  if (hero(me).id !== "raptors") return 0;
+  const foe = other(me);
+  const links = active.spaceById.get(
+    fighterSpace(foe, combat.fighters[foe]),
+  ).links;
+  return fightersOf(me).filter(
+    (fighter) =>
+      fighter !== combat.fighters[me] &&
+      links.includes(fighterSpace(me, fighter)),
+  ).length;
+}
+
 function adjacentFightersOf(player) {
   const links = active.spaceById.get(spaceOf(player)).links;
   const found = [];
@@ -484,6 +517,7 @@ function summon(player, spaceId) {
     name: kidData.name,
     hp: kidData.hp,
     maxHp: kidData.hp,
+    image: kidData.images?.[n - 1],
     attack: kidData.attack,
     space: spaceId,
     down: false,
@@ -1139,6 +1173,19 @@ const api = {
       )
       .map((space) => space.id);
   },
+  friends: (player) => fightersOf(player),
+  packNearFoe: (player) => {
+    const links = active.spaceById.get(spaceOf(other(player))).links;
+    return fightersOf(player).filter((fighter) =>
+      links.includes(fighterSpace(player, fighter)),
+    ).length;
+  },
+  freeSpacesNearFoe: (player) =>
+    adjacentSpaces(player).filter((id) => !occupied().includes(id)),
+  zoneSpacesFor: (player, fighter) =>
+    withFighter(player, fighter, () => zoneSpaces(player)),
+  placeFighter: (player, fighter, spaceId) =>
+    withFighter(player, fighter, () => place(player, spaceId)),
   hasDefeatedKid: (player) =>
     Boolean(pl(player).fallen?.length) ||
     pl(player).sidekicks.some((kid) => kid.down),
@@ -1961,7 +2008,8 @@ function* attack(me) {
     combat.values[player] = total;
   }
   const terrain = game.combat.terrain;
-  combat.values[me] += turnFlags.attackBonus[me] + terrain;
+  const pack = raptorPack(me, combat);
+  combat.values[me] += turnFlags.attackBonus[me] + terrain + pack;
 
   const raw = Math.max(0, combat.values[me] - combat.values[foe]);
   let dealt = raw;
@@ -2028,7 +2076,7 @@ function* attack(me) {
       reveals: [...(game.combat?.reveals || [])],
       tokenBoost: { ...tokenBoost },
       base: { ...baseValues },
-      bonus: turnFlags.attackBonus[me],
+      bonus: turnFlags.attackBonus[me] + pack,
       terrain,
       dealt,
     },
@@ -2073,6 +2121,7 @@ function* attack(me) {
       finalizeDefeat(player, combat.fighters[player]);
     }
   }
+  for (const player of players) fallHero(player);
 
   for (const player of players) {
     const card = combat.cards[player];
@@ -2262,6 +2311,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
               name: data.sidekick.name,
               hp: data.sidekick.hp,
               maxHp: data.sidekick.hp,
+              image: data.sidekick.images?.[i],
               attack: data.sidekick.attack,
               space: null,
               down: false,

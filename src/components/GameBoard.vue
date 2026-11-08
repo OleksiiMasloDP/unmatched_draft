@@ -87,6 +87,7 @@
       <g
         v-if="players[player] && !hideHeroes"
         class="board-hero"
+        :transform="heroScale(player)"
         :class="[
           'is-' + player,
           {
@@ -110,8 +111,8 @@
           {{ initials(players[player].heroId) }}
         </text>
         <image
-          v-if="heroImage(players[player].heroId)"
-          :href="heroImage(players[player].heroId)"
+          v-if="heroImage(players[player].heroId, players[player].skin)"
+          :href="heroImage(players[player].heroId, players[player].skin)"
           :x="byId.get(players[player].space).x - 38"
           :y="byId.get(players[player].space).y - 38"
           width="76"
@@ -389,13 +390,20 @@ onBeforeUnmount(() => timers.forEach(clearTimeout));
 
 const failedImages = reactive({});
 
-const heroImage = (heroId) =>
-  failedImages[heroId] ? null : getHero(heroId)?.image || null;
+const heroImage = (heroId, skin) =>
+  failedImages[heroId] ? null : skin || getHero(heroId)?.image || null;
+
+const heroScale = (player) => {
+  const data = props.players[player];
+  const space = data && byId.value.get(data.space);
+  if (!space || !getHero(data.heroId)?.team) return null;
+  return `translate(${space.x} ${space.y}) scale(0.79) translate(${-space.x} ${-space.y})`;
+};
 
 const kidImage = (player, kid) => {
   const heroId = props.players[player]?.heroId;
   if (!heroId || failedImages["kid-" + heroId]) return null;
-  return getHero(heroId)?.sidekick?.image || null;
+  return kid.image || getHero(heroId)?.sidekick?.image || null;
 };
 
 const initials = (heroId) =>

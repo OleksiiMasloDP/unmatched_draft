@@ -1387,8 +1387,11 @@ const placingKid = computed(
 
 const kidGhost = computed(() => {
   if (!placingKid.value) return null;
-  const heroId = game.players[spacePrompt.value.player]?.heroId;
-  return { image: getHero(heroId)?.sidekick?.image || null };
+  const owner = game.players[spacePrompt.value.player];
+  const next = owner?.sidekicks.find((kid) => kid.unplaced);
+  return {
+    image: next?.image || getHero(owner?.heroId)?.sidekick?.image || null,
+  };
 });
 
 function confirmKid() {
@@ -1806,8 +1809,10 @@ const revealSides = computed(() => {
           : null,
       fighterImage:
         fighter && fighter !== "hero"
-          ? (heroOf(player).sidekick?.image ?? heroOf(player).image)
-          : heroOf(player).image,
+          ? (kid?.image ??
+            heroOf(player).sidekick?.image ??
+            heroOf(player).image)
+          : (game.players[player].skin ?? heroOf(player).image),
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       tokenName: combat.tokenBoost?.[player] ?? null,

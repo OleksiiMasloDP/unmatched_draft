@@ -10,6 +10,7 @@ import {
   wyattEarpCards,
   robinHoodCards,
   jillTrentCards,
+  raptorsCards,
 } from "./packDraftCards.js";
 
 export const PACK_DRAFT_CONFIG = {
@@ -225,6 +226,31 @@ export const packDraftHeroes = [
     cards: wyattEarpCards,
   },
   {
+    id: "raptors",
+    name: "Raptors",
+    hp: 7,
+    move: 3,
+    attack: "melee",
+    team: true,
+    image: "images/echo.webp",
+    passive: {
+      name: "Pack Tactics",
+      text: {
+        en: "Raptors add 1 to the value of their attack cards for each of your other Raptors adjacent to the defender. You lose only when all three Raptors are defeated.",
+        ua: "Raptors додають 1 до значення своїх карт атаки за кожного вашого іншого Raptor, що стоїть поруч із захисником. Ви програєте лише тоді, коли переможено всіх трьох Raptors.",
+      },
+    },
+    sidekick: {
+      name: "Raptor",
+      hp: 7,
+      attack: "melee",
+      image: "images/delta.webp",
+      images: ["images/delta.webp", "images/charlie.webp"],
+      count: 2,
+    },
+    cards: raptorsCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -438,6 +464,24 @@ const CARD_IMAGES = {
       sisters_in_arms: "versatile",
       stasis_diffuser: "versatile",
       utility_belt: "versatile",
+    },
+  },
+  raptors: {
+    dir: "Raptors",
+    files: {
+      ambush: "attack",
+      clever_girl: "attack",
+      coordinated_attack_pattern: "scheme",
+      decoy: "defense",
+      disengage: "attack",
+      helpful_assistant: "scheme",
+      hypnotist: "defense",
+      eaten_alive: "versatile",
+      eviscerate: "attack",
+      feint: "versatile",
+      pack_hunters: "attack",
+      they_remember: "attack",
+      working_things_out: "scheme",
     },
   },
 };
