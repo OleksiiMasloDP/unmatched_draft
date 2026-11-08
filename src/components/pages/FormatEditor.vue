@@ -79,6 +79,20 @@
                 </select>
               </div>
             </div>
+
+            <div class="editor-field">
+              <label class="editor-label" for="format-pick-order">
+                {{ t("formatPickOrderLabel") }}
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="format-pick-order" v-model="draft.pickOrder">
+                  <option value="snake">{{ t("formatPickOrderSnake") }}</option>
+                  <option value="alternate">
+                    {{ t("formatPickOrderAlternate") }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </template>
         </div>
 
@@ -350,6 +364,7 @@ function save() {
     banPreset: draft.mode === "ladder" ? "ladder" : "custom",
     bans: draft.bans,
     picks: draft.picks,
+    pickOrder: draft.pickOrder,
     allowedHeroIds: sortedIds(draft.heroIds),
     allowedMapIds: sortedIds(draft.mapIds),
   });

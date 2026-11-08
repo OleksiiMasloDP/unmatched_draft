@@ -34,9 +34,6 @@ const twoBans_fourPicks = [
   { type: "pick", p1: true },
 ];
 
-// Усі доступні схеми банів/піків в одному місці.
-// Щоб додати нову схему — опиши послідовність вище і додай її сюди:
-// вона автоматично зʼявиться у редакторі власних форматів.
 export const banPresets = {
   three_bans_five_picks: {
     name: "3 bans / 5 picks",
@@ -59,13 +56,20 @@ export const MAX_PICKS = 6;
 export const DEFAULT_BANS = 3;
 export const DEFAULT_PICKS = 5;
 
+export const PICK_ORDER_SNAKE = "snake";
+export const PICK_ORDER_ALTERNATE = "alternate";
+export const DEFAULT_PICK_ORDER = PICK_ORDER_SNAKE;
+
 export function buildSequence(bans, picks) {
   const sequence = [];
   for (let i = 0; i < bans * 2; i++) {
     sequence.push({ type: "ban", p1: i % 2 === 0 });
   }
   for (let i = 0; i < picks * 2; i++) {
-    const p1 = i === 0 ? true : Math.floor((i - 1) / 2) % 2 === 1;
+    const p1 =
+      pickOrder === PICK_ORDER_ALTERNATE
+        ? i % 2 === 0
+        : i === 0 || Math.floor((i - 1) / 2) % 2 === 1;
     sequence.push({ type: "pick", p1 });
   }
   return sequence;
@@ -152,13 +156,18 @@ export function buildCustomFormat(raw) {
     MAX_PICKS,
     DEFAULT_PICKS,
   );
+  const pickOrder =
+    raw.pickOrder === PICK_ORDER_ALTERNATE
+      ? PICK_ORDER_ALTERNATE
+      : DEFAULT_PICK_ORDER;
   return {
     ...base,
     banPreset: CUSTOM_SCHEME_KEY,
     mode: MODE_TURNS,
     bans,
     picks,
-    sequence: buildSequence(bans, picks),
+    pickOrder,
+    sequence: buildSequence(bans, picks, pickOrder),
   };
 }
 
@@ -182,6 +191,7 @@ export function persistCustomFormats(list) {
     banPreset: f.banPreset,
     bans: f.bans,
     picks: f.picks,
+    pickOrder: f.pickOrder,
     allowedHeroIds: f.allowedHeroIds,
     allowedMapIds: f.allowedMapIds,
   }));

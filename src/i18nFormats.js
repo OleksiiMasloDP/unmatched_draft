@@ -8,6 +8,9 @@ Object.assign(translations.en, {
   formatBansLabel: "Bans (per player)",
   formatPicksLabel: "Picks (per player)",
   formatNoBans: "No bans",
+  formatPickOrderLabel: "Pick order",
+  formatPickOrderSnake: "Snake (1-2-2-1-1-2…)",
+  formatPickOrderAlternate: "Alternating (1-2-1-2…)",
   formatsSchemeBansPicks: "{bans} bans / {picks} picks",
   formatsSchemeNoBans: "No bans / {picks} picks",
 });
@@ -19,6 +22,9 @@ Object.assign(translations.ua, {
   formatBansLabel: "Бани (на гравця)",
   formatPicksLabel: "Піки (на гравця)",
   formatNoBans: "Без банів",
+  formatPickOrderLabel: "Порядок піків",
+  formatPickOrderSnake: "Змійкою (1-2-2-1-1-2…)",
+  formatPickOrderAlternate: "По черзі (1-2-1-2…)",
   formatsSchemeBansPicks: "{bans} банів / {picks} піків",
   formatsSchemeNoBans: "Без банів / {picks} піків",
 });

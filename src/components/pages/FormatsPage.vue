@@ -99,9 +99,10 @@ function applyFormat(id) {
 function schemeText(format) {
   if (format.banPreset === "ladder") return banPresets.ladder.name;
   const key = format.bans ? "formatsSchemeBansPicks" : "formatsSchemeNoBans";
-  return t(key)
+  const text = t(key)
     .replace("{bans}", format.bans)
     .replace("{picks}", format.picks);
+  return format.pickOrder === "alternate" ? `${text} (1-2-1-2)` : text;
 }
 
 function mapsCount(format) {
