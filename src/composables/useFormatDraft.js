@@ -1,9 +1,9 @@
 import { reactive, computed } from "vue";
 import {
   DEFAULT_BANS,
-  DEFAULT_BAN_PRESET,
   DEFAULT_PICKS,
   DEFAULT_PICK_ORDER,
+  DEFAULT_POST_BANS,
   LADDER_KEY,
 } from "../draftFormats.js";
 
@@ -11,8 +11,9 @@ const draft = reactive({
   step: 1,
   editingId: null,
   name: "",
-  mode: DEFAULT_BAN_PRESET === LADDER_KEY ? "ladder" : "turns",
+  mode: "turns",
   bans: DEFAULT_BANS,
+  postBans: DEFAULT_POST_BANS,
   picks: DEFAULT_PICKS,
   pickOrder: DEFAULT_PICK_ORDER,
   heroIds: new Set(),
@@ -27,6 +28,7 @@ function snapshot() {
     bans: draft.bans,
     picks: draft.picks,
     pickOrder: draft.pickOrder,
+    postBans: draft.postBans,
     heroIds: [...draft.heroIds].sort((a, b) => a - b),
     mapIds: [...draft.mapIds].sort((a, b) => a - b),
   });
@@ -38,10 +40,11 @@ function resetFields() {
   draft.step = 1;
   draft.editingId = null;
   draft.name = "";
-  draft.mode = DEFAULT_BAN_PRESET === LADDER_KEY ? "ladder" : "turns";
+  draft.mode = "turns";
   draft.bans = DEFAULT_BANS;
   draft.picks = DEFAULT_PICKS;
   draft.pickOrder = DEFAULT_PICK_ORDER;
+  draft.postBans = DEFAULT_POST_BANS;
   draft.heroIds = new Set();
   draft.mapIds = new Set();
 }
@@ -58,6 +61,7 @@ export function useFormatDraft() {
       draft.bans = existing.bans ?? DEFAULT_BANS;
       draft.picks = existing.picks ?? DEFAULT_PICKS;
       draft.pickOrder = existing.pickOrder ?? DEFAULT_PICK_ORDER;
+      draft.postBans = existing.postBans ?? DEFAULT_POST_BANS;
       draft.heroIds = new Set(existing.allowedHeroIds);
       draft.mapIds = new Set(maps.includes("all") ? allMapIds : maps);
     }

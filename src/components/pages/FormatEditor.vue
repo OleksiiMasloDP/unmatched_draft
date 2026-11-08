@@ -93,6 +93,19 @@
                 </select>
               </div>
             </div>
+
+            <div class="editor-field">
+              <label class="editor-label" for="format-post-bans">
+                {{ t("formatPostBansLabel") }}
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="format-post-bans" v-model.number="draft.postBans">
+                  <option v-for="n in postBanOptions" :key="n" :value="n">
+                    {{ n === 0 ? t("formatNoPostBans") : n }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </template>
         </div>
 
@@ -254,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { useDraftState } from "../../composables/useDraftState.js";
 import { useFormatDraft } from "../../composables/useFormatDraft.js";
@@ -262,6 +275,7 @@ import {
   MAX_BANS,
   MAX_PICKS,
   getRequiredHeroCountFor,
+  maxPostBans,
 } from "../../draftFormats.js";
 import "../../i18nFormats.js";
 
@@ -314,6 +328,20 @@ const shownMaps = computed(() =>
 const banOptions = Array.from({ length: MAX_BANS + 1 }, (_, n) => n);
 const pickOptions = Array.from({ length: MAX_PICKS }, (_, n) => n + 1);
 
+// Постбанів може не бути взагалі, але завжди на один менше, ніж піків
+const postBanOptions = computed(() =>
+  Array.from({ length: maxPostBans(draft.picks) + 1 }, (_, n) => n),
+);
+
+watch(
+  () => draft.picks,
+  (picks) => {
+    if (draft.postBans > maxPostBans(picks)) {
+      draft.postBans = maxPostBans(picks);
+    }
+  },
+);
+
 const requiredHeroes = computed(() =>
   getRequiredHeroCountFor({
     mode: draft.mode === "ladder" ? "simultaneous" : "turns",
@@ -365,6 +393,7 @@ function save() {
     bans: draft.bans,
     picks: draft.picks,
     pickOrder: draft.pickOrder,
+    postBans: draft.postBans,
     allowedHeroIds: sortedIds(draft.heroIds),
     allowedMapIds: sortedIds(draft.mapIds),
   });

@@ -55,6 +55,8 @@ export const MAX_BANS = 5;
 export const MAX_PICKS = 6;
 export const DEFAULT_BANS = 3;
 export const DEFAULT_PICKS = 5;
+export const DEFAULT_POST_BANS = 2;
+export const maxPostBans = (picks) => Math.max(0, picks - 1);
 
 export const PICK_ORDER_SNAKE = "snake";
 export const PICK_ORDER_ALTERNATE = "alternate";
@@ -156,6 +158,12 @@ export function buildCustomFormat(raw) {
     MAX_PICKS,
     DEFAULT_PICKS,
   );
+  const postBans = clampInt(
+    raw.postBans,
+    0,
+    maxPostBans(picks),
+    Math.min(DEFAULT_POST_BANS, maxPostBans(picks)),
+  );
   const pickOrder =
     raw.pickOrder === PICK_ORDER_ALTERNATE
       ? PICK_ORDER_ALTERNATE
@@ -167,6 +175,7 @@ export function buildCustomFormat(raw) {
     bans,
     picks,
     pickOrder,
+    postBans,
     sequence: buildSequence(bans, picks, pickOrder),
   };
 }
@@ -192,6 +201,7 @@ export function persistCustomFormats(list) {
     bans: f.bans,
     picks: f.picks,
     pickOrder: f.pickOrder,
+    postBans: f.postBans,
     allowedHeroIds: f.allowedHeroIds,
     allowedMapIds: f.allowedMapIds,
   }));

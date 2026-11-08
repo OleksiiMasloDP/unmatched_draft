@@ -291,7 +291,20 @@ const displayOpponentPicks = computed(() =>
     : opponent.picks,
 );
 
-const canPostBan = computed(() => !current.value && !isSimultaneous.value);
+// Скільки постбанів на гравця дозволяє формат: у вбудованих завжди 2, у власних
+// - як налаштовано (0 і більше), але не менше ніж на один менше, ніж піків.
+const postBanLimit = computed(() => {
+  if (isSimultaneous.value) return 2;
+  const picksPerPlayer = sequence.value.filter(
+    (step) => step.type === "pick" && step.player === "player",
+  ).length;
+  const configured = availableFormats.value[currentFormat.value]?.postBans ?? 2;
+  return Math.max(0, Math.min(configured, picksPerPlayer - 1));
+});
+
+const canPostBan = computed(
+  () => !current.value && !isSimultaneous.value && postBanLimit.value > 0,
+);
 
 const turnColor = computed(() => {
   if (isSimultaneous.value && currentStep.value === "characters") {
@@ -308,8 +321,8 @@ const canProceedToMaps = computed(() => {
     !current.value &&
     player.picks.length > 0 &&
     opponent.picks.length > 0 &&
-    postBans.value.player.size === 2 &&
-    postBans.value.opponent.size === 2
+    postBans.value.player.size === postBanLimit.value &&
+    postBans.value.opponent.size === postBanLimit.value
   );
 });
 
@@ -422,6 +435,7 @@ const finalWinrate = computed(() => {
 const banRecommendation = computed(() => {
   if (current.value || !player.picks.length || !opponent.picks.length)
     return null;
+  if (postBanLimit.value === 0) return null;
 
   const oppBansCount = postBans.value.opponent.size;
   const playerBansCount = postBans.value.player.size;
@@ -468,7 +482,7 @@ const banRecommendation = computed(() => {
     }
   }
 
-  if (playerBansCount === 1) {
+  if (playerBansCount === 1 && playerBansCount < postBanLimit.value) {
     const currentActiveWinrate = calculateTeamWinrate(
       activePlayerPicks.value,
       activeOpponentPicks.value,
@@ -733,7 +747,7 @@ export function useDraftState() {
     if (!canPostBan.value) return;
     const set = postBans.value[side];
     if (set.has(id)) set.delete(id);
-    else if (set.size < 2) set.add(id);
+    else if (set.size < postBanLimit.value) set.add(id);
     saveToStorage();
   }
 
@@ -1026,6 +1040,7 @@ export function useDraftState() {
     displayPlayerPicks,
     displayOpponentPicks,
     canPostBan,
+    postBanLimit,
     toggleLadderPlayer,
     addLadderOpponent,
     removeLadderChoice,
