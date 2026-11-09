@@ -21,6 +21,16 @@
       <button
         type="button"
         class="mode-option"
+        :class="{ 'is-selected': mode === 'bot' }"
+        @click="chooseMode('bot')"
+      >
+        <span class="mode-icon">🤖</span>
+        <span class="mode-name">{{ t("modeBotTitle") }}</span>
+        <span class="mode-desc">{{ t("modeBotDesc") }}</span>
+      </button>
+      <button
+        type="button"
+        class="mode-option"
         :class="{ 'is-selected': mode === 'online' }"
         @click="chooseMode('online')"
       >
@@ -90,7 +100,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useDraftState } from "../composables/useDraftState";
 import { useOnline } from "../composables/useOnline";
 
-const emit = defineEmits(["local"]);
+const emit = defineEmits(["local", "bot"]);
 const { t } = useDraftState();
 const { net, mode, setMode, host, join, leave } = useOnline();
 const route = useRoute();
@@ -114,9 +124,10 @@ const replaceSeat = (key) =>
   );
 
 function chooseMode(next) {
-  if (next === "local" && net.role !== null) leave();
+  if (next !== "online" && net.role !== null) leave();
   setMode(next);
   if (next === "local") emit("local");
+  if (next === "bot") emit("bot");
 }
 
 function hostRoom() {
@@ -162,7 +173,7 @@ onMounted(() => {
 
 .mode-options {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px;
   margin-bottom: 12px;
 }

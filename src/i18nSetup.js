@@ -11,6 +11,9 @@ export const setupText = {
     diceWinner: "{player} wins the roll.",
     diceChooser: "{player} chooses the map.",
     diceOrderChooser: "{player} chooses who goes first:",
+    modeBotTitle: "Vs bot",
+    modeBotDesc: "Play alone against a computer opponent.",
+    gameBotLabel: "Bot",
   },
   ua: {
     gameStepFormat: "Формат",
@@ -24,5 +27,8 @@ export const setupText = {
     diceWinner: "{player} виграє кидок.",
     diceChooser: "{player} обирає мапу.",
     diceOrderChooser: "{player} обирає, хто ходить першим:",
+    modeBotTitle: "Проти бота",
+    modeBotDesc: "Грайте наодинці проти комп'ютерного суперника.",
+    gameBotLabel: "Бот",
   },
 };

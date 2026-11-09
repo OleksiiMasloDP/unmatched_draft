@@ -77,6 +77,7 @@ const game = reactive({
   toss: null,
   tokens: [],
   startPick: null,
+  bot: null,
 });
 
 let flow = null;
@@ -2564,7 +2565,14 @@ function seatFor() {
 }
 
 function blocked() {
-  return net.online.value && net.mySeat.value !== game.turn;
+  return (
+    (net.online.value && net.mySeat.value !== game.turn) ||
+    Boolean(game.bot && game.turn === game.bot)
+  );
+}
+
+function setBot(seat) {
+  game.bot = seat === "p1" || seat === "p2" ? seat : null;
 }
 
 function applyAnswer(answer, seat) {
@@ -2814,9 +2822,9 @@ function startOnlineGame() {
   rollToss();
 }
 
-function availableActions() {
+function availableActions(forBot = false) {
   const none = { maneuver: false, scheme: false, attack: false };
-  if (game.phase !== "play" || blocked()) return none;
+  if (game.phase !== "play" || (!forBot && blocked())) return none;
   const me = game.turn;
   const idle = !game.prompt && !flow;
   const hand = pl(me).hand.map(getCard);
@@ -2872,6 +2880,7 @@ export function useGame() {
     startGame,
     startOnlineGame,
     startLocalToss,
+    setBot,
     chooseDeck,
     resetGame,
     answerPrompt,

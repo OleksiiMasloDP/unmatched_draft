@@ -49,7 +49,8 @@
         (game.phase === 'setup' && setupStep === 1) ||
         netState.status === 'closed'
       "
-      @local="localChosen = true"
+      @local="chooseLocal"
+      @bot="chooseBot"
     />
 
     <div
@@ -171,7 +172,7 @@
       <div v-if="setupStep === 4" class="game-setup">
         <p class="game-prompt-line">
           {{
-            online
+            solo
               ? t(iWonToss ? "tossYouWon" : "tossOppWon")
               : replacePlayer("diceWinner", game.toss.winner)
           }}
@@ -179,7 +180,7 @@
         <h2 class="game-subtitle">{{ t("gameMapLabel") }}</h2>
         <p v-if="game.toss.stage === 'map'" class="game-prompt-line">
           {{
-            online && !iWonToss
+            solo && !iWonToss
               ? t("tossWaitMap")
               : replacePlayer("diceChooser", game.toss.winner)
           }}
@@ -209,10 +210,10 @@
           </button>
         </template>
         <template v-else>
-          <div v-if="!online || !iWonToss" class="toss-order">
+          <div v-if="!solo || !iWonToss" class="toss-order">
             <p class="game-prompt-line">
               {{
-                online
+                solo
                   ? t("tossPickOrder")
                   : replacePlayer("diceOrderChooser", orderChooser)
               }}
@@ -264,7 +265,7 @@
             </p>
             <p class="game-prompt-line">
               {{
-                online
+                solo
                   ? t(iWonToss ? "tossYouWon" : "tossOppWon")
                   : replacePlayer("diceWinner", game.toss.winner)
               }}
@@ -1203,6 +1204,7 @@ import { getCard, getHero, testDecks } from "../../gameDecks";
 import ActionIcon from "../ActionIcon.vue";
 import CombatPopup from "../CombatPopup.vue";
 import DiceRoll from "../DiceRoll.vue";
+import { useBot } from "../../composables/useBot.js";
 import EffectDialog from "../EffectDialog.vue";
 import ReportBugButton from "../ReportBugButton.vue";
 import GameBoard from "../GameBoard.vue";
@@ -1233,6 +1235,7 @@ const {
   availableActions,
   heroOf,
   pickStart,
+  setBot,
 } = useGame();
 const { savedDecks } = useSavedDecks();
 const {
@@ -1246,7 +1249,50 @@ const {
 const boostOpen = ref(false);
 const tossDone = ref(false);
 const mapsOpen = ref(false);
-const localChosen = ref(online.value);
+const localChosen = ref(online.value || Boolean(game.bot));
+const solo = computed(() => online.value || Boolean(game.bot));
+const meSeat = computed(() => (online.value ? mySeat.value : "p1"));
+
+function chooseLocal() {
+  setBot(null);
+  localChosen.value = true;
+}
+
+function chooseBot() {
+  setBot("p2");
+  localChosen.value = true;
+}
+
+useBot();
+
+let botTimer = null;
+watch(
+  () => [
+    game.bot,
+    game.toss?.id,
+    game.toss?.stage,
+    game.toss?.winner,
+    mapsOpen.value,
+    tossDone.value,
+  ],
+  () => {
+    clearTimeout(botTimer);
+    const toss = game.toss;
+    if (!game.bot || !toss || !tossDone.value) return;
+    if (toss.stage === "map" && toss.winner === game.bot && mapsOpen.value) {
+      botTimer = setTimeout(() => {
+        const pick = maps[Math.floor(Math.random() * maps.length)];
+        setMap(pick.id);
+        botTimer = setTimeout(confirmMap, 1200);
+      }, 1200);
+    }
+    if (toss.stage === "order" && opponentOf(toss.winner) === game.bot) {
+      botTimer = setTimeout(() => chooseOrder(Math.random() < 0.5), 1000);
+    }
+  },
+);
+
+onBeforeUnmount(() => clearTimeout(botTimer));
 
 watch(
   () => game.toss?.id,
@@ -1264,10 +1310,11 @@ const canGoBack = computed(() => setupStep.value === 2);
 
 function backToFormat() {
   if (netState.role) leaveRoom();
+  setBot(null);
   localChosen.value = false;
 }
 
-const iWonToss = computed(() => game.toss?.winner === mySeat.value);
+const iWonToss = computed(() => game.toss?.winner === meSeat.value);
 const orderChooser = computed(() =>
   game.toss ? opponentOf(game.toss.winner) : "p1",
 );
@@ -1276,7 +1323,7 @@ const canPickMap = computed(
   () =>
     tossDone.value &&
     game.toss?.stage === "map" &&
-    (!online.value || game.toss.winner === mySeat.value),
+    (!solo.value || game.toss.winner === meSeat.value),
 );
 const logOpen = ref(false);
 const logCardView = ref(null);
@@ -1382,7 +1429,7 @@ const deckMeta = (deck) =>
 const setupPlayers = computed(() => (online.value ? [mySeat.value] : players));
 
 const mine = (prompt) =>
-  !online.value || prompt.player === null || prompt.player === mySeat.value;
+  !solo.value || prompt.player === null || prompt.player === meSeat.value;
 
 const spacePrompt = computed(() =>
   game.prompt?.kind === "space" && mine(game.prompt) ? game.prompt : null,
@@ -1436,9 +1483,9 @@ function onHandSelect(cardId) {
 }
 
 const waitingOpponent = computed(() => {
-  if (!online.value || game.phase !== "play") return false;
+  if (!solo.value || game.phase !== "play") return false;
   const owner = game.prompt ? game.prompt.player : game.turn;
-  return owner !== null && owner !== mySeat.value;
+  return owner !== null && owner !== meSeat.value;
 });
 
 const startPickTurn = computed(() =>
@@ -1450,7 +1497,7 @@ const startPickTurn = computed(() =>
 const startPickMine = computed(
   () =>
     startPickTurn.value !== null &&
-    (!online.value || startPickTurn.value === mySeat.value),
+    (!solo.value || startPickTurn.value === meSeat.value),
 );
 
 const startPickOptions = computed(() =>
@@ -1503,7 +1550,7 @@ function onBoardSelect(space) {
 const mulliganTurn = computed(() => {
   const state = game.mulligan;
   if (game.phase !== "mulligan" || !state || state.reveal) return null;
-  if (online.value) return state.decided[mySeat.value] ? null : mySeat.value;
+  if (solo.value) return state.decided[meSeat.value] ? null : meSeat.value;
   return players.find((player) => !state.decided[player]) ?? null;
 });
 
@@ -1514,7 +1561,7 @@ const passTarget = computed(
 );
 
 const needsPass = computed(() => {
-  if (online.value) return false;
+  if (solo.value) return false;
   if (game.phase === "mulligan") {
     return mulliganTurn.value !== null && mulliganTurn.value !== game.viewer;
   }
@@ -1523,7 +1570,7 @@ const needsPass = computed(() => {
   return owner !== null && owner !== game.viewer;
 });
 
-const viewer = computed(() => (online.value ? mySeat.value : game.viewer));
+const viewer = computed(() => (solo.value ? meSeat.value : game.viewer));
 
 const handCards = computed(() =>
   game.players[viewer.value]
@@ -1879,7 +1926,7 @@ const revealSides = computed(() => {
     const kid = game.players[player]?.sidekicks?.find((k) => k.id === fighter);
     return {
       player,
-      label: online.value
+      label: solo.value
         ? t(player === seat ? "gameYouLabel" : "gameOpponentLabel")
         : playerLabel(player),
       roleKey: combat.attacker === player ? "gameAttacker" : "gameDefender",
@@ -2000,7 +2047,8 @@ function onChooseDeck() {
 
 const playerTag = (player) =>
   playerLabel(player) +
-  (online.value && mySeat.value === player ? ` · ${t("packYou")}` : "");
+  (online.value && mySeat.value === player ? ` · ${t("packYou")}` : "") +
+  (game.bot === player ? ` · ${t("gameBotLabel")}` : "");
 
 function onSurrender() {
   surrenderOpen.value = false;
