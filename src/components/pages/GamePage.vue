@@ -76,6 +76,18 @@
           <h2 class="game-subtitle">
             {{ playerTag(player) }} · {{ t("gameDeckLabel") }}
           </h2>
+          <div v-if="game.bot === player" class="game-source">
+            <label :for="'level-' + player">{{ t("gameBotLevel") }}</label>
+            <select
+              :id="'level-' + player"
+              v-model="botLevel"
+              class="form-select form-select-sm game-source-select"
+            >
+              <option value="easy">{{ t("gameBotEasy") }}</option>
+              <option value="normal">{{ t("gameBotNormal") }}</option>
+              <option value="hard">{{ t("gameBotHard") }}</option>
+            </select>
+          </div>
           <div class="game-source">
             <label :for="'source-' + player">{{ t("gameDeckSource") }}</label>
             <select
@@ -1236,6 +1248,7 @@ const {
   heroOf,
   pickStart,
   setBot,
+  setBotLevel,
 } = useGame();
 const { savedDecks } = useSavedDecks();
 const {
@@ -1257,6 +1270,11 @@ function chooseLocal() {
   setBot(null);
   localChosen.value = true;
 }
+
+const botLevel = computed({
+  get: () => game.botLevel,
+  set: (level) => setBotLevel(level),
+});
 
 function chooseBot() {
   setBot("p2");

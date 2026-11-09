@@ -78,6 +78,7 @@ const game = reactive({
   tokens: [],
   startPick: null,
   bot: null,
+  botLevel: "normal",
 });
 
 let flow = null;
@@ -2575,6 +2576,10 @@ function setBot(seat) {
   game.bot = seat === "p1" || seat === "p2" ? seat : null;
 }
 
+function setBotLevel(level) {
+  game.botLevel = ["easy", "normal", "hard"].includes(level) ? level : "normal";
+}
+
 function applyAnswer(answer, seat) {
   const prompt = game.prompt;
   if (!prompt || game.phase !== "play") return;
@@ -2881,6 +2886,7 @@ export function useGame() {
     startOnlineGame,
     startLocalToss,
     setBot,
+    setBotLevel,
     chooseDeck,
     resetGame,
     answerPrompt,
