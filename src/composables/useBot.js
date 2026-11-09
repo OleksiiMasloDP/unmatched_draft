@@ -1,14 +1,15 @@
 import { onBeforeUnmount, onMounted } from "vue";
 import { getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
+import { botProfiles } from "../botProfiles.js";
 import { useGame } from "./useGame.js";
 
 const TICK = 650;
 const other = (seat) => (seat === "p1" ? "p2" : "p1");
 const isAttackCard = (card) =>
-  card && (card.type === "attack" || card.type === "versatile") && card.value;
+  card && card.type !== "defense" && card.type !== "scheme" && card.value;
 const isDefenseCard = (card) =>
-  card && (card.type === "defense" || card.type === "versatile");
+  card && card.type !== "attack" && card.type !== "scheme";
 const cardPower = (card) => (card.value ?? 0) + (card.boost ?? 0) * 0.35;
 const attackPower = (card) =>
   cardPower(card) - (card.type === "versatile" ? 0.3 : 0);
@@ -43,6 +44,7 @@ export function useBot() {
   let repeats = 0;
   let lastTarget = null;
   let idle = 0;
+  let profile = {};
   let lastTurn = -1;
   let lastHp = -1;
 
@@ -54,7 +56,8 @@ export function useBot() {
     const queue = [from];
     while (queue.length) {
       const id = queue.shift();
-      for (const next of spaceOf(id)?.links || []) {
+      const node = spaceOf(id);
+      for (const next of [...(node?.links || []), ...(node?.secret || [])]) {
         if (!dist.has(next)) {
           dist.set(next, dist.get(id) + 1);
           queue.push(next);
@@ -133,9 +136,9 @@ export function useBot() {
 
   const nearestFoe = (space, bot) => {
     const dist = distances(space);
-    let best = Infinity;
+    let best = 60;
     for (const foe of fightersOf(other(bot))) {
-      best = Math.min(best, dist.get(foe.space) ?? Infinity);
+      best = Math.min(best, dist.get(foe.space) ?? 60);
     }
     return best;
   };
@@ -193,8 +196,9 @@ export function useBot() {
   };
 
   const fear = (fighter, turtle) =>
-    (fighter.isHero ? 1 + (1 - fighter.hp / fighter.max) * 1.5 : 0.5) *
-    (turtle ? 3 : 1);
+    (fighter.isHero
+      ? 1 + (1 - fighter.hp / fighter.max) * 1.5
+      : (profile.kidFear ?? 0.5)) * (turtle ? 3 : 1);
 
   const positionScore = (fighter, space, bot, turtle = false) => {
     const foes = fightersOf(other(bot));
@@ -235,11 +239,25 @@ export function useBot() {
     const dist = nearestFoe(space, bot);
     if (turtle)
       return -fear(fighter, true) * exposure + 0.2 * Math.min(dist, 8);
+    const aggro = profile.aggro ?? 1;
+    let contain = 0;
+    if (profile.contain && fighter.isHero) {
+      const zone = [...byId().keys()].filter((id) =>
+        sharesZone(id, space),
+      ).length;
+      contain =
+        (foes.some((foe) => foe.isHero && sharesZone(foe.space, space))
+          ? 0.6
+          : 0) -
+        zone * 0.04;
+    }
     return (
-      2 * strike +
-      0.8 * reachStrike -
-      fear(fighter, false) * exposure * Math.max(0.1, 0.5 - idle * 0.12) -
-      (strike ? 0 : 0.25 * dist)
+      2 * aggro * strike +
+      0.8 * aggro * reachStrike +
+      contain -
+      (fear(fighter, false) * exposure * Math.max(0, 0.5 - idle * 0.1)) /
+        aggro -
+      (strike ? 0 : 0.25 * aggro * dist)
     );
   };
 
@@ -248,6 +266,9 @@ export function useBot() {
 
   const chooseMulligan = (bot) => {
     const hand = handOf(bot);
+    if (hand.some((card) => (profile.keepInHand || []).includes(card.key))) {
+      return engine.chooseMulligan(false, bot);
+    }
     const good = hand.filter(isAttackCard).length;
     const power = hand.reduce((sum, card) => sum + cardPower(card), 0);
     engine.chooseMulligan(
@@ -268,7 +289,9 @@ export function useBot() {
     fightersOf(other(bot)).find((foe) => foe.space === space);
 
   const targetScore = (foe) =>
-    (foe.isHero ? 3 : 0) + (foe.hp <= 4 ? 2 : 0) - foe.hp * 0.3;
+    (foe.isHero ? (profile.heroFocus ?? 3) : 0) +
+    (foe.hp <= 4 ? 2 : 0) -
+    foe.hp * 0.3;
 
   const bestTarget = (options, bot) =>
     options.reduce((best, id) =>
@@ -365,7 +388,18 @@ export function useBot() {
       const killers = hp
         ? sorted.filter((card) => (card.value ?? 0) >= hp + 1)
         : [];
-      return [(killers.length ? killers[killers.length - 1] : sorted[0]).id];
+      if (killers.length) return [killers[killers.length - 1].id];
+      if (profile.bait && hp && (sorted[0].value ?? 0) < hp + 4) {
+        const bait = sorted.filter((card) => (card.value ?? 0) >= 3);
+        if (
+          bait.length > 1 &&
+          !profile.keep?.includes(bait[bait.length - 1].key)
+        ) {
+          return [bait[bait.length - 1].id];
+        }
+      }
+      const spare = sorted.filter((card) => !profile.keep?.includes(card.key));
+      return [(spare.length ? spare[0] : sorted[0]).id];
     }
     if (title === "promptDefenseCard") {
       const pool = options.filter(isDefenseCard);
@@ -376,14 +410,26 @@ export function useBot() {
       const me = game.players[bot];
       const expected = foeAverageAttack(other(bot));
       if (me.hp <= 6 || state.turtle) return [sorted[0].id];
+      if (
+        profile.thrifty &&
+        me.hp > me.maxHp * 0.6 &&
+        handOf(bot).length <= 3
+      ) {
+        return [];
+      }
       const enough = sorted.filter((card) => (card.value ?? 0) >= expected);
       return [(enough.length ? enough[enough.length - 1] : sorted[0]).id];
     }
     if (title === "promptBoost") {
       const hand = handOf(bot).length;
       const low = game.players[bot].hp <= 8;
-      const pool = options.filter((card) => card.boost);
-      if (!pool.length || hand < (low || state.turtle ? 2 : 3)) return [];
+      const pool = options.filter(
+        (card) => card.boost && !profile.keep?.includes(card.key),
+      );
+      const need = low || state.turtle ? 2 : (profile.boostHand ?? 3);
+      if (!pool.length || hand < Math.min(need, profile.boostHand ?? need)) {
+        return [];
+      }
       return [
         pool.reduce((a, b) =>
           b.boost - (b.value ?? 0) * 0.35 > a.boost - (a.value ?? 0) * 0.35
@@ -402,8 +448,10 @@ export function useBot() {
     const min = prompt.min ?? 0;
     if (!min) return [];
     const discard = /Discard|Bottom|Sacrifice/i.test(title);
+    const worth = (card) =>
+      cardPower(card) + (profile.keep?.includes(card.key) ? 5 : 0);
     const ranked = [...options].sort((a, b) =>
-      discard ? cardPower(a) - cardPower(b) : cardPower(b) - cardPower(a),
+      discard ? worth(a) - worth(b) : worth(b) - worth(a),
     );
     return ranked.slice(0, min).map((card) => card.id);
   };
@@ -440,7 +488,11 @@ export function useBot() {
     if (state.turtle && available.maneuver) return engine.doManeuver();
     if (
       available.attack &&
-      !(available.scheme && hasScheme && hand.length >= 5)
+      !(
+        available.scheme &&
+        hasScheme &&
+        hand.length >= (profile.schemeHand ?? 5)
+      )
     ) {
       return engine.doAttack();
     }
@@ -453,6 +505,7 @@ export function useBot() {
   const step = () => {
     const bot = game.bot;
     if (!bot) return;
+    profile = botProfiles[game.players[bot]?.heroId] || {};
     if (game.phase === "mulligan" && game.mulligan) {
       if (!game.mulligan.reveal && !game.mulligan.decided[bot]) {
         chooseMulligan(bot);
