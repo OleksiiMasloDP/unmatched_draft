@@ -266,6 +266,11 @@ const nav = computed(() => {
           icon: "game",
           label: props.t("gameTitle"),
         },
+        {
+          name: "rogue",
+          icon: "game",
+          label: props.t("rogueTitle"),
+        },
       ],
     },
   ];

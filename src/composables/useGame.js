@@ -2576,6 +2576,27 @@ function setBot(seat) {
   game.bot = seat === "p1" || seat === "p2" ? seat : null;
 }
 
+function startRogueBattle(deckA, deckB, options) {
+  resetGame();
+  game.mapId = options.mapId;
+  useMapId(options.mapId);
+  startGame(deckA, deckB, options.first, "p2");
+  const cut = (value) => Math.max(1, Math.ceil(value * options.scale));
+  for (const seat of ["p1", "p2"]) {
+    const state = game.players[seat];
+    if (!state) return;
+    state.hp = cut(state.hp);
+    state.maxHp = state.hp;
+    for (const kid of state.sidekicks) {
+      kid.hp = cut(kid.hp);
+      kid.maxHp = kid.hp;
+    }
+  }
+  setBot("p2");
+  setBotLevel(options.botLevel);
+  syncOut();
+}
+
 function setBotLevel(level) {
   game.botLevel = ["easy", "normal", "hard"].includes(level) ? level : "normal";
 }
@@ -2887,6 +2908,7 @@ export function useGame() {
     startLocalToss,
     setBot,
     setBotLevel,
+    startRogueBattle,
     chooseDeck,
     resetGame,
     answerPrompt,

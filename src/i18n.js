@@ -1113,3 +1113,7 @@ Object.assign(translations.ua, combatText.ua);
 import { tokensText } from "./i18nTokens.js";
 Object.assign(translations.en, tokensText.en);
 Object.assign(translations.ua, tokensText.ua);
+
+import { rogueText } from "./i18nRogue.js";
+Object.assign(translations.en, rogueText.en);
+Object.assign(translations.ua, rogueText.ua);
