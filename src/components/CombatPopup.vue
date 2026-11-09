@@ -123,6 +123,9 @@
             <PackCard :card="getCard(item.cardId)" />
             <div class="combat-reveal-owner">
               {{ playerLabel(item.player) }}
+              <template v-if="item.kind === 'discard'">
+                · {{ t("combatDiscarded") }}
+              </template>
             </div>
           </div>
         </div>

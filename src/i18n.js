@@ -534,6 +534,7 @@ export const translations = {
     packRolePlays: "plays",
     packRoleCards: "cards only",
     promptPlaceSidekick: "Place your sidekick in a space adjacent to your hero",
+    combatDiscarded: "Discarded",
   },
   ua: {
     navigation: "Навігація",
@@ -1073,6 +1074,7 @@ export const translations = {
     packRolePlays: "грає",
     packRoleCards: "лише карти",
     promptPlaceSidekick: "Поставте помічника на клітинку поруч зі своїм героєм",
+    combatDiscarded: "Скинуто",
   },
 };
 
@@ -1083,23 +1085,27 @@ Object.assign(translations.ua, blackPantherText.ua);
 import { houdiniText } from "./i18nHoudini.js";
 Object.assign(translations.en, houdiniText.en);
 Object.assign(translations.ua, houdiniText.ua);
+
 import { wyattText } from "./i18nWyatt.js";
 Object.assign(translations.en, wyattText.en);
 Object.assign(translations.ua, wyattText.ua);
+
 import { jillText } from "./i18nJill.js";
 Object.assign(translations.en, jillText.en);
 Object.assign(translations.ua, jillText.ua);
+
 import { robinHoodText } from "./i18nRobinHood.js";
 Object.assign(translations.en, robinHoodText.en);
 Object.assign(translations.ua, robinHoodText.ua);
+
 import { raptorsText } from "./i18nRaptors.js";
 Object.assign(translations.en, raptorsText.en);
 Object.assign(translations.ua, raptorsText.ua);
+
 import { combatText } from "./i18nCombat.js";
 Object.assign(translations.en, combatText.en);
 Object.assign(translations.ua, combatText.ua);
 
 import { tokensText } from "./i18nTokens.js";
-
 Object.assign(translations.en, tokensText.en);
 Object.assign(translations.ua, tokensText.ua);

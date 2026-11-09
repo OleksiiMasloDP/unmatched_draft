@@ -1015,6 +1015,7 @@ export const cardEffects = {
       if (!hand.length) return;
       const id = hand[Math.floor(Math.random() * hand.length)];
       c.g.discardFromHand(c.foe, id);
+      c.g.noteDiscard(c.foe, id);
       c.combat.ambush = c.combat.ambush || {};
       c.combat.ambush[c.me] = c.g.cardBoost(id);
     },

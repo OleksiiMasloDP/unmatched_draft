@@ -353,8 +353,9 @@ function buryKids(player) {
 }
 
 let combatHit = false;
-function noteReveal(player, id) {
-  if (game.combat?.reveals) game.combat.reveals.push({ player, cardId: id });
+function noteReveal(player, id, kind = "reveal") {
+  if (game.combat?.reveals)
+    game.combat.reveals.push({ player, cardId: id, kind });
 }
 
 function damage(player, amount, fighter = cur[player]) {
@@ -1023,6 +1024,7 @@ function storeInSuit(player, from, count) {
   for (let i = 0; i < count && pl(from).deck.length; i++) {
     const id = pl(from).deck.shift();
     target.suit.push(id);
+    noteReveal(from, id);
     log("logSuitStore", { player, card: getCard(id).name, cardId: id });
   }
 }
@@ -1141,6 +1143,7 @@ const api = {
     if (bottomId) deck.push(bottomId);
   },
   discardOf: (player) => [...pl(player).discard],
+  noteDiscard: (player, id) => noteReveal(player, id, "discard"),
   logRevealOwn: (player, id) => {
     noteReveal(player, id);
     log("logRevealOwn", { player, card: getCard(id).name, cardId: id });
@@ -2057,7 +2060,7 @@ function* attack(me) {
   });
 
   game.combat.stage = "reveal";
-  yield {
+  const revealInfo = () => ({
     kind: "info",
     player: null,
     title: "gameReveal",
@@ -2080,7 +2083,9 @@ function* attack(me) {
       terrain,
       dealt,
     },
-  };
+  });
+  const shownReveals = (game.combat?.reveals || []).length;
+  yield revealInfo();
 
   if (dealt > 0) {
     damageSrc = combat.cards[me] ? combat.cards[me].name : null;
@@ -2104,6 +2109,14 @@ function* attack(me) {
     if (card && !combat.canceled[player] && game.phase === "play") {
       yield* runEffect(player, card, "after", combat);
     }
+  }
+
+  if (
+    game.phase === "play" &&
+    game.combat &&
+    game.combat.reveals.length > shownReveals
+  ) {
+    yield revealInfo();
   }
 
   if (

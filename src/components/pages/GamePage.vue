@@ -1827,7 +1827,10 @@ const revealedCards = computed(() =>
   (blockingPrompt.value?.combat?.reveals || [])
     .map((item) => ({
       card: getCard(item.cardId),
-      label: playerLabel(item.player),
+      label:
+        item.kind === "discard"
+          ? `${playerLabel(item.player)} · ${t("combatDiscarded")}`
+          : playerLabel(item.player),
     }))
     .filter((item) => item.card),
 );
