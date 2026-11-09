@@ -10,6 +10,30 @@ const isAttackCard = (card) =>
 const isDefenseCard = (card) =>
   card && (card.type === "defense" || card.type === "versatile");
 const cardPower = (card) => (card.value ?? 0) + (card.boost ?? 0) * 0.35;
+const attackPower = (card) =>
+  cardPower(card) - (card.type === "versatile" ? 0.3 : 0);
+const defensePower = (card) =>
+  cardPower(card) - (card.type === "versatile" ? 0.3 : 0);
+const schemeDamage = (card) => {
+  if (!card || card.type !== "scheme") return 0;
+  const found = /(\d+) damage/i.exec(card.text?.en || "");
+  return found ? Number(found[1]) : 0;
+};
+const HEAL = /recover|heal|regain/i;
+
+const graphCache = new Map();
+const reachCache = new Map();
+
+function graphOf(mapId) {
+  if (!graphCache.has(mapId)) {
+    const map = getMap(mapId);
+    graphCache.set(mapId, {
+      map,
+      byId: new Map(map.spaces.map((space) => [space.id, space])),
+    });
+  }
+  return graphCache.get(mapId);
+}
 
 export function useBot() {
   const engine = useGame();
@@ -17,20 +41,20 @@ export function useBot() {
   let timer = null;
   let signature = "";
   let repeats = 0;
+  let lastTarget = null;
+  let idle = 0;
+  let lastTurn = -1;
+  let lastHp = -1;
 
-  const graph = () => {
-    const map = getMap(game.mapId);
-    const byId = new Map(map.spaces.map((space) => [space.id, space]));
-    return { map, byId };
-  };
+  const byId = () => graphOf(game.mapId).byId;
+  const spaceOf = (id) => byId().get(id);
 
   const distances = (from) => {
-    const { byId } = graph();
     const dist = new Map([[from, 0]]);
     const queue = [from];
     while (queue.length) {
       const id = queue.shift();
-      for (const next of byId.get(id)?.links || []) {
+      for (const next of spaceOf(id)?.links || []) {
         if (!dist.has(next)) {
           dist.set(next, dist.get(id) + 1);
           queue.push(next);
@@ -38,6 +62,41 @@ export function useBot() {
       }
     }
     return dist;
+  };
+
+  const reachSet = (from, steps) => {
+    const key = `${game.mapId}|${from}|${steps}`;
+    if (reachCache.has(key)) return reachCache.get(key);
+    const seen = new Map([[from, 0]]);
+    const queue = [from];
+    while (queue.length) {
+      const id = queue.shift();
+      if (seen.get(id) >= steps) continue;
+      const node = spaceOf(id);
+      for (const next of [...(node?.links || []), ...(node?.secret || [])]) {
+        if (!seen.has(next)) {
+          seen.set(next, seen.get(id) + 1);
+          queue.push(next);
+        }
+      }
+    }
+    const result = new Set(seen.keys());
+    reachCache.set(key, result);
+    return result;
+  };
+
+  const linked = (a, b) => (spaceOf(a)?.links || []).includes(b);
+
+  const sharesZone = (a, b) => {
+    const zones = spaceOf(a)?.zones || [];
+    return (spaceOf(b)?.zones || []).some((zone) => zones.includes(zone));
+  };
+
+  const attackPositions = (attack, target) => {
+    if (attack === "range") {
+      return [...byId().keys()].filter((id) => sharesZone(id, target));
+    }
+    return spaceOf(target)?.links || [];
   };
 
   const fightersOf = (seat) => {
@@ -48,18 +107,24 @@ export function useBot() {
     if (state.hp > 0) {
       list.push({
         id: "hero",
+        isHero: true,
         space: state.space,
         hp: state.hp,
+        max: state.maxHp || state.hp,
         attack: data.attack,
+        move: data.move ?? 3,
       });
     }
     for (const kid of state.sidekicks || []) {
       if (!kid.down && kid.space) {
         list.push({
           id: kid.id,
+          isHero: false,
           space: kid.space,
           hp: kid.hp,
+          max: kid.maxHp || kid.hp,
           attack: kid.attack || data.sidekick?.attack,
+          move: data.move ?? 3,
         });
       }
     }
@@ -75,110 +140,264 @@ export function useBot() {
     return best;
   };
 
-  const sharesZone = (a, b) => {
-    const { byId } = graph();
-    const zones = byId.get(a)?.zones || [];
-    return (byId.get(b)?.zones || []).some((zone) => zones.includes(zone));
-  };
-
-  const inRange = (fighter, bot) =>
-    fightersOf(other(bot)).some((foe) =>
-      fighter.attack === "range"
-        ? sharesZone(fighter.space, foe.space)
-        : distances(fighter.space).get(foe.space) === 1,
-    );
+  const canHit = (fighter, from, targetSpace) =>
+    fighter.attack === "range"
+      ? sharesZone(from, targetSpace)
+      : linked(from, targetSpace);
 
   const handOf = (seat) => (game.players[seat]?.hand || []).map(getCard);
+  const deckOf = (seat) => (game.players[seat]?.deck || []).map(getCard);
 
-  const chooseMulligan = (bot) => {
-    const good = handOf(bot).filter(isAttackCard).length;
-    engine.chooseMulligan(good < 2, bot);
+  const healsFoe = (foeSeat) => {
+    const state = game.players[foeSeat];
+    const data = state && getHero(state.heroId);
+    if (!data) return false;
+    const texts = [data.passive?.text?.en || ""];
+    for (const entry of data.cards || []) texts.push(entry[4] || "");
+    return texts.some((text) => HEAL.test(text));
   };
 
-  const pickSpaceNear = (options, bot) => {
-    let best = options[0];
-    let bestDist = Infinity;
-    for (const id of options) {
-      const dist = nearestFoe(id, bot);
-      if (dist < bestDist) {
-        best = id;
-        bestDist = dist;
+  const foeAverageAttack = (foeSeat) => {
+    const data = getHero(game.players[foeSeat]?.heroId);
+    const values = (data?.cards || [])
+      .filter((entry) => entry[2] && entry[7] !== "defense")
+      .flatMap((entry) => Array(entry[0]).fill(entry[2]));
+    if (!values.length) return 3;
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
+  };
+
+  const plan = (bot) => {
+    const foeSeat = other(bot);
+    const foeHero = fightersOf(foeSeat).find((fighter) => fighter.isHero);
+    if (!foeHero || getHero(game.players[foeSeat].heroId).team) {
+      return { finisher: false, turtle: false };
+    }
+    const inHand = handOf(bot).reduce(
+      (sum, card) => sum + schemeDamage(card),
+      0,
+    );
+    const inDeck = deckOf(bot).reduce(
+      (sum, card) => sum + schemeDamage(card),
+      0,
+    );
+    const safe = !healsFoe(foeSeat);
+    const deckLeft = (game.players[bot].deck || []).length;
+    return {
+      finisher: inHand >= foeHero.hp,
+      turtle:
+        safe &&
+        inHand < foeHero.hp &&
+        inHand + inDeck >= foeHero.hp &&
+        deckLeft > 2,
+    };
+  };
+
+  const fear = (fighter, turtle) =>
+    (fighter.isHero ? 1 + (1 - fighter.hp / fighter.max) * 1.5 : 0.5) *
+    (turtle ? 3 : 1);
+
+  const positionScore = (fighter, space, bot, turtle = false) => {
+    const foes = fightersOf(other(bot));
+    if (!foes.length) return 0;
+    const occupied = new Set(
+      [...fightersOf(bot), ...foes]
+        .filter((item) => item.space !== fighter.space)
+        .map((item) => item.space),
+    );
+    const reachMine = reachSet(space, fighter.move);
+    let exposure = 0;
+    let strike = 0;
+    let reachStrike = 0;
+    for (const foe of foes) {
+      const weight = foe.isHero ? 1 : 0.6;
+      const reachFoe = reachSet(foe.space, foe.move);
+      for (const spot of attackPositions(foe.attack, space)) {
+        if (spot === space || !reachFoe.has(spot)) continue;
+        if (spot !== foe.space && occupied.has(spot)) continue;
+        const near = linked(spot, space);
+        let cost;
+        if (fighter.attack === "range") cost = near ? 1.2 : 1;
+        else cost = near ? 0.35 : 1.6;
+        const retaliate = attackPositions(fighter.attack, spot).some(
+          (id) => id === space || reachMine.has(id),
+        );
+        exposure += cost * weight * (retaliate ? 1 : 1.4);
+      }
+      if (canHit(fighter, space, foe.space)) strike += weight;
+      else if (
+        attackPositions(fighter.attack, foe.space).some((id) =>
+          reachMine.has(id),
+        )
+      ) {
+        reachStrike = Math.max(reachStrike, weight);
       }
     }
-    return best;
+    const dist = nearestFoe(space, bot);
+    if (turtle)
+      return -fear(fighter, true) * exposure + 0.2 * Math.min(dist, 8);
+    return (
+      2 * strike +
+      0.8 * reachStrike -
+      fear(fighter, false) * exposure * Math.max(0.1, 0.5 - idle * 0.12) -
+      (strike ? 0 : 0.25 * dist)
+    );
+  };
+
+  const fighterAt = (space, bot) =>
+    fightersOf(bot).find((item) => item.space === space);
+
+  const chooseMulligan = (bot) => {
+    const hand = handOf(bot);
+    const good = hand.filter(isAttackCard).length;
+    const power = hand.reduce((sum, card) => sum + cardPower(card), 0);
+    engine.chooseMulligan(
+      good < 2 || power / Math.max(hand.length, 1) < 2.2,
+      bot,
+    );
+  };
+
+  const startScore = (id, bot) => {
+    const data = getHero(game.players[bot].heroId);
+    const size = [...byId().keys()].filter((other) =>
+      sharesZone(id, other),
+    ).length;
+    return data.attack === "range" ? size : -size;
   };
 
   const foeAt = (space, bot) =>
     fightersOf(other(bot)).find((foe) => foe.space === space);
 
+  const targetScore = (foe) =>
+    (foe.isHero ? 3 : 0) + (foe.hp <= 4 ? 2 : 0) - foe.hp * 0.3;
+
+  const bestTarget = (options, bot) =>
+    options.reduce((best, id) =>
+      targetScore(foeAt(id, bot)) > targetScore(foeAt(best, bot)) ? id : best,
+    );
+
+  const bestBy = (options, scoreOf) => {
+    let best = options[0];
+    let bestScore = -Infinity;
+    for (const id of options) {
+      const value = scoreOf(id);
+      if (value > bestScore) {
+        best = id;
+        bestScore = value;
+      }
+    }
+    return best;
+  };
+
   const answerSpace = (prompt, bot) => {
     const options = prompt.options;
     if (!options.length) return null;
     const title = prompt.title;
-    if (title === "promptAttackWith") return pickSpaceNear(options, bot);
+    const state = plan(bot);
+    if (title === "promptAttackWith") {
+      return bestBy(options, (id) => {
+        const me = fighterAt(id, bot);
+        if (!me) return 0;
+        const targets = fightersOf(other(bot)).filter((foe) =>
+          canHit(me, id, foe.space),
+        );
+        const top = targets.length
+          ? Math.max(...targets.map(targetScore))
+          : -10;
+        return top + (me.isHero ? 0 : 0.5) + me.hp * 0.01;
+      });
+    }
     const foes = options.filter((id) => foeAt(id, bot));
     if (title === "promptAttackTarget" || foes.length === options.length) {
-      return foes.reduce((best, id) =>
-        foeAt(id, bot).hp < foeAt(best, bot).hp ? id : best,
-      );
+      const pick = bestTarget(foes, bot);
+      lastTarget = foeAt(pick, bot);
+      return pick;
     }
     if (title === "promptMoveWith") {
-      const movers = options
-        .map((id) => ({
-          id,
-          fighter: fightersOf(bot).find((item) => item.space === id),
-        }))
-        .filter((item) => item.fighter && !inRange(item.fighter, bot));
-      if (!movers.length) return null;
-      return movers.reduce((best, item) =>
-        nearestFoe(item.id, bot) > nearestFoe(best.id, bot) ? item : best,
-      ).id;
+      let best = null;
+      let bestGain = 0.3;
+      for (const id of options) {
+        const me = fighterAt(id, bot);
+        if (!me) continue;
+        const now = positionScore(me, me.space, bot, state.turtle);
+        for (const spot of reachSet(me.space, me.move)) {
+          if (spot === me.space) continue;
+          const gain = positionScore(me, spot, bot, state.turtle) - now;
+          if (gain > bestGain) {
+            best = id;
+            bestGain = gain;
+          }
+        }
+      }
+      return best;
     }
     if (title === "promptMoveSpace" || title === "promptMoveSidekick") {
-      const fighter = fightersOf(bot).find(
-        (item) => item.id === prompt.fighter,
+      const me = fightersOf(bot).find((item) => item.id === prompt.fighter);
+      if (!me) return null;
+      const now = positionScore(me, me.space, bot, state.turtle);
+      const target = bestBy(options, (id) =>
+        positionScore(me, id, bot, state.turtle),
       );
-      if (!fighter || inRange(fighter, bot)) return null;
-      const current = nearestFoe(fighter.space, bot);
-      const target = pickSpaceNear(options, bot);
-      if (nearestFoe(target, bot) >= current) return null;
+      if (positionScore(me, target, bot, state.turtle) <= now + 0.1)
+        return null;
       return target;
     }
-    if (foes.length) {
-      return foes.reduce((best, id) =>
-        foeAt(id, bot).hp < foeAt(best, bot).hp ? id : best,
-      );
-    }
+    if (foes.length) return bestTarget(foes, bot);
     if (/Foe/.test(title)) {
       return options.reduce((best, id) =>
         nearestFoe(id, bot) > nearestFoe(best, bot) ? id : best,
       );
     }
-    return pickSpaceNear(options, bot);
+    const hero = fightersOf(bot).find((item) => item.isHero);
+    const stand = hero || { attack: "melee", move: 3, hp: 1, max: 1 };
+    return bestBy(options, (id) => positionScore(stand, id, bot, state.turtle));
   };
 
   const answerCards = (prompt, bot) => {
     const options = prompt.options.map(getCard).filter(Boolean);
     const title = prompt.title;
+    const state = plan(bot);
     if (title === "promptAttackCard") {
       if (!options.length) return [];
-      return [
-        options.reduce((a, b) => (cardPower(b) > cardPower(a) ? b : a)).id,
-      ];
+      const sorted = [...options].sort(
+        (a, b) => attackPower(b) - attackPower(a),
+      );
+      const hp = lastTarget?.hp;
+      const killers = hp
+        ? sorted.filter((card) => (card.value ?? 0) >= hp + 1)
+        : [];
+      return [(killers.length ? killers[killers.length - 1] : sorted[0]).id];
     }
     if (title === "promptDefenseCard") {
       const pool = options.filter(isDefenseCard);
       if (!pool.length) return [];
-      return [pool.reduce((a, b) => (cardPower(b) > cardPower(a) ? b : a)).id];
+      const sorted = [...pool].sort(
+        (a, b) => defensePower(b) - defensePower(a),
+      );
+      const me = game.players[bot];
+      const expected = foeAverageAttack(other(bot));
+      if (me.hp <= 6 || state.turtle) return [sorted[0].id];
+      const enough = sorted.filter((card) => (card.value ?? 0) >= expected);
+      return [(enough.length ? enough[enough.length - 1] : sorted[0]).id];
     }
     if (title === "promptBoost") {
       const hand = handOf(bot).length;
+      const low = game.players[bot].hp <= 8;
       const pool = options.filter((card) => card.boost);
-      if (hand < 3 || !pool.length) return [];
-      return [pool.reduce((a, b) => (b.boost > a.boost ? b : a)).id];
+      if (!pool.length || hand < (low || state.turtle ? 2 : 3)) return [];
+      return [
+        pool.reduce((a, b) =>
+          b.boost - (b.value ?? 0) * 0.35 > a.boost - (a.value ?? 0) * 0.35
+            ? b
+            : a,
+        ).id,
+      ];
     }
     if (title === "promptSchemeCard") {
-      return options.length ? [options[0].id] : [];
+      if (!options.length) return [];
+      return [
+        options.reduce((a, b) => (schemeDamage(b) > schemeDamage(a) ? b : a))
+          .id,
+      ];
     }
     const min = prompt.min ?? 0;
     if (!min) return [];
@@ -213,14 +432,22 @@ export function useBot() {
 
   const act = (bot) => {
     const available = engine.availableActions(true);
-    const schemes = handOf(bot).filter((card) => card.type === "scheme");
-    if (available.attack && !(available.scheme && Math.random() < 0.2)) {
-      engine.doAttack();
-    } else if (available.scheme && (schemes.length || !available.maneuver)) {
-      engine.doScheme();
-    } else if (available.maneuver) {
-      engine.doManeuver();
+    const hand = handOf(bot);
+    const hasScheme = hand.some((card) => card.type === "scheme");
+    const state = plan(bot);
+    reachCache.clear();
+    if (state.finisher && available.scheme) return engine.doScheme();
+    if (state.turtle && available.maneuver) return engine.doManeuver();
+    if (
+      available.attack &&
+      !(available.scheme && hasScheme && hand.length >= 5)
+    ) {
+      return engine.doAttack();
     }
+    if (available.scheme && hasScheme) return engine.doScheme();
+    if (available.maneuver) return engine.doManeuver();
+    if (available.attack) return engine.doAttack();
+    if (available.scheme) return engine.doScheme();
   };
 
   const step = () => {
@@ -239,7 +466,12 @@ export function useBot() {
         const options = Object.values(map.starts).filter(
           (id) => !taken.includes(id),
         );
-        if (options.length) engine.pickStart(options[0], bot);
+        if (options.length) {
+          engine.pickStart(
+            bestBy(options, (id) => startScore(id, bot)),
+            bot,
+          );
+        }
       }
       return;
     }
@@ -262,7 +494,20 @@ export function useBot() {
     }
     signature = "";
     repeats = 0;
-    if (game.turn === bot) act(bot);
+    if (game.turn === bot) {
+      if (game.turnNo !== lastTurn) {
+        lastTurn = game.turnNo;
+        const total = ["p1", "p2"].reduce(
+          (sum, seat) =>
+            sum +
+            fightersOf(seat).reduce((acc, fighter) => acc + fighter.hp, 0),
+          0,
+        );
+        idle = total === lastHp ? idle + 1 : 0;
+        lastHp = total;
+      }
+      act(bot);
+    }
   };
 
   onMounted(() => {
