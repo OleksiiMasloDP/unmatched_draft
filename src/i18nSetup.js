@@ -1,0 +1,28 @@
+export const setupText = {
+  en: {
+    gameStepFormat: "Format",
+    gameStepHeroes: "Characters",
+    gameStepDice: "Dice",
+    gameStepMap: "Map",
+    gameDeckSource: "Decks",
+    gameSourceBase: "Base decks",
+    gameSourceDraft: "Pack Draft decks",
+    diceToMaps: "Go to maps",
+    diceWinner: "{player} wins the roll.",
+    diceChooser: "{player} chooses the map.",
+    diceOrderChooser: "{player} chooses who goes first:",
+  },
+  ua: {
+    gameStepFormat: "Формат",
+    gameStepHeroes: "Персонажі",
+    gameStepDice: "Кубик",
+    gameStepMap: "Мапа",
+    gameDeckSource: "Колоди",
+    gameSourceBase: "Базові колоди",
+    gameSourceDraft: "Колоди Pack Draft",
+    diceToMaps: "Перейти до мап",
+    diceWinner: "{player} виграє кидок.",
+    diceChooser: "{player} обирає мапу.",
+    diceOrderChooser: "{player} обирає, хто ходить першим:",
+  },
+};

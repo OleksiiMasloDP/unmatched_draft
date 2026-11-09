@@ -1078,6 +1078,10 @@ export const translations = {
   },
 };
 
+import { setupText } from "./i18nSetup.js";
+Object.assign(translations.en, setupText.en);
+Object.assign(translations.ua, setupText.ua);
+
 import { blackPantherText } from "./i18nBlackPanther.js";
 Object.assign(translations.en, blackPantherText.en);
 Object.assign(translations.ua, blackPantherText.ua);

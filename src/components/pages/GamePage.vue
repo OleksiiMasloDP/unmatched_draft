@@ -11,44 +11,93 @@
       </div>
 
       <div class="game-note">{{ t("gameTestNote") }}</div>
+
+      <div class="game-steps">
+        <span
+          class="game-step"
+          :class="{
+            active: setupStep === 1,
+            done: setupStep > 1,
+            'is-link': canGoBack,
+          }"
+          :role="canGoBack ? 'button' : null"
+          :title="canGoBack ? t('packStepBack') : ''"
+          @click="canGoBack && backToFormat()"
+        >
+          <b>1</b> {{ t("gameStepFormat") }}
+        </span>
+        <span
+          class="game-step"
+          :class="{ active: setupStep === 2, done: setupStep > 2 }"
+        >
+          <b>2</b> {{ t("gameStepHeroes") }}
+        </span>
+        <span
+          class="game-step"
+          :class="{ active: setupStep === 3, done: setupStep > 3 }"
+        >
+          <b>3</b> {{ t("gameStepDice") }}
+        </span>
+        <span class="game-step" :class="{ active: setupStep === 4 }">
+          <b>4</b> {{ t("gameStepMap") }}
+        </span>
+      </div>
     </template>
 
     <OnlinePanel
-      v-if="game.phase === 'setup' || netState.status === 'closed'"
+      v-if="
+        (game.phase === 'setup' && setupStep === 1) ||
+        netState.status === 'closed'
+      "
+      @local="localChosen = true"
     />
 
-    <template v-if="game.phase === 'setup'">
-      <div class="game-setup">
-        <h2 class="game-subtitle">{{ t("gameMapLabel") }}</h2>
-        <div class="map-tiles">
-          <button
-            v-for="item in maps"
-            :key="item.id"
-            type="button"
-            class="map-tile"
-            :class="{ 'is-selected': game.mapId === item.id }"
-            :disabled="!canPickMap"
-            @click="setMap(item.id)"
-          >
-            <img :src="item.image" :alt="item.name" />
-            <span>{{ item.name }}</span>
-          </button>
-        </div>
+    <div
+      v-if="game.phase === 'setup' && setupStep > 1 && netState.role"
+      class="game-setup-bar"
+    >
+      <span class="game-setup-room">{{ netState.code }}</span>
+      <button
+        class="btn btn-sm btn-outline-secondary action-btn"
+        @click="leaveRoom"
+      >
+        {{ t("onlineLeave") }}
+      </button>
+    </div>
 
+    <template v-if="game.phase === 'setup'">
+      <div v-if="setupStep === 2" class="game-setup">
         <div
           v-for="player in setupPlayers"
           :key="player"
           class="game-setup-row"
         >
           <h2 class="game-subtitle">
-            {{ playerLabel(player) }} · {{ t("gameDeckLabel") }}
+            {{ playerTag(player) }} · {{ t("gameDeckLabel") }}
           </h2>
-          <p v-if="online && !game.toss" class="game-prompt-line">
-            {{ t("tossMapHint") }}
+          <div class="game-source">
+            <label :for="'source-' + player">{{ t("gameDeckSource") }}</label>
+            <select
+              :id="'source-' + player"
+              v-model="deckSource[player]"
+              class="form-select form-select-sm game-source-select"
+            >
+              <option value="base">{{ t("gameSourceBase") }}</option>
+              <option value="draft">{{ t("gameSourceDraft") }}</option>
+            </select>
+          </div>
+          <p
+            v-if="deckSource[player] === 'draft' && !savedDecks.length"
+            class="game-empty"
+          >
+            {{ t("gameNoSaved") }}
+            <router-link :to="{ name: 'pack-draft' }">
+              {{ t("packDraftTitle") }}
+            </router-link>
           </p>
           <div class="deck-tiles">
             <div
-              v-for="deck in allDecks"
+              v-for="deck in decksFor(player)"
               :key="deck.id"
               class="deck-tile"
               :class="{
@@ -80,18 +129,11 @@
           </div>
         </div>
 
-        <p v-if="!savedDecks.length" class="game-empty">
-          {{ t("gameNoSaved") }}
-          <router-link :to="{ name: 'pack-draft' }">
-            {{ t("packDraftTitle") }}
-          </router-link>
-        </p>
-
         <template v-if="online">
           <button
             class="btn btn-primary btn-sm action-btn"
+            :disabled="!currentDeck"
             @click="onChooseDeck"
-            :disabled="Boolean(game.toss)"
           >
             {{
               game.lobby[mySeat]
@@ -108,87 +150,133 @@
             }}
           </div>
           <button
-            v-if="isHost && !game.toss"
-            class="btn btn-success btn-sm action-btn"
+            v-if="isHost"
+            class="btn btn-success btn-sm action-btn game-start"
             :disabled="!game.lobby.p1 || !game.lobby.p2"
             @click="startOnlineGame"
           >
             {{ t("tossRoll") }}
           </button>
-          <p v-else-if="!isHost && !game.toss" class="game-prompt-line">
-            {{ t("onlineWaitHost") }}
-          </p>
-
-          <div v-if="game.toss" class="toss">
-            <h2 class="game-subtitle">{{ t("tossTitle") }}</h2>
-            <div class="toss-dice">
-              <div
-                v-for="player in players"
-                :key="player"
-                class="toss-side"
-                :class="{
-                  'is-winner': tossDone && game.toss.winner === player,
-                }"
-              >
-                <div class="toss-die" :class="{ 'is-rolling': !tossDone }">
-                  {{ dice[player] }}
-                </div>
-                <div class="toss-name">
-                  {{ playerLabel(player) }}
-                  <template v-if="player === mySeat">
-                    · {{ t("packYou") }}
-                  </template>
-                </div>
-              </div>
-            </div>
-
-            <template v-if="tossDone">
-              <p v-if="game.toss.rerolls" class="game-prompt-line">
-                {{ t("tossReroll") }}
-              </p>
-              <p class="game-prompt-line">
-                {{ t(iWonToss ? "tossYouWon" : "tossOppWon") }}
-              </p>
-
-              <template v-if="game.toss.stage === 'map'">
-                <button
-                  v-if="iWonToss"
-                  class="btn btn-success btn-sm action-btn"
-                  @click="confirmMap"
-                >
-                  {{ t("tossConfirmMap") }}
-                </button>
-                <p v-else class="game-prompt-line">{{ t("tossWaitMap") }}</p>
-              </template>
-
-              <template v-else>
-                <div v-if="!iWonToss" class="toss-order">
-                  <p class="game-prompt-line">{{ t("tossPickOrder") }}</p>
-                  <button
-                    class="btn btn-success btn-sm action-btn"
-                    @click="chooseOrder(true)"
-                  >
-                    {{ t("tossFirst") }}
-                  </button>
-                  <button
-                    class="btn btn-primary btn-sm action-btn"
-                    @click="chooseOrder(false)"
-                  >
-                    {{ t("tossSecond") }}
-                  </button>
-                </div>
-                <p v-else class="game-prompt-line">{{ t("tossWaitOrder") }}</p>
-              </template>
-            </template>
-          </div>
+          <p v-else class="game-prompt-line">{{ t("onlineWaitHost") }}</p>
         </template>
         <button
           v-else
           class="btn btn-success btn-sm action-btn game-start"
           @click="onStart"
         >
-          {{ t("gameStart") }}
+          {{ t("tossRoll") }}
         </button>
+      </div>
+
+      <div v-if="setupStep === 4" class="game-setup">
+        <p class="game-prompt-line">
+          {{
+            online
+              ? t(iWonToss ? "tossYouWon" : "tossOppWon")
+              : replacePlayer("diceWinner", game.toss.winner)
+          }}
+        </p>
+        <h2 class="game-subtitle">{{ t("gameMapLabel") }}</h2>
+        <p v-if="game.toss.stage === 'map'" class="game-prompt-line">
+          {{
+            online && !iWonToss
+              ? t("tossWaitMap")
+              : replacePlayer("diceChooser", game.toss.winner)
+          }}
+        </p>
+        <div class="map-tiles">
+          <button
+            v-for="item in maps"
+            :key="item.id"
+            type="button"
+            class="map-tile"
+            :class="{ 'is-selected': game.mapId === item.id }"
+            :disabled="!canPickMap"
+            @click="setMap(item.id)"
+          >
+            <img :src="item.image" :alt="item.name" />
+            <span>{{ item.name }}</span>
+          </button>
+        </div>
+
+        <template v-if="game.toss.stage === 'map'">
+          <button
+            v-if="canPickMap"
+            class="btn btn-success btn-sm action-btn game-start"
+            @click="confirmMap"
+          >
+            {{ t("tossConfirmMap") }}
+          </button>
+        </template>
+        <template v-else>
+          <div v-if="!online || !iWonToss" class="toss-order">
+            <p class="game-prompt-line">
+              {{
+                online
+                  ? t("tossPickOrder")
+                  : replacePlayer("diceOrderChooser", orderChooser)
+              }}
+            </p>
+            <button
+              class="btn btn-success btn-sm action-btn"
+              @click="chooseOrder(true)"
+            >
+              {{ t("tossFirst") }}
+            </button>
+            <button
+              class="btn btn-primary btn-sm action-btn"
+              @click="chooseOrder(false)"
+            >
+              {{ t("tossSecond") }}
+            </button>
+          </div>
+          <p v-else class="game-prompt-line">{{ t("tossWaitOrder") }}</p>
+        </template>
+      </div>
+
+      <div v-if="game.toss && !mapsOpen" class="dice-overlay">
+        <div class="dice-modal">
+          <h2 class="dice-title">{{ t("tossTitle") }} · d20</h2>
+          <DiceRoll
+            :rolls="game.toss.rolls"
+            :roll-key="game.toss.id"
+            :winner="tossDone ? game.toss.winner : null"
+            @done="tossDone = true"
+          />
+          <div class="dice-names">
+            <div
+              v-for="player in players"
+              :key="player"
+              class="dice-name"
+              :class="{
+                'is-winner': tossDone && game.toss.winner === player,
+              }"
+            >
+              <span class="dice-name-label">{{ playerTag(player) }}</span>
+              <span class="dice-name-value">
+                {{ tossDone ? game.toss.rolls[player] : "?" }}
+              </span>
+            </div>
+          </div>
+          <template v-if="tossDone">
+            <p v-if="game.toss.rerolls" class="game-prompt-line">
+              {{ t("tossReroll") }}
+            </p>
+            <p class="game-prompt-line">
+              {{
+                online
+                  ? t(iWonToss ? "tossYouWon" : "tossOppWon")
+                  : replacePlayer("diceWinner", game.toss.winner)
+              }}
+            </p>
+            <button
+              class="btn btn-success btn-sm action-btn"
+              @click="mapsOpen = true"
+            >
+              {{ t("diceToMaps") }}
+            </button>
+          </template>
+        </div>
       </div>
     </template>
 
@@ -1114,6 +1202,7 @@ import { useSavedDecks } from "../../composables/useSavedDecks";
 import { getCard, getHero, testDecks } from "../../gameDecks";
 import ActionIcon from "../ActionIcon.vue";
 import CombatPopup from "../CombatPopup.vue";
+import DiceRoll from "../DiceRoll.vue";
 import EffectDialog from "../EffectDialog.vue";
 import ReportBugButton from "../ReportBugButton.vue";
 import GameBoard from "../GameBoard.vue";
@@ -1129,7 +1218,7 @@ const {
   setMap,
   confirmMap,
   chooseOrder,
-  startGame,
+  startLocalToss,
   startOnlineGame,
   chooseDeck,
   resetGame,
@@ -1155,49 +1244,39 @@ const {
   leave: leaveRoom,
 } = useOnline();
 const boostOpen = ref(false);
-const TOSS_ANIM_MS = 1800;
-const dice = ref({ p1: 1, p2: 1 });
 const tossDone = ref(false);
-let tossSpin = null;
-let tossEnd = null;
-
-function stopToss() {
-  clearInterval(tossSpin);
-  clearTimeout(tossEnd);
-}
+const mapsOpen = ref(false);
+const localChosen = ref(online.value);
 
 watch(
   () => game.toss?.id,
   () => {
-    stopToss();
-    const current = game.toss;
     tossDone.value = false;
-    if (!current) return;
-    tossSpin = setInterval(() => {
-      dice.value = {
-        p1: 1 + Math.floor(Math.random() * 6),
-        p2: 1 + Math.floor(Math.random() * 6),
-      };
-    }, 90);
-    tossEnd = setTimeout(() => {
-      stopToss();
-      dice.value = { p1: current.rolls.p1, p2: current.rolls.p2 };
-      tossDone.value = true;
-    }, TOSS_ANIM_MS);
+    mapsOpen.value = false;
   },
-  { immediate: true },
 );
 
-onBeforeUnmount(stopToss);
+const setupStep = computed(() => {
+  if (game.toss) return mapsOpen.value ? 4 : 3;
+  return online.value || localChosen.value ? 2 : 1;
+});
+const canGoBack = computed(() => setupStep.value === 2);
+
+function backToFormat() {
+  if (netState.role) leaveRoom();
+  localChosen.value = false;
+}
 
 const iWonToss = computed(() => game.toss?.winner === mySeat.value);
+const orderChooser = computed(() =>
+  game.toss ? opponentOf(game.toss.winner) : "p1",
+);
 
 const canPickMap = computed(
   () =>
-    !online.value ||
-    (tossDone.value &&
-      game.toss?.stage === "map" &&
-      game.toss.winner === mySeat.value),
+    tossDone.value &&
+    game.toss?.stage === "map" &&
+    (!online.value || game.toss.winner === mySeat.value),
 );
 const logOpen = ref(false);
 const logCardView = ref(null);
@@ -1205,6 +1284,9 @@ const surrenderOpen = ref(false);
 
 const players = ["p1", "p2"];
 const allDecks = computed(() => [...testDecks, ...savedDecks.value]);
+const deckSource = ref({ p1: "base", p2: "base" });
+const decksFor = (player) =>
+  deckSource.value[player] === "draft" ? savedDecks.value : testDecks;
 const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
 
@@ -1870,7 +1952,7 @@ function ensureUnique(keep) {
   const mine = findDeck(selected.value[keep]);
   const theirs = findDeck(selected.value[other]);
   if (mine && theirs && mine.heroId === theirs.heroId) {
-    const alt = allDecks.value.find((deck) => deck.heroId !== mine.heroId);
+    const alt = decksFor(other).find((deck) => deck.heroId !== mine.heroId);
     if (alt) selected.value[other] = alt.id;
   }
 }
@@ -1881,9 +1963,32 @@ function pickDeck(player, deck) {
   ensureUnique(player);
 }
 
+watch(
+  deckSource,
+  () => {
+    for (const player of players) {
+      const list = decksFor(player);
+      if (list.some((deck) => deck.id === selected.value[player])) continue;
+      const rival = findDeck(selected.value[opponentOf(player)]);
+      const next = list.find(
+        (deck) => online.value || !rival || deck.heroId !== rival.heroId,
+      );
+      selected.value[player] = next ? next.id : null;
+    }
+  },
+  { deep: true },
+);
+
+const currentDeck = computed(() => {
+  const deck = findDeck(selected.value[mySeat.value]);
+  return deck && !takenBy(mySeat.value, deck) ? deck : null;
+});
+
 function onStart() {
-  ensureUnique("p1");
-  startGame(findDeck(selected.value.p1), findDeck(selected.value.p2));
+  const deckA = findDeck(selected.value.p1);
+  const deckB = findDeck(selected.value.p2);
+  if (!deckA || !deckB || deckA.heroId === deckB.heroId) return;
+  startLocalToss(deckA, deckB);
 }
 
 function onChooseDeck() {
@@ -2608,65 +2713,160 @@ function onNewGame() {
   font-weight: 800;
 }
 
-.toss {
-  margin-top: 16px;
-}
-.toss-dice {
-  display: flex;
-  gap: 28px;
-  margin: 12px 0;
-}
-.toss-side {
-  text-align: center;
-}
-.toss-die {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 84px;
-  height: 84px;
-  margin: 0 auto 8px;
-  border: 2px solid var(--border-medium);
-  border-radius: 16px;
-  background: var(--bg-slate);
-  color: var(--text-white);
-  font-size: 40px;
-  font-weight: 900;
-}
-.toss-die.is-rolling {
-  animation: toss-roll 0.45s linear infinite;
-}
-.toss-side.is-winner .toss-die {
-  border-color: #f59e0b;
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.55);
-}
-.toss-name {
-  color: var(--text-light);
-  font-size: 13px;
-  font-weight: 800;
-}
 .toss-order {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+  margin-top: 12px;
 }
-@keyframes toss-roll {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(14deg) scale(1.08);
-  }
-  50% {
-    transform: rotate(0deg) scale(1);
-  }
-  75% {
-    transform: rotate(-14deg) scale(1.08);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
+
+.game-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px;
+}
+
+.game-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-step b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+}
+
+.game-step.active {
+  background: rgba(var(--color-player-rgb), 0.12);
+  border-color: rgba(var(--color-player-rgb), 0.6);
+  color: var(--text-white);
+}
+
+.game-step.done {
+  border-color: rgba(var(--color-proceed-rgb), 0.5);
+  color: var(--color-success-light);
+}
+
+.game-step.is-link {
+  cursor: pointer;
+}
+
+.game-step.is-link:hover {
+  border-color: var(--color-success-light);
+}
+
+.game-setup-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.game-setup-room {
+  padding: 4px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  color: var(--text-white);
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.game-source {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.game-source label {
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.game-source-select {
+  width: auto;
+  min-width: 220px;
+}
+
+.dice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 6, 14, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.dice-modal {
+  width: min(640px, 100%);
+  padding: 22px 24px;
+  background: rgba(var(--bg-slate-rgb), 0.97);
+  border: 1px solid var(--border-medium);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.dice-title {
+  margin: 0 0 4px;
+  color: var(--text-white);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.dice-names {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dice-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.dice-name-value {
+  color: var(--text-white);
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.dice-name.is-winner {
+  border-color: #f59e0b;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
 }
 
 .game-modal-box.is-mulligan {

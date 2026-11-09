@@ -2716,7 +2716,7 @@ function chooseDeck(deck) {
 }
 
 function rollDie() {
-  return 1 + Math.floor(Math.random() * 6);
+  return 1 + Math.floor(Math.random() * 20);
 }
 
 function rollToss() {
@@ -2740,9 +2740,7 @@ function rollToss() {
 function applyMap(player, id) {
   if (game.phase !== "setup") return;
   if (!gameMaps.some((item) => item.id === id)) return;
-  if (net.online.value) {
-    if (game.toss?.stage !== "map" || game.toss.winner !== player) return;
-  }
+  if (game.toss?.stage !== "map" || game.toss.winner !== player) return;
   game.mapId = id;
   useMapId(id);
   syncOut();
@@ -2769,19 +2767,44 @@ function applyOrder(player, goFirst) {
   );
 }
 
+function tossActor(role) {
+  if (net.online.value || !game.toss) return "p1";
+  return role === "loser" ? other(game.toss.winner) : game.toss.winner;
+}
+
 function setMap(id) {
   if (net.isGuest.value) send({ type: "map", id });
-  else applyMap("p1", id);
+  else applyMap(tossActor("winner"), id);
 }
 
 function confirmMap() {
   if (net.isGuest.value) send({ type: "mapConfirm" });
-  else applyMapConfirm("p1");
+  else applyMapConfirm(tossActor("winner"));
 }
 
 function chooseOrder(goFirst) {
   if (net.isGuest.value) send({ type: "order", goFirst });
-  else applyOrder("p1", goFirst);
+  else applyOrder(tossActor("loser"), goFirst);
+}
+
+function startLocalToss(deckA, deckB) {
+  game.notice = null;
+  if (game.phase !== "setup" || game.toss || net.online.value) return;
+  if (!validDeck(deckA) || !validDeck(deckB)) return;
+  if (deckA.heroId === deckB.heroId) return;
+  lobbyDecks.p1 = {
+    name: deckA.name,
+    heroId: deckA.heroId,
+    cardIds: [...deckA.cardIds],
+  };
+  lobbyDecks.p2 = {
+    name: deckB.name,
+    heroId: deckB.heroId,
+    cardIds: [...deckB.cardIds],
+  };
+  game.lobby.p1 = { name: deckA.name, heroId: deckA.heroId };
+  game.lobby.p2 = { name: deckB.name, heroId: deckB.heroId };
+  rollToss();
 }
 function startOnlineGame() {
   game.notice = null;
@@ -2848,6 +2871,7 @@ export function useGame() {
     setMap,
     startGame,
     startOnlineGame,
+    startLocalToss,
     chooseDeck,
     resetGame,
     answerPrompt,
