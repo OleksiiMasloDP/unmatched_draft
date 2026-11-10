@@ -268,6 +268,7 @@ export function useBot() {
     if (turtle)
       return -fear(fighter, true) * exposure + 0.2 * Math.min(dist, 8);
     const aggro = profile.aggro ?? 1;
+    const early = game.turnNo <= 3;
     let contain = 0;
     if (profile.contain && fighter.isHero) {
       const zone = [...byId().keys()].filter((id) =>
@@ -283,9 +284,13 @@ export function useBot() {
       2 * aggro * strike +
       0.8 * aggro * reachStrike +
       contain -
-      (fear(fighter, false) * exposure * Math.max(0, 0.5 - idle * 0.1)) /
+      (fear(fighter, false) *
+        Math.min(exposure, 4) *
+        Math.max(0, 0.5 - idle * 0.1) *
+        (early ? 0.3 : 1) *
+        (handOf(bot).length >= 7 ? 0.2 : 1)) /
         aggro -
-      (strike ? 0 : 0.25 * aggro * dist)
+      (strike ? 0 : 0.35 * aggro * dist * (early ? 2 : 1))
     );
   };
 
@@ -589,6 +594,20 @@ export function useBot() {
     if (title === "promptBoost") {
       if (level() === "easy") return [];
       const hand = handOf(bot).length;
+      const combat = game.combat;
+      const played = combat?.cardIds?.[bot] && getCard(combat.cardIds[bot]);
+      const known = knowledge(bot);
+      if (played && hand < 7) {
+        const value = played.value ?? 0;
+        if (combat.defender === bot) {
+          const need = known
+            ? known.attack + (known.size > 1 ? known.boost * 0.5 : 0)
+            : foeAverageAttack(other(bot)) + 1;
+          if (value >= need) return [];
+        } else if (combat.attacker === bot && known && lastTarget) {
+          if (value - known.defense >= lastTarget.hp) return [];
+        }
+      }
       const low = game.players[bot].hp <= 8;
       const pool = options.filter(
         (card) => card.boost && !profile.keep?.includes(card.key),
@@ -705,16 +724,34 @@ export function useBot() {
     if (state.turtle && available.maneuver) return engine.doManeuver();
     const scheme = available.scheme ? bestScheme(bot) : null;
     const options = [];
-    if (available.attack) options.push(["attack", attackUtility(bot)]);
-    if (scheme?.card) options.push(["scheme", scheme.value]);
+    if (available.attack) {
+      options.push([
+        "attack",
+        attackUtility(bot) + (hand.length >= 6 ? 0.7 : 0),
+      ]);
+    }
+    if (scheme?.card)
+      options.push(["scheme", scheme.value + (hand.length >= 6 ? 0.6 : 0)]);
     if (available.maneuver) {
-      const draw = hand.length >= 6 ? 0 : hand.length <= 2 ? 1.4 : 0.8;
+      const draw =
+        hand.length >= 7
+          ? -1.2
+          : hand.length >= 6
+            ? -0.6
+            : hand.length <= 2
+              ? 1.4
+              : 0.8;
       options.push(["maneuver", draw + bestMoveGain(bot)]);
     }
     if (!options.length) return;
     options.sort((a, b) => b[1] - a[1]);
     const [pick, value] = options[0];
-    if (pick === "scheme" && value < 1.2 && available.attack) {
+    if (
+      pick === "scheme" &&
+      value < 1.2 &&
+      available.attack &&
+      hand.length < 6
+    ) {
       return engine.doAttack();
     }
     if (pick === "attack") return engine.doAttack();
