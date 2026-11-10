@@ -292,6 +292,114 @@ export function useBot() {
   const fighterAt = (space, bot) =>
     fightersOf(bot).find((item) => item.space === space);
 
+  const missingHp = (bot) => {
+    const me = game.players[bot];
+    return Math.max(0, (me.maxHp || me.hp) - me.hp);
+  };
+
+  const textOf = (card) => (card?.text?.en || "").toLowerCase();
+  const numberIn = (pattern, text) => {
+    const found = pattern.exec(text);
+    return found ? Number(found[1]) : 0;
+  };
+
+  const effectBonus = (card, bot) => {
+    const text = textOf(card);
+    let bonus = 0;
+    bonus += 0.4 * numberIn(/draw (\d+) card/, text);
+    bonus +=
+      0.35 * Math.min(numberIn(/recover (\d+) health/, text), missingHp(bot));
+    bonus += 0.6 * numberIn(/deal (\d+) damage/, text);
+    if (/gain 1 action|free action/.test(text)) bonus += 1;
+    if (/cancel/.test(text)) bonus += 0.6;
+    return bonus;
+  };
+
+  const bestMoveGain = (bot, steps) => {
+    const turtle = plan(bot).turtle;
+    let total = 0;
+    for (const me of fightersOf(bot)) {
+      const range = steps ?? me.move;
+      const now = positionScore(me, me.space, bot, turtle);
+      let best = 0;
+      for (const spot of reachSet(me.space, range)) {
+        if (spot === me.space) continue;
+        best = Math.max(best, positionScore(me, spot, bot, turtle) - now);
+      }
+      total += best * (me.isHero ? 1 : 0.4);
+    }
+    return Math.min(total, 3);
+  };
+
+  const schemeValue = (card, bot) => {
+    const text = textOf(card);
+    const hand = handOf(bot).length - 1;
+    let value = 0;
+    let known = false;
+    const drawN = numberIn(/draw (\d+) cards?/, text);
+    const until = numberIn(/draw until you have (\d+) cards/, text);
+    if (until) {
+      value += 0.45 * Math.max(0, until - hand);
+      known = true;
+    } else if (drawN) {
+      value += 0.45 * Math.min(drawN, Math.max(0, 7 - hand));
+      known = true;
+    }
+    const heal = numberIn(/recover[s]? (\d+) health/, text);
+    if (heal && !/unless/.test(text)) {
+      value += 0.5 * Math.min(heal, missingHp(bot));
+      known = true;
+    }
+    const damage = numberIn(/deal (\d+) damage/, text);
+    if (damage) {
+      value += 1.2 * damage;
+      known = true;
+    }
+    if (/gain 1 (free )?action/.test(text)) {
+      value += 1.4;
+      known = true;
+    }
+    const move = numberIn(/move [^.]*?up to (\d+) spaces/, text);
+    if (move) {
+      value += bestMoveGain(bot, move);
+      known = true;
+    }
+    if (/excalibur/.test(text)) {
+      value += handOf(bot).some((item) => /excalibur/i.test(item.name))
+        ? 0
+        : 1.4;
+      known = true;
+    }
+    if (/shuffle your hand into your deck/.test(text)) {
+      value -= 0.4 * Math.max(0, hand - 1);
+    }
+    return known ? value : 0.7;
+  };
+
+  const bestScheme = (bot) =>
+    handOf(bot)
+      .filter((card) => card.type === "scheme")
+      .reduce(
+        (best, card) => {
+          const value = schemeValue(card, bot);
+          return value > best.value ? { card, value } : best;
+        },
+        { card: null, value: -Infinity },
+      );
+
+  const attackUtility = (bot) => {
+    const known = knowledge(bot);
+    const cards = handOf(bot).filter(isAttackCard);
+    if (!cards.length) return 0;
+    const top = cards.reduce((best, card) =>
+      attackPower(card) > attackPower(best) ? card : best,
+    );
+    const guard = known ? known.defense : 2;
+    return (
+      Math.max(0, (top.value ?? 0) - guard) + effectBonus(top, bot) * 0.5 + 0.5
+    );
+  };
+
   const chooseMulligan = (bot) => {
     const hand = handOf(bot);
     if (hand.some((card) => (profile.keepInHand || []).includes(card.key))) {
@@ -365,7 +473,7 @@ export function useBot() {
     }
     if (title === "promptMoveWith") {
       let best = null;
-      let bestGain = 0.3;
+      let bestGain = 0.5;
       for (const id of options) {
         const me = fighterAt(id, bot);
         if (!me) continue;
@@ -385,11 +493,16 @@ export function useBot() {
       const me = fightersOf(bot).find((item) => item.id === prompt.fighter);
       if (!me) return null;
       const now = positionScore(me, me.space, bot, state.turtle);
-      const target = bestBy(options, (id) =>
-        positionScore(me, id, bot, state.turtle),
-      );
-      if (positionScore(me, target, bot, state.turtle) <= now + 0.1)
-        return null;
+      const ahead = (id) => {
+        let best = positionScore(me, id, bot, state.turtle);
+        for (const spot of reachSet(id, Math.max(me.move - 1, 1))) {
+          if (spot === id) continue;
+          best = Math.max(best, positionScore(me, spot, bot, state.turtle));
+        }
+        return best;
+      };
+      const target = bestBy(options, ahead);
+      if (ahead(target) <= now + 0.2) return null;
       return target;
     }
     if (foes.length) return bestTarget(foes, bot);
@@ -410,7 +523,10 @@ export function useBot() {
     if (title === "promptAttackCard") {
       if (!options.length) return [];
       const sorted = [...options].sort(
-        (a, b) => attackPower(b) - attackPower(a),
+        (a, b) =>
+          attackPower(b) +
+          effectBonus(b, bot) * 0.5 -
+          (attackPower(a) + effectBonus(a, bot) * 0.5),
       );
       if (slip()) return [pickRandom(options).id];
       const hp = lastTarget?.hp;
@@ -492,8 +608,9 @@ export function useBot() {
     if (title === "promptSchemeCard") {
       if (!options.length) return [];
       return [
-        options.reduce((a, b) => (schemeDamage(b) > schemeDamage(a) ? b : a))
-          .id,
+        options.reduce((a, b) =>
+          schemeValue(b, bot) > schemeValue(a, bot) ? b : a,
+        ).id,
       ];
     }
     const min = prompt.min ?? 0;
@@ -507,11 +624,51 @@ export function useBot() {
     return ranked.slice(0, min).map((card) => card.id);
   };
 
+  const answerConfirm = (prompt, bot) => {
+    const hand = handOf(bot).length;
+    switch (prompt.title) {
+      case "promptSwap":
+      case "promptSmokeSwap":
+        return false;
+      case "promptDrawUp":
+        return hand < 5;
+      case "promptFiveAgainst":
+        return hand >= 2;
+      case "promptStealDiscard":
+        return hand >= 4;
+      default:
+        return true;
+    }
+  };
+
+  const answerChoice = (prompt, bot) => {
+    const values = prompt.choices.map((item) => item.value);
+    const has = (value) => values.includes(value);
+    const missing = missingHp(bot);
+    const hand = handOf(bot).length;
+    switch (prompt.title) {
+      case "promptKisoChoice":
+        return missing >= 2 ? "heal" : "action";
+      case "promptUtilityBelt":
+        if (missing >= 1 && has("heal")) return "heal";
+        return hand < 5 && has("draw") ? "draw" : "move";
+      case "promptMoveWho":
+      case "promptSkirmishWho":
+        return has("mine") ? "mine" : has("me") ? "me" : values[0];
+      case "promptShrinkChoice":
+        return hand >= 4 && has("discard") ? "discard" : "move";
+      case "promptSchemeSource":
+        return has("card") ? "card" : values[0];
+      default:
+        return values[0];
+    }
+  };
+
   const answer = (prompt, bot) => {
     if (prompt.kind === "space") return answerSpace(prompt, bot);
     if (prompt.kind === "cards") return answerCards(prompt, bot);
-    if (prompt.kind === "confirm") return true;
-    if (prompt.kind === "choice") return prompt.choices[0].value;
+    if (prompt.kind === "confirm") return answerConfirm(prompt, bot);
+    if (prompt.kind === "choice") return answerChoice(prompt, bot);
     return true;
   };
 
@@ -532,7 +689,6 @@ export function useBot() {
   const act = (bot) => {
     const available = engine.availableActions(true);
     const hand = handOf(bot);
-    const hasScheme = hand.some((card) => card.type === "scheme");
     const state = plan(bot);
     reachCache.clear();
     const choices = Object.keys(available).filter((key) => available[key]);
@@ -545,29 +701,25 @@ export function useBot() {
       }[key];
       if (run) return run();
     }
-    const known = knowledge(bot);
-    if (known && known.size && available.attack && available.maneuver) {
-      const best = hand
-        .filter(isAttackCard)
-        .reduce((top, card) => Math.max(top, card.value ?? 0), 0);
-      if (best <= known.defense) return engine.doManeuver();
-    }
     if (state.finisher && available.scheme) return engine.doScheme();
     if (state.turtle && available.maneuver) return engine.doManeuver();
-    if (
-      available.attack &&
-      !(
-        available.scheme &&
-        hasScheme &&
-        hand.length >= (profile.schemeHand ?? 5)
-      )
-    ) {
+    const scheme = available.scheme ? bestScheme(bot) : null;
+    const options = [];
+    if (available.attack) options.push(["attack", attackUtility(bot)]);
+    if (scheme?.card) options.push(["scheme", scheme.value]);
+    if (available.maneuver) {
+      const draw = hand.length >= 6 ? 0 : hand.length <= 2 ? 1.4 : 0.8;
+      options.push(["maneuver", draw + bestMoveGain(bot)]);
+    }
+    if (!options.length) return;
+    options.sort((a, b) => b[1] - a[1]);
+    const [pick, value] = options[0];
+    if (pick === "scheme" && value < 1.2 && available.attack) {
       return engine.doAttack();
     }
-    if (available.scheme && hasScheme) return engine.doScheme();
-    if (available.maneuver) return engine.doManeuver();
-    if (available.attack) return engine.doAttack();
-    if (available.scheme) return engine.doScheme();
+    if (pick === "attack") return engine.doAttack();
+    if (pick === "scheme") return engine.doScheme();
+    return engine.doManeuver();
   };
 
   const step = () => {
