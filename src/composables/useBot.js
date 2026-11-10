@@ -585,7 +585,7 @@ export function useBot() {
       const { order, index, taken } = game.startPick;
       if (order[index] === bot) {
         const map = getMap(game.mapId);
-        const options = Object.values(map.starts).filter(
+        const options = [map.starts.p1, map.starts.p2].filter(
           (id) => !taken.includes(id),
         );
         if (options.length) {
