@@ -21,6 +21,7 @@ const schemeDamage = (card) => {
   return found ? Number(found[1]) : 0;
 };
 const HEAL = /recover|heal|regain/i;
+const KID_HEROES = ["dr-jill-trent", "black-panther"];
 
 const graphCache = new Map();
 const reachCache = new Map();
@@ -127,6 +128,7 @@ export function useBot() {
       list.push({
         id: "hero",
         isHero: true,
+        core: true,
         space: state.space,
         hp: state.hp,
         max: state.maxHp || state.hp,
@@ -139,6 +141,7 @@ export function useBot() {
         list.push({
           id: kid.id,
           isHero: false,
+          core: KID_HEROES.includes(state.heroId),
           space: kid.space,
           hp: kid.hp,
           max: kid.maxHp || kid.hp,
@@ -154,7 +157,7 @@ export function useBot() {
     const dist = distances(space);
     let best = 60;
     for (const foe of fightersOf(other(bot))) {
-      best = Math.min(best, dist.get(foe.space) ?? 60);
+      best = Math.min(best, (dist.get(foe.space) ?? 60) + (foe.core ? 0 : 3));
     }
     return best;
   };
@@ -241,7 +244,7 @@ export function useBot() {
     let strike = 0;
     let reachStrike = 0;
     for (const foe of foes) {
-      const weight = foe.isHero ? 1 : 0.6;
+      const weight = foe.isHero ? 1 : foe.core ? 0.8 : 0.25;
       const reachFoe = reachSet(foe.space, foe.move);
       for (const spot of attackPositions(foe.attack, space)) {
         if (spot === space || !reachFoe.has(spot)) continue;
@@ -269,6 +272,8 @@ export function useBot() {
       return -fear(fighter, true) * exposure + 0.2 * Math.min(dist, 8);
     const aggro = profile.aggro ?? 1;
     const early = game.turnNo <= 3;
+    const cards = handOf(bot);
+    const bare = cards.length < 6 && !cards.some(isDefenseCard);
     let contain = 0;
     if (profile.contain && fighter.isHero) {
       const zone = [...byId().keys()].filter((id) =>
@@ -285,10 +290,12 @@ export function useBot() {
       0.8 * aggro * reachStrike +
       contain -
       (fear(fighter, false) *
-        Math.min(exposure, 4) *
-        Math.max(0, 0.5 - idle * 0.1) *
-        (early ? 0.3 : 1) *
-        (handOf(bot).length >= 7 ? 0.2 : 1)) /
+        Math.min(exposure, bare ? 8 : 4) *
+        (bare
+          ? 1.5
+          : Math.max(0, 0.5 - idle * 0.1) *
+            (early ? 0.3 : 1) *
+            (handOf(bot).length >= 7 ? 0.2 : 1))) /
         aggro -
       (strike ? 0 : 0.35 * aggro * dist * (early ? 2 : 1))
     );
@@ -361,7 +368,17 @@ export function useBot() {
       known = true;
     }
     if (/gain 1 (free )?action/.test(text)) {
-      value += 1.4;
+      value += handOf(bot).some(isAttackCard) ? 1 : 0.5;
+      known = true;
+    }
+    if (
+      /summon|revive|return|place/.test(text) &&
+      /sidekick|raptor|sea dog/.test(text)
+    ) {
+      const fallen = (game.players[bot].sidekicks || []).filter(
+        (kid) => kid.down || !kid.space,
+      ).length;
+      value += 1.3 * Math.min(fallen, 2);
       known = true;
     }
     const move = numberIn(/move [^.]*?up to (\d+) spaces/, text);
@@ -378,7 +395,7 @@ export function useBot() {
     if (/shuffle your hand into your deck/.test(text)) {
       value -= 0.4 * Math.max(0, hand - 1);
     }
-    return known ? value : 0.7;
+    return known ? value : 0.3;
   };
 
   const bestScheme = (bot) =>
@@ -430,7 +447,7 @@ export function useBot() {
     fightersOf(other(bot)).find((foe) => foe.space === space);
 
   const targetScore = (foe) =>
-    (foe.isHero ? (profile.heroFocus ?? 3) : 0) +
+    (foe.isHero ? (profile.heroFocus ?? 6) : foe.core ? 5 : 0) +
     (foe.hp <= 4 ? 2 : 0) -
     foe.hp * 0.3;
 
@@ -557,7 +574,11 @@ export function useBot() {
           return [bait[bait.length - 1].id];
         }
       }
-      const spare = sorted.filter((card) => !profile.keep?.includes(card.key));
+      const guards = handOf(bot).filter(isDefenseCard).length;
+      const pure = sorted.filter((card) => card.type !== "versatile");
+      const spare = (guards <= 2 && pure.length ? pure : sorted).filter(
+        (card) => !profile.keep?.includes(card.key),
+      );
       return [(spare.length ? spare[0] : sorted[0]).id];
     }
     if (title === "promptDefenseCard") {
@@ -609,9 +630,12 @@ export function useBot() {
         }
       }
       const low = game.players[bot].hp <= 8;
-      const pool = options.filter(
+      const guards = handOf(bot).filter(isDefenseCard).length;
+      const fodder = options.filter(
         (card) => card.boost && !profile.keep?.includes(card.key),
       );
+      const spareFodder = fodder.filter((card) => !isDefenseCard(card));
+      const pool = guards <= 2 ? spareFodder : fodder;
       const need = low || state.turtle ? 2 : (profile.boostHand ?? 3);
       if (!pool.length || hand < Math.min(need, profile.boostHand ?? need)) {
         return [];
@@ -636,7 +660,9 @@ export function useBot() {
     if (!min) return [];
     const discard = /Discard|Bottom|Sacrifice/i.test(title);
     const worth = (card) =>
-      cardPower(card) + (profile.keep?.includes(card.key) ? 5 : 0);
+      cardPower(card) +
+      (profile.keep?.includes(card.key) ? 5 : 0) +
+      (isDefenseCard(card) ? 1.5 : 0);
     const ranked = [...options].sort((a, b) =>
       discard ? worth(a) - worth(b) : worth(b) - worth(a),
     );
@@ -730,8 +756,11 @@ export function useBot() {
         attackUtility(bot) + (hand.length >= 6 ? 0.7 : 0),
       ]);
     }
-    if (scheme?.card)
-      options.push(["scheme", scheme.value + (hand.length >= 6 ? 0.6 : 0)]);
+    const defenders = hand.filter(isDefenseCard).length;
+    const crowded = hand.length >= 6;
+    if (scheme?.card && scheme.value >= (crowded ? 0.4 : 1)) {
+      options.push(["scheme", scheme.value + (crowded ? 0.6 : 0)]);
+    }
     if (available.maneuver) {
       const draw =
         hand.length >= 7
@@ -741,7 +770,8 @@ export function useBot() {
             : hand.length <= 2
               ? 1.4
               : 0.8;
-      options.push(["maneuver", draw + bestMoveGain(bot)]);
+      const need = !defenders && hand.length < 7 ? 1.2 : 0;
+      options.push(["maneuver", draw + need + bestMoveGain(bot)]);
     }
     if (!options.length) return;
     options.sort((a, b) => b[1] - a[1]);
