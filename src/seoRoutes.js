@@ -1,11 +1,7 @@
-// SEO-дані сторінок. Модуль без залежностей: його використовують і vite.config.js
-// (статичні сторінки та sitemap під час збірки), і src/seo.js (оновлення в браузері).
 export const SITE_URL = "https://oleksiimaslodp.github.io/unmatched_draft";
 export const SITE_NAME = "Unmatched Draftsim";
 export const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
-// Сторінки, які мають потрапити в пошук. Усі інші (редактори, бета, власні мапи)
-// отримують noindex.
 export const seoPages = [
   {
     path: "/",
@@ -166,7 +162,6 @@ const esc = (text) =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-// Блок <head>: title, description, canonical, Open Graph, Twitter, JSON-LD.
 export function renderHead(page, lang = "en") {
   const title = esc(page.title[lang]);
   const description = esc(page.description[lang]);
@@ -208,17 +203,13 @@ export function renderHead(page, lang = "en") {
   return lines.join("\n    ");
 }
 
-// Статичний вміст усередині #app: його бачать пошукові боти й соцмережі до
-// запуску JS, а Vue замінює його під час монтування.
 export function renderBody(page, lang = "en") {
   if (page.bodyHtml) {
     return `<main class="seo-fallback seo-entity">${page.bodyHtml}</main>`;
   }
   const links = seoPages
     .filter((item) => item.path !== "/")
-    .map(
-      (item) => `<a href="${pageUrl(item.path)}">${esc(item.h1[lang])}</a>`,
-    )
+    .map((item) => `<a href="${pageUrl(item.path)}">${esc(item.h1[lang])}</a>`)
     .join(" · ");
   return `<main class="seo-fallback"><h1>${esc(page.h1[lang])}</h1><p>${esc(
     page.description[lang],
