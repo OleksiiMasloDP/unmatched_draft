@@ -9,6 +9,7 @@ import PackDraftPage from "./components/pages/PackDraftPage.vue";
 import GamePage from "./components/pages/GamePage.vue";
 import MapEditor from "./components/pages/MapEditor.vue";
 import HomePage from "./components/pages/HomePage.vue";
+import BotEditor from "./components/pages/BotEditor.vue";
 
 export const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -31,6 +32,7 @@ export const routes = [
   },
   { path: "/game", name: "game", component: GamePage },
   { path: "/map-editor", name: "map-editor", component: MapEditor },
+  { path: "/bot-editor", name: "bot-editor", component: BotEditor },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 
