@@ -98,6 +98,42 @@ export const seoPages = [
     },
   },
   {
+    path: "/heroes",
+    names: ["heroes"],
+    changefreq: "weekly",
+    priority: "0.8",
+    title: {
+      en: "All Unmatched Heroes: ratings, maps and matchups",
+      ua: "Усі герої Unmatched: рейтинги, мапи та матчапи",
+    },
+    description: {
+      en: "Browse Unmatched heroes with Elo ratings, best maps, matchups and character guides.",
+      ua: "Перегляньте героїв Unmatched з рейтингами Elo, найкращими мапами, матчапами та гайдами.",
+    },
+    h1: {
+      en: "All Unmatched Heroes",
+      ua: "Усі герої Unmatched",
+    },
+  },
+  {
+    path: "/map-list",
+    names: ["map-list"],
+    changefreq: "weekly",
+    priority: "0.7",
+    title: {
+      en: "All Unmatched Maps: favored and disfavored heroes",
+      ua: "Усі мапи Unmatched: вигідні й невигідні герої",
+    },
+    description: {
+      en: "Browse Unmatched maps and see which heroes are favored or disfavored on each of them.",
+      ua: "Перегляньте мапи Unmatched і дізнайтесь, яким героям кожна з них вигідна чи невигідна.",
+    },
+    h1: {
+      en: "All Unmatched Maps",
+      ua: "Усі мапи Unmatched",
+    },
+  },
+  {
     path: "/formats",
     names: ["formats"],
     changefreq: "monthly",
@@ -175,6 +211,9 @@ export function renderHead(page, lang = "en") {
 // Статичний вміст усередині #app: його бачать пошукові боти й соцмережі до
 // запуску JS, а Vue замінює його під час монтування.
 export function renderBody(page, lang = "en") {
+  if (page.bodyHtml) {
+    return `<main class="seo-fallback seo-entity">${page.bodyHtml}</main>`;
+  }
   const links = seoPages
     .filter((item) => item.path !== "/")
     .map(
@@ -186,8 +225,8 @@ export function renderBody(page, lang = "en") {
   )}</p><nav>${links}</nav></main>`;
 }
 
-export function renderSitemap(date) {
-  const urls = seoPages
+export function renderSitemap(date, pages = seoPages) {
+  const urls = pages
     .map(
       (page) =>
         `  <url><loc>${pageUrl(page.path)}</loc><lastmod>${date}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`,
