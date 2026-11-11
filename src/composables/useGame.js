@@ -4,7 +4,6 @@ import { getCard, getHero } from "../gameDecks.js";
 import { cardEffects } from "../gameEffects.js";
 import { TOKENS, tokenIds } from "../gameTokens.js";
 import { useOnline } from "./useOnline.js";
-import "../i18nSanta.js";
 
 const HAND_LIMIT = 7;
 const START_HAND = 5;

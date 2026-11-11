@@ -1,5 +1,5 @@
 import { ref, computed, watch, reactive } from "vue";
-import { translations } from "../i18n.js";
+import { translations } from "../i18n/index.js";
 import { trackProceedToMaps } from "../utils/gaAnalytics";
 import {
   formats,
