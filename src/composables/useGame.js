@@ -2581,10 +2581,12 @@ function startRogueBattle(deckA, deckB, options) {
   game.mapId = options.mapId;
   useMapId(options.mapId);
   startGame(deckA, deckB, options.first, "p2");
-  const cut = (value) => Math.max(1, Math.ceil(value * options.scale));
   for (const seat of ["p1", "p2"]) {
     const state = game.players[seat];
     if (!state) return;
+    const factor =
+      seat === "p2" ? (options.foeScale ?? options.scale) : options.scale;
+    const cut = (value) => Math.max(1, Math.ceil(value * factor));
     state.hp = cut(state.hp);
     state.maxHp = state.hp;
     for (const kid of state.sidekicks) {

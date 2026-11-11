@@ -8,6 +8,7 @@
         <span v-if="run.best" class="rogue-best">
           {{ t("rogueBest") }}: {{ run.best }} {{ t("rogueWinsShort") }}
         </span>
+        <span v-if="inRun" class="rogue-gold">💰 {{ run.gold }}</span>
       </div>
 
       <div v-if="run.phase !== 'idle'" class="rogue-steps">
@@ -86,81 +87,7 @@
       </section>
 
       <section v-else-if="run.phase === 'map'">
-        <div class="rogue-map rogue-anim">
-          <svg
-            class="rogue-path"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
-            <polyline
-              :points="pathPoints"
-              fill="none"
-              vector-effect="non-scaling-stroke"
-            />
-          </svg>
-          <div
-            v-for="node in nodes"
-            :key="node.n"
-            class="rogue-node"
-            :class="{
-              'is-done': node.n < run.level,
-              'is-current': node.n === run.level,
-              'is-elite': node.n % 5 === 0,
-            }"
-            :style="{ left: node.x + '%', top: node.y + '%' }"
-          >
-            <span class="rogue-node-dot">
-              {{
-                node.n < run.level
-                  ? "✔"
-                  : node.n === run.level
-                    ? node.n
-                    : node.n % 5 === 0
-                      ? "★"
-                      : "?"
-              }}
-            </span>
-            <span class="rogue-node-label">
-              {{ node.n % 5 === 0 ? t("rogueBoss") : "" }}
-            </span>
-          </div>
-        </div>
-
-        <div class="rogue-versus">
-          <div class="rogue-side rogue-anim">
-            <div class="rogue-side-title">{{ heroName(run.heroId) }}</div>
-            <PackHeroCard v-if="myHero" :hero="myHero" />
-          </div>
-          <div class="rogue-vs rogue-anim">
-            <div class="rogue-level">
-              {{ t("rogueLevel").replace("{n}", run.level) }}
-            </div>
-            <div class="rogue-info">
-              {{
-                t("rogueHpScale")
-                  .replace("{p}", Math.round(scale() * 100))
-                  .replace("{n}", run.deck.length)
-                  .replace("{max}", constants.FULL_DECK)
-              }}
-            </div>
-            <div class="rogue-info">
-              {{
-                t("rogueBotLevel").replace(
-                  "{level}",
-                  t("rogueLevel" + capitalize(botLevel())),
-                )
-              }}
-            </div>
-            <button class="btn btn-success rogue-fight" @click="startBattle">
-              {{ t("rogueFight") }}
-            </button>
-          </div>
-          <div class="rogue-side rogue-anim">
-            <div class="rogue-side-title">{{ t("rogueEnemy") }}</div>
-            <PackHeroCard v-if="enemyHero" :hero="enemyHero" />
-          </div>
-        </div>
-
+        <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
         <div class="rogue-toolbar">
           <button
             class="btn btn-sm btn-outline-secondary"
@@ -175,16 +102,66 @@
             {{ t("rogueAbandon") }}
           </button>
         </div>
-        <div v-if="showDeck" class="rogue-cards">
-          <div v-for="card in myDeck" :key="card.id" class="rogue-card">
+        <div v-if="showDeck" class="rogue-cards rogue-deckview">
+          <div v-for="(card, i) in myDeck" :key="i" class="rogue-card">
             <PackCard :card="card" />
+          </div>
+        </div>
+        <RogueMap
+          :map="run.map"
+          :pos="run.pos"
+          :visited="run.visited"
+          :reachable="reachable()"
+          :labels="nodeLabels"
+          @enter="enterNode"
+        />
+      </section>
+
+      <section v-else-if="run.phase === 'encounter'">
+        <div class="rogue-versus">
+          <div class="rogue-side rogue-anim">
+            <div class="rogue-side-title">{{ heroName(run.heroId) }}</div>
+            <PackHeroCard v-if="myHero" :hero="myHero" />
+          </div>
+          <div class="rogue-vs rogue-anim">
+            <div class="rogue-level" :class="'kind-' + enemyKind">
+              {{ encounterTitle }}
+            </div>
+            <div class="rogue-info">
+              {{
+                t("rogueHealthNote").replace("{p}", Math.round(myScale * 100))
+              }}
+            </div>
+            <div class="rogue-info">
+              {{
+                t("rogueFoeNote").replace("{p}", Math.round(foePercent * 100))
+              }}
+            </div>
+            <div class="rogue-info">
+              {{
+                t("rogueBotLevel").replace(
+                  "{level}",
+                  t("rogueLevel" + capitalize(botLevelFor(currentNode))),
+                )
+              }}
+            </div>
+            <button class="btn btn-success rogue-fight" @click="startBattle">
+              {{ t("rogueFight") }}
+            </button>
+          </div>
+          <div class="rogue-side rogue-anim">
+            <div class="rogue-side-title">{{ t("rogueEnemy") }}</div>
+            <PackHeroCard v-if="enemyHero" :hero="enemyHero" />
           </div>
         </div>
       </section>
 
       <section v-else-if="run.phase === 'reward'">
         <h2 class="rogue-subtitle">{{ t("rogueRewardTitle") }}</h2>
-        <p class="rogue-hint">{{ t("rogueRewardHint") }}</p>
+        <p class="rogue-hint">
+          {{ t("rogueRewardHint") }} ·
+          {{ t("rogueRewardGold").replace("{n}", lastGold) }}
+        </p>
         <div class="rogue-rewards">
           <div
             v-for="card in rewardCards"
@@ -196,11 +173,220 @@
         </div>
       </section>
 
+      <section v-else-if="run.phase === 'packs'">
+        <h2 class="rogue-subtitle">{{ t("roguePacksTitle") }}</h2>
+        <p class="rogue-hint">
+          {{ t("roguePacksHint") }} ·
+          {{ t("rogueRewardGold").replace("{n}", lastGold) }}
+        </p>
+        <div class="rogue-packs">
+          <RoguePack
+            v-for="pack in run.packs"
+            :key="pack.id"
+            class="rogue-anim"
+            :pack="pack"
+            :opened="run.packChosen === pack.id"
+            :dim="!!run.packChosen && run.packChosen !== pack.id"
+            :locked="!!run.packChosen"
+            @open="pickPack"
+          />
+        </div>
+        <div v-if="run.packChosen" class="rogue-toolbar rogue-center">
+          <button class="btn btn-success" @click="leavePacks">
+            {{ t("roguePackTake") }}
+          </button>
+        </div>
+      </section>
+
+      <section v-else-if="run.phase === 'rest'">
+        <h2 class="rogue-subtitle">🔥 {{ t("rogueRestTitle") }}</h2>
+        <template v-if="!run.rest.mode">
+          <p class="rogue-hint">{{ t("rogueRestText") }}</p>
+          <div class="rogue-options">
+            <button
+              class="rogue-option rogue-anim"
+              :disabled="run.deck.length <= constants.MIN_DECK"
+              @click="chooseRest('remove')"
+            >
+              <span class="rogue-option-icon">🗑️</span>
+              <span>{{ t("rogueRestRemove") }}</span>
+              <small v-if="run.deck.length <= constants.MIN_DECK">
+                {{ t("rogueDeckTooSmall") }}
+              </small>
+            </button>
+            <button
+              class="rogue-option rogue-anim"
+              :disabled="!upgradable().length"
+              @click="chooseRest('upgrade')"
+            >
+              <span class="rogue-option-icon">⬆️</span>
+              <span>{{ t("rogueRestUpgrade") }}</span>
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <p class="rogue-hint">
+            {{
+              run.rest.mode === "remove"
+                ? t("rogueRestPickRemove")
+                : t("rogueRestPickUpgrade")
+            }}
+          </p>
+          <div class="rogue-cards">
+            <div
+              v-for="(card, i) in run.rest.mode === 'remove'
+                ? myDeck
+                : upgradableCards"
+              :key="card.id + i"
+              class="rogue-card rogue-anim"
+            >
+              <PackCard :card="card" clickable @select="restPick" />
+            </div>
+          </div>
+        </template>
+      </section>
+
+      <section v-else-if="run.phase === 'shop'">
+        <h2 class="rogue-subtitle">💰 {{ t("rogueShopTitle") }}</h2>
+        <template v-if="!run.shop.picking">
+          <div class="rogue-cards">
+            <div
+              v-for="(item, i) in run.shop.cards"
+              :key="item.id"
+              class="rogue-card rogue-anim rogue-shopitem"
+              :class="{ 'is-sold': item.sold }"
+            >
+              <PackCard :card="getCard(item.id)" />
+              <button
+                class="btn btn-sm"
+                :class="
+                  run.gold >= item.price
+                    ? 'btn-success'
+                    : 'btn-outline-secondary'
+                "
+                :disabled="item.sold || run.gold < item.price"
+                @click="buy(i)"
+              >
+                {{ item.sold ? t("rogueShopSold") : t("rogueShopBuy") }} · 💰
+                {{ item.price }}
+              </button>
+            </div>
+          </div>
+          <div class="rogue-toolbar">
+            <button
+              class="btn btn-sm btn-outline-warning"
+              :disabled="
+                run.gold < removePrice(run.shop.removed) ||
+                run.deck.length <= constants.MIN_DECK
+              "
+              @click="startShopRemove"
+            >
+              🗑️
+              {{
+                t("rogueShopRemove").replace(
+                  "{price}",
+                  removePrice(run.shop.removed),
+                )
+              }}
+            </button>
+            <button class="btn btn-sm btn-success" @click="leave">
+              {{ t("rogueShopLeave") }}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <p class="rogue-hint">{{ t("rogueShopPickRemove") }}</p>
+          <div class="rogue-toolbar">
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              @click="cancelShopRemove"
+            >
+              {{ t("rogueCancel") }}
+            </button>
+          </div>
+          <div class="rogue-cards">
+            <div
+              v-for="(card, i) in myDeck"
+              :key="card.id + i"
+              class="rogue-card"
+            >
+              <PackCard :card="card" clickable @select="shopRemove" />
+            </div>
+          </div>
+        </template>
+      </section>
+
+      <section v-else-if="run.phase === 'event' && eventData">
+        <div class="rogue-event rogue-anim">
+          <div class="rogue-event-icon">{{ eventData.icon }}</div>
+          <h2 class="rogue-subtitle">{{ eventData.title[lang] }}</h2>
+          <p>{{ eventData.text[lang] }}</p>
+        </div>
+        <div v-if="run.event.step === 'choose'" class="rogue-options">
+          <button
+            v-for="(choice, i) in eventData.choices"
+            :key="i"
+            class="rogue-option rogue-anim"
+            :disabled="eventBlocked(choice)"
+            @click="chooseEvent(i)"
+          >
+            <span>{{ choice.label[lang] }}</span>
+          </button>
+        </div>
+        <template v-else-if="run.event.step === 'result'">
+          <p class="rogue-hint">{{ run.event.result?.[lang] }}</p>
+          <div v-if="eventCards.length" class="rogue-rewards">
+            <div
+              v-for="card in eventCards"
+              :key="card.id"
+              class="rogue-card rogue-reward"
+            >
+              <PackCard :card="card" />
+            </div>
+          </div>
+          <div class="rogue-toolbar">
+            <button class="btn btn-success" @click="leave">
+              {{ t("rogueLeave") }}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <p class="rogue-hint">
+            {{
+              run.event.step === "pickCard"
+                ? t("rogueEventPickCard")
+                : run.event.step === "pickUpgrade"
+                  ? t("rogueEventPickUpgrade")
+                  : t("rogueEventPickRemove")
+            }}
+          </p>
+          <div class="rogue-cards">
+            <div
+              v-for="(card, i) in eventPickList"
+              :key="card.id + i"
+              class="rogue-card rogue-anim"
+            >
+              <PackCard :card="card" clickable @select="eventPick" />
+            </div>
+          </div>
+          <div class="rogue-toolbar">
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              @click="skipEventPick"
+            >
+              {{ t("rogueEventSkip") }}
+            </button>
+          </div>
+        </template>
+      </section>
+
       <section v-else-if="run.phase === 'over'" class="rogue-intro rogue-anim">
-        <h2 class="rogue-subtitle">{{ t("rogueOverTitle") }}</h2>
+        <h2 class="rogue-subtitle">
+          {{ run.victory ? t("rogueOverVictory") : t("rogueOverTitle") }}
+        </h2>
         <p>
           {{
-            t("rogueOverText")
+            (run.victory ? t("rogueOverVictoryText") : t("rogueOverText"))
               .replace("{n}", run.wins)
               .replace("{hero}", heroName(run.heroId))
           }}
@@ -220,12 +406,12 @@
         <span class="rogue-battle-result">
           {{ game.winner === "p1" ? t("rogueVictory") : t("rogueDefeat") }}
         </span>
-        <button class="btn btn-sm btn-success" @click="syncBattle">
+        <button class="btn btn-sm btn-success" @click="afterBattle">
           {{ t("rogueAfterBattle") }}
         </button>
       </template>
       <template v-else>
-        <span>{{ t("rogueBattleLabel").replace("{n}", run.level) }}</span>
+        <span>{{ encounterTitle }}</span>
         <button class="btn btn-sm btn-outline-danger" @click="abandon">
           {{ t("rogueAbandon") }}
         </button>
@@ -247,40 +433,68 @@ import gsap from "gsap";
 import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useRogue } from "../../composables/useRogue";
-import { getCard, getHero } from "../../gameDecks";
+import { getHero } from "../../gameDecks";
 import { packDraftHeroes } from "../../packDraftData";
+import { events } from "../../rogueData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
 import PackHeroCard from "../PackHeroCard.vue";
+import RogueMap from "../RogueMap.vue";
+import RoguePack from "../RoguePack.vue";
 
-const { t } = useDraftState();
+const { t, lang } = useDraftState();
 const engine = useGame();
 const { game } = engine;
 const {
   run,
   heroCards,
-  scale,
-  botLevel,
+  getCard,
+  upgradable,
+  reachable,
+  nodeById,
+  kindOf,
+  hpScale,
+  foeScale,
+  botLevelFor,
   constants,
+  removePrice,
   startRun,
   pickHero,
   confirmDeck,
+  enterNode,
   startBattle,
   syncBattle,
   pickReward,
+  pickPack,
+  leavePacks,
+  chooseRest,
+  restPick,
+  buy,
+  startShopRemove,
+  shopRemove,
+  cancelShopRemove,
+  chooseEvent,
+  eventPick,
+  skipEventPick,
+  leave,
   abandon: endRun,
 } = useRogue();
 
 const root = ref(null);
 const picked = ref([]);
 const showDeck = ref(false);
+const lastGold = ref(0);
 const base = constants.BASE_DECK;
 let context = null;
 
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const heroName = (id) => (id ? getHero(id).name : "");
 const heroOf = (id) => packDraftHeroes.find((hero) => hero.id === id);
+const cardsOf = (ids) => ids.map(getCard).filter(Boolean);
 
+const inRun = computed(
+  () => !["idle", "hero", "deck"].includes(run.phase) && run.deck.length > 0,
+);
 const step = computed(() =>
   run.phase === "hero" ? 1 : run.phase === "deck" ? 2 : 3,
 );
@@ -288,21 +502,57 @@ const heroOptions = computed(() => run.heroOptions.map(heroOf).filter(Boolean));
 const myHero = computed(() => heroOf(run.heroId));
 const enemyHero = computed(() => heroOf(run.enemy?.heroId));
 const deckPool = computed(() => (run.heroId ? heroCards(run.heroId) : []));
-const myDeck = computed(() => run.deck.map(getCard).filter(Boolean));
-const rewardCards = computed(() => run.rewards.map(getCard).filter(Boolean));
-
-const NODES = 9;
-const nodes = computed(() => {
-  const first = Math.max(1, run.level - 2);
-  return Array.from({ length: NODES }, (_, i) => ({
-    n: first + i,
-    x: 6 + (i * 88) / (NODES - 1),
-    y: 50 + Math.sin(i * 1.25) * 26,
-  }));
-});
-const pathPoints = computed(() =>
-  nodes.value.map((node) => `${node.x},${node.y}`).join(" "),
+const myDeck = computed(() => cardsOf(run.deck));
+const upgradableCards = computed(() => cardsOf(upgradable()));
+const rewardCards = computed(() => cardsOf(run.rewards));
+const currentNode = computed(() => (run.node ? nodeById(run.node) : null));
+const enemyKind = computed(() => run.enemy?.kind || "fight");
+const myScale = computed(() =>
+  currentNode.value ? hpScale(currentNode.value) : 1,
 );
+const foePercent = computed(() =>
+  currentNode.value ? foeScale(currentNode.value) : 1,
+);
+const eventData = computed(() =>
+  run.event ? events.find((item) => item.id === run.event.id) : null,
+);
+const eventCards = computed(() => cardsOf(run.event?.cards || []));
+const eventPickList = computed(() => {
+  const stepName = run.event?.step;
+  if (stepName === "pickCard") return cardsOf(run.event.options);
+  if (stepName === "pickUpgrade") return upgradableCards.value;
+  return myDeck.value;
+});
+const encounterTitle = computed(() =>
+  enemyKind.value === "boss"
+    ? t("rogueEncounterBoss")
+    : enemyKind.value === "elite"
+      ? t("rogueEncounterElite")
+      : t("rogueEncounterFight"),
+);
+const nodeLabels = computed(() => ({
+  fight: t("rogueNodeFight"),
+  mystery: t("rogueNodeMystery"),
+  rest: t("rogueNodeRest"),
+  shop: t("rogueNodeShop"),
+  boss: t("rogueNodeBoss"),
+}));
+
+function eventBlocked(choice) {
+  if (run.gold < (choice.cost || 0)) return true;
+  if (choice.effect.upgrade && !upgradable().length) return true;
+  if (choice.effect.remove && run.deck.length <= constants.MIN_DECK)
+    return true;
+  return false;
+}
+
+function afterBattle() {
+  const before = run.gold;
+  syncBattle();
+  lastGold.value = run.gold - before;
+  engine.resetGame();
+  engine.setBot(null);
+}
 
 function abandon() {
   engine.resetGame();
@@ -344,25 +594,12 @@ function animate() {
       stagger: 0.15,
       ease: "back.out(1.4)",
     });
-    gsap.from(".rogue-node", {
-      scale: 0,
-      duration: 0.4,
-      stagger: 0.05,
-      ease: "back.out(2)",
-    });
-    gsap.to(".rogue-node.is-current .rogue-node-dot", {
-      scale: 1.18,
-      repeat: -1,
-      yoyo: true,
-      duration: 0.8,
-      ease: "sine.inOut",
-    });
   }, root.value);
 }
 
 watch(
-  () => run.phase,
-  async (phase) => {
+  () => [run.phase, run.rest?.mode, run.event?.step, run.shop?.picking],
+  async ([phase]) => {
     if (phase === "deck") picked.value = [];
     if (phase === "map") showDeck.value = false;
     await nextTick();
@@ -370,15 +607,8 @@ watch(
   },
 );
 
-watch(
-  () => game.phase,
-  () => {
-    if (run.phase === "battle" && game.phase === "setup") syncBattle();
-  },
-);
-
 onMounted(async () => {
-  if (run.phase === "battle" && game.phase === "setup") syncBattle();
+  if (run.phase === "battle" && game.phase !== "play") syncBattle();
   await nextTick();
   animate();
 });
@@ -656,5 +886,98 @@ onBeforeUnmount(() => {
   .rogue-versus {
     grid-template-columns: 1fr;
   }
+}
+
+.rogue-gold {
+  margin-left: auto;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(246, 201, 69, 0.15);
+  border: 1px solid rgba(246, 201, 69, 0.6);
+  color: #f6c945;
+  font-weight: 800;
+}
+
+.rogue-center {
+  justify-content: center;
+}
+
+.rogue-packs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  margin: 24px 0;
+}
+
+.rogue-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  max-width: 720px;
+  margin: 16px 0;
+}
+
+.rogue-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+
+.rogue-option:not(:disabled):hover {
+  transform: translateY(-3px);
+  border-color: var(--color-info);
+}
+
+.rogue-option:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rogue-option-icon {
+  font-size: 40px;
+}
+
+.rogue-event {
+  max-width: 560px;
+  text-align: center;
+  margin: 8px auto 16px;
+}
+
+.rogue-event-icon {
+  font-size: 64px;
+}
+
+.rogue-shopitem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rogue-shopitem.is-sold {
+  opacity: 0.4;
+}
+
+.rogue-level.kind-elite {
+  color: #ff9f43;
+}
+
+.rogue-level.kind-boss {
+  color: #ff4d6d;
+}
+
+.rogue-deckview {
+  margin-bottom: 16px;
 }
 </style>
