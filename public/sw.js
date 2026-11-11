@@ -1,4 +1,4 @@
-const CACHE = "ud-assets-v1";
+const CACHE = "ud-assets-v2";
 const SCOPE = self.registration.scope;
 const STATIC = /\.(webp|avif|png|jpe?g|svg|woff2?)$/i;
 const DATA = /\/(characters|maps)\.json$|\/guides\//;
@@ -27,16 +27,17 @@ async function cacheFirst(request) {
   return response;
 }
 
-async function staleWhileRevalidate(request) {
+async function networkFirst(request) {
   const cache = await caches.open(CACHE);
-  const hit = await cache.match(request);
-  const fresh = fetch(request)
-    .then((response) => {
-      if (response.ok) cache.put(request, response.clone());
-      return response;
-    })
-    .catch(() => hit);
-  return hit || fresh;
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch (error) {
+    const hit = await cache.match(request);
+    if (hit) return hit;
+    throw error;
+  }
 }
 
 self.addEventListener("fetch", (event) => {
@@ -47,6 +48,6 @@ self.addEventListener("fetch", (event) => {
   if (STATIC.test(url.pathname)) {
     event.respondWith(cacheFirst(request));
   } else if (DATA.test(url.pathname)) {
-    event.respondWith(staleWhileRevalidate(request));
+    event.respondWith(networkFirst(request));
   }
 });

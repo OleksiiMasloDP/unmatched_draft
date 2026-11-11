@@ -8,9 +8,7 @@ import {
 
 const STORAGE_KEY = "unmatched_pack_draft_v1";
 const PLAYERS = ["p1", "p2"];
-// Кількість персонажів, карти яких змішуються в пул (вибір: p1, p2, p1, p2).
 const POOL_SIZE = 4;
-// Спочатку набираємо пул (p1, p2, p1, p2), потім обираємо, ким грати: p2, потім p1.
 
 const allCards = buildAllCards();
 const cardById = new Map(allCards.map((card) => [card.id, card]));
@@ -29,7 +27,6 @@ function newDraftId() {
   return `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
-// Паки збираються лише з карт обраних персонажів.
 function buildPacks(poolIds) {
   const ids = shuffle(
     allCards.filter((card) => poolIds.includes(card.heroId)).map((c) => c.id),
@@ -48,7 +45,6 @@ function createState() {
   return {
     phase: "heroes",
     draftId: newDraftId(),
-    // Обрані персонажі за порядком вибору. 1-й і 2-й - герої гравців 1 і 2.
     pool: [],
     heroes: { p1: null, p2: null },
     packs: [],
@@ -123,12 +119,9 @@ function load() {
 
 const state = reactive(load());
 const marks = ref({ keep: null, discard: [] });
-// Локальна гра: кому передати пристрій (ховаємо пак, поки гравець не підтвердить).
 const passFor = ref(null);
 const net = useOnline();
 
-// Що бачить гравець онлайн: лише свій пак і лише свої обрані карти.
-// Скид спільний, тому видимий усім. Суперник бачить лише, чи підтвердили вибір.
 function viewFor(seat) {
   const foe = otherPlayer(seat);
   const reveal = state.phase === "draft" ? state.holding[seat] : -1;
@@ -169,7 +162,6 @@ function actor() {
   return null;
 }
 
-// Набір пулу: p1, p2, p1, p2. Вибір героя для гри: спершу p2, потім p1.
 function heroesActor() {
   if (state.pool.length < POOL_SIZE)
     return state.pool.length % 2 === 0 ? "p1" : "p2";
@@ -548,7 +540,9 @@ export function usePackDraft() {
 
   function isDeadCard(card, player) {
     if (card.kind !== "sidekick") return false;
-    const sidekick = playerHeroes.value[player]?.sidekick;
+    const hero = playerHeroes.value[player];
+    if (hero?.noSidekick) return true;
+    const sidekick = hero?.sidekick;
     return !sidekick;
   }
 
