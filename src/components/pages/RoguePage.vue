@@ -41,7 +41,7 @@
         <p class="rogue-hint">{{ t("rogueChooseHeroHint") }}</p>
         <div class="rogue-heroes">
           <div v-for="hero in heroOptions" :key="hero.id" class="rogue-anim">
-            <PackHeroCard :hero="hero" clickable @select="pickHero" />
+            <RogueHeroTile :hero="hero" clickable @select="pickHero" />
           </div>
         </div>
       </section>
@@ -89,23 +89,14 @@
       <section v-else-if="run.phase === 'map'">
         <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
         <div class="rogue-toolbar">
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="showDeck = !showDeck"
-          >
-            {{ showDeck ? t("rogueHideDeck") : t("rogueShowDeck") }}
+          <button class="rogue-deckbtn" @click="deckOpen = true">
+            <span>📚</span>
+            <b>{{ t("rogueDeckButton") }}</b>
+            <i>{{ run.deck.length }}</i>
           </button>
-          <span class="rogue-count">
-            {{ t("rogueYourDeck").replace("{n}", run.deck.length) }}
-          </span>
           <button class="btn btn-sm btn-outline-danger" @click="abandon">
             {{ t("rogueAbandon") }}
           </button>
-        </div>
-        <div v-if="showDeck" class="rogue-cards rogue-deckview">
-          <div v-for="(card, i) in myDeck" :key="i" class="rogue-card">
-            <PackCard :card="card" />
-          </div>
         </div>
         <RogueMap
           :map="run.map"
@@ -113,46 +104,53 @@
           :visited="run.visited"
           :reachable="reachable()"
           :labels="nodeLabels"
+          :hero-image="myHero ? assetUrl(myHero.image) : ''"
           @enter="enterNode"
         />
       </section>
 
-      <section v-else-if="run.phase === 'encounter'">
-        <div class="rogue-versus">
-          <div class="rogue-side rogue-anim">
-            <div class="rogue-side-title">{{ heroName(run.heroId) }}</div>
-            <PackHeroCard v-if="myHero" :hero="myHero" />
+      <section v-else-if="run.phase === 'encounter'" class="rogue-encounter">
+        <div class="rogue-banner" :class="'kind-' + enemyKind">
+          {{ encounterTitle }}
+        </div>
+        <p v-if="enemyKind !== 'fight'" class="rogue-hint rogue-center-text">
+          {{ enemyKind === "boss" ? t("rogueBossHint") : t("rogueEliteHint") }}
+        </p>
+        <div class="rogue-duel">
+          <div class="rogue-anim">
+            <RogueHeroTile
+              v-if="myHero"
+              :hero="myHero"
+              side="me"
+              :tag="t('rogueYourHp')"
+              :hp-value="scaledHp(myHero.hp, myScale)"
+            />
           </div>
-          <div class="rogue-vs rogue-anim">
-            <div class="rogue-level" :class="'kind-' + enemyKind">
-              {{ encounterTitle }}
-            </div>
-            <div class="rogue-info">
-              {{
-                t("rogueHealthNote").replace("{p}", Math.round(myScale * 100))
-              }}
-            </div>
-            <div class="rogue-info">
-              {{
-                t("rogueFoeNote").replace("{p}", Math.round(foePercent * 100))
-              }}
-            </div>
-            <div class="rogue-info">
-              {{
-                t("rogueBotLevel").replace(
-                  "{level}",
-                  t("rogueLevel" + capitalize(botLevelFor(currentNode))),
-                )
-              }}
-            </div>
-            <button class="btn btn-success rogue-fight" @click="startBattle">
-              {{ t("rogueFight") }}
-            </button>
+          <div class="rogue-vsbadge rogue-anim">VS</div>
+          <div class="rogue-anim">
+            <RogueHeroTile
+              v-if="enemyHero"
+              :hero="enemyHero"
+              side="foe"
+              :tag="t('rogueEnemy')"
+              :hp-value="scaledHp(enemyHero.hp, foePercent)"
+            />
           </div>
-          <div class="rogue-side rogue-anim">
-            <div class="rogue-side-title">{{ t("rogueEnemy") }}</div>
-            <PackHeroCard v-if="enemyHero" :hero="enemyHero" />
-          </div>
+        </div>
+        <div class="rogue-info-row">
+          <span>
+            {{
+              t("rogueBotLevel").replace(
+                "{level}",
+                t("rogueLevel" + capitalize(botLevelFor(currentNode))),
+              )
+            }}
+          </span>
+        </div>
+        <div class="rogue-toolbar rogue-center">
+          <button class="btn btn-success rogue-fight" @click="startBattle">
+            ⚔️ {{ t("rogueFight") }}
+          </button>
         </div>
       </section>
 
@@ -198,98 +196,80 @@
         </div>
       </section>
 
-      <section v-else-if="run.phase === 'rest'">
-        <h2 class="rogue-subtitle">🔥 {{ t("rogueRestTitle") }}</h2>
-        <template v-if="!run.rest.mode">
-          <p class="rogue-hint">{{ t("rogueRestText") }}</p>
-          <div class="rogue-options">
-            <button
-              class="rogue-option rogue-anim"
-              :disabled="run.deck.length <= constants.MIN_DECK"
-              @click="chooseRest('remove')"
-            >
-              <span class="rogue-option-icon">🗑️</span>
-              <span>{{ t("rogueRestRemove") }}</span>
-              <small v-if="run.deck.length <= constants.MIN_DECK">
-                {{ t("rogueDeckTooSmall") }}
-              </small>
-            </button>
-            <button
-              class="rogue-option rogue-anim"
-              :disabled="!upgradable().length"
-              @click="chooseRest('upgrade')"
-            >
-              <span class="rogue-option-icon">⬆️</span>
-              <span>{{ t("rogueRestUpgrade") }}</span>
-            </button>
+      <section v-else-if="run.phase === 'rest'" class="rogue-restscene">
+        <div class="rogue-fire">🔥</div>
+        <h2 class="rogue-subtitle">{{ t("rogueRestTitle") }}</h2>
+        <p class="rogue-hint">{{ t("rogueRestText") }}</p>
+        <div class="rogue-toolbar rogue-center">
+          <button class="btn btn-success" @click="leave">
+            {{ t("rogueLeave") }}
+          </button>
+        </div>
+        <p v-if="run.deck.length > constants.MIN_DECK" class="rogue-hint">
+          {{ t("rogueRestPickRemove") }}
+        </p>
+        <p v-else class="rogue-hint">{{ t("rogueDeckTooSmall") }}</p>
+        <div v-if="run.deck.length > constants.MIN_DECK" class="rogue-cards">
+          <div
+            v-for="(card, i) in myDeck"
+            :key="card.id + i"
+            class="rogue-card rogue-anim"
+          >
+            <PackCard :card="card" clickable @select="restPick" />
           </div>
-        </template>
-        <template v-else>
-          <p class="rogue-hint">
-            {{
-              run.rest.mode === "remove"
-                ? t("rogueRestPickRemove")
-                : t("rogueRestPickUpgrade")
-            }}
-          </p>
-          <div class="rogue-cards">
-            <div
-              v-for="(card, i) in run.rest.mode === 'remove'
-                ? myDeck
-                : upgradableCards"
-              :key="card.id + i"
-              class="rogue-card rogue-anim"
-            >
-              <PackCard :card="card" clickable @select="restPick" />
-            </div>
-          </div>
-        </template>
+        </div>
       </section>
 
-      <section v-else-if="run.phase === 'shop'">
-        <h2 class="rogue-subtitle">💰 {{ t("rogueShopTitle") }}</h2>
+      <section v-else-if="run.phase === 'shop'" class="rogue-shop">
+        <div class="rogue-shop-head">
+          <div class="rogue-shopkeeper">🧙</div>
+          <div class="rogue-bubble">
+            <b>{{ t("rogueShopTitle") }}</b>
+            <span>{{ t("rogueShopKeeper") }}</span>
+          </div>
+        </div>
         <template v-if="!run.shop.picking">
-          <div class="rogue-cards">
+          <div class="rogue-shelf">
             <div
               v-for="(item, i) in run.shop.cards"
               :key="item.id"
-              class="rogue-card rogue-anim rogue-shopitem"
-              :class="{ 'is-sold': item.sold }"
+              class="rogue-ware rogue-anim"
+              :class="{
+                'is-sold': item.sold,
+                'is-poor': run.gold < item.price,
+              }"
             >
-              <PackCard :card="getCard(item.id)" />
+              <div class="rogue-ware-card">
+                <PackCard :card="getCard(item.id)" />
+                <span v-if="item.sold" class="rogue-sold">
+                  {{ t("rogueShopSold") }}
+                </span>
+              </div>
               <button
-                class="btn btn-sm"
-                :class="
-                  run.gold >= item.price
-                    ? 'btn-success'
-                    : 'btn-outline-secondary'
-                "
+                class="rogue-price"
                 :disabled="item.sold || run.gold < item.price"
                 @click="buy(i)"
               >
-                {{ item.sold ? t("rogueShopSold") : t("rogueShopBuy") }} · 💰
-                {{ item.price }}
+                <span class="rogue-coin">🪙</span>
+                <b>{{ item.price }}</b>
+                <small>{{ t("rogueShopBuy") }}</small>
               </button>
             </div>
           </div>
-          <div class="rogue-toolbar">
+          <div class="rogue-services">
             <button
-              class="btn btn-sm btn-outline-warning"
+              class="rogue-service"
               :disabled="
                 run.gold < removePrice(run.shop.removed) ||
                 run.deck.length <= constants.MIN_DECK
               "
               @click="startShopRemove"
             >
-              🗑️
-              {{
-                t("rogueShopRemove").replace(
-                  "{price}",
-                  removePrice(run.shop.removed),
-                )
-              }}
+              <span class="rogue-service-icon">✂️</span>
+              <span>{{ t("rogueShopRemoveSign") }}</span>
+              <b>🪙 {{ removePrice(run.shop.removed) }}</b>
             </button>
-            <button class="btn btn-sm btn-success" @click="leave">
+            <button class="btn btn-success" @click="leave">
               {{ t("rogueShopLeave") }}
             </button>
           </div>
@@ -355,9 +335,7 @@
             {{
               run.event.step === "pickCard"
                 ? t("rogueEventPickCard")
-                : run.event.step === "pickUpgrade"
-                  ? t("rogueEventPickUpgrade")
-                  : t("rogueEventPickRemove")
+                : t("rogueEventPickRemove")
             }}
           </p>
           <div class="rogue-cards">
@@ -396,6 +374,15 @@
         </button>
       </section>
     </div>
+
+    <button
+      v-if="inRun && run.phase !== 'map'"
+      class="rogue-fab"
+      @click="deckOpen = true"
+    >
+      📚 <b>{{ run.deck.length }}</b>
+    </button>
+    <RogueDeckModal v-if="deckOpen" :cards="myDeck" @close="deckOpen = false" />
 
     <div
       v-if="run.phase === 'battle'"
@@ -438,7 +425,8 @@ import { packDraftHeroes } from "../../packDraftData";
 import { events } from "../../rogueData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
-import PackHeroCard from "../PackHeroCard.vue";
+import RogueDeckModal from "../RogueDeckModal.vue";
+import RogueHeroTile from "../RogueHeroTile.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
 
@@ -449,7 +437,6 @@ const {
   run,
   heroCards,
   getCard,
-  upgradable,
   reachable,
   nodeById,
   kindOf,
@@ -467,7 +454,6 @@ const {
   pickReward,
   pickPack,
   leavePacks,
-  chooseRest,
   restPick,
   buy,
   startShopRemove,
@@ -482,11 +468,13 @@ const {
 
 const root = ref(null);
 const picked = ref([]);
-const showDeck = ref(false);
+const deckOpen = ref(false);
 const lastGold = ref(0);
 const base = constants.BASE_DECK;
+const scaledHp = (value, factor) => Math.max(1, Math.ceil(value * factor));
 let context = null;
 
+const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const heroName = (id) => (id ? getHero(id).name : "");
 const heroOf = (id) => packDraftHeroes.find((hero) => hero.id === id);
@@ -503,7 +491,6 @@ const myHero = computed(() => heroOf(run.heroId));
 const enemyHero = computed(() => heroOf(run.enemy?.heroId));
 const deckPool = computed(() => (run.heroId ? heroCards(run.heroId) : []));
 const myDeck = computed(() => cardsOf(run.deck));
-const upgradableCards = computed(() => cardsOf(upgradable()));
 const rewardCards = computed(() => cardsOf(run.rewards));
 const currentNode = computed(() => (run.node ? nodeById(run.node) : null));
 const enemyKind = computed(() => run.enemy?.kind || "fight");
@@ -520,7 +507,6 @@ const eventCards = computed(() => cardsOf(run.event?.cards || []));
 const eventPickList = computed(() => {
   const stepName = run.event?.step;
   if (stepName === "pickCard") return cardsOf(run.event.options);
-  if (stepName === "pickUpgrade") return upgradableCards.value;
   return myDeck.value;
 });
 const encounterTitle = computed(() =>
@@ -532,15 +518,19 @@ const encounterTitle = computed(() =>
 );
 const nodeLabels = computed(() => ({
   fight: t("rogueNodeFight"),
+  elite: t("rogueNodeElite"),
   mystery: t("rogueNodeMystery"),
   rest: t("rogueNodeRest"),
   shop: t("rogueNodeShop"),
   boss: t("rogueNodeBoss"),
+  forest: t("rogueZoneForest"),
+  mountains: t("rogueZoneMountains"),
+  ruins: t("rogueZoneRuins"),
+  citadel: t("rogueZoneCitadel"),
 }));
 
 function eventBlocked(choice) {
   if (run.gold < (choice.cost || 0)) return true;
-  if (choice.effect.upgrade && !upgradable().length) return true;
   if (choice.effect.remove && run.deck.length <= constants.MIN_DECK)
     return true;
   return false;
@@ -601,7 +591,6 @@ watch(
   () => [run.phase, run.rest?.mode, run.event?.step, run.shop?.picking],
   async ([phase]) => {
     if (phase === "deck") picked.value = [];
-    if (phase === "map") showDeck.value = false;
     await nextTick();
     animate();
   },
@@ -703,7 +692,7 @@ onBeforeUnmount(() => {
 
 .rogue-heroes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   max-width: 820px;
 }
@@ -810,36 +799,6 @@ onBeforeUnmount(() => {
   top: 100%;
 }
 
-.rogue-versus {
-  display: grid;
-  grid-template-columns: 1fr minmax(200px, 1.2fr) 1fr;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.rogue-side {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.rogue-side-title {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.8rem;
-  color: var(--text-dim);
-}
-
-.rogue-vs {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-}
-
 .rogue-level {
   font-size: 1.6rem;
   font-weight: 900;
@@ -880,12 +839,6 @@ onBeforeUnmount(() => {
   font-size: 1.1rem;
   font-weight: 900;
   text-transform: uppercase;
-}
-
-@media (max-width: 720px) {
-  .rogue-versus {
-    grid-template-columns: 1fr;
-  }
 }
 
 .rogue-gold {
@@ -979,5 +932,331 @@ onBeforeUnmount(() => {
 
 .rogue-deckview {
   margin-bottom: 16px;
+}
+
+.rogue-deckbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 2px solid #8a6c43;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #3a2c1b, #1a120a);
+  color: #ffecc8;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s;
+}
+
+.rogue-deckbtn:hover {
+  transform: translateY(-2px);
+}
+
+.rogue-deckbtn span {
+  font-size: 1.4rem;
+}
+
+.rogue-deckbtn i {
+  min-width: 28px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #f6c945;
+  color: #1b130a;
+  font-style: normal;
+  font-weight: 900;
+  text-align: center;
+}
+
+.rogue-fab {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1200;
+  padding: 10px 16px;
+  border: 2px solid #8a6c43;
+  border-radius: 999px;
+  background: linear-gradient(160deg, #3a2c1b, #1a120a);
+  color: #ffecc8;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.rogue-fab b {
+  margin-left: 4px;
+  color: #f6c945;
+}
+
+.rogue-center-text {
+  text-align: center;
+}
+
+.rogue-banner {
+  margin: 0 auto 10px;
+  width: fit-content;
+  padding: 6px 28px;
+  border: 2px solid currentColor;
+  border-radius: 8px;
+  color: #d9534f;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.rogue-banner.kind-elite {
+  color: #ff9f43;
+}
+
+.rogue-banner.kind-boss {
+  color: #ff4d6d;
+  box-shadow: 0 0 24px rgba(255, 77, 109, 0.5);
+}
+
+.rogue-duel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.rogue-vsbadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff4d6d, #7a1126);
+  font-weight: 900;
+  box-shadow: 0 0 24px rgba(255, 77, 109, 0.6);
+}
+
+.rogue-info-row {
+  margin: 12px 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.rogue-restscene {
+  text-align: center;
+}
+
+.rogue-restscene .rogue-cards {
+  text-align: left;
+}
+
+.rogue-fire {
+  font-size: 72px;
+  filter: drop-shadow(0 0 22px #ff9f43);
+  animation: rogue-flicker 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes rogue-flicker {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+.rogue-shop {
+  padding: 16px;
+  border: 3px solid #5a4630;
+  border-radius: 16px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.12) 0 2px,
+      transparent 2px 46px
+    ),
+    linear-gradient(180deg, #2a1c10, #17100a);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+.rogue-shop-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.rogue-shopkeeper {
+  font-size: 56px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+}
+
+.rogue-bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f4e6c4;
+  color: #2a1c10;
+  font-size: 0.85rem;
+}
+
+.rogue-bubble b {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rogue-bubble::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 18px;
+  border: 8px solid transparent;
+  border-left: 0;
+  border-right-color: #f4e6c4;
+}
+
+.rogue-shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 22px 14px;
+  padding: 16px 8px 18px;
+  border-bottom: 10px solid #5a4630;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.rogue-ware {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rogue-ware-card {
+  position: relative;
+  width: 100%;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.6));
+}
+
+.rogue-ware.is-sold .rogue-ware-card {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.rogue-sold {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4d6d;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transform: rotate(-18deg);
+  text-shadow: 0 2px 8px #000;
+}
+
+.rogue-price {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border: 2px solid #f6c945;
+  border-radius: 999px;
+  background: rgba(246, 201, 69, 0.15);
+  color: #f6c945;
+  cursor: pointer;
+}
+
+.rogue-price b {
+  font-size: 1.05rem;
+}
+
+.rogue-price small {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.rogue-price:not(:disabled):hover {
+  background: #f6c945;
+  color: #1b130a;
+}
+
+.rogue-ware.is-poor .rogue-price,
+.rogue-price:disabled {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.45);
+  background: none;
+  cursor: not-allowed;
+}
+
+.rogue-services {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rogue-service {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 2px dashed #8a6c43;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffecc8;
+  cursor: pointer;
+}
+
+.rogue-service:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rogue-service-icon {
+  font-size: 1.4rem;
+}
+
+@media (max-width: 720px) {
+  .rogue-cards,
+  .rogue-rewards {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+
+  .rogue-duel {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    position: relative;
+  }
+
+  .rogue-vsbadge {
+    position: absolute;
+    left: 50%;
+    top: 50px;
+    z-index: 2;
+    width: 42px;
+    height: 42px;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+  }
+
+  .rogue-shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.rogue-page {
+  padding-bottom: 84px;
 }
 </style>

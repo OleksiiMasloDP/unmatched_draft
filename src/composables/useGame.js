@@ -2335,6 +2335,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
         : [],
       fallen: [],
       coins: data.id === "blackbeard" ? 2 : 0,
+      roster: [...deck.cardIds].sort(),
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],

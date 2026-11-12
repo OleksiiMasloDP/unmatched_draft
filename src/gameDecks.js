@@ -3,25 +3,7 @@ import { buildAllCards, packDraftHeroes } from "./packDraftData.js";
 const allCards = buildAllCards();
 const cardById = new Map(allCards.map((card) => [card.id, card]));
 
-export function upgradeCard(id) {
-  const baseId = id.endsWith("+") ? id.slice(0, -1) : id;
-  const base = cardById.get(baseId);
-  if (!base || base.value == null) return undefined;
-  const upgradedId = `${baseId}+`;
-  if (!cardById.has(upgradedId)) {
-    cardById.set(upgradedId, {
-      ...base,
-      id: upgradedId,
-      upgraded: true,
-      value: base.value + 1,
-      boost: base.boost == null ? null : base.boost + 1,
-    });
-  }
-  return cardById.get(upgradedId);
-}
-
-export const getCard = (id) =>
-  cardById.get(id) ?? (id.endsWith("+") ? upgradeCard(id) : undefined);
+export const getCard = (id) => cardById.get(id);
 
 export const getHero = (id) => packDraftHeroes.find((hero) => hero.id === id);
 

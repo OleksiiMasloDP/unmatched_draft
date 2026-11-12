@@ -1,6 +1,6 @@
 export const ROWS = 11;
-export const BASE_DECK = 15;
-export const MIN_DECK = 10;
+export const BASE_DECK = 10;
+export const MIN_DECK = 8;
 export const HERO_CHOICES = 3;
 export const REWARD_CHOICES = 3;
 export const PACK_COUNT = 3;
@@ -9,6 +9,7 @@ export const START_GOLD = 40;
 
 export const nodeTypes = {
   fight: { icon: "⚔️", color: "#d9534f" },
+  elite: { icon: "💀", color: "#ff7b3a" },
   mystery: { icon: "❓", color: "#9b6bff" },
   rest: { icon: "🔥", color: "#ff9f43" },
   shop: { icon: "💰", color: "#f6c945" },
@@ -113,21 +114,20 @@ export const events = [
     ],
   },
   {
-    id: "forge",
-    icon: "⚒️",
-    title: { en: "Old forge", ua: "Стара кузня" },
+    id: "pawn",
+    icon: "🪙",
+    title: { en: "Pawnbroker", ua: "Ломбард" },
     text: {
-      en: "A smith offers to sharpen one of your cards for a fee.",
-      ua: "Коваль пропонує загострити одну з твоїх карт за плату.",
+      en: "A pawnbroker offers coin for a card you no longer need.",
+      ua: "Лихвар пропонує монети за карту, яка тобі вже не потрібна.",
     },
     choices: [
       {
         label: {
-          en: "Pay 30 gold: upgrade a card",
-          ua: "Заплатити 30: покращити карту",
+          en: "Sell a card for 20 gold",
+          ua: "Продати карту за 20 золота",
         },
-        cost: 30,
-        effect: { upgrade: true },
+        effect: { remove: true, gold: 20 },
       },
       {
         label: { en: "Walk away", ua: "Піти геть" },

@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { getCard, getHero, upgradeCard } from "../gameDecks.js";
+import { getCard, getHero } from "../gameDecks.js";
 import { gameMaps } from "../gameMaps.js";
 import { buildAllCards, packDraftHeroes } from "../packDraftData.js";
 import { generateMap } from "../rogueMap.js";
@@ -94,9 +94,9 @@ const hpScale = (node) => Math.min(1, 0.5 + 0.05 * node.row);
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1;
-  if (kind === "elite") return Math.min(1, hpScale(node) + 0.15);
-  return hpScale(node);
+  if (kind === "boss") return 1.3;
+  if (kind === "elite") return hpScale(node) * 1.1;
+  return hpScale(node) * 1.05;
 };
 
 const botLevelFor = (node) => {
@@ -163,7 +163,7 @@ function makeEnemy(node) {
     .map((card) => card.id);
   const size = Math.min(
     pool.length,
-    kind === "boss" ? pool.length : 15 + node.row + (kind === "elite" ? 3 : 0),
+    kind === "boss" ? pool.length : 10 + node.row + (kind === "elite" ? 2 : 0),
   );
   run.enemy = {
     heroId: hero.id,
@@ -198,12 +198,6 @@ export function useRogue() {
 
   const heroCards = (heroId) =>
     allCards.filter((card) => card.heroId === heroId);
-
-  const upgradable = () =>
-    run.deck.filter((id) => {
-      const card = getCard(id);
-      return card && !card.upgraded && card.value != null;
-    });
 
   const reachable = () => {
     if (!run.map.length) return [];
@@ -273,7 +267,7 @@ export function useRogue() {
       makeEnemy(node);
       run.phase = "encounter";
     } else if (kind === "rest") {
-      run.rest = { mode: null };
+      run.rest = { mode: "remove" };
       run.phase = "rest";
     } else if (kind === "shop") {
       makeShop();
@@ -320,7 +314,11 @@ export function useRogue() {
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
         run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
-        if (kind === "fight") {
+        if (kind === "boss") {
+          run.best = Math.max(run.best, run.wins);
+          run.victory = true;
+          run.phase = "over";
+        } else if (kind === "fight") {
           makeRewards();
           run.phase = "reward";
         } else {
@@ -360,29 +358,15 @@ export function useRogue() {
     if (run.phase === "packs") finishNode();
   }
 
-  function chooseRest(mode) {
-    if (run.phase !== "rest") return;
-    if (mode === "remove" && run.deck.length <= MIN_DECK) return;
-    run.rest = { mode };
-    save();
-  }
-
   function restPick(cardId) {
-    if (run.phase !== "rest" || !run.rest?.mode) return;
-    if (run.rest.mode === "remove") removeCard(cardId);
-    else upgradeInDeck(cardId);
+    if (run.phase !== "rest") return;
+    removeCard(cardId);
     finishNode();
   }
 
   function removeCard(cardId) {
     const index = run.deck.indexOf(cardId);
     if (index >= 0 && run.deck.length > MIN_DECK) run.deck.splice(index, 1);
-  }
-
-  function upgradeInDeck(cardId) {
-    const index = run.deck.indexOf(cardId);
-    const upgraded = upgradeCard(cardId);
-    if (index >= 0 && upgraded) run.deck.splice(index, 1, upgraded.id);
   }
 
   function buy(index) {
@@ -423,7 +407,6 @@ export function useRogue() {
     const data = events.find((item) => item.id === run.event.id);
     const choice = data.choices[index];
     if (!choice || run.gold < (choice.cost || 0)) return;
-    if (choice.effect.upgrade && !upgradable().length) return;
     if (choice.effect.remove && run.deck.length <= MIN_DECK) return;
     run.gold -= choice.cost || 0;
     const effect = choice.effect;
@@ -446,8 +429,6 @@ export function useRogue() {
         (card) => card.id,
       );
       run.event.step = "pickCard";
-    } else if (effect.upgrade && upgradable().length) {
-      run.event.step = "pickUpgrade";
     } else if (effect.remove && run.deck.length > MIN_DECK) {
       run.event.step = "pickRemove";
     } else {
@@ -466,8 +447,6 @@ export function useRogue() {
     if (step === "pickCard" && run.event.options.includes(cardId)) {
       run.deck.push(cardId);
       run.event.cards = [cardId];
-    } else if (step === "pickUpgrade") {
-      upgradeInDeck(cardId);
     } else if (step === "pickRemove") {
       removeCard(cardId);
     } else {
@@ -505,7 +484,6 @@ export function useRogue() {
     run,
     heroCards,
     getCard,
-    upgradable,
     reachable,
     nodeById,
     kindOf,
@@ -523,7 +501,6 @@ export function useRogue() {
     pickReward,
     pickPack,
     leavePacks,
-    chooseRest,
     restPick,
     buy,
     startShopRemove,

@@ -4,25 +4,30 @@ const pickType = (rng, row) => {
   const roll = rng();
   if (row === 0) return "fight";
   if (row === ROWS - 1) return "rest";
-  if (roll < 0.46) return "fight";
-  if (roll < 0.7) return "mystery";
-  if (roll < 0.82 && row >= 3) return "rest";
-  if (roll < 0.9 && row >= 2) return "shop";
+  if (roll < 0.4) return "fight";
+  if (roll < 0.6) return "mystery";
+  if (roll < 0.72 && row >= 3) return "rest";
+  if (roll < 0.8 && row >= 2) return "shop";
+  if (roll < 0.93 && row >= 3) return "elite";
   return "fight";
 };
+
+const LANES = 3;
+
+const crosses = (edges, from, to) =>
+  edges.some(([a, b]) => (a - from) * (b - to) < 0);
 
 export function generateMap(rng) {
   const rows = [];
   for (let row = 0; row < ROWS; row += 1) {
-    const count = row === 0 ? 3 : 3 + (rng() < 0.5 ? 1 : 0);
     rows.push(
-      Array.from({ length: count }, (_, col) => {
+      Array.from({ length: LANES }, (_, col) => {
         const type = pickType(rng, row);
         return {
           id: `${row}-${col}`,
           row,
           col,
-          x: (col + 0.5) / count + (rng() - 0.5) * 0.08,
+          x: (col + 0.5) / LANES,
           type,
           secret:
             type === "mystery"
@@ -48,32 +53,44 @@ export function generateMap(rng) {
   ]);
 
   const shopRow = 4 + Math.floor(rng() * 3);
-  const shopNode = rows[shopRow][Math.floor(rng() * rows[shopRow].length)];
+  const shopNode = rows[shopRow][Math.floor(rng() * LANES)];
   shopNode.type = "shop";
   shopNode.secret = null;
 
-  for (let row = 0; row < rows.length - 1; row += 1) {
-    const here = rows[row];
-    const there = rows[row + 1];
-    for (const node of here) {
-      const near = there
-        .filter((other) => Math.abs(other.x - node.x) <= 0.4)
-        .map((other) => other.id);
-      if (near.length) node.next = near.slice(0, 2);
-      else {
-        const closest = [...there].sort(
-          (a, b) => Math.abs(a.x - node.x) - Math.abs(b.x - node.x),
-        )[0];
-        node.next = [closest.id];
+  for (let row = 0; row < ROWS - 1; row += 1) {
+    const edges = [];
+    for (let col = 0; col < LANES; col += 1) {
+      const options = [col - 1, col, col + 1].filter(
+        (lane) => lane >= 0 && lane < LANES,
+      );
+      let target = col;
+      if (rng() > 0.55) {
+        const side = options.filter((lane) => lane !== col);
+        target = side[Math.floor(rng() * side.length)];
       }
+      if (crosses(edges, col, target)) target = col;
+      edges.push([col, target]);
     }
-    for (const target of there) {
-      if (here.some((node) => node.next.includes(target.id))) continue;
-      const closest = [...here].sort(
-        (a, b) => Math.abs(a.x - target.x) - Math.abs(b.x - target.x),
-      )[0];
-      closest.next.push(target.id);
+    for (let col = 0; col < LANES; col += 1) {
+      if (rng() > 0.2) continue;
+      const side = [col - 1, col + 1].filter(
+        (lane) =>
+          lane >= 0 &&
+          lane < LANES &&
+          !edges.some(([a, b]) => a === col && b === lane) &&
+          !crosses(edges, col, lane),
+      );
+      if (side.length) edges.push([col, side[Math.floor(rng() * side.length)]]);
+    }
+    for (let col = 0; col < LANES; col += 1) {
+      if (!edges.some(([, b]) => b === col)) edges.push([col, col]);
+    }
+    for (const [from, to] of edges) {
+      const list = rows[row][from].next;
+      const id = rows[row + 1][to].id;
+      if (!list.includes(id)) list.push(id);
     }
   }
+  for (const node of rows[ROWS - 1]) node.next = [rows[ROWS][0].id];
   return rows;
 }
