@@ -58,7 +58,7 @@ const game = reactive({
   turnNo: 0,
   actions: 0,
   freeAttacks: [],
-  turnStart: null,
+  turnStarts: null,
   redRoomIgnored: { p1: false, p2: false },
   gadget: { p1: null, p2: null },
   viewer: "p1",
@@ -1220,7 +1220,10 @@ const api = {
   handOf: (player) => [...pl(player).hand],
   discardOf: (player) => [...pl(player).discard],
   actionsLeft: regularActions,
-  movedThisTurn: (player) => spaceOf(player) !== game.turnStart,
+  movedThisTurn: (player, fighter = cur[player]) => {
+    const start = game.turnStarts?.[player]?.[fighter];
+    return start !== undefined && fighterSpace(player, fighter) !== start;
+  },
   redRoomOn: (player) => !game.redRoomIgnored[player],
   ignoreRedRoom: (player) => {
     game.redRoomIgnored[player] = true;
@@ -1359,7 +1362,13 @@ function* startTurn() {
   resetTurnFlags();
   game.actions = ACTIONS_PER_TURN;
   game.freeAttacks = [];
-  game.turnStart = spaceOf(me);
+  game.turnStarts = {};
+  for (const owner of ["p1", "p2"]) {
+    game.turnStarts[owner] = {};
+    for (const fighter of fightersOf(owner)) {
+      game.turnStarts[owner][fighter] = fighterSpace(owner, fighter);
+    }
+  }
   game.redRoomIgnored[me] = false;
   game.turnNo += 1;
   log("logTurn", { player: me, n: game.turnNo, hero: hero(me).name });
@@ -1991,6 +2000,22 @@ function* attack(me) {
     ) {
       ignored[other(player)] = true;
     }
+    if (
+      effect?.ignoreFoeCard &&
+      !combat.canceled[player] &&
+      effect.ignoreFoeCard(context(player, card, combat))
+    ) {
+      const target = other(player);
+      ignored[target] = true;
+      const targetCard = combat.cards[target];
+      if (
+        targetCard &&
+        hero(target).id !== "winter-soldier" &&
+        !cardEffects[targetCard.key]?.uncancelable
+      ) {
+        combat.canceled[target] = true;
+      }
+    }
   }
 
   for (const player of players) {
@@ -2014,6 +2039,7 @@ function* attack(me) {
   const terrain = game.combat.terrain;
   const pack = raptorPack(me, combat);
   combat.values[me] += turnFlags.attackBonus[me] + terrain + pack;
+  if (ignored[me]) combat.values[me] = 0;
 
   const raw = Math.max(0, combat.values[me] - combat.values[foe]);
   let dealt = raw;
@@ -2610,7 +2636,7 @@ function takeSnapshot() {
     players: game.players,
     actions: game.actions,
     freeAttacks: game.freeAttacks,
-    turnStart: game.turnStart,
+    turnStarts: game.turnStarts,
     redRoomIgnored: game.redRoomIgnored,
     logLength: game.log.length,
     flags: turnFlags,
@@ -2625,7 +2651,7 @@ function undoAction(seat) {
   game.players = snap.players;
   game.actions = snap.actions;
   game.freeAttacks = snap.freeAttacks;
-  game.turnStart = snap.turnStart;
+  game.turnStarts = snap.turnStarts;
   game.redRoomIgnored = snap.redRoomIgnored;
   game.log.length = snap.logLength;
   turnFlags.noDraw = snap.flags.noDraw;
