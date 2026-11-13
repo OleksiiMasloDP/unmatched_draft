@@ -209,7 +209,6 @@ function cardFor(side) {
   return id ? getCard(id) : null;
 }
 
-// Обкладинка залежить від карти (з якого героя вона), а не від героя гравця.
 const coverFor = (side) =>
   coverImage(
     props.combat.covers?.[side.player] || props.players[side.player].heroId,

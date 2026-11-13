@@ -85,6 +85,7 @@
             >
               <option value="base">{{ t("gameSourceBase") }}</option>
               <option value="draft">{{ t("gameSourceDraft") }}</option>
+              <option value="custom">{{ t("gameSourceCustom") }}</option>
             </select>
           </div>
           <p
@@ -1253,7 +1254,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useSavedDecks } from "../../composables/useSavedDecks";
-import { getCard, getHero, testDecks } from "../../gameDecks";
+import { customDecks, getCard, getHero, testDecks } from "../../gameDecks";
 import ActionIcon from "../ActionIcon.vue";
 import CombatPopup from "../CombatPopup.vue";
 import DiceRoll from "../DiceRoll.vue";
@@ -1383,10 +1384,18 @@ const logCardView = ref(null);
 const surrenderOpen = ref(false);
 
 const players = ["p1", "p2"];
-const allDecks = computed(() => [...testDecks, ...savedDecks.value]);
+const allDecks = computed(() => [
+  ...testDecks,
+  ...customDecks,
+  ...savedDecks.value,
+]);
 const deckSource = ref({ p1: "base", p2: "base" });
 const decksFor = (player) =>
-  deckSource.value[player] === "draft" ? savedDecks.value : testDecks;
+  deckSource.value[player] === "draft"
+    ? savedDecks.value
+    : deckSource.value[player] === "custom"
+      ? customDecks
+      : testDecks;
 const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
 

@@ -58,7 +58,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
-import { packDraftHeroes } from "../packDraftData";
+import { everyHero } from "../packDraftData";
 
 const props = defineProps({
   card: {
@@ -95,7 +95,7 @@ const { t, lang } = useDraftState();
 const ownerLabel = computed(() => {
   if (props.card.kind === "sidekick") return props.card.sidekick;
   if (props.card.kind === "any") return t("packOwnerAny");
-  return packDraftHeroes.find((hero) => hero.id === props.card.heroId)?.name;
+  return everyHero.find((hero) => hero.id === props.card.heroId)?.name;
 });
 
 const text = computed(

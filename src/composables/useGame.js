@@ -1211,6 +1211,26 @@ const api = {
   handSize: (player) => pl(player).hand.length,
   handOf: (player) => [...pl(player).hand],
   discardOf: (player) => [...pl(player).discard],
+  deckOf: (player) => [...pl(player).deck],
+  searchDeck: (player, id) => {
+    const target = pl(player);
+    const index = target.deck.indexOf(id);
+    if (index !== -1) {
+      target.deck.splice(index, 1);
+      target.hand.push(id);
+      log("logAddToHand", { player, card: getCard(id).name, cardId: id });
+    }
+    target.deck = shuffle(target.deck);
+    log("logShuffleDeck", { player });
+  },
+  discardTop: (player, count) => {
+    const target = pl(player);
+    for (let i = 0; i < count && target.deck.length; i++) {
+      const id = target.deck.shift();
+      target.discard.push(id);
+      log("logDiscard", { player, card: getCard(id).name, cardId: id });
+    }
+  },
   actionsLeft: regularActions,
   movedThisTurn: (player, fighter = cur[player]) => {
     const start = game.turnStarts?.[player]?.[fighter];
@@ -2179,6 +2199,19 @@ function* attack(me) {
       }
       endAnnounce();
     }
+  }
+
+  if (
+    game.phase === "play" &&
+    hero(me).id === "agent-venom" &&
+    combat.fighters[me] === "hero" &&
+    combat.cards[foe] &&
+    pl(foe).discard.some((id) => getCard(id).key === combat.cards[foe].key)
+  ) {
+    activeCard = hero(me).passive.name;
+    log("logSymbioticBond", { player: me, card: combat.cards[foe].name });
+    heal(me, 2, "hero");
+    activeCard = null;
   }
 
   if (game.phase === "play" && hero(me).id === "robin-hood") {
