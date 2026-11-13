@@ -249,6 +249,124 @@ export const cardEffects = {
     },
   },
 
+  "scare-tactics": {
+    *after(c) {
+      const ok = yield c.g.askConfirm(c.me, "promptScareTactics");
+      if (!ok) return;
+      c.g.damage(c.me, 2);
+      c.g.discardRandom(c.foe, 1);
+    },
+  },
+
+  savage: {
+    *after(c) {
+      const ok = yield c.g.askConfirm(c.me, "promptSavage");
+      if (!ok) return;
+      c.g.damage(c.me, 2);
+      yield* c.g.walk(c.me, c.me, 3, "promptMoveSpace", { fighter: "hero" });
+    },
+  },
+
+  "good-enough-for-us": {
+    *after(c) {
+      const ok = yield c.g.askConfirm(c.me, "promptGoodEnough");
+      if (!ok) return;
+      c.g.draw(c.me, 2);
+      c.g.damage(c.me, 2);
+    },
+  },
+
+  "multi-gun": {
+    *after(c) {
+      const all = [
+        { value: "move", label: "gameVenomMove" },
+        { value: "damage", label: "gameVenomDamage" },
+        { value: "draw", label: "gameVenomDraw" },
+      ];
+      const first = yield c.g.askChoice(c.me, "promptVenomFirst", all);
+      const second = yield c.g.askChoice(
+        c.me,
+        "promptVenomSecond",
+        all.filter((item) => item.value !== first),
+      );
+      const picked = [first, second];
+      if (picked.includes("move")) {
+        yield* c.g.walk(c.me, c.me, 1, "promptMoveSpace", { fighter: "hero" });
+      }
+      if (picked.includes("damage") && c.g.adjacent(c.me, c.foe)) {
+        c.g.damage(c.foe, 1);
+      }
+      if (picked.includes("draw")) c.g.draw(c.me, 1);
+    },
+  },
+
+  "spider-sense-tingling": {
+    *after(c) {
+      if ((c.combat.values[c.foe] ?? 0) >= 4) c.g.draw(c.me, 2);
+    },
+  },
+
+  "a-totally-sane-thing-to-do": {
+    *after(c) {
+      const ok = yield c.g.askConfirm(c.me, "promptTotallySane");
+      if (!ok) return;
+      c.g.damage(c.me, 2);
+      c.g.damage(c.foe, 2);
+    },
+  },
+
+  "grasping-tendrils": {
+    *immediate(c) {
+      c.g.pin(c.foe);
+    },
+    *after(c) {
+      if (c.g.isTurnOf(c.me)) c.g.gainAction(1);
+    },
+  },
+
+  "locked-and-loaded": {
+    *after(c) {
+      const deck = c.g.deckOf(c.me);
+      if (!deck.length) return;
+      const ids = yield c.g.askCards(c.me, "promptSearchDeck", deck, {
+        min: 0,
+        max: 1,
+      });
+      if (ids.length) c.g.searchDeck(c.me, ids[0]);
+      else c.g.shuffleDeck(c.me);
+    },
+  },
+
+  "lethal-protector": {
+    *after(c) {
+      if ((c.combat.taken[c.me] ?? 0) >= 2) c.g.discardTop(c.foe, 2);
+    },
+  },
+
+  "improvise-to-neutralise": {
+    *scheme(c) {
+      const hand = c.g.handOf(c.foe);
+      const count = Math.min(2, hand.length);
+      if (count) {
+        const ids = yield c.g.askCards(c.foe, "promptDiscardTwo", hand, {
+          min: count,
+          max: count,
+        });
+        for (const id of ids) c.g.discardFromHand(c.foe, id);
+      }
+      const pile = c.g.discardOf(c.foe);
+      const back = Math.min(2, pile.length);
+      if (back) {
+        const ids = yield c.g.askCards(c.me, "promptShuffleBack", pile, {
+          min: back,
+          max: back,
+        });
+        c.g.shuffleIntoDeck(c.foe, ids);
+      }
+      if (c.g.handSize(c.foe) >= 2) c.g.gainAction(1);
+    },
+  },
+
   "complete-the-mission": {
     canBoost: () => true,
     *after(c) {

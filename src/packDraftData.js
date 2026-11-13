@@ -13,6 +13,8 @@ import {
   raptorsCards,
 } from "./packDraftCards.js";
 
+import { customHeroes } from "./customHeroes.js";
+
 export const PACK_DRAFT_CONFIG = {
   packSize: 12,
   packCount: 10,
@@ -486,6 +488,24 @@ const CARD_IMAGES = {
   },
 };
 
+CARD_IMAGES["agent-venom"] = {
+  dir: "Agent Venom",
+  cover: false,
+  files: {
+    scare_tactics: "attack",
+    savage: "attack",
+    good_enough_for_us: "versatile",
+    multi_gun: "versatile",
+    spider_sense_tingling: "versatile",
+    a_totally_sane_thing_to_do: "versatile",
+    grasping_tendrils: "versatile",
+    locked_and_loaded: "versatile",
+    complete_the_mission: "defense",
+    lethal_protector: "defense",
+    improvise_to_neutralise: "scheme",
+  },
+};
+
 const CARD_IMAGE_ALIASES = {
   "tomoe-gozen": { "confront any demon or god": "demon" },
   blackbeard: { "queen anne's revenge": "queen_annes_revenge" },
@@ -508,8 +528,6 @@ function cardImage(hero, name) {
   };
 }
 
-// cover: false - без обкладинки, рядок - власний шлях до картинки (наприклад,
-// "images/raptors.webp"), інакше images/cards/<dir>/cover.webp.
 export function coverImage(heroId) {
   const entry = CARD_IMAGES[heroId];
   if (!entry || entry.cover === false) return null;
@@ -547,4 +565,10 @@ function expandDeck(hero) {
 
 export function buildAllCards() {
   return packDraftHeroes.flatMap(expandDeck);
+}
+
+export const everyHero = [...packDraftHeroes, ...customHeroes];
+
+export function buildCustomCards() {
+  return customHeroes.flatMap(expandDeck);
 }

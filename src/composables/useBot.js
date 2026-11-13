@@ -882,6 +882,20 @@ export function useBot() {
         ).id,
       ];
     }
+    if (title === "promptSearchDeck") {
+      const guards = handOf(bot).filter(isDefenseCard).length;
+      const wanted = guards
+        ? options.filter(isAttackCard)
+        : options.filter(isDefenseCard);
+      const pool = wanted.length ? wanted : options;
+      return [pool.reduce((a, b) => (cardPower(b) > cardPower(a) ? b : a)).id];
+    }
+    if (title === "promptShuffleBack") {
+      return [...options]
+        .sort((a, b) => cardPower(a) - cardPower(b))
+        .slice(0, prompt.min ?? 1)
+        .map((card) => card.id);
+    }
     const min = prompt.min ?? 0;
     if (!min) return [];
     const discard = /Discard|Bottom|Sacrifice/i.test(title);
@@ -897,12 +911,27 @@ export function useBot() {
     return ranked.slice(0, min).map((card) => card.id);
   };
 
+  const myHp = (bot) => game.players[bot].hp;
+  const foeLead = (bot) =>
+    fightersOf(other(bot)).find((fighter) => fighter.isHero);
+
   const answerConfirm = (prompt, bot) => {
     const hand = handOf(bot).length;
     switch (prompt.title) {
       case "promptSwap":
       case "promptSmokeSwap":
         return false;
+      case "promptScareTactics":
+        return myHp(bot) > 5 && handOf(other(bot)).length > 0;
+      case "promptSavage":
+        return myHp(bot) > 8;
+      case "promptGoodEnough":
+        return hand <= 4 && myHp(bot) > 5;
+      case "promptTotallySane": {
+        const foeHp = foeLead(bot)?.hp ?? 99;
+        const mine = myHp(bot);
+        return (foeHp <= 2 && mine > 2) || (mine > 6 && mine > foeHp + 1);
+      }
       case "promptDrawUp":
         return hand < 5;
       case "promptFiveAgainst":
@@ -930,6 +959,15 @@ export function useBot() {
         return has("mine") ? "mine" : has("me") ? "me" : values[0];
       case "promptShrinkChoice":
         return hand >= 4 && has("discard") ? "discard" : "move";
+      case "promptVenomFirst":
+      case "promptVenomSecond": {
+        const near = fightersOf(other(bot)).some((foe) =>
+          fightersOf(bot).some((me) => linked(me.space, foe.space)),
+        );
+        if (has("draw") && hand < 5) return "draw";
+        if (has("damage") && near) return "damage";
+        return has("draw") ? "draw" : has("move") ? "move" : values[0];
+      }
       case "promptSchemeSource":
         return has("card") ? "card" : values[0];
       default:

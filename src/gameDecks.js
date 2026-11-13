@@ -1,11 +1,12 @@
-import { buildAllCards, packDraftHeroes } from "./packDraftData.js";
+import { buildAllCards, buildCustomCards, everyHero } from "./packDraftData.js";
+import { customHeroes } from "./customHeroes.js";
 
-const allCards = buildAllCards();
+const allCards = [...buildAllCards(), ...buildCustomCards()];
 const cardById = new Map(allCards.map((card) => [card.id, card]));
 
 export const getCard = (id) => cardById.get(id);
 
-export const getHero = (id) => packDraftHeroes.find((hero) => hero.id === id);
+export const getHero = (id) => everyHero.find((hero) => hero.id === id);
 
 function mulberry32(seed) {
   let state = seed >>> 0;
@@ -127,3 +128,13 @@ function buildTestDecks() {
 }
 
 export const testDecks = buildTestDecks();
+
+export const customDecks = customHeroes.map((hero) => ({
+  id: `custom-${hero.id}`,
+  name: hero.name,
+  heroId: hero.id,
+  cardIds: allCards
+    .filter((card) => card.heroId === hero.id)
+    .map((card) => card.id),
+  isCustom: true,
+}));

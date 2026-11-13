@@ -23,7 +23,7 @@
     <div class="bot-editor-heroes">
       <span class="bot-editor-label">{{ t("botEdHeroes") }}</span>
       <button
-        v-for="item in packDraftHeroes"
+        v-for="item in everyHero"
         :key="item.id"
         class="btn btn-sm"
         :class="item.id === heroId ? 'btn-info' : 'btn-outline-light'"
@@ -235,7 +235,11 @@ import {
   loadBotData,
   typeDefaults,
 } from "../../botData";
-import { buildAllCards, packDraftHeroes } from "../../packDraftData";
+import {
+  buildAllCards,
+  buildCustomCards,
+  everyHero,
+} from "../../packDraftData";
 import { BOT_STYLES } from "../../botStyles";
 import { botProfiles } from "../../botProfiles";
 
@@ -243,20 +247,20 @@ const { t } = useDraftState();
 
 const types = Object.keys(typeDefaults);
 const data = reactive(loadBotData());
-const heroId = ref(packDraftHeroes[0].id);
+const heroId = ref(everyHero[0].id);
 const copied = ref(false);
 const importText = ref("");
 const importError = ref(false);
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
-const hero = computed(() => packDraftHeroes.find((h) => h.id === heroId.value));
+const hero = computed(() => everyHero.find((h) => h.id === heroId.value));
 const heroSettings = computed(() => data.heroes[heroId.value] || {});
 const kid = computed(() => ({
   ...kidDefaults,
   ...(data.sidekicks[heroId.value] || {}),
 }));
 
-const allCards = buildAllCards();
+const allCards = [...buildAllCards(), ...buildCustomCards()];
 const cards = computed(() => {
   const seen = new Map();
   for (const card of allCards) {

@@ -66,6 +66,24 @@ export const gameLogText = {
     promptAttackWith: "Choose which fighter attacks",
     promptAttackTarget: "Choose which fighter to attack",
     promptBlindBoost: "Blind boost: discard the top card of your deck?",
+    promptScareTactics:
+      "Scare Tactics: deal 2 damage to Agent Venom to make the opponent discard a random card?",
+    promptSavage:
+      "Savage: deal 2 damage to Agent Venom to move him up to 3 spaces?",
+    promptGoodEnough: "Good Enough for Us: draw 2 cards and take 2 damage?",
+    promptTotallySane:
+      "A Totally Sane Thing to Do: deal 2 damage to both fighters?",
+    promptVenomFirst: "Multi-Gun: choose the first effect",
+    promptVenomSecond: "Multi-Gun: choose a different second effect",
+    gameVenomMove: "Move Agent Venom up to 1 space",
+    gameVenomDamage: "Deal 1 damage to an adjacent fighter",
+    gameVenomDraw: "Draw 1 card",
+    promptSearchDeck: "Search your deck: choose a card to add to your hand",
+    promptDiscardTwo: "Discard cards",
+    promptShuffleBack:
+      "Choose cards from the discard pile to shuffle back into the deck",
+    logSymbioticBond:
+      "Symbiotic Bond: {player} recovers 2 health (copy of {card} in the discard pile)",
     promptDarkPact:
       "Dark Pact: take 1 damage, put the card on the bottom of the deck and draw 1?",
     promptWindsStrange: "Place Dr. Strange in a starting space",
@@ -239,6 +257,24 @@ export const gameLogText = {
     promptAttackWith: "Оберіть, який боєць атакує",
     promptAttackTarget: "Оберіть, якого бійця атакувати",
     promptBlindBoost: "Сліпий буст: скинути верхню карту колоди?",
+    promptScareTactics:
+      "Scare Tactics: завдати 2 шкоди Agent Venom, щоб супротивник скинув випадкову карту?",
+    promptSavage:
+      "Savage: завдати 2 шкоди Agent Venom, щоб перемістити його на відстань до 3 клітинок?",
+    promptGoodEnough: "Good Enough for Us: взяти 2 карти й отримати 2 шкоди?",
+    promptTotallySane:
+      "A Totally Sane Thing to Do: завдати 2 шкоди обом бійцям?",
+    promptVenomFirst: "Multi-Gun: оберіть перший ефект",
+    promptVenomSecond: "Multi-Gun: оберіть другий, інший ефект",
+    gameVenomMove: "Перемістити Agent Venom на відстань до 1 клітинки",
+    gameVenomDamage: "Завдати 1 шкоди сусідньому бійцю",
+    gameVenomDraw: "Взяти 1 карту",
+    promptSearchDeck: "Пошук у колоді: оберіть карту, щоб додати її до руки",
+    promptDiscardTwo: "Скиньте карти",
+    promptShuffleBack:
+      "Оберіть карти зі скиду, щоб перетасувати їх назад у колоду",
+    logSymbioticBond:
+      "Symbiotic Bond: {player} відновлює 2 здоров'я (копія {card} у скиді)",
     promptDarkPact:
       "Темний договір: отримати 1 шкоди, покласти карту на низ колоди та взяти 1 карту?",
     promptWindsStrange: "Поставте Dr. Strange на стартову клітинку",
