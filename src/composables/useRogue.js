@@ -13,6 +13,7 @@ import {
   START_GOLD,
   cardPrice,
   events,
+  heroEvents,
   removePrice,
   themes,
 } from "../rogueData.js";
@@ -73,6 +74,19 @@ function load() {
   }
   return emptyRun();
 }
+
+const HISTORY_KEY = "unmatched-rogue-history";
+
+function loadHistory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(HISTORY_KEY));
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+
+const history = reactive(loadHistory());
 
 const run = reactive(load());
 
@@ -205,6 +219,27 @@ export function useRogue() {
     return nodeById(run.pos)?.next || [];
   };
 
+  function endRun(victory) {
+    run.victory = victory;
+    run.best = Math.max(run.best, run.wins);
+    run.phase = "over";
+    if (run.heroId) {
+      history.unshift({
+        hero: run.heroId,
+        wins: run.wins,
+        victory,
+        deck: run.deck.length,
+        date: Date.now(),
+      });
+      history.splice(30);
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch {
+        return;
+      }
+    }
+  }
+
   function startRun() {
     const best = run.best;
     Object.assign(run, emptyRun(), { best });
@@ -240,7 +275,6 @@ export function useRogue() {
       run.visited.push(run.node);
     }
     run.pos = run.node;
-    const node = nodeById(run.node);
     run.enemy = null;
     run.rewards = [];
     run.packs = [];
@@ -248,13 +282,7 @@ export function useRogue() {
     run.shop = null;
     run.event = null;
     run.rest = null;
-    if (node && node.type === "boss") {
-      run.victory = true;
-      run.best = Math.max(run.best, run.wins);
-      run.phase = "over";
-    } else {
-      run.phase = "map";
-    }
+    run.phase = "map";
     save();
   }
 
@@ -273,8 +301,7 @@ export function useRogue() {
       makeShop();
       run.phase = "shop";
     } else {
-      const pick = events[Math.floor(Math.random() * events.length)];
-      run.event = { id: pick.id, step: "choose", result: null, options: [] };
+      startEvent();
       run.phase = "event";
     }
     save();
@@ -315,9 +342,7 @@ export function useRogue() {
         run.wins += 1;
         run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
         if (kind === "boss") {
-          run.best = Math.max(run.best, run.wins);
-          run.victory = true;
-          run.phase = "over";
+          endRun(true);
         } else if (kind === "fight") {
           makeRewards();
           run.phase = "reward";
@@ -326,8 +351,7 @@ export function useRogue() {
           run.phase = "packs";
         }
       } else {
-        run.best = Math.max(run.best, run.wins);
-        run.phase = "over";
+        endRun(false);
       }
       save();
       return;
@@ -402,41 +426,93 @@ export function useRogue() {
     if (run.shop) run.shop.picking = false;
   }
 
+  const eventData = () => {
+    if (!run.event) return null;
+    const list = run.event.hero ? heroEvents : events;
+    return list.find((item) => item.id === run.event.id) || null;
+  };
+
+  function startEvent() {
+    const heroChance = Math.random() < 0.4;
+    const list = heroChance ? heroEvents : events;
+    const total = list.reduce((sum, item) => sum + (item.weight || 1), 0);
+    let roll = Math.random() * total;
+    const pick = list.find((item) => (roll -= item.weight || 1) < 0) || list[0];
+    const others = packDraftHeroes.filter((hero) => hero.id !== run.heroId);
+    run.event = {
+      id: pick.id,
+      hero: heroChance
+        ? others[Math.floor(Math.random() * others.length)].id
+        : null,
+      step: "choose",
+      result: null,
+      options: [],
+      cards: [],
+      gold: 0,
+      removed: null,
+    };
+  }
+
+  function eventCardFor(kind) {
+    const keys = ownedKeys();
+    const fresh = uniqueByKey(freshPool()).filter(
+      (card) => !keys.has(card.key),
+    );
+    const own = fresh.filter((card) => card.heroId === run.heroId);
+    const ally = fresh.filter((card) => card.heroId === run.event.hero);
+    const pool = kind === "own" ? own : kind === "ally" ? ally : fresh;
+    const [card] = pickMany(pool.length ? pool : fresh, 1);
+    return card || null;
+  }
+
+  function applyOutcome(outcome) {
+    const before = run.gold;
+    run.gold = Math.max(0, run.gold + (outcome.gold || 0));
+    run.event.gold += run.gold - before;
+    if (outcome.card) {
+      const card = eventCardFor(outcome.card);
+      if (card) {
+        run.deck.push(card.id);
+        run.event.cards.push(card.id);
+      }
+    }
+    run.event.result = outcome.text || { en: "", ua: "" };
+    run.event.step = "result";
+  }
+
   function chooseEvent(index) {
     if (run.phase !== "event" || run.event.step !== "choose") return;
-    const data = events.find((item) => item.id === run.event.id);
-    const choice = data.choices[index];
+    const choice = eventData()?.choices[index];
     if (!choice || run.gold < (choice.cost || 0)) return;
-    if (choice.effect.remove && run.deck.length <= MIN_DECK) return;
+    if (choice.remove && run.deck.length <= MIN_DECK) return;
+    const before = run.gold;
     run.gold -= choice.cost || 0;
-    const effect = choice.effect;
-    if (effect.gold) run.gold += effect.gold;
-    if (effect.gamble) {
-      const won = Math.random() < 0.5;
-      if (won) run.gold += effect.gamble;
-      run.event.result = won
-        ? { en: "You win.", ua: "Ти виграв." }
-        : { en: "You lose the bet.", ua: "Ставка програна." };
-      run.event.step = "result";
-    } else if (effect.card) {
-      const [card] = pickMany(eventPool(), 1);
-      if (card) run.deck.push(card.id);
-      run.event.cards = card ? [card.id] : [];
-      run.event.result = choice.result;
-      run.event.step = "result";
-    } else if (effect.pick) {
-      run.event.options = pickMany(eventPool(), effect.pick).map(
+    run.event.gold -= before - run.gold;
+    run.event.choice = index;
+    if (choice.outcomes) {
+      const total = choice.outcomes.reduce((sum, item) => sum + item.w, 0);
+      let roll = Math.random() * total;
+      const outcome =
+        choice.outcomes.find((item) => (roll -= item.w) < 0) ||
+        choice.outcomes[0];
+      applyOutcome(outcome);
+    } else if (choice.pick || choice.pickAlly) {
+      const kind = choice.pickAlly ? "ally" : "any";
+      const count = choice.pick || choice.pickAlly;
+      const keys = ownedKeys();
+      const fresh = uniqueByKey(freshPool()).filter(
+        (card) => !keys.has(card.key),
+      );
+      const pool =
+        kind === "ally"
+          ? fresh.filter((card) => card.heroId === run.event.hero)
+          : fresh;
+      run.event.options = pickMany(pool.length ? pool : fresh, count).map(
         (card) => card.id,
       );
       run.event.step = "pickCard";
-    } else if (effect.remove && run.deck.length > MIN_DECK) {
+    } else if (choice.remove) {
       run.event.step = "pickRemove";
-    } else {
-      run.event.result = choice.result || {
-        en: "Nothing happens.",
-        ua: "Нічого не відбувається.",
-      };
-      run.event.step = "result";
     }
     save();
   }
@@ -444,15 +520,24 @@ export function useRogue() {
   function eventPick(cardId) {
     if (run.phase !== "event") return;
     const step = run.event.step;
+    const choice = eventData()?.choices[run.event.choice];
     if (step === "pickCard" && run.event.options.includes(cardId)) {
       run.deck.push(cardId);
       run.event.cards = [cardId];
+      run.event.result = {
+        en: "You take the card.",
+        ua: "Ти береш карту.",
+      };
     } else if (step === "pickRemove") {
       removeCard(cardId);
+      run.event.removed = cardId;
+      const before = run.gold;
+      run.gold += choice?.gold || 0;
+      run.event.gold += run.gold - before;
+      run.event.result = choice?.text || { en: "Done.", ua: "Готово." };
     } else {
       return;
     }
-    run.event.result = { en: "Done.", ua: "Готово." };
     run.event.step = "result";
     save();
   }
@@ -469,8 +554,7 @@ export function useRogue() {
   }
 
   function abandon() {
-    run.best = Math.max(run.best, run.wins);
-    run.phase = "over";
+    endRun(false);
     save();
   }
 
@@ -482,6 +566,8 @@ export function useRogue() {
 
   return {
     run,
+    history,
+    eventData,
     heroCards,
     getCard,
     reachable,

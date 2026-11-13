@@ -7,8 +7,20 @@
       :disabled="locked"
       @click="emit('open', pack.id)"
     >
+      <span class="rpack-art">
+        <img
+          v-for="(src, index) in arts"
+          :key="index"
+          :src="src"
+          alt=""
+          @error="$event.target.style.visibility = 'hidden'"
+        />
+      </span>
+      <span class="rpack-tint"></span>
       <span class="rpack-shine"></span>
-      <span class="rpack-icon">{{ theme.icon }}</span>
+      <span class="rpack-medal">
+        <RogueIcon :name="theme.icon" metal="gold" size="46px" />
+      </span>
       <span class="rpack-name">{{ theme.name[lang] }}</span>
       <span class="rpack-count">{{ t("roguePackCards") }}</span>
       <span class="rpack-open">{{ t("roguePackOpen") }}</span>
@@ -32,9 +44,10 @@ import {
 } from "vue";
 import gsap from "gsap";
 import { useDraftState } from "../composables/useDraftState";
-import { getCard } from "../gameDecks";
+import { getCard, getHero } from "../gameDecks";
 import { themes } from "../rogueData";
 import PackCard from "./PackCard.vue";
+import RogueIcon from "./RogueIcon.vue";
 
 const props = defineProps({
   pack: { type: Object, required: true },
@@ -50,6 +63,12 @@ const root = ref(null);
 let context = null;
 
 const theme = computed(() => themes.find((item) => item.id === props.pack.id));
+const arts = computed(() =>
+  props.pack.cards
+    .map((id) => getHero(getCard(id)?.heroId)?.image)
+    .filter(Boolean)
+    .map((path) => `${import.meta.env.BASE_URL}${path}`),
+);
 const cards = computed(() => props.pack.cards.map(getCard).filter(Boolean));
 
 function idle() {
@@ -137,6 +156,7 @@ onBeforeUnmount(() => context?.revert());
 .rpack-wrap {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   width: 190px;
   height: 270px;
   display: flex;
@@ -213,12 +233,52 @@ onBeforeUnmount(() => context?.revert());
   pointer-events: none;
 }
 
-.rpack-icon {
-  font-size: 64px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+.rpack-art {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.rpack-art img {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: saturate(0.8) contrast(1.1);
+}
+
+.rpack-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.85) 100%),
+    linear-gradient(155deg, var(--a), var(--b));
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+
+.rpack-medal {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  margin-top: -40px;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 40%, #2b241b 0 55%, #0e0b08 100%) padding-box,
+    linear-gradient(150deg, #fff3b0, #d9a520 45%, #7a5208 75%, #f7dc7a)
+      border-box;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.9),
+    0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
 .rpack-name {
+  position: relative;
   font-size: 1.15rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -228,12 +288,14 @@ onBeforeUnmount(() => context?.revert());
 }
 
 .rpack-count {
+  position: relative;
   font-size: 0.8rem;
   font-weight: 700;
   opacity: 0.9;
 }
 
 .rpack-open {
+  position: relative;
   margin-top: 8px;
   padding: 3px 12px;
   border-radius: 999px;

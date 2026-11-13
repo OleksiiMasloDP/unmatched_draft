@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="rmap">
+  <div ref="root" class="rmap" :class="{ 'is-wide': wide }">
     <div class="rmap-frame">
       <svg
         class="rmap-svg"
@@ -7,12 +7,18 @@
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <linearGradient id="rmap-sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#2a0d18" />
-            <stop offset="0.28" stop-color="#2b1a2e" />
-            <stop offset="0.5" stop-color="#1d2433" />
-            <stop offset="0.75" stop-color="#16301f" />
-            <stop offset="1" stop-color="#0d1f14" />
+          <linearGradient
+            id="rmap-sky"
+            :x1="0"
+            :y1="wide ? 0 : 1"
+            :x2="wide ? 1 : 0"
+            :y2="0"
+          >
+            <stop offset="0" stop-color="#0d1f14" />
+            <stop offset="0.3" stop-color="#16301f" />
+            <stop offset="0.55" stop-color="#1d2433" />
+            <stop offset="0.8" stop-color="#2b1a2e" />
+            <stop offset="1" stop-color="#2a0d18" />
           </linearGradient>
           <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
             <stop offset="0.6" stop-color="#000" stop-opacity="0" />
@@ -28,8 +34,8 @@
             :key="zone.id"
             x1="0"
             y1="0"
-            x2="0"
-            y2="1"
+            :x2="wide ? 1 : 0"
+            :y2="wide ? 0 : 1"
           >
             <stop offset="0" :stop-color="zone.tint" stop-opacity="0" />
             <stop offset="0.5" :stop-color="zone.tint" stop-opacity="0.22" />
@@ -47,24 +53,17 @@
         </defs>
         <rect :width="W" :height="H" fill="url(#rmap-sky)" />
         <circle
-          :cx="W / 2"
-          :cy="60"
+          :cx="bossSpot.x"
+          :cy="bossSpot.y"
           r="190"
           fill="url(#rmap-glow)"
           class="rmap-bossglow"
         />
         <g v-for="item in scenery" :key="item.key" :opacity="item.opacity">
-          <polygon
-            v-if="item.kind === 'mountain'"
-            :points="item.points"
-            :fill="item.fill"
-          />
-          <polygon
-            v-if="item.kind === 'mountain'"
-            :points="item.cap"
-            fill="#c9d3e0"
-            opacity="0.55"
-          />
+          <g v-if="item.kind === 'mountain'">
+            <polygon :points="item.points" :fill="item.fill" />
+            <polygon :points="item.cap" fill="#c9d3e0" opacity="0.55" />
+          </g>
           <g v-else-if="item.kind === 'pine'" :fill="item.fill">
             <polygon :points="item.points" />
             <polygon :points="item.points2" />
@@ -94,13 +93,17 @@
         </g>
         <g v-for="zone in zones" :key="zone.id">
           <rect
-            :x="0"
+            :x="zone.x"
             :y="zone.y"
-            :width="W"
+            :width="zone.w"
             :height="zone.h"
             :fill="`url(#rmap-zone-${zone.id})`"
           />
-          <text :x="22" :y="zone.y + 26" class="rmap-zone">
+          <text
+            :x="zone.x + 18"
+            :y="wide ? H - 16 : zone.y + 26"
+            class="rmap-zone"
+          >
             {{ labels[zone.id] || "" }}
           </text>
         </g>
@@ -131,31 +134,36 @@
         v-for="node in nodes"
         :key="node.id"
         class="rmap-node"
-        :class="{
-          'is-live': node.live,
-          'is-visited': node.visited,
-          'is-current': node.current,
-          'is-locked': !node.live && !node.visited,
-          'is-boss': node.type === 'boss',
-        }"
+        :class="[
+          'm-' + node.metal,
+          {
+            'is-live': node.live,
+            'is-visited': node.visited,
+            'is-current': node.current,
+            'is-locked': !node.live && !node.visited,
+            'is-boss': node.type === 'boss',
+          },
+        ]"
         :style="{
           left: node.left + '%',
           top: node.top + '%',
           '--c': node.color,
-          '--tilt': node.tilt + 'deg',
         }"
         :disabled="!node.live"
         @click="emit('enter', node.id)"
       >
-        <span class="rmap-plate">
-          <span class="rmap-icon">{{ node.icon }}</span>
+        <span class="rmap-medal">
+          <RogueIcon
+            :name="node.icon"
+            :metal="node.metal"
+            :size="node.type === 'boss' ? '38px' : '28px'"
+          />
           <span v-if="node.visited" class="rmap-seal">✔</span>
         </span>
         <span class="rmap-label">{{ node.label }}</span>
       </button>
       <div
         v-if="heroImage"
-        ref="token"
         class="rmap-token"
         :style="{ left: tokenSpot.left + '%', top: tokenSpot.top + '%' }"
       >
@@ -176,6 +184,7 @@ import {
 } from "vue";
 import gsap from "gsap";
 import { nodeTypes } from "../rogueData";
+import RogueIcon from "./RogueIcon.vue";
 
 const props = defineProps({
   map: { type: Array, required: true },
@@ -188,18 +197,29 @@ const props = defineProps({
 
 const emit = defineEmits(["enter"]);
 
-const W = 600;
-const STEP = 112;
-const TOP = 96;
-const BOTTOM = 96;
-
 const root = ref(null);
-const token = ref(null);
 let context = null;
-let seed = 0;
+let query = null;
+
+const wide = ref(true);
+const onQuery = () => (wide.value = query.matches);
 
 const total = computed(() => props.map.length);
-const H = computed(() => TOP + BOTTOM + (total.value - 1) * STEP);
+
+const WIDE = { step: 112, pad: 86, across: 560 };
+const TALL = { step: 86, pad: 86, across: 640 };
+
+const size = computed(() => (wide.value ? WIDE : TALL));
+const W = computed(() =>
+  wide.value
+    ? size.value.pad * 2 + (total.value - 1) * size.value.step
+    : size.value.across,
+);
+const H = computed(() =>
+  wide.value
+    ? size.value.across
+    : size.value.pad * 2 + (total.value - 1) * size.value.step,
+);
 
 const hash = (text) => {
   let h = 2166136261;
@@ -209,17 +229,30 @@ const hash = (text) => {
   return ((h >>> 0) % 1000) / 1000;
 };
 
+const alongOf = (row) =>
+  wide.value
+    ? size.value.pad + row * size.value.step
+    : H.value - size.value.pad - row * size.value.step;
+
+const point = (along, across) =>
+  wide.value ? { x: along, y: across } : { x: across, y: along };
+
 const spot = (node) => {
-  const jitterX = (hash(node.id + "x") - 0.5) * 26;
-  const jitterY = (hash(node.id + "y") - 0.5) * 20;
-  return {
-    x: node.x * W + jitterX,
-    y: H.value - BOTTOM - node.row * STEP + jitterY,
-  };
+  const jitterA = (hash(node.id + "a") - 0.5) * 18;
+  const jitterB = (hash(node.id + "b") - 0.5) * 22;
+  return point(
+    alongOf(node.row) + jitterA,
+    node.x * size.value.across + jitterB,
+  );
 };
 
 const flat = computed(() => props.map.flat());
 const byId = computed(() => new Map(flat.value.map((node) => [node.id, node])));
+
+const bossSpot = computed(() => {
+  const boss = flat.value.find((node) => node.type === "boss");
+  return boss ? spot(boss) : { x: 0, y: 0 };
+});
 
 const nodes = computed(() =>
   flat.value.map((node) => {
@@ -229,11 +262,11 @@ const nodes = computed(() =>
       id: node.id,
       type: node.type,
       icon: meta.icon,
+      metal: meta.metal,
       color: meta.color,
       label: props.labels[node.type] || "",
-      left: (at.x / W) * 100,
+      left: (at.x / W.value) * 100,
       top: (at.y / H.value) * 100,
-      tilt: Math.round((hash(node.id + "t") - 0.5) * 10),
       live: props.reachable.includes(node.id),
       visited: props.visited.includes(node.id),
       current: props.pos === node.id,
@@ -243,9 +276,20 @@ const nodes = computed(() =>
 
 const tokenSpot = computed(() => {
   const node = props.pos ? byId.value.get(props.pos) : null;
-  if (!node) return { left: 50, top: ((H.value - 26) / H.value) * 100 };
+  if (!node) {
+    const start = wide.value
+      ? { x: size.value.pad * 0.4, y: H.value / 2 }
+      : { x: W.value / 2, y: H.value - size.value.pad * 0.35 };
+    return {
+      left: (start.x / W.value) * 100,
+      top: (start.y / H.value) * 100,
+    };
+  }
   const at = spot(node);
-  return { left: (at.x / W) * 100, top: ((at.y - 44) / H.value) * 100 };
+  return {
+    left: (at.x / W.value) * 100,
+    top: ((at.y - 46) / H.value) * 100,
+  };
 });
 
 const edges = computed(() => {
@@ -256,12 +300,12 @@ const edges = computed(() => {
       const other = byId.value.get(target);
       if (!other) continue;
       const to = spot(other);
-      const bend = (hash(node.id + target) - 0.5) * 34;
-      const midX = (from.x + to.x) / 2 + bend;
-      const midY = (from.y + to.y) / 2;
+      const bend = (hash(node.id + target) - 0.5) * 30;
+      const midX = (from.x + to.x) / 2 + (wide.value ? 0 : bend);
+      const midY = (from.y + to.y) / 2 + (wide.value ? bend : 0);
       list.push({
         key: `${node.id}>${target}`,
-        d: `M ${from.x} ${from.y - 14} Q ${midX} ${midY} ${to.x} ${to.y + 14}`,
+        d: `M ${from.x} ${from.y} Q ${midX} ${midY} ${to.x} ${to.y}`,
         walked:
           props.visited.includes(node.id) &&
           (props.visited.includes(target) || props.pos === target),
@@ -274,52 +318,58 @@ const edges = computed(() => {
   return list;
 });
 
+const ZONE_IDS = ["forest", "mountains", "ruins", "citadel"];
+const TINTS = {
+  forest: "#2e7d32",
+  mountains: "#5c6bc0",
+  ruins: "#8d6e63",
+  citadel: "#c62828",
+};
+
 const zones = computed(() => {
-  const ids = ["forest", "mountains", "ruins", "citadel"];
   const rows = total.value;
-  const size = Math.ceil(rows / ids.length);
-  return ids.map((id, i) => {
-    const topRow = Math.min(rows - 1, (i + 1) * size - 1);
-    const bottomRow = i * size;
-    const yTop = H.value - BOTTOM - topRow * STEP - STEP / 2;
-    const yBottom = H.value - BOTTOM - bottomRow * STEP + STEP / 2;
-    return {
-      id,
-      y: Math.max(0, yTop),
-      h: Math.min(H.value, yBottom) - Math.max(0, yTop),
-      tint: {
-        forest: "#2e7d32",
-        mountains: "#5c6bc0",
-        ruins: "#8d6e63",
-        citadel: "#c62828",
-      }[id],
-      bottomRow,
-      topRow,
-    };
+  const each = Math.ceil(rows / ZONE_IDS.length);
+  const half = size.value.step / 2;
+  return ZONE_IDS.map((id, i) => {
+    const first = i * each;
+    const last = Math.min(rows - 1, (i + 1) * each - 1);
+    const a = alongOf(first);
+    const b = alongOf(last);
+    const start = Math.min(a, b) - half;
+    const end = Math.max(a, b) + half;
+    const lo = Math.max(0, start);
+    const hi = Math.min(wide.value ? W.value : H.value, end);
+    return wide.value
+      ? { id, x: lo, y: 0, w: hi - lo, h: H.value, tint: TINTS[id] }
+      : { id, x: 0, y: lo, w: W.value, h: hi - lo, tint: TINTS[id] };
   });
 });
 
 const scenery = computed(() => {
-  seed = 0;
+  let seed = 7;
   const rng = () => {
     seed = (seed * 16807 + 11) % 2147483647;
     return seed / 2147483647;
   };
-  seed = 7;
   const list = [];
   let key = 0;
+  const edge = 78;
   for (const zone of zones.value) {
-    const count = 26;
+    const length = wide.value ? zone.w : zone.h;
+    const count = Math.round(length / 14);
     for (let i = 0; i < count; i += 1) {
-      const left = rng() < 0.5;
-      const x = left ? 8 + rng() * 78 : W - 8 - rng() * 78;
-      const y = zone.y + 14 + rng() * (zone.h - 20);
-      const size = 0.7 + rng() * 0.9;
-      const id = zone.id;
+      const nearStart = rng() < 0.5;
+      const across = nearStart
+        ? 8 + rng() * edge
+        : size.value.across - 8 - rng() * edge;
+      const along = (wide.value ? zone.x : zone.y) + 10 + rng() * (length - 20);
+      const at = point(along, across);
+      const { x, y } = at;
+      const scale = 0.7 + rng() * 0.9;
       key += 1;
-      if (id === "forest") {
-        const w = 18 * size;
-        const h = 30 * size;
+      if (zone.id === "forest") {
+        const w = 18 * scale;
+        const h = 30 * scale;
         list.push({
           key,
           kind: "pine",
@@ -330,9 +380,9 @@ const scenery = computed(() => {
           points: `${x - w},${y} ${x},${y - h} ${x + w},${y}`,
           points2: `${x - w * 0.75},${y - h * 0.45} ${x},${y - h * 1.25} ${x + w * 0.75},${y - h * 0.45}`,
         });
-      } else if (id === "mountains") {
-        const w = 44 * size;
-        const h = 62 * size;
+      } else if (zone.id === "mountains") {
+        const w = 44 * scale;
+        const h = 62 * scale;
         list.push({
           key,
           kind: "mountain",
@@ -341,7 +391,7 @@ const scenery = computed(() => {
           points: `${x - w},${y + 14} ${x},${y - h} ${x + w},${y + 14}`,
           cap: `${x - w * 0.28},${y - h * 0.72} ${x},${y - h} ${x + w * 0.28},${y - h * 0.72} ${x + w * 0.1},${y - h * 0.8} ${x - w * 0.08},${y - h * 0.66}`,
         });
-      } else if (id === "ruins") {
+      } else if (zone.id === "ruins") {
         const w = 8 + rng() * 8;
         const h = 24 + rng() * 40;
         list.push({
@@ -377,8 +427,8 @@ const scenery = computed(() => {
 const fogs = computed(() =>
   Array.from({ length: 9 }, (_, i) => ({
     key: i,
-    x: 60 + ((i * 97) % 480),
-    y: (H.value / 9) * i + 40,
+    x: wide.value ? (W.value / 9) * i + 40 : 60 + ((i * 97) % 480),
+    y: wide.value ? 60 + ((i * 83) % 420) : (H.value / 9) * i + 40,
     rx: 150 + (i % 3) * 40,
     ry: 26,
   })),
@@ -392,11 +442,11 @@ function animate() {
       scale: 0,
       opacity: 0,
       duration: 0.5,
-      stagger: { each: 0.03, from: "start" },
+      stagger: { each: 0.025, from: "start" },
       ease: "back.out(2)",
     });
     gsap.from(".rmap-edge", { opacity: 0, duration: 1, delay: 0.3 });
-    gsap.to(".rmap-node.is-live .rmap-plate", {
+    gsap.to(".rmap-node.is-live .rmap-medal", {
       y: -5,
       repeat: -1,
       yoyo: true,
@@ -431,14 +481,17 @@ function animate() {
       duration: 0.9,
       ease: "sine.inOut",
     });
-    const target = root.value.querySelector(".rmap-node.is-live");
-    const focus = target || root.value.querySelector(".rmap-token");
-    focus?.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (!wide.value) {
+      const focus =
+        root.value.querySelector(".rmap-node.is-live") ||
+        root.value.querySelector(".rmap-token");
+      focus?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
   }, root.value);
 }
 
 watch(
-  () => [props.pos, props.reachable.join()],
+  () => [props.pos, props.reachable.join(), wide.value],
   async () => {
     await nextTick();
     animate();
@@ -446,18 +499,28 @@ watch(
 );
 
 onMounted(async () => {
+  query = window.matchMedia("(min-width: 900px)");
+  wide.value = query.matches;
+  query.addEventListener("change", onQuery);
   await nextTick();
   animate();
 });
 
-onBeforeUnmount(() => context?.revert());
+onBeforeUnmount(() => {
+  context?.revert();
+  query?.removeEventListener("change", onQuery);
+});
 </script>
 
 <style scoped>
 .rmap {
   width: 100%;
-  max-width: 620px;
+  max-width: 640px;
   margin: 0 auto;
+}
+
+.rmap.is-wide {
+  max-width: 1400px;
 }
 
 .rmap-frame {
@@ -486,7 +549,7 @@ onBeforeUnmount(() => context?.revert());
 }
 
 .rmap-edge {
-  stroke: rgba(235, 215, 170, 0.28);
+  stroke: rgba(235, 215, 170, 0.3);
   stroke-width: 2.2;
   stroke-dasharray: 3 9;
 }
@@ -518,41 +581,52 @@ onBeforeUnmount(() => context?.revert());
   cursor: default;
 }
 
-.rmap-plate {
+.rmap-medal {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 56px;
-  border-radius: 7px;
-  background: linear-gradient(160deg, #3a2c1b, #1a120a);
-  border: 2px solid var(--c);
-  transform: rotate(var(--tilt));
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 40%, #2b241b 0 55%, #0e0b08 100%) padding-box,
+    var(--ring) border-box;
+  border: 4px solid transparent;
   box-shadow:
-    inset 0 0 0 2px rgba(0, 0, 0, 0.5),
-    0 4px 10px rgba(0, 0, 0, 0.6);
+    inset 0 0 8px rgba(0, 0, 0, 0.9),
+    0 4px 10px rgba(0, 0, 0, 0.65);
 }
 
-.rmap-icon {
-  font-size: 24px;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.7));
+.m-gold {
+  --ring: linear-gradient(150deg, #fff3b0, #d9a520 45%, #7a5208 75%, #f7dc7a);
 }
 
-.rmap-node.is-locked .rmap-plate {
-  opacity: 0.5;
-  filter: grayscale(0.7) brightness(0.8);
+.m-silver {
+  --ring: linear-gradient(150deg, #ffffff, #b9c2cc 45%, #5b6573 75%, #e3e8ee);
 }
 
-.rmap-node.is-visited .rmap-plate {
-  border-color: #8a6c43;
-  filter: grayscale(0.9) brightness(0.65);
+.m-bronze {
+  --ring: linear-gradient(150deg, #ffd7a8, #c97b3a 45%, #6d3a14 75%, #e6a76a);
+}
+
+.m-ruby {
+  --ring: linear-gradient(150deg, #ffd0d0, #d9393b 45%, #6d0f13 75%, #ff8e8e);
+}
+
+.rmap-node.is-locked .rmap-medal {
+  opacity: 0.55;
+  filter: grayscale(0.6) brightness(0.8);
+}
+
+.rmap-node.is-visited .rmap-medal {
+  filter: grayscale(0.9) brightness(0.6);
 }
 
 .rmap-seal {
   position: absolute;
-  right: -9px;
-  bottom: -9px;
+  right: -8px;
+  bottom: -8px;
   width: 22px;
   height: 22px;
   display: flex;
@@ -570,31 +644,27 @@ onBeforeUnmount(() => context?.revert());
   cursor: pointer;
 }
 
-.rmap-node.is-live .rmap-plate {
+.rmap-node.is-live .rmap-medal {
   box-shadow:
-    inset 0 0 0 2px rgba(0, 0, 0, 0.5),
-    0 0 0 3px rgba(255, 255, 255, 0.12),
-    0 0 22px var(--c);
+    inset 0 0 8px rgba(0, 0, 0, 0.9),
+    0 0 0 3px rgba(255, 255, 255, 0.14),
+    0 0 24px var(--c);
 }
 
-.rmap-node.is-live:hover .rmap-plate {
+.rmap-node.is-live:hover .rmap-medal {
   filter: brightness(1.25);
 }
 
-.rmap-node.is-boss .rmap-plate {
-  width: 72px;
-  height: 92px;
-  border-width: 3px;
-}
-
-.rmap-node.is-boss .rmap-icon {
-  font-size: 40px;
+.rmap-node.is-boss .rmap-medal {
+  width: 84px;
+  height: 84px;
+  border-width: 5px;
 }
 
 .rmap-label {
   padding: 1px 6px;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 1.2px;
@@ -610,6 +680,7 @@ onBeforeUnmount(() => context?.revert());
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
+  z-index: 3;
   transition:
     left 0.9s ease,
     top 0.9s ease;
@@ -628,18 +699,20 @@ onBeforeUnmount(() => context?.revert());
 }
 
 @media (max-width: 560px) {
-  .rmap-plate {
-    width: 36px;
-    height: 46px;
+  .rmap-medal {
+    width: 42px;
+    height: 42px;
+    border-width: 3px;
   }
 
-  .rmap-icon {
-    font-size: 19px;
+  .rmap-node.is-boss .rmap-medal {
+    width: 62px;
+    height: 62px;
   }
 
-  .rmap-node.is-boss .rmap-plate {
-    width: 56px;
-    height: 72px;
+  .rmap-label {
+    font-size: 8px;
+    letter-spacing: 0.6px;
   }
 }
 </style>

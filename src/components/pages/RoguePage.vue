@@ -5,13 +5,20 @@
       <div class="rogue-title-row">
         <h1 class="page-main-title">{{ t("rogueTitle") }}</h1>
         <span class="rogue-beta">{{ t("rogueBeta") }}</span>
-        <span v-if="run.best" class="rogue-best">
-          {{ t("rogueBest") }}: {{ run.best }} {{ t("rogueWinsShort") }}
-        </span>
+        <button
+          v-if="history.length"
+          class="rogue-bestbtn"
+          @click="historyOpen = true"
+        >
+          🏆 {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
+        </button>
         <span v-if="inRun" class="rogue-gold">💰 {{ run.gold }}</span>
       </div>
 
-      <div v-if="run.phase !== 'idle'" class="rogue-steps">
+      <div
+        v-if="run.phase === 'hero' || run.phase === 'deck'"
+        class="rogue-steps"
+      >
         <span
           class="rogue-step"
           :class="{ active: step === 1, done: step > 1 }"
@@ -298,9 +305,17 @@
 
       <section v-else-if="run.phase === 'event' && eventData">
         <div class="rogue-event rogue-anim">
-          <div class="rogue-event-icon">{{ eventData.icon }}</div>
-          <h2 class="rogue-subtitle">{{ eventData.title[lang] }}</h2>
-          <p>{{ eventData.text[lang] }}</p>
+          <div class="rogue-event-icon">
+            <img
+              v-if="eventHero"
+              class="rogue-event-hero"
+              :src="assetUrl(eventHero.image)"
+              alt=""
+            />
+            <RogueIcon v-else :name="eventData.icon" metal="gold" size="72px" />
+          </div>
+          <h2 class="rogue-subtitle">{{ eventText(eventData.title) }}</h2>
+          <p>{{ eventText(eventData.text) }}</p>
         </div>
         <div v-if="run.event.step === 'choose'" class="rogue-options">
           <button
@@ -310,11 +325,20 @@
             :disabled="eventBlocked(choice)"
             @click="chooseEvent(i)"
           >
-            <span>{{ choice.label[lang] }}</span>
+            <span>{{ eventText(choice.label) }}</span>
           </button>
         </div>
         <template v-else-if="run.event.step === 'result'">
-          <p class="rogue-hint">{{ run.event.result?.[lang] }}</p>
+          <p class="rogue-hint">{{ eventText(run.event.result) }}</p>
+          <div v-if="run.event.gold" class="rogue-gain">
+            <span :class="run.event.gold > 0 ? 'is-up' : 'is-down'">
+              🪙 {{ run.event.gold > 0 ? "+" : "" }}{{ run.event.gold }}
+            </span>
+          </div>
+          <div v-if="removedCard" class="rogue-removed">
+            <small>{{ t("rogueEventRemoved") }}</small>
+            <div class="rogue-card"><PackCard :card="removedCard" /></div>
+          </div>
           <div v-if="eventCards.length" class="rogue-rewards">
             <div
               v-for="card in eventCards"
@@ -373,6 +397,9 @@
           {{ t("rogueNewRun") }}
         </button>
       </section>
+      <p v-if="run.phase !== 'battle'" class="rogue-credit">
+        {{ t("rogueIconsCredit") }}
+      </p>
     </div>
 
     <button
@@ -382,6 +409,11 @@
     >
       📚 <b>{{ run.deck.length }}</b>
     </button>
+    <RogueHistoryModal
+      v-if="historyOpen"
+      :history="history"
+      @close="historyOpen = false"
+    />
     <RogueDeckModal v-if="deckOpen" :cards="myDeck" @close="deckOpen = false" />
 
     <div
@@ -422,9 +454,10 @@ import { useGame } from "../../composables/useGame";
 import { useRogue } from "../../composables/useRogue";
 import { getHero } from "../../gameDecks";
 import { packDraftHeroes } from "../../packDraftData";
-import { events } from "../../rogueData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
+import RogueHistoryModal from "../RogueHistoryModal.vue";
+import RogueIcon from "../RogueIcon.vue";
 import RogueDeckModal from "../RogueDeckModal.vue";
 import RogueHeroTile from "../RogueHeroTile.vue";
 import RogueMap from "../RogueMap.vue";
@@ -435,6 +468,8 @@ const engine = useGame();
 const { game } = engine;
 const {
   run,
+  history,
+  eventData: currentEvent,
   heroCards,
   getCard,
   reachable,
@@ -468,7 +503,11 @@ const {
 
 const root = ref(null);
 const picked = ref([]);
+const bestWins = computed(() =>
+  Math.max(run.best, ...history.map((entry) => entry.wins)),
+);
 const deckOpen = ref(false);
+const historyOpen = ref(false);
 const lastGold = ref(0);
 const base = constants.BASE_DECK;
 const scaledHp = (value, factor) => Math.max(1, Math.ceil(value * factor));
@@ -500,9 +539,18 @@ const myScale = computed(() =>
 const foePercent = computed(() =>
   currentNode.value ? foeScale(currentNode.value) : 1,
 );
-const eventData = computed(() =>
-  run.event ? events.find((item) => item.id === run.event.id) : null,
+const eventData = computed(() => (run.event ? currentEvent() : null));
+const eventHero = computed(() =>
+  run.event?.hero ? heroOf(run.event.hero) : null,
 );
+const removedCard = computed(() =>
+  run.event?.removed ? getCard(run.event.removed) : null,
+);
+const eventText = (value) =>
+  (value?.[lang.value] || value?.en || "").replaceAll(
+    "{hero}",
+    run.event?.hero ? heroName(run.event.hero) : "",
+  );
 const eventCards = computed(() => cardsOf(run.event?.cards || []));
 const eventPickList = computed(() => {
   const stepName = run.event?.step;
@@ -531,8 +579,7 @@ const nodeLabels = computed(() => ({
 
 function eventBlocked(choice) {
   if (run.gold < (choice.cost || 0)) return true;
-  if (choice.effect.remove && run.deck.length <= constants.MIN_DECK)
-    return true;
+  if (choice.remove && run.deck.length <= constants.MIN_DECK) return true;
   return false;
 }
 
@@ -634,6 +681,70 @@ onBeforeUnmount(() => {
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.rogue-bestbtn {
+  padding: 4px 14px;
+  border: 1px solid #8a6c43;
+  border-radius: 999px;
+  background: rgba(138, 108, 67, 0.15);
+  color: #ffecc8;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rogue-bestbtn:hover {
+  background: rgba(138, 108, 67, 0.4);
+}
+
+.rogue-event-hero {
+  width: 96px;
+  height: 96px;
+  border: 4px solid #e0b25c;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.rogue-gain {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.rogue-gain .is-up {
+  color: #f6c945;
+}
+
+.rogue-gain .is-down {
+  color: #ff7b8f;
+}
+
+.rogue-removed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--text-dim);
+}
+
+.rogue-removed .rogue-card {
+  width: 140px;
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
+.rogue-credit {
+  margin-top: 28px;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  text-align: center;
+  opacity: 0.7;
 }
 
 .rogue-best {
@@ -868,7 +979,7 @@ onBeforeUnmount(() => {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
   max-width: 720px;
-  margin: 16px 0;
+  margin: 16px auto;
 }
 
 .rogue-option {
