@@ -35,19 +35,56 @@
 
     <section class="bot-editor-panel">
       <b>{{ t("botEdHero") }}: {{ hero.name }}</b>
-      <label class="bot-editor-field">
-        {{ t("botEdAggro") }}
-        <input
-          type="range"
-          min="0.5"
-          max="2"
-          step="0.1"
-          :value="heroSettings.aggro ?? 1"
-          @input="setHero('aggro', Number($event.target.value))"
-        />
-        <b>{{ heroSettings.aggro ?? 1 }}</b>
-        <span class="bot-editor-muted">{{ t("botEdAggroHint") }}</span>
-      </label>
+      <div class="bot-editor-style">
+        <span class="bot-editor-label">{{ t("botEdStyle") }}</span>
+        <div class="bot-editor-segment">
+          <button
+            v-for="(style, index) in styles"
+            :key="style"
+            class="bot-editor-pill"
+            :class="{ active: heroValue('style') === style }"
+            @click="setHeroValue('style', style)"
+          >
+            {{ styleNames[index] }}
+          </button>
+        </div>
+        <span class="bot-editor-muted">{{ styleHint }}</span>
+      </div>
+      <div class="bot-editor-sliders">
+        <div
+          v-for="control in heroControls"
+          :key="control.key"
+          class="bot-editor-row"
+          :class="{ changed: heroChanged(control.key) }"
+          :title="t(control.name + 'Hint')"
+        >
+          <div class="bot-editor-rowhead">
+            <span>{{ t(control.name) }}</span>
+            <b>{{ heroValue(control.key) }}</b>
+            <button
+              v-if="heroChanged(control.key)"
+              class="bot-editor-undo"
+              :title="t('botEdResetOne')"
+              @click="resetHeroValue(control.key)"
+            >
+              ↺
+            </button>
+          </div>
+          <input
+            type="range"
+            :min="control.min"
+            :max="control.max"
+            :step="control.step"
+            :value="heroValue(control.key)"
+            @input="setHeroValue(control.key, Number($event.target.value))"
+          />
+          <div class="bot-editor-ends">
+            <span>{{ t(control.name + "Left") }}</span>
+            <span>{{ t(control.name + "Right") }}</span>
+          </div>
+          <span class="bot-editor-muted">{{ t(control.name + "Hint") }}</span>
+        </div>
+      </div>
       <label class="bot-editor-field bot-editor-notes">
         {{ t("botEdNotes") }}
         <input
@@ -108,48 +145,47 @@
       <b>{{ t("botEdCards") }} ({{ cards.length }})</b>
       <div class="bot-editor-table">
         <div
-          v-for="card in cards"
-          :key="card.key"
+          v-for="control in controlsFor(card)"
+          :key="control.key"
           class="bot-editor-row"
-          :class="'type-' + card.type"
+          :class="{ changed: cardChanged(card, control.key) }"
+          :title="t(control.name + 'Hint')"
         >
-          <div class="bot-editor-card">
-            <b>{{ card.name }}</b>
-            <span class="bot-editor-badge">{{ card.type }}</span>
-            <span class="bot-editor-muted">
-              {{ card.value ?? "-" }}/{{ card.boost ?? "-" }} ×{{ card.qty }}
-            </span>
-            <div class="bot-editor-text" :title="card.text.en">
-              {{ card.text.en }}
-            </div>
+          <div class="bot-editor-rowhead">
+            <span>{{ t(control.name) }}</span>
+            <b>{{ cardValue(card, control.key) }}</b>
+            <button
+              v-if="cardChanged(card, control.key)"
+              class="bot-editor-undo"
+              :title="t('botEdResetOne')"
+              @click="resetCardValue(card, control.key)"
+            >
+              ↺
+            </button>
           </div>
           <label class="bot-editor-field bot-editor-score">
             <input
               type="range"
               min="0"
               max="10"
-              :value="importanceOf(card)"
-              @input="setCard(card, 'importance', Number($event.target.value))"
+              :value="cardValue(card, control.key)"
+              @input="
+                setCardValue(card, control.key, Number($event.target.value))
+              "
             />
-            <b>{{ importanceOf(card) }}</b>
           </label>
-          <label class="bot-editor-check" :title="t('botEdHoldHint')">
-            <input
-              type="checkbox"
-              :checked="flag(card, 'hold')"
-              @change="setCard(card, 'hold', $event.target.checked)"
-            />
-            {{ t("botEdHold") }}
-          </label>
-          <label class="bot-editor-check" :title="t('botEdFodderHint')">
-            <input
-              type="checkbox"
-              :checked="flag(card, 'fodder')"
-              @change="setCard(card, 'fodder', $event.target.checked)"
-            />
-            {{ t("botEdFodder") }}
-          </label>
+          <div class="bot-editor-ends">
+            <span>{{ t(control.name + "Left") }}</span>
+            <span>{{ t(control.name + "Right") }}</span>
+          </div>
         </div>
+        <button
+          v-if="cardTouched(card)"
+          class="btn btn-sm btn-outline-warning"
+          @click="resetCard(card)"
+        >
+          {{ t("botEdResetCard") }}
+        </button>
       </div>
     </section>
 
@@ -193,12 +229,15 @@ import { computed, reactive, ref, watch } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import {
   BOT_DATA_KEY,
+  cardDefaults,
   cardId,
   kidDefaults,
   loadBotData,
   typeDefaults,
 } from "../../botData";
 import { buildAllCards, packDraftHeroes } from "../../packDraftData";
+import { BOT_STYLES } from "../../botStyles";
+import { botProfiles } from "../../botProfiles";
 
 const { t } = useDraftState();
 
@@ -228,12 +267,7 @@ const cards = computed(() => {
   return [...seen.values()];
 });
 
-const importanceOf = (card) =>
-  data.cards[cardId(card)]?.importance ??
-  data.types[card.type] ??
-  typeDefaults[card.type] ??
-  5;
-const flag = (card, name) => Boolean(data.cards[cardId(card)]?.[name]);
+const importanceOf = (card) => cardValue(card, "importance");
 const touched = (id) =>
   Boolean(
     data.heroes[id] ||
@@ -244,14 +278,6 @@ const touched = (id) =>
 function setType(type, value) {
   if (value === typeDefaults[type]) delete data.types[type];
   else data.types[type] = value;
-}
-
-function setHero(name, value) {
-  const next = { ...(data.heroes[heroId.value] || {}), [name]: value };
-  if (next.aggro === 1) delete next.aggro;
-  if (!next.notes) delete next.notes;
-  if (Object.keys(next).length) data.heroes[heroId.value] = next;
-  else delete data.heroes[heroId.value];
 }
 
 function setKid(name, value) {
@@ -266,15 +292,104 @@ function setKid(name, value) {
   }
 }
 
-function setCard(card, name, value) {
+const styles = Object.values(BOT_STYLES);
+const styleNames = computed(() => t("botEdStyleNames").split("|"));
+const styleHint = computed(() =>
+  t(
+    "botEdStyle" +
+      heroValue("style").charAt(0).toUpperCase() +
+      heroValue("style").slice(1),
+  ),
+);
+
+const heroDefaults = {
+  style: BOT_STYLES.NEUTRAL,
+  aggro: 1,
+  heroFocus: 6,
+  kidFear: 0.5,
+  boostHand: 3,
+  refill: 4,
+  fatigue: 1,
+};
+
+const heroControls = [
+  { key: "aggro", name: "botEdAggro", min: 0.5, max: 2, step: 0.1 },
+  { key: "heroFocus", name: "botEdHeroFocus", min: 0, max: 10, step: 1 },
+  { key: "kidFear", name: "botEdKidFear", min: 0, max: 2, step: 0.1 },
+  { key: "boostHand", name: "botEdBoostHand", min: 1, max: 7, step: 1 },
+  { key: "refill", name: "botEdRefill", min: 0, max: 6, step: 1 },
+  { key: "fatigue", name: "botEdFatigue", min: 0, max: 2, step: 0.1 },
+];
+
+const heroBase = (key) => botProfiles[heroId.value]?.[key] ?? heroDefaults[key];
+const heroValue = (key) => heroSettings.value[key] ?? heroBase(key);
+const heroChanged = (key) => heroSettings.value[key] !== undefined;
+
+function setHeroValue(key, value) {
+  const next = { ...(data.heroes[heroId.value] || {}) };
+  if (value === heroBase(key)) delete next[key];
+  else next[key] = value;
+  commitHero(next);
+}
+
+function resetHeroValue(key) {
+  const next = { ...(data.heroes[heroId.value] || {}) };
+  delete next[key];
+  commitHero(next);
+}
+
+function setHero(name, value) {
+  const next = { ...(data.heroes[heroId.value] || {}), [name]: value };
+  if (!next.notes) delete next.notes;
+  commitHero(next);
+}
+
+function commitHero(next) {
+  if (Object.keys(next).length) data.heroes[heroId.value] = next;
+  else delete data.heroes[heroId.value];
+}
+
+const cardControlList = [
+  { key: "importance", name: "botEdCardImportance" },
+  { key: "lean", name: "botEdLean", only: "versatile" },
+  { key: "timing", name: "botEdTiming" },
+  { key: "cancelCare", name: "botEdCancelCare" },
+  { key: "who", name: "botEdWho" },
+  { key: "boostWill", name: "botEdBoostWill" },
+];
+
+const controlsFor = (card) =>
+  cardControlList.filter((item) => !item.only || item.only === card.type);
+
+const cardBase = (card, key) =>
+  key === "importance"
+    ? (data.types[card.type] ?? typeDefaults[card.type] ?? 5)
+    : cardDefaults[key];
+const cardValue = (card, key) =>
+  data.cards[cardId(card)]?.[key] ?? cardBase(card, key);
+const cardChanged = (card, key) =>
+  data.cards[cardId(card)]?.[key] !== undefined;
+const cardTouched = (card) => Boolean(data.cards[cardId(card)]);
+
+function setCardValue(card, key, value) {
   const id = cardId(card);
-  const next = { ...(data.cards[id] || {}), [name]: value };
-  const base = data.types[card.type] ?? typeDefaults[card.type] ?? 5;
-  if (next.importance === base) delete next.importance;
-  if (!next.hold) delete next.hold;
-  if (!next.fodder) delete next.fodder;
+  const next = { ...(data.cards[id] || {}) };
+  if (value === cardBase(card, key)) delete next[key];
+  else next[key] = value;
   if (Object.keys(next).length) data.cards[id] = next;
   else delete data.cards[id];
+}
+
+function resetCardValue(card, key) {
+  const id = cardId(card);
+  const next = { ...(data.cards[id] || {}) };
+  delete next[key];
+  if (Object.keys(next).length) data.cards[id] = next;
+  else delete data.cards[id];
+}
+
+function resetCard(card) {
+  delete data.cards[cardId(card)];
 }
 
 const json = computed(() => {
@@ -488,5 +603,84 @@ function download() {
   .bot-editor-row {
     grid-template-columns: 1fr;
   }
+}
+.bot-editor-style {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bot-editor-segment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bot-editor-pill {
+  padding: 5px 16px;
+  border: 2px solid var(--border-light);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bot-editor-pill.active {
+  border-color: var(--color-info);
+  background: rgba(var(--color-info-rgb), 0.25);
+}
+
+.bot-editor-sliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px 24px;
+}
+
+.bot-editor-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 10px;
+  border-left: 3px solid transparent;
+}
+
+.bot-editor-row.changed {
+  border-left-color: #f6c945;
+}
+
+.bot-editor-rowhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bot-editor-rowhead b {
+  margin-left: auto;
+  color: var(--color-info);
+}
+
+.bot-editor-undo {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: #f6c945;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.bot-editor-row input[type="range"] {
+  width: 100%;
+}
+
+.bot-editor-ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 11px;
 }
 </style>

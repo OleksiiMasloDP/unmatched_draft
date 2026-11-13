@@ -3,7 +3,13 @@ import { onBeforeUnmount, onMounted } from "vue";
 import { getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { botProfiles } from "../botProfiles.js";
-import { cardInfo, heroInfo, kidInfo, loadBotData } from "../botData.js";
+import {
+  cardInfo,
+  heroInfo,
+  heroSettingKeys,
+  kidInfo,
+  loadBotData,
+} from "../botData.js";
 import { useGame } from "./useGame.js";
 
 const TICK = 650;
@@ -13,10 +19,13 @@ const isAttackCard = (card) =>
 const isDefenseCard = (card) =>
   card && card.type !== "attack" && card.type !== "scheme";
 const cardPower = (card) => (card.value ?? 0) + (card.boost ?? 0) * 0.35;
+let currentStore = loadBotData();
+const leanOf = (card) =>
+  card.type === "versatile" ? cardInfo(card, currentStore).lean - 5 : 0;
 const attackPower = (card) =>
-  cardPower(card) - (card.type === "versatile" ? 0.3 : 0);
+  cardPower(card) - (card.type === "versatile" ? 0.3 : 0) + leanOf(card) * 0.15;
 const defensePower = (card) =>
-  cardPower(card) - (card.type === "versatile" ? 0.3 : 0);
+  cardPower(card) - (card.type === "versatile" ? 0.3 : 0) - leanOf(card) * 0.15;
 const schemeDamage = (card) => {
   if (!card || card.type !== "scheme") return 0;
   const found = /(\d+) damage/i.exec(card.text?.en || "");
@@ -226,7 +235,8 @@ export function useBot() {
     const deckLeft = (game.players[bot].deck || []).length;
     const mine = fightersOf(bot).find((fighter) => fighter.isHero);
     const refill =
-      handOf(bot).length < (styleOf() === BOT_STYLES.PRESSURE ? 3 : 4) &&
+      handOf(bot).length <
+        (profile.refill ?? (styleOf() === BOT_STYLES.PRESSURE ? 3 : 4)) &&
       Boolean(mine) &&
       mine.hp > foeHero.hp &&
       deckLeft > (game.players[foeSeat].deck || []).length &&
@@ -411,6 +421,22 @@ export function useBot() {
     return Math.min(total, 3);
   };
 
+  const foeHasCancel = (bot) =>
+    handOf(other(bot)).some((card) => /cancel/i.test(textOf(card)));
+
+  const fighterKind = (bot) => game.combat?.fighters?.[bot];
+
+  const playBias = (card, bot) => {
+    const info = rate(card);
+    const kind = fighterKind(bot);
+    const who = kind ? ((info.who - 5) / 5) * (kind === "hero" ? 1 : -1) : 0;
+    return (
+      (info.timing - 5) * 0.15 -
+      (foeHasCancel(bot) ? info.cancelCare * 0.25 : 0) +
+      who
+    );
+  };
+
   const schemeValue = (card, bot) => {
     const text = textOf(card);
     const hand = handOf(bot).length - 1;
@@ -464,8 +490,11 @@ export function useBot() {
       value -= 0.4 * Math.max(0, hand - 1);
     }
     const info = rate(card);
+    const waiting = foeHasCancel(bot) ? info.cancelCare * 0.35 : 0;
     return (
-      (known ? value + (info.importance - 5) * 0.15 : 0) - (info.hold ? 2 : 0)
+      (known ? value + (info.importance - 5) * 0.15 : 0) -
+      (5 - info.timing) * 0.35 -
+      waiting
     );
   };
 
@@ -555,7 +584,18 @@ export function useBot() {
         const top = targets.length
           ? Math.max(...targets.map(targetScore))
           : -10;
-        return top + (me.isHero ? 0 : 0.5) + me.hp * 0.01;
+        const prefer = handOf(bot)
+          .filter(isAttackCard)
+          .map((card) => (rate(card).who - 5) / 5);
+        const lean = prefer.length
+          ? prefer.reduce((sum, value) => sum + value, 0) / prefer.length
+          : 0;
+        return (
+          top +
+          (me.isHero ? 0 : 0.5) +
+          lean * (me.isHero ? 0.6 : -0.6) +
+          me.hp * 0.01
+        );
       });
     }
     const foes = options.filter((id) => foeAt(id, bot));
@@ -698,7 +738,7 @@ export function useBot() {
     card.boost -
     (card.value ?? 0) * 0.35 -
     (rate(card).importance - 5) * 0.2 +
-    (rate(card).fodder ? 1 : 0);
+    (rate(card).boostWill - 5) * 0.25;
 
   const cheapest = (cards) =>
     cards.reduce((best, card) =>
@@ -718,10 +758,12 @@ export function useBot() {
         (a, b) =>
           attackPower(b) +
           effectBonus(b, bot) * 0.5 -
-          (rate(b).importance - 5) * 0.2 -
+          (rate(b).importance - 5) * 0.2 +
+          playBias(b, bot) -
           (attackPower(a) +
             effectBonus(a, bot) * 0.5 -
-            (rate(a).importance - 5) * 0.2),
+            (rate(a).importance - 5) * 0.2 +
+            playBias(a, bot)),
       );
       const hp = lastTarget?.hp;
       const known = knowledge(bot);
@@ -757,7 +799,10 @@ export function useBot() {
       const pool = options.filter(isDefenseCard);
       if (!pool.length) return [];
       const sorted = [...pool].sort(
-        (a, b) => defensePower(b) - defensePower(a),
+        (a, b) =>
+          defensePower(b) +
+          playBias(b, bot) -
+          (defensePower(a) + playBias(a, bot)),
       );
       const me = game.players[bot];
       const known = knowledge(bot);
@@ -815,6 +860,7 @@ export function useBot() {
       const fodder = options.filter(
         (card) =>
           card.boost &&
+          rate(card).boostWill > 1 &&
           !profile.keep?.includes(card.key) &&
           (rate(card).fodder || rate(card).importance < 8),
       );
@@ -844,7 +890,7 @@ export function useBot() {
       (profile.keep?.includes(card.key) ? 5 : 0) +
       (isDefenseCard(card) ? 1.5 : 0) +
       (rate(card).importance - 5) * 0.4 -
-      (rate(card).fodder ? 2 : 0);
+      (rate(card).boostWill - 5) * 0.5;
     const ranked = [...options].sort((a, b) =>
       discard ? worth(a) - worth(b) : worth(b) - worth(a),
     );
@@ -983,7 +1029,8 @@ export function useBot() {
     }
     const scheme = available.scheme ? bestScheme(bot) : null;
     const style = styleOf();
-    const edge = fatigueEdge(bot);
+    const weight = profile.fatigue ?? 1;
+    const edge = fatigueEdge(bot) * weight;
     const options = [];
     if (available.attack) {
       options.push([
@@ -1062,12 +1109,13 @@ export function useBot() {
     const bot = game.bot;
     if (!bot) return;
     store = loadBotData();
+    currentStore = store;
     const heroKey = game.players[bot]?.heroId;
     const edited = heroInfo(heroKey, store);
-    profile = {
-      ...(botProfiles[heroKey] || {}),
-      ...(edited.aggro ? { aggro: edited.aggro } : {}),
-    };
+    profile = { ...(botProfiles[heroKey] || {}) };
+    for (const name of heroSettingKeys) {
+      if (edited[name] !== undefined) profile[name] = edited[name];
+    }
     if (game.phase === "mulligan" && game.mulligan) {
       if (!game.mulligan.reveal && !game.mulligan.decided[bot]) {
         chooseMulligan(bot);

@@ -9,6 +9,16 @@ export const typeDefaults = {
   scheme: 5,
 };
 
+export const heroSettingKeys = [
+  "style",
+  "aggro",
+  "heroFocus",
+  "kidFear",
+  "boostHand",
+  "refill",
+  "fatigue",
+];
+
 export const kidDefaults = { importance: 5, block: 0 };
 
 const empty = () => ({
@@ -19,10 +29,31 @@ const empty = () => ({
   heroes: {},
 });
 
+export const cardDefaults = {
+  lean: 5,
+  timing: 5,
+  cancelCare: 0,
+  who: 5,
+  boostWill: 5,
+};
+
+const normalizeCards = (cards = {}) => {
+  const out = {};
+  for (const [id, entry] of Object.entries(cards)) {
+    const next = { ...entry };
+    if (next.hold && next.timing === undefined) next.timing = 0;
+    if (next.fodder && next.boostWill === undefined) next.boostWill = 9;
+    delete next.hold;
+    delete next.fodder;
+    out[id] = next;
+  }
+  return out;
+};
+
 const merge = (first, second) => ({
   version: 1,
   types: { ...first.types, ...second.types },
-  cards: { ...first.cards, ...second.cards },
+  cards: { ...first.cards, ...normalizeCards(second.cards) },
   sidekicks: { ...first.sidekicks, ...second.sidekicks },
   heroes: { ...first.heroes, ...second.heroes },
 });
@@ -47,8 +78,13 @@ export function cardInfo(card, data = loadBotData()) {
   const fallback = data.types[card.type] ?? typeDefaults[card.type] ?? 5;
   return {
     importance: own.importance ?? fallback,
-    hold: Boolean(own.hold),
-    fodder: Boolean(own.fodder),
+    lean: own.lean ?? cardDefaults.lean,
+    timing: own.timing ?? cardDefaults.timing,
+    cancelCare: own.cancelCare ?? cardDefaults.cancelCare,
+    who: own.who ?? cardDefaults.who,
+    boostWill: own.boostWill ?? cardDefaults.boostWill,
+    hold: (own.timing ?? cardDefaults.timing) <= 1,
+    fodder: (own.boostWill ?? cardDefaults.boostWill) >= 8,
   };
 }
 
