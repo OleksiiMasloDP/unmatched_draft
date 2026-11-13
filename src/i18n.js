@@ -1114,6 +1114,10 @@ import { tokensText } from "./i18n/tokens.js";
 Object.assign(translations.en, tokensText.en);
 Object.assign(translations.ua, tokensText.ua);
 
+import { rogueText } from "./i18n/rogue.js";
+Object.assign(translations.en, rogueText.en);
+Object.assign(translations.ua, rogueText.ua);
+
 import { botEditorText } from "./i18n/botEditor.js";
 Object.assign(translations.en, botEditorText.en);
 Object.assign(translations.ua, botEditorText.ua);

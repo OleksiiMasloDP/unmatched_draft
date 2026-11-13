@@ -2385,6 +2385,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
         : [],
       fallen: [],
       coins: data.id === "blackbeard" ? 2 : 0,
+      roster: [...deck.cardIds].sort(),
       deck: shuffled.slice(START_HAND),
       hand: shuffled.slice(0, START_HAND),
       discard: [],
@@ -2624,6 +2625,33 @@ function blocked() {
 
 function setBot(seat) {
   game.bot = seat === "p1" || seat === "p2" ? seat : null;
+}
+
+function startRogueBattle(deckA, deckB, options) {
+  resetGame();
+  game.mapId = options.mapId;
+  useMapId(options.mapId);
+  startGame(deckA, deckB, options.first, "p2");
+  for (const seat of ["p1", "p2"]) {
+    const state = game.players[seat];
+    if (!state) return;
+    const factor =
+      seat === "p2" ? (options.foeScale ?? options.scale) : options.scale;
+    const cut = (value) => Math.max(1, Math.ceil(value * factor));
+    state.hp = cut(state.hp);
+    state.maxHp = state.hp;
+    for (const kid of state.sidekicks) {
+      kid.hp = cut(kid.hp);
+      kid.maxHp = kid.hp;
+    }
+  }
+  setBot("p2");
+  setBotLevel(options.botLevel);
+  syncOut();
+}
+
+function setBotLevel(level) {
+  game.botLevel = ["easy", "normal", "hard"].includes(level) ? level : "normal";
 }
 
 function applyAnswer(answer, seat) {
@@ -2932,6 +2960,8 @@ export function useGame() {
     startOnlineGame,
     startLocalToss,
     setBot,
+    setBotLevel,
+    startRogueBattle,
     chooseDeck,
     resetGame,
     answerPrompt,

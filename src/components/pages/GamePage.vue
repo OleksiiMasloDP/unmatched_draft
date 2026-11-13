@@ -515,13 +515,18 @@
               </span>
               <span class="game-counter-label">{{ t("gameHand") }}</span>
             </div>
-            <div class="game-counter" :title="t('gameDeck')">
+            <button
+              type="button"
+              class="game-counter is-button"
+              :title="t('gameViewDeck')"
+              @click="deckView = player"
+            >
               <span class="game-counter-icon">📚</span>
               <span class="game-counter-value">
                 {{ game.players[player].deck.length }}
               </span>
-              <span class="game-counter-label">{{ t("gameDeck") }}</span>
-            </div>
+              <span class="game-counter-label">{{ t("gameDeck") }} 🔍</span>
+            </button>
             <button
               type="button"
               class="game-counter is-button"
@@ -996,6 +1001,54 @@
             <button
               class="btn btn-primary btn-sm action-btn"
               @click="discardView = null"
+            >
+              {{ t("combatHide") }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="deckView" class="game-modal" @click.self="deckView = null">
+        <div class="game-modal-box is-discard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="deckView = null"
+          >
+            ✕
+          </button>
+          <h3 class="game-modal-title">
+            {{ replacePlayer("gameDeckOf", deckView) }}
+            ({{ deckTotal }})
+          </h3>
+          <p class="game-hint-empty">{{ t("gameDeckListHint") }}</p>
+          <div class="discard-grid">
+            <div
+              v-for="group in deckGroups"
+              :key="group.key"
+              class="discard-stack"
+              :style="{ '--n': group.cards.length }"
+              :title="group.cards[0].card.name"
+            >
+              <div
+                v-for="(entry, index) in group.cards"
+                :key="index"
+                class="discard-stack-card"
+                :class="{ 'is-gone': entry.gone }"
+                :style="{ '--i': index }"
+              >
+                <PackCard :card="entry.card" />
+              </div>
+              <span v-if="group.cards.length > 1" class="discard-count">
+                ×{{ group.cards.length }}
+              </span>
+            </div>
+          </div>
+          <div class="game-modal-actions">
+            <button
+              class="btn btn-primary btn-sm action-btn"
+              @click="deckView = null"
             >
               {{ t("combatHide") }}
             </button>
@@ -1840,6 +1893,33 @@ const discardGroups = computed(() => {
   return [...groups.values()].sort((a, b) => b.cards.length - a.cards.length);
 });
 
+const deckView = ref(null);
+const deckGroups = computed(() => {
+  if (!deckView.value) return [];
+  const state = game.players[deckView.value];
+  const spent = new Map();
+  for (const id of state.discard || []) spent.set(id, (spent.get(id) || 0) + 1);
+  const groups = new Map();
+  for (const id of state.roster || []) {
+    const card = getCard(id);
+    if (!card) continue;
+    const left = spent.get(id) || 0;
+    if (left > 0) spent.set(id, left - 1);
+    const key = `${card.heroId}:${card.key}`;
+    if (!groups.has(key)) groups.set(key, { key, cards: [] });
+    groups.get(key).cards.push({ card, gone: left > 0 });
+  }
+  for (const group of groups.values()) {
+    group.cards.sort((a, b) => Number(b.gone) - Number(a.gone));
+  }
+  return [...groups.values()].sort((a, b) =>
+    a.cards[0].card.name.localeCompare(b.cards[0].card.name),
+  );
+});
+const deckTotal = computed(() =>
+  deckGroups.value.reduce((n, group) => n + group.cards.length, 0),
+);
+
 const suitView = ref(null);
 const suitGroups = computed(() => {
   const groups = new Map();
@@ -1856,6 +1936,7 @@ watch(
   () => game.phase,
   () => {
     discardView.value = null;
+    deckView.value = null;
     suitView.value = null;
   },
 );
@@ -3637,6 +3718,11 @@ function onNewGame() {
     calc(var(--i) * var(--offset-y))
   );
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.discard-stack-card.is-gone {
+  filter: grayscale(1) brightness(0.55);
+  opacity: 0.7;
 }
 
 .discard-count {

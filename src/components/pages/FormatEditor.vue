@@ -277,10 +277,9 @@ import {
   getRequiredHeroCountFor,
   maxPostBans,
 } from "../../draftFormats.js";
-import "../../i18nFormats.js";
+import "../../i18n/formats.js";
 
 const props = defineProps({
-  // id приходить з маршруту /formats/:id; для /formats/new його немає
   id: {
     type: String,
     default: null,

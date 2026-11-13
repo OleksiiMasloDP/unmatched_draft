@@ -7,6 +7,7 @@ import FormatsPage from "./components/pages/FormatsPage.vue";
 import FormatEditor from "./components/pages/FormatEditor.vue";
 import PackDraftPage from "./components/pages/PackDraftPage.vue";
 import GamePage from "./components/pages/GamePage.vue";
+import RoguePage from "./components/pages/RoguePage.vue";
 import MapEditor from "./components/pages/MapEditor.vue";
 import HomePage from "./components/pages/HomePage.vue";
 import BotEditor from "./components/pages/BotEditor.vue";
@@ -32,6 +33,7 @@ export const routes = [
     component: PackDraftPage,
   },
   { path: "/game", name: "game", component: GamePage },
+  { path: "/roguelike", name: "rogue", component: RoguePage },
   {
     path: "/heroes",
     name: "heroes",
