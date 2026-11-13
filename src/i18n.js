@@ -1114,7 +1114,7 @@ import { tokensText } from "./i18n/tokens.js";
 Object.assign(translations.en, tokensText.en);
 Object.assign(translations.ua, tokensText.ua);
 
-import { rogueText } from "./i18nRogue.js";
+import { rogueText } from "./i18n/rogue.js";
 Object.assign(translations.en, rogueText.en);
 Object.assign(translations.ua, rogueText.ua);
 
