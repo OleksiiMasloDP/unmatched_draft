@@ -1,3 +1,4 @@
+import { BOT_STYLES } from "../botStyles";
 import { onBeforeUnmount, onMounted } from "vue";
 import { getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
@@ -52,6 +53,22 @@ export function useBot() {
   const level = () => game.botLevel || "normal";
   const slip = () => level() === "easy" && Math.random() < 0.3;
   const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
+
+  const styleOf = () => profile.style ?? BOT_STYLES.NEUTRAL;
+
+  const reserve = (seat) => {
+    const state = game.players[seat];
+    const cards = [...(state.deck || []), ...(state.hand || [])]
+      .map(getCard)
+      .filter(Boolean);
+    const drawers = cards.filter((card) =>
+      /draw (\d+|until)/i.test(card.text?.en || ""),
+    ).length;
+    return (state.deck || []).length + (state.hp ?? 0) / 2 - drawers * 0.7;
+  };
+
+  const fatigueEdge = (bot) =>
+    level() === "easy" ? 0 : reserve(bot) - reserve(other(bot));
 
   const knowledge = (bot) => {
     if (level() !== "hard") return null;
@@ -215,7 +232,7 @@ export function useBot() {
     const deckLeft = (game.players[bot].deck || []).length;
     const mine = fightersOf(bot).find((fighter) => fighter.isHero);
     const refill =
-      handOf(bot).length < 4 &&
+      handOf(bot).length < (styleOf() === BOT_STYLES.PRESSURE ? 3 : 4) &&
       Boolean(mine) &&
       mine.hp > foeHero.hp &&
       deckLeft > (game.players[foeSeat].deck || []).length &&
@@ -244,7 +261,22 @@ export function useBot() {
     ) {
       base *= 2;
     }
-    return base * (turtle ? 3 : 1);
+    const styled =
+      styleOf() === BOT_STYLES.PASS
+        ? 1.4
+        : styleOf() === BOT_STYLES.PRESSURE
+          ? 0.6
+          : 1;
+    return base * styled * (turtle ? 3 : 1);
+  };
+
+  const coverage = (fighter, space, foe) => {
+    const spots = [...reachSet(foe.space, foe.move)];
+    const mine = reachSet(space, fighter.move);
+    const covered = spots.filter((spot) =>
+      [...mine].some((from) => canHit(fighter, from, spot)),
+    );
+    return covered.length / Math.max(spots.length, 1);
   };
 
   const positionScore = (fighter, space, bot, turtle = false) => {
@@ -297,9 +329,14 @@ export function useBot() {
       }
     }
     const dist = nearestFoe(space, bot);
+    const lead = foes.find((foe) => foe.isHero);
+    if (!turtle && game.turnNo === 1 && fighter.isHero && lead) {
+      return 4 * coverage(fighter, space, lead) - 0.01 * dist;
+    }
     if (turtle)
       return -fear(fighter, true) * exposure + 0.2 * Math.min(dist, 8);
-    const aggro = profile.aggro ?? 1;
+    const aggro =
+      (profile.aggro ?? 1) * (styleOf() === BOT_STYLES.PRESSURE ? 1.25 : 1);
     const early = game.turnNo <= 3;
     const cards = handOf(bot);
     const bare = cards.length < 6 && !cards.some(isDefenseCard);
@@ -314,7 +351,15 @@ export function useBot() {
           : 0) -
         zone * 0.04;
     }
+    const needsClose = cards.some(
+      (card) => isAttackCard(card) && /adjacent/i.test(textOf(card)),
+    );
+    const hugging =
+      fighter.attack === "range" &&
+      !needsClose &&
+      foes.some((foe) => linked(space, foe.space));
     return (
+      (hugging ? -1.5 : 0) +
       (blocked * fighter.block * 1.5) / 10 +
       2 * aggro * strike +
       0.8 * aggro * reachStrike +
@@ -895,23 +940,50 @@ export function useBot() {
       if (run) return run();
     }
     if (state.finisher && available.scheme) return engine.doScheme();
+    if (game.turnNo === 1 && available.maneuver && turnManeuvers < 2) {
+      turnManeuvers += 1;
+      return engine.doManeuver();
+    }
     if (state.turtle && available.maneuver) {
       turnManeuvers += 1;
       return engine.doManeuver();
     }
     const scheme = available.scheme ? bestScheme(bot) : null;
+    const style = styleOf();
+    const edge = fatigueEdge(bot);
     const options = [];
     if (available.attack) {
       options.push([
         "attack",
-        attackUtility(bot) + 1.5 + (hand.length >= 6 ? 0.7 : 0),
+        attackUtility(bot) +
+          1.5 +
+          (hand.length >= 6 ? 0.7 : 0) +
+          (style === BOT_STYLES.PASS
+            ? 1.2
+            : style === BOT_STYLES.PRESSURE
+              ? 0.8
+              : edge >= 3 || edge <= -3
+                ? 0.6
+                : 0),
       ]);
     }
     const defenders = hand.filter(isDefenseCard).length;
     const crowded = hand.length >= 6;
     const afterMove = turnManeuvers > 0;
     if (scheme?.card && scheme.value >= (afterMove ? 0.6 : 0.8)) {
-      options.push(["scheme", scheme.value + (crowded ? 0.6 : 0)]);
+      const text = textOf(scheme.card);
+      const quiet = !/draw|gain 1 (free )?action/.test(text);
+      const bonus =
+        style === BOT_STYLES.PASS
+          ? quiet
+            ? 0.8
+            : -0.3
+          : style === BOT_STYLES.PRESSURE
+            ? quiet
+              ? 0
+              : 0.5
+            : 0;
+      options.push(["scheme", scheme.value + bonus + (crowded ? 0.6 : 0)]);
     }
     if (available.maneuver) {
       const draw =
@@ -922,10 +994,20 @@ export function useBot() {
             : hand.length <= 2
               ? 1.4
               : 0.8;
-      const need = !defenders && hand.length < 7 ? 1.6 : 0;
+      const top =
+        level() === "hard" ? getCard(game.players[bot].deck?.[0]) : null;
+      const need =
+        (!defenders && hand.length < 7 ? 1.6 : 0) +
+        (top && !defenders && isDefenseCard(top) ? 1 : 0);
+      const styleDraw =
+        style === BOT_STYLES.PASS && hand.length >= 4
+          ? -0.6
+          : style === BOT_STYLES.PRESSURE
+            ? 0.4
+            : 0;
       const repeat = afterMove ? -1.5 : 0;
       const gain = bestMoveGain(bot) * (available.attack ? 0.4 : 1);
-      options.push(["maneuver", draw + need + repeat + gain]);
+      options.push(["maneuver", draw + styleDraw + need + repeat + gain]);
     }
     if (!options.length) return;
     options.sort((a, b) => b[1] - a[1]);
