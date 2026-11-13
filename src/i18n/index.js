@@ -15,6 +15,8 @@ import { wyattText } from "./heroes/wyatt.js";
 import { combatText } from "./combat.js";
 import { setupText } from "./setup.js";
 import { tokensText } from "./tokens.js";
+import { botEditorText } from "./botEditor.js";
+import { rogueText } from "./rogue.js";
 
 const parts = [
   draftText,
@@ -34,6 +36,8 @@ const parts = [
   combatText,
   setupText,
   tokensText,
+  botEditorText,
+  rogueText,
 ];
 
 export const translations = { en: {}, ua: {} };

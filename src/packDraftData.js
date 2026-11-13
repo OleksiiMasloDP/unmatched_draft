@@ -380,7 +380,6 @@ const CARD_IMAGES = {
   },
   "harry-houdini": {
     dir: "Harry Houdini",
-    cover: false,
     files: {
       the_big_reveal: "attack",
       sleight_of_hand: "attack",
@@ -399,7 +398,6 @@ const CARD_IMAGES = {
   },
   "wyatt-earp": {
     dir: "Wyatt Earp",
-    cover: false,
     files: {
       a_marshal_and_an_outlaw: "versatile",
       you_just_gonna_stand_there_and_bleed: "attack",
@@ -417,7 +415,6 @@ const CARD_IMAGES = {
   },
   "black-panther": {
     dir: "Black Panther",
-    cover: false,
     files: {
       analyze_and_adjust: "attack",
       ancestral_insight: "versatile",
@@ -490,7 +487,6 @@ const CARD_IMAGES = {
 
 CARD_IMAGES["agent-venom"] = {
   dir: "Agent Venom",
-  cover: false,
   files: {
     scare_tactics: "attack",
     savage: "attack",
