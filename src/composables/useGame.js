@@ -77,7 +77,6 @@ const game = reactive({
   tokens: [],
   startPick: null,
   bot: null,
-  botLevel: "normal",
 });
 
 let flow = null;
@@ -785,10 +784,6 @@ const askChoice = (player, title, choices) => ({
   choices,
 });
 
-// Рух по клітинках. Кожен крок - окремий вибір: клітинки, на які можна стати
-// наступним кроком (через зайняті клітинки можна проходити, але не зупинятись;
-// вартість стрибка - кількість пройдених клітинок). Кожен крок викликає place(),
-// тому "Attack of Opportunity" спрацьовує щоразу, коли ворог виходить із зони.
 function stepOptions(player, through = false, left = 1) {
   const hops = new Map();
   if (turnFlags.pinned[player]) return hops;
@@ -811,7 +806,6 @@ function stepOptions(player, through = false, left = 1) {
   return hops;
 }
 
-// chooser обирає клітинки, player (його поточний боєць) рухається.
 function* walk(
   chooser,
   player,
@@ -892,7 +886,6 @@ const anySpaces = () =>
     .map((space) => space.id)
     .filter((id) => !occupied().includes(id));
 
-// Завдати шкоди будь-якому бійцю на мапі (обирає player).
 function* damageAny(player, amount, title = "promptDamageAny") {
   const targets = [];
   for (const owner of ["p1", "p2"]) {
@@ -930,7 +923,6 @@ function swapWithSidekick(player, combat) {
   return true;
 }
 
-// Sleight of Hand: повернути зіграну карту в руку й зіграти іншу.
 function* swapPlayedCard(player, combat) {
   const old = combat.cards[player];
   if (!old || game.phase !== "play") return;
@@ -2601,10 +2593,6 @@ function setBot(seat) {
   game.bot = seat === "p1" || seat === "p2" ? seat : null;
 }
 
-function setBotLevel(level) {
-  game.botLevel = ["easy", "normal", "hard"].includes(level) ? level : "normal";
-}
-
 function applyAnswer(answer, seat) {
   const prompt = game.prompt;
   if (!prompt || game.phase !== "play") return;
@@ -2911,7 +2899,6 @@ export function useGame() {
     startOnlineGame,
     startLocalToss,
     setBot,
-    setBotLevel,
     chooseDeck,
     resetGame,
     answerPrompt,
