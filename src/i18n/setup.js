@@ -14,10 +14,6 @@ export const setupText = {
     modeBotTitle: "Vs bot",
     modeBotDesc: "Play alone against a computer opponent.",
     gameBotLabel: "Bot",
-    gameBotLevel: "Bot difficulty",
-    gameBotEasy: "Easy",
-    gameBotNormal: "Normal",
-    gameBotHard: "Hard (sees your hand)",
   },
   ua: {
     gameStepFormat: "Формат",
@@ -34,9 +30,5 @@ export const setupText = {
     modeBotTitle: "Проти бота",
     modeBotDesc: "Грайте наодинці проти комп'ютерного суперника.",
     gameBotLabel: "Бот",
-    gameBotLevel: "Складність бота",
-    gameBotEasy: "Легка",
-    gameBotNormal: "Звичайна",
-    gameBotHard: "Складна (бачить вашу руку)",
   },
 };

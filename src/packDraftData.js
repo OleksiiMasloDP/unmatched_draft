@@ -232,7 +232,7 @@ export const packDraftHeroes = [
     move: 3,
     attack: "melee",
     team: true,
-    image: "images/echo.webp",
+    image: "images/raptors.webp",
     passive: {
       name: "Pack Tactics",
       text: {
@@ -508,11 +508,13 @@ function cardImage(hero, name) {
   };
 }
 
+// cover: false - без обкладинки, рядок - власний шлях до картинки (наприклад,
+// "images/raptors.webp"), інакше images/cards/<dir>/cover.webp.
 export function coverImage(heroId) {
   const entry = CARD_IMAGES[heroId];
-  return entry && entry.cover !== false
-    ? encodeURI(`images/cards/${entry.dir}/cover.webp`)
-    : null;
+  if (!entry || entry.cover === false) return null;
+  if (typeof entry.cover === "string") return encodeURI(entry.cover);
+  return encodeURI(`images/cards/${entry.dir}/cover.webp`);
 }
 
 function slug(value) {

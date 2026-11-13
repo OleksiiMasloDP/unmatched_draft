@@ -230,7 +230,8 @@ export const cardEffects = {
   },
 
   "momentous-shift": {
-    value: (c, value) => (c.g.movedThisTurn(c.me) ? 5 : value),
+    value: (c, value) =>
+      c.g.movedThisTurn(c.me, c.combat.fighters[c.me]) ? 5 : value,
   },
 
   "a-boy-named-bucky": {
@@ -426,7 +427,8 @@ export const cardEffects = {
   "a-warrior-s-way": {
     *after(c) {
       yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
-      const near = c.g.adjacentSpaces(c.me);
+      const near =
+        c.combat.fighters[c.foe] === "hero" ? c.g.adjacentSpaces(c.me) : [];
       if (near.length) {
         const space = yield c.g.askSpace(c.me, "promptPlaceAdjacent", near);
         if (space) c.g.place(c.me, space);
@@ -460,12 +462,12 @@ export const cardEffects = {
   },
 
   "a-worthy-opponent": {
-    value: () => 5,
+    value: (c, value) => (c.combat.fighters[c.foe] === "hero" ? 5 : value),
   },
 
   "flash-of-steel": {
     *immediate(c) {
-      cancelOpponentCard(c);
+      if (c.combat.fighters[c.foe] === "hero") cancelOpponentCard(c);
     },
     *after(c) {
       if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
@@ -517,7 +519,7 @@ export const cardEffects = {
   },
 
   "cloak-of-levitation": {
-    ignoreFoeValue: (c) => c.g.adjacent(c.me, c.foe),
+    ignoreFoeCard: (c) => c.g.adjacent(c.me, c.foe),
   },
 
   "steadfast-disciple": {

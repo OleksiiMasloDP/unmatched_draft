@@ -10,6 +10,8 @@ import GamePage from "./components/pages/GamePage.vue";
 import RoguePage from "./components/pages/RoguePage.vue";
 import MapEditor from "./components/pages/MapEditor.vue";
 import HomePage from "./components/pages/HomePage.vue";
+import BotEditor from "./components/pages/BotEditor.vue";
+import SeoEntityPage from "./components/pages/SeoEntityPage.vue";
 
 export const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -32,7 +34,32 @@ export const routes = [
   },
   { path: "/game", name: "game", component: GamePage },
   { path: "/roguelike", name: "rogue", component: RoguePage },
+  {
+    path: "/heroes",
+    name: "heroes",
+    component: SeoEntityPage,
+    props: { kind: "heroes" },
+  },
+  {
+    path: "/heroes/:slug",
+    name: "hero",
+    component: SeoEntityPage,
+    props: (route) => ({ kind: "hero", slug: String(route.params.slug) }),
+  },
+  {
+    path: "/map-list",
+    name: "map-list",
+    component: SeoEntityPage,
+    props: { kind: "maps" },
+  },
+  {
+    path: "/maps/:slug",
+    name: "map-detail",
+    component: SeoEntityPage,
+    props: (route) => ({ kind: "map", slug: String(route.params.slug) }),
+  },
   { path: "/map-editor", name: "map-editor", component: MapEditor },
+  { path: "/bot-editor", name: "bot-editor", component: BotEditor },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 

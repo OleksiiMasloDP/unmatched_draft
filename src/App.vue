@@ -18,7 +18,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, watch } from "vue";
+import { useRoute } from "vue-router";
+import { applySeo } from "./seo.js";
 import { useDraftState } from "./composables/useDraftState";
 import Header from "./components/Header.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
@@ -27,6 +29,15 @@ import SupportModal from "./components/SupportModal.vue";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
+
+const currentRoute = useRoute();
+
+// title/description/canonical/robots під поточну сторінку й мову
+watch(
+  [() => currentRoute.name, lang],
+  ([name, language]) => applySeo(name, language),
+  { immediate: true },
+);
 
 let bsModalInstance = null;
 const isAppReady = ref(false);

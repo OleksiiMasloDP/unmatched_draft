@@ -1078,42 +1078,46 @@ export const translations = {
   },
 };
 
-import { setupText } from "./i18nSetup.js";
+import { setupText } from "./i18n/setup.js";
 Object.assign(translations.en, setupText.en);
 Object.assign(translations.ua, setupText.ua);
 
-import { blackPantherText } from "./i18nBlackPanther.js";
+import { blackPantherText } from "./i18n/heroes/blackPanther.js";
 Object.assign(translations.en, blackPantherText.en);
 Object.assign(translations.ua, blackPantherText.ua);
 
-import { houdiniText } from "./i18nHoudini.js";
+import { houdiniText } from "./i18n/heroes/houdini.js";
 Object.assign(translations.en, houdiniText.en);
 Object.assign(translations.ua, houdiniText.ua);
 
-import { wyattText } from "./i18nWyatt.js";
+import { wyattText } from "./i18n/heroes/wyatt.js";
 Object.assign(translations.en, wyattText.en);
 Object.assign(translations.ua, wyattText.ua);
 
-import { jillText } from "./i18nJill.js";
+import { jillText } from "./i18n/heroes/jill.js";
 Object.assign(translations.en, jillText.en);
 Object.assign(translations.ua, jillText.ua);
 
-import { robinHoodText } from "./i18nRobinHood.js";
+import { robinHoodText } from "./i18n/heroes/robinHood.js";
 Object.assign(translations.en, robinHoodText.en);
 Object.assign(translations.ua, robinHoodText.ua);
 
-import { raptorsText } from "./i18nRaptors.js";
+import { raptorsText } from "./i18n/heroes/raptors.js";
 Object.assign(translations.en, raptorsText.en);
 Object.assign(translations.ua, raptorsText.ua);
 
-import { combatText } from "./i18nCombat.js";
+import { combatText } from "./i18n/combat.js";
 Object.assign(translations.en, combatText.en);
 Object.assign(translations.ua, combatText.ua);
 
-import { tokensText } from "./i18nTokens.js";
+import { tokensText } from "./i18n/tokens.js";
 Object.assign(translations.en, tokensText.en);
 Object.assign(translations.ua, tokensText.ua);
 
 import { rogueText } from "./i18nRogue.js";
 Object.assign(translations.en, rogueText.en);
 Object.assign(translations.ua, rogueText.ua);
+
+import { botEditorText } from "./i18n/botEditor.js";
+Object.assign(translations.en, botEditorText.en);
+Object.assign(translations.ua, botEditorText.ua);

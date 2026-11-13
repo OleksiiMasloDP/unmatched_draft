@@ -51,7 +51,8 @@
             :class="{
               'is-open': openMenu === entry.id,
               'is-current': entry.items.some(
-                (item) => route.name === item.name,
+                (item) =>
+                  route.name === item.name || item.also?.includes(route.name),
               ),
             }"
             @mouseenter="openMenu = entry.id"
@@ -240,6 +241,18 @@ const nav = computed(() => {
           name: "maps",
           icon: "maps",
           label: props.t("heroMapGuide"),
+        },
+        {
+          name: "heroes",
+          also: ["hero"],
+          icon: "guide",
+          label: ua ? "Усі герої" : "All heroes",
+        },
+        {
+          name: "map-list",
+          also: ["map-detail"],
+          icon: "maps",
+          label: ua ? "Усі мапи" : "All maps",
         },
       ],
     },
