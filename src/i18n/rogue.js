@@ -84,6 +84,10 @@ export const rogueText = {
     rogueOverVictoryText: "{n} battles won with {hero}.",
     rogueUpgraded: "Upgraded",
     rogueDeckCountShort: "{n} cards",
+    rogueEventTipCost: "Costs {n} gold",
+    rogueEventTipPoor: "Not enough gold",
+    rogueEventTipRemove: "Choose a card to remove from your deck",
+    rogueEventTipPick: "Choose 1 of {n} cards",
   },
   ua: {
     rogueTitle: "Роугалік",
@@ -171,5 +175,9 @@ export const rogueText = {
     rogueOverVictoryText: "{n} боїв виграно за героя {hero}.",
     rogueUpgraded: "Покращено",
     rogueDeckCountShort: "{n} карт",
+    rogueEventTipCost: "Коштує {n} золота",
+    rogueEventTipPoor: "Не вистачає золота",
+    rogueEventTipRemove: "Оберіть карту, яку видалити з колоди",
+    rogueEventTipPick: "Оберіть 1 з {n} карт",
   },
 };

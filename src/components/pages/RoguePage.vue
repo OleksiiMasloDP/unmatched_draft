@@ -12,7 +12,13 @@
         >
           🏆 {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
         </button>
-        <span v-if="inRun" class="rogue-gold">💰 {{ run.gold }}</span>
+        <button
+          v-if="inRun && run.phase !== 'battle'"
+          class="btn btn-sm btn-outline-danger rogue-abandon"
+          @click="abandon"
+        >
+          {{ t("rogueAbandon") }}
+        </button>
       </div>
 
       <div
@@ -101,9 +107,7 @@
             <b>{{ t("rogueDeckButton") }}</b>
             <i>{{ run.deck.length }}</i>
           </button>
-          <button class="btn btn-sm btn-outline-danger" @click="abandon">
-            {{ t("rogueAbandon") }}
-          </button>
+          <span class="rogue-gold">💰 {{ run.gold }}</span>
         </div>
         <RogueMap
           :map="run.map"
@@ -304,31 +308,17 @@
       </section>
 
       <section v-else-if="run.phase === 'event' && eventData">
-        <div class="rogue-event rogue-anim">
-          <div class="rogue-event-icon">
-            <img
-              v-if="eventHero"
-              class="rogue-event-hero"
-              :src="assetUrl(eventHero.image)"
-              alt=""
-            />
-            <RogueIcon v-else :name="eventData.icon" metal="gold" size="72px" />
-          </div>
-          <h2 class="rogue-subtitle">{{ eventText(eventData.title) }}</h2>
-          <p>{{ eventText(eventData.text) }}</p>
-        </div>
-        <div v-if="run.event.step === 'choose'" class="rogue-options">
-          <button
-            v-for="(choice, i) in eventData.choices"
-            :key="i"
-            class="rogue-option rogue-anim"
-            :disabled="eventBlocked(choice)"
-            @click="chooseEvent(i)"
-          >
-            <span>{{ eventText(choice.label) }}</span>
-          </button>
-        </div>
-        <template v-else-if="run.event.step === 'result'">
+        <RogueEventScene
+          class="rogue-anim"
+          :title="eventText(eventData.title)"
+          :text="eventText(eventData.text)"
+          :icon="eventData.icon || ''"
+          :art="eventArt"
+          :tint="eventData.tint"
+          :choices="run.event.step === 'choose' ? eventChoices : []"
+          @choose="chooseEvent"
+        />
+        <template v-if="run.event.step === 'result'">
           <p class="rogue-hint">{{ eventText(run.event.result) }}</p>
           <div v-if="run.event.gold" class="rogue-gain">
             <span :class="run.event.gold > 0 ? 'is-up' : 'is-down'">
@@ -354,7 +344,11 @@
             </button>
           </div>
         </template>
-        <template v-else>
+        <template
+          v-else-if="
+            run.event.step === 'pickCard' || run.event.step === 'pickRemove'
+          "
+        >
           <p class="rogue-hint">
             {{
               run.event.step === "pickCard"
@@ -408,6 +402,7 @@
       @click="deckOpen = true"
     >
       📚 <b>{{ run.deck.length }}</b>
+      <span class="rogue-fab-gold">💰 {{ run.gold }}</span>
     </button>
     <RogueHistoryModal
       v-if="historyOpen"
@@ -457,9 +452,9 @@ import { packDraftHeroes } from "../../packDraftData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
 import RogueHistoryModal from "../RogueHistoryModal.vue";
-import RogueIcon from "../RogueIcon.vue";
 import RogueDeckModal from "../RogueDeckModal.vue";
 import RogueHeroTile from "../RogueHeroTile.vue";
+import RogueEventScene from "../RogueEventScene.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
 
@@ -551,6 +546,18 @@ const eventText = (value) =>
     "{hero}",
     run.event?.hero ? heroName(run.event.hero) : "",
   );
+const eventArt = computed(() => {
+  if (eventHero.value) return assetUrl(eventHero.value.image);
+  return run.event ? assetUrl(`images/rogue/events/${run.event.id}.webp`) : "";
+});
+const eventChoices = computed(() =>
+  (eventData.value?.choices || []).map((choice) => ({
+    icon: choice.icon,
+    label: eventText(choice.label),
+    blocked: eventBlocked(choice),
+    tip: choiceTip(choice),
+  })),
+);
 const eventCards = computed(() => cardsOf(run.event?.cards || []));
 const eventPickList = computed(() => {
   const stepName = run.event?.step;
@@ -576,6 +583,18 @@ const nodeLabels = computed(() => ({
   ruins: t("rogueZoneRuins"),
   citadel: t("rogueZoneCitadel"),
 }));
+
+function choiceTip(choice) {
+  const lines = [];
+  if (choice.cost) {
+    lines.push(t("rogueEventTipCost").replace("{n}", choice.cost));
+    if (run.gold < choice.cost) lines.push(t("rogueEventTipPoor"));
+  }
+  if (choice.remove) lines.push(t("rogueEventTipRemove"));
+  const count = choice.pick || choice.pickAlly;
+  if (count) lines.push(t("rogueEventTipPick").replace("{n}", count));
+  return lines;
+}
 
 function eventBlocked(choice) {
   if (run.gold < (choice.cost || 0)) return true;
@@ -696,16 +715,6 @@ onBeforeUnmount(() => {
 
 .rogue-bestbtn:hover {
   background: rgba(138, 108, 67, 0.4);
-}
-
-.rogue-event-hero {
-  width: 96px;
-  height: 96px;
-  border: 4px solid #e0b25c;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: top;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
 }
 
 .rogue-gain {
@@ -952,6 +961,31 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
 }
 
+.rogue-abandon {
+  margin-left: auto;
+  padding: 5px 14px;
+  border: 1px solid rgba(217, 83, 79, 0.7);
+  border-radius: 999px;
+  background: rgba(217, 83, 79, 0.12);
+  color: #ff8d8a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rogue-abandon:hover {
+  background: rgba(217, 83, 79, 0.3);
+  color: #fff;
+}
+
+.rogue-fab-gold {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 236, 200, 0.3);
+  color: #f6c945;
+  font-weight: 800;
+}
+
 .rogue-gold {
   margin-left: auto;
   padding: 3px 12px;
@@ -1011,16 +1045,6 @@ onBeforeUnmount(() => {
 
 .rogue-option-icon {
   font-size: 40px;
-}
-
-.rogue-event {
-  max-width: 560px;
-  text-align: center;
-  margin: 8px auto 16px;
-}
-
-.rogue-event-icon {
-  font-size: 64px;
 }
 
 .rogue-shopitem {

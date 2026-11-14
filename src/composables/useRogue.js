@@ -108,8 +108,8 @@ const hpScale = (node) => Math.min(1, 0.5 + 0.05 * node.row);
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1.3;
-  if (kind === "elite") return hpScale(node) * 1.1;
+  if (kind === "boss") return 1.5;
+  if (kind === "elite") return hpScale(node) * 2;
   return hpScale(node) * 1.05;
 };
 

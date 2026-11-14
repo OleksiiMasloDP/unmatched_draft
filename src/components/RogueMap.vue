@@ -160,7 +160,7 @@
           />
           <span v-if="node.visited" class="rmap-seal">✔</span>
         </span>
-        <span class="rmap-label">{{ node.label }}</span>
+        <span class="rmap-tip">{{ node.label }}</span>
       </button>
       <div
         v-if="heroImage"
@@ -614,13 +614,8 @@ onBeforeUnmount(() => {
   --ring: linear-gradient(150deg, #ffd0d0, #d9393b 45%, #6d0f13 75%, #ff8e8e);
 }
 
-.rmap-node.is-locked .rmap-medal {
-  opacity: 0.55;
-  filter: grayscale(0.6) brightness(0.8);
-}
-
 .rmap-node.is-visited .rmap-medal {
-  filter: grayscale(0.9) brightness(0.6);
+  filter: brightness(0.8);
 }
 
 .rmap-seal {
@@ -661,19 +656,38 @@ onBeforeUnmount(() => {
   border-width: 5px;
 }
 
-.rmap-label {
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.6);
-  font-size: 9px;
+.rmap-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 6;
+  padding: 4px 10px;
+  border: 1px solid var(--c);
+  border-radius: 6px;
+  background: rgba(10, 8, 6, 0.95);
+  color: #ffecc8;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: rgba(255, 236, 200, 0.7);
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s;
 }
 
-.rmap-node.is-live .rmap-label {
-  color: var(--c);
+.rmap-node:hover,
+.rmap-node:focus-visible {
+  z-index: 5;
+}
+
+.rmap-node:hover .rmap-tip,
+.rmap-node:focus-visible .rmap-tip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .rmap-token {
@@ -708,11 +722,6 @@ onBeforeUnmount(() => {
   .rmap-node.is-boss .rmap-medal {
     width: 62px;
     height: 62px;
-  }
-
-  .rmap-label {
-    font-size: 8px;
-    letter-spacing: 0.6px;
   }
 }
 </style>
