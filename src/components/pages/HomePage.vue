@@ -37,6 +37,9 @@
           >
             {{ L.ctaFormats }}
           </router-link>
+          <router-link :to="{ name: 'game' }" class="home-btn home-btn-ghost">
+            {{ L.ctaPlay }}
+          </router-link>
         </div>
 
         <ul class="home-stats">
@@ -157,7 +160,7 @@
       <div class="home-grid">
         <router-link
           v-for="(f, i) in features"
-          :key="f.route"
+          :key="f.key"
           :to="{ name: f.route }"
           class="home-card"
           data-reveal
@@ -173,6 +176,7 @@
             class="home-card-art"
             :class="{ 'is-map': f.art === 'map' }"
           />
+          <span v-if="f.isNew" class="home-card-badge">{{ L.newLabel }}</span>
           <div class="home-card-body">
             <span class="home-card-icon">{{ f.icon }}</span>
             <h3>{{ L.features[f.key].title }}</h3>
@@ -207,9 +211,11 @@ const dict = {
   en: {
     eyebrow: "Draft simulator for the Unmatched board game",
     tagline:
-      "Ban and pick heroes, choose the map, test new formats and even play the match — all in your browser.",
+      "Ban and pick heroes with ratings from professional players, draft card packs, play against a bot, or run a roguelike — all in your browser.",
     ctaDraft: "Start drafting",
     ctaFormats: "Draft formats",
+    ctaPlay: "Play vs bot",
+    newLabel: "New",
     stats: {
       tools: "tools",
       schemes: "draft schemes",
@@ -224,7 +230,7 @@ const dict = {
     demoDone: "Draft complete — map chosen!",
     aboutTitle: "What is this?",
     aboutText:
-      "Unmatched Draftsim is a fan-made toolbox for players who like to draft. Run a ban/pick with your opponent, see how heroes rank and which maps suit them, build your own draft formats, and take the result straight into a game.",
+      "Unmatched Draftsim is a fan-made toolbox for players who like to draft. Run a ban/pick with your opponent, see how heroes rank — the ratings are built from statistics of professional players — and which maps suit them, build your own draft formats, and take the result straight into a game against a friend or a bot.",
     howTitle: "How it works",
     steps: [
       {
@@ -245,7 +251,7 @@ const dict = {
     features: {
       draft: {
         title: "Draft simulator",
-        text: "Turn-based ban/pick (3 bans / 5 picks, 2 bans / 4 picks) or simultaneous Ladder mode, with heroes ranked by Elo — and a map choice at the end.",
+        text: "Turn-based ban/pick (3 bans / 5 picks, 2 bans / 4 picks) or simultaneous Ladder mode. Heroes are ranked by Elo built from statistics of professional players — and a map choice at the end.",
       },
       formats: {
         title: "Draft formats",
@@ -265,20 +271,26 @@ const dict = {
       },
       "pack-draft": {
         title: "Pack Draft",
-        text: "A 2-player, 4-hero format: all cards go into one pool, get split into packs and drafted — and only then played.",
+        text: "A 2-player, 4-hero format: all cards go into one pool, get split into packs and drafted — and only then played. Build the decks from the packs you take.",
       },
       game: {
         title: "Game",
-        text: "Play your drafted decks on one screen or online with a room code: hand, deck, attacks, maneuvers and a battle log.",
+        text: "Play your decks against a bot, on one screen or online with a room code: hand, deck, attacks, maneuvers and a battle log. The bot looks ahead and plays in a style that suits its hero.",
+      },
+      rogue: {
+        title: "Roguelike",
+        text: "Fight through a map of battles, elites and events: collect gold and cards, remove weak ones, rebuild your deck and face custom bosses.",
       },
     },
   },
   ua: {
     eyebrow: "Драфт-симулятор для настільної гри Unmatched",
     tagline:
-      "Банте й пікайте героїв, обирайте мапу, пробуйте нові формати і навіть грайте матч — усе в браузері.",
+      "Банте й пікайте героїв за рейтингом професійних гравців, драфтіть паки карт, грайте проти бота чи проходьте рогалик — усе в браузері.",
     ctaDraft: "Почати драфт",
     ctaFormats: "Формати драфту",
+    ctaPlay: "Грати з ботом",
+    newLabel: "Нове",
     stats: {
       tools: "інструментів",
       schemes: "схеми драфту",
@@ -293,7 +305,7 @@ const dict = {
     demoDone: "Драфт завершено — мапу обрано!",
     aboutTitle: "Що це?",
     aboutText:
-      "Unmatched Draftsim — фанатський набір інструментів для тих, хто любить драфт. Проведіть бан/пік із суперником, подивіться рейтинг героїв і які мапи їм підходять, створіть власні формати драфту та одразу перейдіть до гри.",
+      "Unmatched Draftsim — фанатський набір інструментів для тих, хто любить драфт. Проведіть бан/пік із суперником, подивіться рейтинг героїв — він побудований на статистиці професійних гравців — і які мапи їм підходять, створіть власні формати драфту та одразу перейдіть до гри з другом або ботом.",
     howTitle: "Як це працює",
     steps: [
       {
@@ -314,7 +326,7 @@ const dict = {
     features: {
       draft: {
         title: "Драфт-симулятор",
-        text: "Покроковий бан/пік (3 бани / 5 піків, 2 бани / 4 піки) або одночасний режим Ladder, герої з рейтингом Elo — і вибір мапи наприкінці.",
+        text: "Покроковий бан/пік (3 бани / 5 піків, 2 бани / 4 піки) або одночасний режим Ladder. Герої з рейтингом Elo, побудованим на статистиці професійних гравців, — і вибір мапи наприкінці.",
       },
       formats: {
         title: "Формати драфту",
@@ -334,11 +346,15 @@ const dict = {
       },
       "pack-draft": {
         title: "Pack Draft",
-        text: "Формат для 2 гравців і 4 героїв: усі карти йдуть в один пул, діляться на паки й драфтяться — і лише потім грають.",
+        text: "Формат для 2 гравців і 4 героїв: усі карти йдуть в один пул, діляться на паки й драфтяться — і лише потім грають. Збирайте колоди з паків, які ви взяли.",
       },
       game: {
         title: "Гра",
-        text: "Грайте задрафтовані колоди на одному екрані або онлайн за кодом кімнати: рука, колода, атаки, маневри та журнал бою.",
+        text: "Грайте колодами проти бота, на одному екрані або онлайн за кодом кімнати: рука, колода, атаки, маневри та журнал бою. Бот дивиться наперед і грає у стилі свого героя.",
+      },
+      rogue: {
+        title: "Рогалик",
+        text: "Проходьте мапу з боїв, еліт і подій: збирайте золото й карти, прибирайте слабкі, перебудовуйте колоду та зустрічайте кастомних босів.",
       },
     },
   },
@@ -357,8 +373,10 @@ const features = [
     route: "pack-draft",
     icon: "🎴",
     art: "map",
+    isNew: true,
   },
-  { key: "game", route: "game", icon: "🎮", art: "hero" },
+  { key: "game", route: "game", icon: "🎮", art: "hero", isNew: true },
+  { key: "rogue", route: "rogue", icon: "🗡️", art: "map", isNew: true },
 ];
 
 const abs = (path) => new URL(path, document.baseURI).href;
@@ -1203,6 +1221,7 @@ onBeforeUnmount(() => {
 }
 .home-card-badge {
   position: absolute;
+  z-index: 3;
   top: 18px;
   right: 16px;
   padding: 2px 9px;
