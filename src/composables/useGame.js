@@ -111,6 +111,7 @@ function resetFighters() {
 }
 
 function fx(type, player, extra = {}) {
+  if (simulating) return;
   game.fxSeq += 1;
   game.fx.push({ id: game.fxSeq, type, player, ...extra });
   if (game.fx.length > 40) game.fx.shift();
@@ -184,14 +185,17 @@ function shuffle(list) {
 }
 
 let currentNote = null;
+let simulating = false;
 
 function log(key, params = {}) {
+  if (simulating) return;
   game.log.push({ key, params });
   if (game.log.length > 200) game.log.shift();
   if (currentNote && currentNote.open) currentNote.lines.push({ key, params });
 }
 
 function beginAnnounce(player, card, phase) {
+  if (simulating) return;
   game.fxSeq += 1;
   game.announces.push({
     id: game.fxSeq,
@@ -2586,6 +2590,7 @@ function viewFor(seat) {
 }
 
 function syncOut() {
+  if (simulating) return;
   if (net.isHost.value) net.send("game:view", viewFor("p2"));
 }
 
@@ -2712,6 +2717,73 @@ function undoAction(seat) {
   flow = null;
   game.prompt = null;
   undoPoint = null;
+}
+
+const SIM_SKIP = [
+  "log",
+  "fx",
+  "announce",
+  "announces",
+  "notice",
+  "lobby",
+  "mulligan",
+  "toss",
+  "startPick",
+  "viewer",
+  "bot",
+  "prompt",
+];
+
+function snapshot() {
+  if (game.prompt || flow) return null;
+  const data = {};
+  for (const key of Object.keys(game)) {
+    if (!SIM_SKIP.includes(key)) data[key] = game[key];
+  }
+  return JSON.stringify({
+    game: data,
+    flags: turnFlags,
+    cur,
+    undo: undoPoint,
+    combatHit,
+    activeCard,
+    damageSrc,
+  });
+}
+
+function restore(saved) {
+  const snap = JSON.parse(saved);
+  for (const key of Object.keys(snap.game)) game[key] = snap.game[key];
+  for (const key of Object.keys(snap.flags)) turnFlags[key] = snap.flags[key];
+  cur.p1 = snap.cur.p1;
+  cur.p2 = snap.cur.p2;
+  undoPoint = snap.undo;
+  combatHit = snap.combatHit;
+  activeCard = snap.activeCard;
+  damageSrc = snap.damageSrc;
+  game.prompt = null;
+  flow = null;
+  currentNote = null;
+}
+
+function simulate(fn) {
+  const before = simulating;
+  const keep = game.announce;
+  const note = currentNote;
+  simulating = true;
+  try {
+    return fn();
+  } finally {
+    simulating = before;
+    game.announce = keep;
+    currentNote = note;
+  }
+}
+
+function shuffleDecks() {
+  for (const player of ["p1", "p2"]) {
+    if (pl(player)) pl(player).deck = shuffle([...pl(player).deck]);
+  }
 }
 
 function applyAction(type, seat) {
@@ -2978,5 +3050,9 @@ export function useGame() {
     confirmMap,
     chooseOrder,
     pickStart,
+    snapshot,
+    restore,
+    simulate,
+    shuffleDecks,
   };
 }

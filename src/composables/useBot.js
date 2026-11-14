@@ -11,6 +11,7 @@ import {
   loadBotData,
 } from "../botData.js";
 import { useGame } from "./useGame.js";
+import { createSearch, validReply } from "./botSearch.js";
 
 const TICK = 650;
 const other = (seat) => (seat === "p1" ? "p2" : "p1");
@@ -61,6 +62,34 @@ export function useBot() {
   const rate = (card) => cardInfo(card, store);
 
   const styleOf = () => profile.style ?? BOT_STYLES.NEUTRAL;
+
+  const profileOf = (seat) => {
+    const heroKey = game.players[seat]?.heroId;
+    const edited = heroInfo(heroKey, store);
+    const result = { ...(botProfiles[heroKey] || {}) };
+    for (const name of heroSettingKeys) {
+      if (edited[name] !== undefined) result[name] = edited[name];
+    }
+    return result;
+  };
+
+  const withSeat = (seat, fn) => {
+    const keepProfile = profile;
+    const keepBot = game.bot;
+    profile = profileOf(seat);
+    game.bot = seat;
+    try {
+      return fn();
+    } finally {
+      profile = keepProfile;
+      game.bot = keepBot;
+    }
+  };
+
+  let inSim = false;
+  let simTurn = -1;
+  let saveSim = null;
+  let planned = null;
 
   const reserve = (seat) => {
     const state = game.players[seat];
@@ -748,9 +777,25 @@ export function useBot() {
         : best,
     );
 
+  const wakandaFit = (card) => {
+    if (card.key !== "wakanda-forever") return true;
+    const target = lastTarget;
+    if (!target) return false;
+    if (target.isHero) return true;
+    return target.max > 2 && (card.value ?? 0) >= target.hp;
+  };
+
   const answerCards = (prompt, bot) => {
-    const options = prompt.options.map(getCard).filter(Boolean);
+    let options = prompt.options.map(getCard).filter(Boolean);
     const title = prompt.title;
+    if (title === "promptDefenseCard" || title === "promptAttackCard") {
+      const attacking = title === "promptAttackCard";
+      const fit = options.filter(
+        (card) =>
+          card.key !== "wakanda-forever" || (attacking && wakandaFit(card)),
+      );
+      if (fit.length) options = fit;
+    }
     const state = plan(bot);
     if (title === "promptAttackCard") {
       if (!options.length) return [];
@@ -920,6 +965,7 @@ export function useBot() {
     switch (prompt.title) {
       case "promptSwap":
       case "promptSmokeSwap":
+      case "promptSleightReturn":
         return false;
       case "promptScareTactics":
         return myHp(bot) > 5 && handOf(other(bot)).length > 0;
@@ -1042,10 +1088,11 @@ export function useBot() {
   };
 
   const act = (bot) => {
+    if (!inSim) planned = null;
     const available = engine.availableActions(true);
     const hand = handOf(bot);
     const state = plan(bot);
-    reachCache.clear();
+    if (!inSim) reachCache.clear();
     if (state.finisher && available.scheme) return engine.doScheme();
     const kill = lethalMove(bot, available);
     if (kill === "scheme") return engine.doScheme();
@@ -1127,6 +1174,17 @@ export function useBot() {
       options.push(["maneuver", draw + styleDraw + need + repeat + gain]);
     }
     if (!options.length) return;
+    if (!inSim && !(game.noSearch || []).includes(bot)) {
+      const prior = Object.fromEntries(options);
+      const found = search.choose(bot, available, prior);
+      if (found) {
+        planned = { index: 0, list: found.overrides, turn: game.turnNo };
+        if (found.action === "attack") return engine.doAttack();
+        if (found.action === "scheme") return engine.doScheme();
+        turnManeuvers += 1;
+        return engine.doManeuver();
+      }
+    }
     options.sort((a, b) => b[1] - a[1]);
     const [pick, value] = options[0];
     if (
@@ -1143,17 +1201,50 @@ export function useBot() {
     return engine.doManeuver();
   };
 
+  const search = createSearch({
+    engine,
+    game,
+    fightersOf,
+    handOf,
+    fatigueEdge,
+    positionScore: (fighter, space, bot) =>
+      positionScore(fighter, space, bot, false),
+    nearestFoe,
+    canHit,
+    isAttackCard,
+    isDefenseCard,
+    fallback,
+    styleOf: (seat) => profileOf(seat).style ?? BOT_STYLES.NEUTRAL,
+    decide: (prompt, seat) => withSeat(seat, () => answer(prompt, seat)),
+    step: (seat) =>
+      withSeat(seat, () => {
+        if (game.turnNo !== simTurn) {
+          simTurn = game.turnNo;
+          turnManeuvers = 0;
+        }
+        act(seat);
+      }),
+    startSim: (action) => {
+      saveSim = { turnManeuvers, lastTarget };
+      inSim = true;
+      simTurn = game.turnNo;
+      if (action === "maneuver") turnManeuvers += 1;
+    },
+    endSim: () => {
+      inSim = false;
+      if (saveSim) {
+        turnManeuvers = saveSim.turnManeuvers;
+        lastTarget = saveSim.lastTarget;
+      }
+    },
+  });
+
   const step = () => {
     const bot = game.bot;
     if (!bot) return;
     store = loadBotData();
     currentStore = store;
-    const heroKey = game.players[bot]?.heroId;
-    const edited = heroInfo(heroKey, store);
-    profile = { ...(botProfiles[heroKey] || {}) };
-    for (const name of heroSettingKeys) {
-      if (edited[name] !== undefined) profile[name] = edited[name];
-    }
+    profile = profileOf(bot);
     if (game.phase === "mulligan" && game.mulligan) {
       if (!game.mulligan.reveal && !game.mulligan.decided[bot]) {
         chooseMulligan(bot);
@@ -1188,8 +1279,18 @@ export function useBot() {
       ]);
       repeats = key === signature ? repeats + 1 : 0;
       signature = key;
-      const reply =
-        repeats < 2 ? answer(prompt, bot) : fallback(prompt, repeats);
+      let reply;
+      if (repeats >= 2) reply = fallback(prompt, repeats);
+      else {
+        const forced = planned?.list.get(planned.index);
+        if (planned) planned.index += 1;
+        reply =
+          forced &&
+          forced.title === prompt.title &&
+          validReply(prompt, forced.value)
+            ? forced.value
+            : answer(prompt, bot);
+      }
       engine.answerPrompt(reply);
       return;
     }
