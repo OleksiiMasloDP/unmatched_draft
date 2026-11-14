@@ -11,7 +11,7 @@ import {
   loadBotData,
 } from "../botData.js";
 import { useGame } from "./useGame.js";
-import { createSearch, validReply } from "./botSearch.js";
+import { createSearch, validReply, DEFAULT_WEIGHTS } from "./botSearch.js";
 
 const TICK = 650;
 const other = (seat) => (seat === "p1" ? "p2" : "p1");
@@ -1204,6 +1204,10 @@ export function useBot() {
   const search = createSearch({
     engine,
     game,
+    weightsOf: (seat) => ({
+      ...DEFAULT_WEIGHTS,
+      ...(game.weights?.[seat] || game.weights?.all || {}),
+    }),
     fightersOf,
     handOf,
     fatigueEdge,

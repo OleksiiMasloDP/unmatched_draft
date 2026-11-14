@@ -26,13 +26,31 @@ export const validReply = (prompt, value) => {
   return true;
 };
 
+export const DEFAULT_WEIGHTS = {
+  hp: 2,
+  kidHp: 0.7,
+  kidCount: 1.2,
+  card: 0.9,
+  lowHand: 1.1,
+  noDefense: 2.2,
+  noAttack: 1.2,
+  deck: 0.2,
+  fatigue: 0.45,
+  fatiguePass: 0.7,
+  reach: 0.6,
+  beatGuard: 0.4,
+  position: 0.3,
+  prior: 3,
+};
+
 export function createSearch(api) {
   const { engine, game } = api;
-  const BUDGET = 700;
+  const BUDGET = () => api.weightsOf(null).budget ?? 700;
   const SAMPLES = 3;
   const DEPTH = 7;
 
   const evaluate = (bot) => {
+    const w = api.weightsOf(bot);
     if (game.phase === "over") return game.winner === bot ? 1000 : -1000;
     const foe = other(bot);
     const me = game.players[bot];
@@ -47,21 +65,23 @@ export function createSearch(api) {
     const dmgWeight = style === BOT_STYLES.PRESSURE ? 1.25 : 1;
     const cardWeight = style === BOT_STYLES.PASS ? 1.3 : 1;
     let score = 0;
-    score += (me.hp - them.hp * dmgWeight) * 2;
-    score += (kidHp(me) - kidHp(them) * dmgWeight) * 0.7;
-    score += (kidCount(me) - kidCount(them)) * 1.2;
+    score += (me.hp - them.hp * dmgWeight) * w.hp;
+    score += (kidHp(me) - kidHp(them) * dmgWeight) * w.kidHp;
+    score += (kidCount(me) - kidCount(them)) * w.kidCount;
     const hand = api.handOf(bot);
     const foeHand = api.handOf(foe);
     const defenders = hand.filter(api.isDefenseCard).length;
     const attackers = hand.filter(api.isAttackCard).length;
     const size = Math.min(hand.length, 7);
-    score += size * 0.9 * cardWeight;
-    if (hand.length < 4) score -= (4 - hand.length) * 1.1;
-    if (!defenders) score -= 2.2;
-    if (!attackers) score -= 1.2;
-    score -= Math.min(foeHand.length, 7) * 0.9 * cardWeight;
-    score += (me.deck.length - them.deck.length) * 0.2;
-    score += api.fatigueEdge(bot) * (style === BOT_STYLES.PASS ? 0.7 : 0.45);
+    score += size * w.card * cardWeight;
+    if (hand.length < 4) score -= (4 - hand.length) * w.lowHand;
+    if (!defenders) score -= w.noDefense;
+    if (!attackers) score -= w.noAttack;
+    score -= Math.min(foeHand.length, 7) * w.card * cardWeight;
+    score += (me.deck.length - them.deck.length) * w.deck;
+    score +=
+      api.fatigueEdge(bot) *
+      (style === BOT_STYLES.PASS ? w.fatiguePass : w.fatigue);
     const hero = api.fightersOf(bot).find((item) => item.isHero);
     const foeHero = api.fightersOf(foe).find((item) => item.isHero);
     if (hero && foeHero) {
@@ -71,12 +91,12 @@ export function createSearch(api) {
       const reach = api
         .fightersOf(bot)
         .some((fighter) => api.canHit(fighter, fighter.space, foeHero.space));
-      if (reach && best) score += best * 0.6;
+      if (reach && best) score += best * w.reach;
       const guard = foeHand
         .filter(api.isDefenseCard)
         .reduce((top, card) => Math.max(top, card.value ?? 0), 0);
-      if (reach && best > guard) score += (best - guard) * 0.4;
-      score += api.positionScore(hero, hero.space, bot) * 0.3;
+      if (reach && best > guard) score += (best - guard) * w.beatGuard;
+      score += api.positionScore(hero, hero.space, bot) * w.position;
     }
     return score;
   };
@@ -205,7 +225,7 @@ export function createSearch(api) {
     );
     if (!options.length) return null;
     const started = performance.now();
-    const over = () => performance.now() - started > BUDGET;
+    const over = () => performance.now() - started > BUDGET();
     let result = null;
     engine.simulate(() => {
       const keep = game.bot;
@@ -229,7 +249,9 @@ export function createSearch(api) {
             );
           }
         }
-        const total = (row) => mean(row.scores) + (prior[row.action] ?? 0) * 3;
+        const total = (row) =>
+          mean(row.scores) +
+          (prior[row.action] ?? 0) * api.weightsOf(bot).prior;
         rows.sort((a, b) => total(b) - total(a));
         const best = rows[0];
         let base = mean(best.scores);
