@@ -3288,9 +3288,6 @@ const SANTA_LINKS = [
   ["T5", "T6"],
   ["T6", "T7"],
   ["T1", "R5"],
-  ["T1", "R1"],
-  ["T2", "R1"],
-  ["T3", "R2"],
   ["R1", "R2"],
   ["R1", "R3"],
   ["R1", "R5"],
@@ -3319,7 +3316,6 @@ const SANTA_LINKS = [
   ["C4", "C5"],
   ["C5", "C6"],
   ["T5", "B1"],
-  ["T6", "Y1"],
   ["T7", "Y2"],
   ["B1", "Y1"],
   ["B1", "C1"],
@@ -3337,8 +3333,6 @@ const SANTA_LINKS = [
   ["B4", "B5"],
   ["B5", "C5"],
   ["B5", "C6"],
-  ["Y4", "B4"],
-  ["Y5", "B5"],
   ["Y1", "Y2"],
   ["Y1", "Y3"],
   ["Y1", "Y4"],
@@ -3347,6 +3341,15 @@ const SANTA_LINKS = [
   ["Y3", "Y4"],
   ["Y3", "Y5"],
   ["Y4", "Y5"],
+];
+
+const SANTA_ONE_WAY = [
+  ["T1", "R1"],
+  ["T2", "R1"],
+  ["T3", "R2"],
+  ["T6", "Y1"],
+  ["Y4", "B4"],
+  ["Y5", "B5"],
 ];
 
 export const santasWorkshop = {
@@ -3359,6 +3362,7 @@ export const santasWorkshop = {
     radius: 64,
     spaces: SANTA_SPACES,
     links: SANTA_LINKS,
+    oneWay: SANTA_ONE_WAY,
     starts: { p1: "B5", p2: "R1", p3: "G2", p4: "Y2" },
   }),
   conveyor: {

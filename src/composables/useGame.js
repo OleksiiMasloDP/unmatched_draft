@@ -233,7 +233,7 @@ function zoneCount(player) {
 
 function stepsFrom(id) {
   const space = active.spaceById.get(id);
-  return [...space.links, ...space.secret];
+  return [...space.moves, ...space.secret];
 }
 
 function reach(player, steps, through = false) {

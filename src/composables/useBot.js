@@ -99,7 +99,7 @@ export function useBot() {
     while (queue.length) {
       const id = queue.shift();
       const node = spaceOf(id);
-      for (const next of [...(node?.links || []), ...(node?.secret || [])]) {
+      for (const next of [...(node?.moves || []), ...(node?.secret || [])]) {
         if (!dist.has(next)) {
           dist.set(next, dist.get(id) + 1);
           queue.push(next);
@@ -118,7 +118,7 @@ export function useBot() {
       const id = queue.shift();
       if (seen.get(id) >= steps) continue;
       const node = spaceOf(id);
-      for (const next of [...(node?.links || []), ...(node?.secret || [])]) {
+      for (const next of [...(node?.moves || []), ...(node?.secret || [])]) {
         if (!seen.has(next)) {
           seen.set(next, seen.get(id) + 1);
           queue.push(next);
