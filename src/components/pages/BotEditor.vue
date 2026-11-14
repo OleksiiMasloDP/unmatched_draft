@@ -21,20 +21,24 @@
     </section>
 
     <div class="bot-editor-heroes">
-      <span class="bot-editor-label">{{ t("botEdHeroes") }}</span>
       <button
         v-for="item in everyHero"
         :key="item.id"
-        class="btn btn-sm"
-        :class="item.id === heroId ? 'btn-info' : 'btn-outline-light'"
+        class="bot-editor-hero"
+        :class="{ active: item.id === heroId, touched: touched(item.id) }"
+        :title="item.name"
         @click="heroId = item.id"
       >
-        {{ item.name }}{{ touched(item.id) ? " ✎" : "" }}
+        <img :src="assetUrl(item.image)" :alt="item.name" />
+        <span>{{ item.name }}</span>
       </button>
     </div>
 
     <section class="bot-editor-panel">
-      <b>{{ t("botEdHero") }}: {{ hero.name }}</b>
+      <div class="bot-editor-herohead">
+        <img :src="assetUrl(hero.image)" :alt="hero.name" />
+        <b>{{ t("botEdHero") }}: {{ hero.name }}</b>
+      </div>
       <div class="bot-editor-style">
         <span class="bot-editor-label">{{ t("botEdStyle") }}</span>
         <div class="bot-editor-segment">
@@ -142,28 +146,62 @@
     </section>
 
     <section class="bot-editor-panel">
-      <b>{{ t("botEdCards") }} ({{ cards.length }})</b>
-      <div class="bot-editor-table">
-        <div
-          v-for="control in controlsFor(card)"
-          :key="control.key"
-          class="bot-editor-row"
-          :class="{ changed: cardChanged(card, control.key) }"
-          :title="t(control.name + 'Hint')"
+      <b>{{ t("botEdCards") }} ({{ shownCards.length }}/{{ cards.length }})</b>
+      <div class="bot-editor-bar">
+        <button
+          class="btn btn-sm"
+          :class="typeFilter ? 'btn-outline-light' : 'btn-info'"
+          @click="typeFilter = ''"
         >
-          <div class="bot-editor-rowhead">
-            <span>{{ t(control.name) }}</span>
-            <b>{{ cardValue(card, control.key) }}</b>
-            <button
-              v-if="cardChanged(card, control.key)"
-              class="bot-editor-undo"
-              :title="t('botEdResetOne')"
-              @click="resetCardValue(card, control.key)"
-            >
-              ↺
-            </button>
+          {{ t("botEdAll") }}
+        </button>
+        <button
+          v-for="type in cardTypes"
+          :key="type"
+          class="btn btn-sm"
+          :class="typeFilter === type ? 'btn-info' : 'btn-outline-light'"
+          @click="typeFilter = type"
+        >
+          {{ type }}
+        </button>
+        <label class="bot-editor-check">
+          <input v-model="sortByScore" type="checkbox" />
+          {{ t("botEdSort") }}
+        </label>
+      </div>
+      <div class="bot-editor-grid">
+        <div
+          v-for="card in shownCards"
+          :key="card.key"
+          class="bot-editor-tile"
+          :style="{ '--score': importanceOf(card) / 10 }"
+        >
+          <div class="bot-editor-pic">
+            <PackCard :card="card" />
+            <span v-if="card.qty > 1" class="bot-editor-qty">
+              ×{{ card.qty }}
+            </span>
           </div>
-          <label class="bot-editor-field bot-editor-score">
+          <div class="bot-editor-meter"><i></i></div>
+          <div
+            v-for="control in controlsFor(card)"
+            :key="control.key"
+            class="bot-editor-row"
+            :class="{ changed: cardChanged(card, control.key) }"
+            :title="t(control.name + 'Hint')"
+          >
+            <div class="bot-editor-rowhead">
+              <span>{{ t(control.name) }}</span>
+              <b>{{ cardValue(card, control.key) }}</b>
+              <button
+                v-if="cardChanged(card, control.key)"
+                class="bot-editor-undo"
+                :title="t('botEdResetOne')"
+                @click="resetCardValue(card, control.key)"
+              >
+                ↺
+              </button>
+            </div>
             <input
               type="range"
               min="0"
@@ -173,19 +211,19 @@
                 setCardValue(card, control.key, Number($event.target.value))
               "
             />
-          </label>
-          <div class="bot-editor-ends">
-            <span>{{ t(control.name + "Left") }}</span>
-            <span>{{ t(control.name + "Right") }}</span>
+            <div class="bot-editor-ends">
+              <span>{{ t(control.name + "Left") }}</span>
+              <span>{{ t(control.name + "Right") }}</span>
+            </div>
           </div>
+          <button
+            v-if="cardTouched(card)"
+            class="btn btn-sm btn-outline-warning"
+            @click="resetCard(card)"
+          >
+            {{ t("botEdResetCard") }}
+          </button>
         </div>
-        <button
-          v-if="cardTouched(card)"
-          class="btn btn-sm btn-outline-warning"
-          @click="resetCard(card)"
-        >
-          {{ t("botEdResetCard") }}
-        </button>
       </div>
     </section>
 
@@ -235,13 +273,14 @@ import {
   loadBotData,
   typeDefaults,
 } from "../../botData";
+import { BOT_STYLES } from "../../botStyles";
+import { botProfiles } from "../../botProfiles";
 import {
   buildAllCards,
   buildCustomCards,
   everyHero,
 } from "../../packDraftData";
-import { BOT_STYLES } from "../../botStyles";
-import { botProfiles } from "../../botProfiles";
+import PackCard from "../PackCard.vue";
 
 const { t } = useDraftState();
 
@@ -269,6 +308,20 @@ const cards = computed(() => {
     else seen.set(card.key, { ...card, qty: 1 });
   }
   return [...seen.values()];
+});
+
+const typeFilter = ref("");
+const sortByScore = ref(false);
+const cardTypes = computed(() => [
+  ...new Set(cards.value.map((card) => card.type).filter(Boolean)),
+]);
+const shownCards = computed(() => {
+  const list = cards.value.filter(
+    (card) => !typeFilter.value || card.type === typeFilter.value,
+  );
+  return sortByScore.value
+    ? [...list].sort((a, b) => importanceOf(b) - importanceOf(a))
+    : list;
 });
 
 const importanceOf = (card) => cardValue(card, "importance");
@@ -405,6 +458,8 @@ const json = computed(() => {
   return JSON.stringify(out, null, 2);
 });
 
+watch(heroId, () => (typeFilter.value = ""));
+
 watch(
   json,
   (value) => {
@@ -493,8 +548,125 @@ function download() {
 .bot-editor-heroes {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bot-editor-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 4px;
+  width: 84px;
+  padding: 6px;
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-light);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+
+.bot-editor-hero img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 50%;
+}
+
+.bot-editor-hero:hover {
+  transform: translateY(-2px);
+}
+
+.bot-editor-hero.active {
+  border-color: var(--color-info);
+  background: rgba(var(--color-info-rgb), 0.15);
+}
+
+.bot-editor-hero.touched::after {
+  content: "✎";
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  color: #f6c945;
+}
+
+.bot-editor-herohead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bot-editor-herohead img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 12px;
+}
+
+.bot-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.bot-editor-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bot-editor-pic {
+  position: relative;
+}
+
+.bot-editor-qty {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.bot-editor-meter {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.bot-editor-meter i {
+  display: block;
+  height: 100%;
+  width: calc(var(--score) * 100%);
+  background: hsl(calc(var(--score) * 120), 75%, 50%);
+  transition: width 0.15s;
+}
+
+.bot-editor-tilebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
+}
+
+.bot-editor-tilebar input[type="range"] {
+  flex: 1;
+  min-width: 0;
 }
 
 .bot-editor-label {
@@ -537,47 +709,6 @@ function download() {
   border-radius: 8px;
 }
 
-.bot-editor-table {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.bot-editor-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 200px 80px 80px;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-}
-
-.bot-editor-card {
-  min-width: 0;
-}
-
-.bot-editor-badge {
-  margin: 0 8px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--border-medium);
-  font-size: 11px;
-  text-transform: uppercase;
-}
-
-.bot-editor-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.bot-editor-score {
-  flex-wrap: nowrap;
-}
-
 .bot-editor-check {
   display: flex;
   align-items: center;
@@ -601,12 +732,6 @@ function download() {
 .bot-editor-error {
   color: #ff6b6b;
   font-size: 13px;
-}
-
-@media (max-width: 720px) {
-  .bot-editor-row {
-    grid-template-columns: 1fr;
-  }
 }
 .bot-editor-style {
   display: flex;
