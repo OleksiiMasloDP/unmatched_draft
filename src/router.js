@@ -11,6 +11,7 @@ import RoguePage from "./components/pages/RoguePage.vue";
 import MapEditor from "./components/pages/MapEditor.vue";
 import HomePage from "./components/pages/HomePage.vue";
 import BotEditor from "./components/pages/BotEditor.vue";
+import BotWatch from "./components/pages/BotWatch.vue";
 import SeoEntityPage from "./components/pages/SeoEntityPage.vue";
 
 export const routes = [
@@ -60,6 +61,7 @@ export const routes = [
   },
   { path: "/map-editor", name: "map-editor", component: MapEditor },
   { path: "/bot-editor", name: "bot-editor", component: BotEditor },
+  { path: "/bot-watch", name: "bot-watch", component: BotWatch },
   { path: "/:pathMatch(.*)*", redirect: { name: "main" } },
 ];
 
@@ -69,7 +71,6 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 });
 
-// Аналітика: та сама подія, що раніше відправлялась при зміні active_screen
 router.afterEach((to) => {
   if (typeof window.gtag === "function") {
     const screen = String(to.name || "main");

@@ -49,10 +49,12 @@ function graphOf(mapId) {
   return graphCache.get(mapId);
 }
 
-export function useBot() {
+export function useBot(options = {}) {
   const engine = useGame();
   const { game } = engine;
   let timer = null;
+  let dry = false;
+  let pending = null;
   let signature = "";
   let repeats = 0;
   let lastTarget = null;
@@ -392,7 +394,7 @@ export function useBot() {
       foes.some((foe) => linked(space, foe.space));
     return (
       (hugging ? -1.5 : 0) +
-      (blocked * fighter.block * 1.5) / 10 +
+      (blocked * (fighter.block || 0) * 1.5) / 10 +
       2 * aggro * strike +
       0.8 * aggro * reachStrike +
       contain -
@@ -1176,8 +1178,17 @@ export function useBot() {
     if (!options.length) return;
     if (!inSim && !(game.noSearch || []).includes(bot)) {
       const prior = Object.fromEntries(options);
-      const found = search.choose(bot, available, prior);
+      const key = `${game.turnNo}:${game.actions}`;
+      const reuse = pending && pending.key === key && pending.seat === bot;
+      const found = reuse
+        ? pending.found
+        : search.choose(bot, available, prior);
       if (found) {
+        if (dry) {
+          pending = { seat: bot, key, found, prior };
+          return;
+        }
+        pending = null;
         planned = { index: 0, list: found.overrides, turn: game.turnNo };
         if (found.action === "attack") return engine.doAttack();
         if (found.action === "scheme") return engine.doScheme();
@@ -1317,7 +1328,24 @@ export function useBot() {
     }
   };
 
+  const propose = (seat) => {
+    pending = null;
+    dry = true;
+    try {
+      step();
+    } finally {
+      dry = false;
+    }
+    return pending && pending.seat === seat ? pending : null;
+  };
+
+  const choose = (action) => {
+    if (!pending) return;
+    pending.found = { ...pending.found, action, overrides: new Map() };
+  };
+
   onMounted(() => {
+    if (options.manual) return;
     timer = setInterval(() => {
       try {
         step();
@@ -1329,5 +1357,5 @@ export function useBot() {
 
   onBeforeUnmount(() => clearInterval(timer));
 
-  return { step };
+  return { step, propose, choose };
 }
