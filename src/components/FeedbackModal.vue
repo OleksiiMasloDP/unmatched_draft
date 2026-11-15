@@ -478,18 +478,6 @@ onBeforeUnmount(() => {
   display: block;
   width: 100%;
   margin-top: 4px;
-  padding: 8px 10px;
-  font-size: 0.92rem;
-  font-weight: 400;
-  color: var(--text-light, #f1f5f9);
-  background: var(--bg-slate, #1e293b);
-  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.15));
-  border-radius: 8px;
-  resize: vertical;
-}
-.fb-input:focus {
-  outline: 2px solid rgba(var(--color-player-rgb, 79, 124, 255), 0.6);
-  outline-offset: 0;
 }
 .fb-check {
   display: flex;
