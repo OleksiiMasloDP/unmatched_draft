@@ -438,7 +438,7 @@ export const mcMinnville = makeMap({
   radius: 51,
   spaces: MCMINNVILLE_SPACES,
   links: MCMINNVILLE_LINKS,
-  starts: { p1: "M2", p2: "M41" },
+  starts: { p1: "M2", p2: "M41", p3: "M30", p4: "M6", p5: "M24" },
 });
 
 const HELICARRIER_SPACES = [
