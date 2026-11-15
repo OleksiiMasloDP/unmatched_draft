@@ -175,10 +175,11 @@ function makeEnemy(node) {
   const pool = allCards
     .filter((card) => card.heroId === hero.id)
     .map((card) => card.id);
-  const size = Math.min(
-    pool.length,
-    kind === "boss" ? pool.length : 10 + node.row + (kind === "elite" ? 2 : 0),
+  const wanted = Math.max(
+    BASE_DECK + 4 + node.row + (kind === "elite" ? 2 : 0),
+    run.deck.length + 2,
   );
+  const size = Math.min(pool.length, kind === "boss" ? pool.length : wanted);
   run.enemy = {
     heroId: hero.id,
     cardIds: pickMany(pool, size),

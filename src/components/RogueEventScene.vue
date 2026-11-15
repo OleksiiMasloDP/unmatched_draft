@@ -2,11 +2,11 @@
   <div class="rev" :style="{ '--tint': tint }">
     <div class="rev-backdrop"></div>
     <img
-      v-if="art"
+      v-if="art && !artFailed"
       class="rev-art"
       :src="art"
       alt=""
-      @error="$event.target.style.display = 'none'"
+      @error="artFailed = true"
     />
     <span v-else-if="icon" class="rev-glyph">
       <RogueIcon :name="icon" metal="gold" size="100%" />
@@ -19,6 +19,17 @@
         <h2 class="rev-title">{{ title }}</h2>
       </header>
       <p class="rev-text">{{ text }}</p>
+      <div v-if="result" class="rev-result">
+        <span class="rev-result-label">{{ resultLabel }}</span>
+        <p>{{ result }}</p>
+        <span
+          v-if="gold"
+          class="rev-gold"
+          :class="gold > 0 ? 'is-up' : 'is-down'"
+        >
+          🪙 {{ gold > 0 ? "+" : "" }}{{ gold }}
+        </span>
+      </div>
       <ul v-if="choices.length" class="rev-choices">
         <li v-for="(choice, i) in choices" :key="i">
           <button
@@ -42,16 +53,26 @@
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
 import RogueIcon from "./RogueIcon.vue";
 
-defineProps({
+const props = defineProps({
   title: { type: String, required: true },
   text: { type: String, required: true },
   icon: { type: String, default: "" },
   art: { type: String, default: "" },
   tint: { type: String, default: "#c98a2b" },
   choices: { type: Array, default: () => [] },
+  result: { type: String, default: "" },
+  resultLabel: { type: String, default: "" },
+  gold: { type: Number, default: 0 },
 });
+
+const artFailed = ref(false);
+watch(
+  () => props.art,
+  () => (artFailed.value = false),
+);
 
 const emit = defineEmits(["choose"]);
 </script>
@@ -159,6 +180,56 @@ const emit = defineEmits(["choose"]);
   font-size: 1.05rem;
   line-height: 1.65;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.rev-result {
+  max-width: 560px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  background: rgba(8, 10, 16, 0.72);
+  border: 1px solid color-mix(in srgb, var(--tint) 70%, transparent);
+  border-left-width: 4px;
+  border-radius: 12px;
+  animation: rev-result-in 0.45s ease both;
+}
+
+.rev-result-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffd772;
+}
+
+.rev-result p {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #fff3d6;
+}
+
+.rev-gold {
+  display: inline-block;
+  padding: 2px 12px;
+  margin-top: 8px;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 999px;
+}
+
+.rev-gold.is-up {
+  color: #6ee7a0;
+}
+
+.rev-gold.is-down {
+  color: #ff7b7b;
+}
+
+@keyframes rev-result-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .rev-choices {

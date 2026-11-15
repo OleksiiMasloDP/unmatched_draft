@@ -695,6 +695,871 @@ export const events = [
       leave("The flowers sway as you go.", "Квіти хитаються, коли ти йдеш."),
     ],
   },
+  {
+    id: "blackbeard",
+    icon: "treasureMap",
+    tint: "#2f7f9d",
+    weight: 1,
+    title: both("Blackbeard's buried loot", "Закопана здобич Чорної Бороди"),
+    text: both(
+      "A tattered map is nailed to a driftwood post. An X marks the spot, and a skull is scratched beside it: Edward Teach never shared his plunder willingly.",
+      "До дошки з викинутого морем дерева прибито потріпану карту. Хрестик позначає місце, а поруч видряпано череп: Едвард Тіч ніколи не ділився здобиччю охоче.",
+    ),
+    choices: [
+      {
+        icon: "crowbar",
+        label: both("Dig where the X is", "Копати там, де хрестик"),
+        outcomes: [
+          out(
+            3,
+            "Your shovel rings on a chest full of doubloons.",
+            "Лопата дзвенить об скриню, повну дублонів.",
+            { gold: 65 },
+          ),
+          out(
+            2,
+            "Only a rusty cutlass, but it teaches you a trick.",
+            "Лише іржава шабля, та вона підказує прийом.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "The hole is already empty. Teach was here first.",
+            "Яма вже порожня. Тіч побував тут першим.",
+          ),
+        ],
+      },
+      {
+        icon: "magnifyingGlass",
+        label: both("Read the map carefully", "Уважно вивчити карту"),
+        cost: 10,
+        outcomes: [
+          out(
+            3,
+            "The real spot is two paces left. A fat purse waits there.",
+            "Справжнє місце за два кроки ліворуч. Там чекає важкий гаманець.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "Under the false X lies a booby-trapped chest. You defuse it and find a card.",
+            "Під фальшивим хрестиком схована скриня з пасткою. Ти знешкоджуєш її й знаходиш карту.",
+            { card: "any" },
+          ),
+        ],
+      },
+      leave(
+        "Cursed gold is still cursed.",
+        "Прокляте золото лишається проклятим.",
+      ),
+    ],
+  },
+  {
+    id: "excalibur",
+    icon: "swordman",
+    tint: "#8c9db5",
+    weight: 1,
+    title: both("The sword in the stone", "Меч у камені"),
+    text: both(
+      "A sword is buried to the hilt in a mossy stone. Legend says only the true king of Britain can pull it free.",
+      "Меч увійшов у вкритий мохом камінь по самий руків'я. За легендою, витягти його може лише істинний король Британії.",
+    ),
+    choices: [
+      {
+        icon: "muscleUp",
+        label: both("Pull with all your strength", "Тягти з усієї сили"),
+        outcomes: [
+          out(
+            1,
+            "The stone yields! A royal technique flows into your deck.",
+            "Камінь піддається! Королівський прийом вливається у твою колоду.",
+            { card: "any" },
+          ),
+          out(
+            3,
+            "Not a budge. A passing knight laughs and you pay for the show.",
+            "Ані руш. Лицар, що проїжджав повз, регоче, і ти платиш за видовище.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "scrollUnfurled",
+        label: both("Read the inscription", "Прочитати напис"),
+        outcomes: [
+          out(
+            2,
+            "The words are a lesson in humility. It sticks with you.",
+            "Слова виявляються уроком смирення. Він залишається з тобою.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "A priest pays you to copy the inscription.",
+            "Священник платить тобі за копію напису.",
+            { gold: 25 },
+          ),
+        ],
+      },
+      leave(
+        "Some crowns are not meant for you.",
+        "Деякі корони створені не для тебе.",
+      ),
+    ],
+  },
+  {
+    id: "pandora",
+    icon: "lockedChest",
+    tint: "#b06bd1",
+    weight: 1,
+    title: both("Pandora's jar", "Глек Пандори"),
+    text: both(
+      "A sealed clay jar hums on a flat rock. A tiny voice inside whispers that something good is left at the very bottom.",
+      "Запечатаний глиняний глек гуде на пласкому камені. Тихенький голос усередині шепоче, що на дні лишилося щось добре.",
+    ),
+    choices: [
+      {
+        icon: "key",
+        label: both("Break the seal", "Зламати печатку"),
+        outcomes: [
+          out(
+            2,
+            "Troubles swarm out and chew your purse, but Hope stays: a card.",
+            "Лиха виривається назовні й гризе гаманець, та Надія залишається: це карта.",
+            { gold: -20, card: "any" },
+          ),
+          out(
+            2,
+            "Only Hope was left inside, and it pays well.",
+            "Усередині лишилася лише Надія, і вона щедро платить.",
+            { gold: 40 },
+          ),
+          out(
+            1,
+            "The jar is empty. Whatever lived here is already out.",
+            "Глек порожній. Те, що тут жило, вже на волі.",
+          ),
+        ],
+      },
+      {
+        icon: "padlock",
+        label: both("Reseal it and sell it", "Запечатати й продати"),
+        outcomes: [
+          out(
+            1,
+            "A collector pays handsomely for a jar nobody dares open.",
+            "Колекціонер щедро платить за глек, який ніхто не наважується відкрити.",
+            { gold: 30 },
+          ),
+        ],
+      },
+      leave("You leave the jar humming.", "Ти лишаєш глек гудіти далі."),
+    ],
+  },
+  {
+    id: "peaches",
+    icon: "sun",
+    tint: "#e98f6b",
+    weight: 1,
+    title: both("Peaches of immortality", "Персики безсмертя"),
+    text: both(
+      "An orchard of golden peaches sways above the clouds. Sun Wukong has already raided it once, and the guards remember.",
+      "Сад золотих персиків гойдається над хмарами. Сунь Укун уже обносив його одного разу, і охоронці це пам'ятають.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Eat a fallen peach", "З'їсти впалий персик"),
+        outcomes: [
+          out(
+            3,
+            "Warmth and clarity flood you. An old move feels new again.",
+            "Тепло й ясність заливають тебе. Старий прийом знов здається новим.",
+            { card: "own" },
+          ),
+          out(
+            1,
+            "It was overripe. A healer charges you for the cramps.",
+            "Він був перестиглий. Цілитель бере гроші за біль у животі.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      {
+        icon: "robberHand",
+        label: both("Steal a basketful", "Поцупити кошик"),
+        outcomes: [
+          out(
+            2,
+            "You slip away and sell them to a very grateful monk.",
+            "Ти тікаєш і продаєш їх дуже вдячному ченцеві.",
+            { gold: 55 },
+          ),
+          out(
+            2,
+            "The guards catch you and you pay the fine in coins.",
+            "Охоронці ловлять тебе, і ти сплачуєш штраф монетами.",
+            { gold: -25 },
+          ),
+        ],
+      },
+      leave("Immortality can wait.", "Безсмертя може зачекати."),
+    ],
+  },
+  {
+    id: "houdini",
+    icon: "padlock",
+    tint: "#c9a227",
+    weight: 1,
+    title: both("The great escape", "Велика втеча"),
+    text: both(
+      "A crowd gathers around a man in chains hanging over a river. Harry Houdini grins: he has never failed to escape, and neither will he today.",
+      "Натовп збирається навколо чоловіка в ланцюгах, що висить над річкою. Гаррі Гудіні усміхається: він ще ніколи не провалював втечу, не провалить і сьогодні.",
+    ),
+    choices: [
+      {
+        icon: "coins",
+        label: both("Bet he escapes", "Поставити на втечу"),
+        cost: 20,
+        outcomes: [
+          out(
+            4,
+            "He emerges before the count of ten. The bookies pay out.",
+            "Він виринає ще до десяти. Букмекери платять.",
+            { gold: 55 },
+          ),
+          out(
+            1,
+            "He surfaces five minutes late, soaked and furious. You lose the bet.",
+            "Він випливає на п'ять хвилин пізніше, мокрий і розлючений. Ставка програна.",
+          ),
+        ],
+      },
+      {
+        icon: "lockpicks",
+        label: both("Ask him to teach you", "Попросити навчити"),
+        cost: 15,
+        outcomes: [
+          out(
+            1,
+            "A magician never tells, but he lets you watch. You copy a trick.",
+            "Чарівник ніколи не розкриває секретів, та дозволяє дивитись. Ти копіюєш прийом.",
+            { card: "any" },
+          ),
+        ],
+      },
+      {
+        icon: "robberMask",
+        label: both("Pick the crowd's pockets", "Обшукати кишені в натовпі"),
+        outcomes: [
+          out(
+            2,
+            "Everyone is watching the river. Easy pickings.",
+            "Усі дивляться на річку. Легка здобич.",
+            { gold: 35 },
+          ),
+          out(
+            1,
+            "Houdini spots you mid-trick and fines you from the stage.",
+            "Гудіні помічає тебе просто посеред фокуса й штрафує зі сцени.",
+            { gold: -20 },
+          ),
+        ],
+      },
+      leave("The crowd closes in behind you.", "Натовп змикається за тобою."),
+    ],
+  },
+  {
+    id: "sherwood",
+    icon: "swordman",
+    tint: "#4f9a4a",
+    weight: 1,
+    title: both("The Sherwood contest", "Змагання в Шервуді"),
+    text: both(
+      "Targets line a clearing under the old oaks. A silver arrow is the prize, and Robin of Locksley is the man to beat.",
+      "Мішені стоять у лісовому проламі під старими дубами. Нагорода — срібна стріла, а Робін із Локслі — той, кого треба перемогти.",
+    ),
+    choices: [
+      {
+        icon: "crossedSwords",
+        label: both("Enter the contest", "Узяти участь"),
+        cost: 10,
+        outcomes: [
+          out(
+            2,
+            "A bullseye! The silver arrow and the purse are yours.",
+            "Влучання в яблучко! Срібна стріла й гаманець твої.",
+            { gold: 50 },
+          ),
+          out(
+            2,
+            "Second place, but Robin teaches you how to split an arrow.",
+            "Друге місце, зате Робін показує, як розколоти стрілу.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "Your arrow lands in the mud. The crowd roars.",
+            "Твоя стріла падає в багнюку. Натовп ревить.",
+          ),
+        ],
+      },
+      {
+        icon: "coins",
+        label: both("Bet on Robin", "Поставити на Робіна"),
+        cost: 15,
+        outcomes: [
+          out(
+            4,
+            "Of course he wins. The bet pays double.",
+            "Звісно, він перемагає. Ставка приносить подвійну виплату.",
+            { gold: 35 },
+          ),
+          out(
+            1,
+            "A strong gust of wind throws his shot. You lose.",
+            "Сильний порив вітру збиває його постріл. Ти програєш.",
+          ),
+        ],
+      },
+      leave("The oaks hold their secrets.", "Дуби зберігають свої таємниці."),
+    ],
+  },
+  {
+    id: "jekyll",
+    icon: "candleFlame",
+    tint: "#6fae5a",
+    weight: 1,
+    title: both("A flask of green liquid", "Колба зі смарагдовою рідиною"),
+    text: both(
+      "In a dim laboratory, a flask bubbles on its own. A note in neat handwriting reads: Dr. Jekyll accepts no responsibility for Mr. Hyde.",
+      "У темній лабораторії колба булькоче сама по собі. Записка охайним почерком: доктор Джекіл не відповідає за містера Гайда.",
+    ),
+    choices: [
+      {
+        icon: "waterDrop",
+        label: both("Drink it", "Випити"),
+        outcomes: [
+          out(
+            2,
+            "Strength surges through you. Something savage settles into your deck.",
+            "Тебе пронизує сила. Щось дике оселяється у твоїй колоді.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "You wake up in an alley with an empty purse.",
+            "Ти прокидаєшся в провулку з порожнім гаманцем.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      {
+        icon: "magnifyingGlass",
+        label: both("Study the notes", "Вивчити записи"),
+        outcomes: [
+          out(
+            2,
+            "The notes are brilliant. You adapt a method of your own.",
+            "Записи геніальні. Ти адаптуєш власний метод.",
+            { card: "own" },
+          ),
+          out(
+            1,
+            "A colleague of Jekyll pays you for the research.",
+            "Колега Джекіла платить тобі за дослідження.",
+            { gold: 30 },
+          ),
+        ],
+      },
+      leave(
+        "Some experiments end badly.",
+        "Деякі експерименти кінчаються погано.",
+      ),
+    ],
+  },
+  {
+    id: "dracula",
+    icon: "castle",
+    tint: "#a3253a",
+    weight: 1,
+    title: both("An invitation from the castle", "Запрошення із замку"),
+    text: both(
+      "A black carriage waits at the crossroads. Count Dracula's seal glows on the invitation, and the horses do not breathe.",
+      "На роздоріжжі чекає чорна карета. На запрошенні мерехтить печатка графа Дракули, а коні не дихають.",
+    ),
+    choices: [
+      {
+        icon: "castle",
+        label: both("Dine with the Count", "Повечеряти з графом"),
+        outcomes: [
+          out(
+            2,
+            "He is a gracious host. A gift from his ancient collection follows.",
+            "Він люб'язний господар. Слідує подарунок із його давньої колекції.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "The meal is fine, but the bill is paid in blood and coin.",
+            "Вечеря чудова, але рахунок оплачується кров'ю та монетами.",
+            { gold: -25 },
+          ),
+        ],
+      },
+      {
+        icon: "robberHand",
+        label: both("Raid the crypt", "Обшукати склеп"),
+        outcomes: [
+          out(
+            2,
+            "Old tombs hold old riches.",
+            "Старі гробниці ховають старі скарби.",
+            { gold: 50 },
+          ),
+          out(
+            1,
+            "The crypt wakes. You flee and drop half your coins.",
+            "Склеп прокидається. Ти тікаєш і губиш половину монет.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      leave("You turn the carriage away.", "Ти відсилаєш карету геть."),
+    ],
+  },
+  {
+    id: "alice",
+    icon: "uncertainty",
+    tint: "#e07bb5",
+    weight: 1,
+    title: both("The grinning cat", "Усміхнений кіт"),
+    text: both(
+      "A striped grin hangs in the air above a branch. The Cheshire Cat purrs: answer my riddle, or don't, it makes no difference to me.",
+      "Смугаста усмішка висить у повітрі над гілкою. Чеширський Кіт муркоче: відповідай на мою загадку, чи ні, мені однаково.",
+    ),
+    choices: [
+      {
+        icon: "crystalBall",
+        label: both("Answer the riddle", "Відповісти на загадку"),
+        outcomes: [
+          out(
+            2,
+            "Correct, or so he claims. A card appears in your pocket.",
+            "Правильно, принаймні так він каже. У кишені з'являється карта.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "Wrong, but he is amused and drops a few coins.",
+            "Неправильно, але його це розважає, і він скидає кілька монет.",
+            { gold: 20 },
+          ),
+          out(
+            1,
+            "The cat vanishes, leaving only the smile.",
+            "Кіт зникає, лишивши тільки усмішку.",
+          ),
+        ],
+      },
+      {
+        icon: "footsteps",
+        label: both("Ask for directions", "Спитати дорогу"),
+        outcomes: [
+          out(
+            1,
+            "He points every way at once. You get lost and pay a guide.",
+            "Він показує одразу в усі боки. Ти блукаєш і платиш провідникові.",
+            { gold: -10 },
+          ),
+          out(
+            1,
+            "He points up. A card is stuck in the branch.",
+            "Він показує вгору. У гілці застрягла карта.",
+            { card: "any" },
+          ),
+        ],
+      },
+      leave("We are all mad here.", "Ми тут усі трохи божевільні."),
+    ],
+  },
+  {
+    id: "genie",
+    icon: "candleFlame",
+    tint: "#3bb5c9",
+    weight: 1,
+    title: both("The lamp in the sand", "Лампа в піску"),
+    text: both(
+      "A dented brass lamp pokes out of the dune. When you rub the sand away, a bored voice sighs: three wishes, but read the fine print.",
+      "З бархана стирчить помята мідна лампа. Коли ти змітаєш пісок, нудний голос зітхає: три бажання, та читай дрібний шрифт.",
+    ),
+    choices: [
+      {
+        icon: "twoCoins",
+        label: both("Wish for riches", "Побажати багатства"),
+        outcomes: [
+          out(
+            3,
+            "Gold rains down. The Genie smirks: you didn't say whose.",
+            "Золото сиплеться дощем. Джин пирхає: ти не уточнив, чиє.",
+            { gold: 45 },
+          ),
+          out(
+            1,
+            "The Genie grants it literally: one gold coin.",
+            "Джин виконує буквально: одна золота монета.",
+            { gold: 1 },
+          ),
+        ],
+      },
+      {
+        icon: "cardRandom",
+        label: both("Wish for knowledge", "Побажати знань"),
+        outcomes: [
+          out(
+            3,
+            "A technique unfolds in your mind, complete and clear.",
+            "Прийом розгортається в голові повністю й чітко.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "You now know everything about the lamp. Nothing else.",
+            "Тепер ти знаєш усе про лампу. І нічого більше.",
+          ),
+        ],
+      },
+      {
+        icon: "rollingDices",
+        label: both("Wish for more wishes", "Побажати більше бажань"),
+        outcomes: [
+          out(
+            1,
+            "The Genie sighs and throws you a card to shut you up.",
+            "Джин зітхає й кидає тобі карту, щоб ти замовк.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "He vanishes into the lamp, taking a tip from your purse.",
+            "Він зникає в лампі, прихопивши чайові з твого гаманця.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      leave("You leave the lamp in the sand.", "Ти лишаєш лампу в піску."),
+    ],
+  },
+  {
+    id: "loki",
+    icon: "ghost",
+    tint: "#2e9d62",
+    weight: 1,
+    title: both("A trickster's offer", "Пропозиція трикстера"),
+    text: both(
+      "A stranger with a green smile sits on your road. Loki spreads his hands: a small wager, nothing you cannot afford to lose.",
+      "На твоїй дорозі сидить незнайомець із зеленою усмішкою. Локі розводить руками: невеличке парі, нічого, що ти не зміг би дозволити собі втратити.",
+    ),
+    choices: [
+      {
+        icon: "scales",
+        label: both("Accept the wager", "Прийняти парі"),
+        cost: 20,
+        outcomes: [
+          out(
+            1,
+            "For once, the god of lies keeps his word. Double your stake.",
+            "Цього разу бог брехні тримає слово. Подвійна ставка.",
+            { gold: 60 },
+          ),
+          out(
+            1,
+            "He wins and pockets your coins with a bow.",
+            "Він виграє й ховає твої монети з уклоном.",
+          ),
+          out(
+            1,
+            "He wins, but pays out in a stolen card.",
+            "Він виграє, але платить краденою картою.",
+            { card: "any" },
+          ),
+        ],
+      },
+      {
+        icon: "ninjaMask",
+        label: both("Outwit him", "Перехитрити його"),
+        outcomes: [
+          out(
+            1,
+            "You spot the trick first. He applauds and hands over a card.",
+            "Ти помічаєш фокус першим. Він аплодує й віддає карту.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "He was one step ahead and your purse is lighter.",
+            "Він випередив тебе на крок, і гаманець полегшав.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      leave("His laughter follows you.", "Його сміх лине за тобою."),
+    ],
+  },
+  {
+    id: "raptors",
+    icon: "skullCrossedBones",
+    tint: "#d98a2b",
+    weight: 1,
+    title: both("Rustling in the ferns", "Шерех у папороті"),
+    text: both(
+      "The ferns tremble. A pack of raptors tracks you in silence, closing the circle with the patience of old hunters.",
+      "Папороть тремтить. Зграя раптори безгучно вистежує тебе, змикаючи коло з терпінням старих мисливців.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Throw them your rations", "Кинути їм припаси"),
+        cost: 10,
+        outcomes: [
+          out(
+            3,
+            "They squabble over the meat. You slip away unhurt.",
+            "Вони сваряться за м'ясо. Ти непомітно втікаєш неушкодженим.",
+          ),
+          out(
+            1,
+            "One of them drops a shiny card they were guarding.",
+            "Один із них упускає блискучу карту, яку охороняв.",
+            { card: "any" },
+          ),
+        ],
+      },
+      {
+        icon: "torch",
+        label: both("Drive them off with fire", "Прогнати вогнем"),
+        outcomes: [
+          out(
+            2,
+            "The torch holds them back. You find their stash.",
+            "Смолоскип стримує їх. Ти знаходиш їхній сховок.",
+            { gold: 40 },
+          ),
+          out(
+            2,
+            "They circle and strike. You escape but lose coins.",
+            "Вони кружляють і б'ють. Ти втікаєш, але губиш монети.",
+            { gold: -25 },
+          ),
+        ],
+      },
+      leave("You tiptoe away.", "Ти навшпиньки відходиш."),
+    ],
+  },
+  {
+    id: "medusa",
+    icon: "skullStaff",
+    tint: "#6c8a55",
+    weight: 1,
+    title: both("The garden of statues", "Сад статуй"),
+    text: both(
+      "A courtyard crowded with stone warriors, each frozen mid-scream. Something hisses overhead. Medusa never forgets a face.",
+      "Двір, заповнений кам'яними воїнами, кожен завмер посеред крику. Згори чути сичання. Медуза ніколи не забуває облич.",
+    ),
+    choices: [
+      {
+        icon: "robberHand",
+        label: both("Loot the statues", "Обшукати статуї"),
+        outcomes: [
+          out(
+            2,
+            "Stone warriors still carry their purses.",
+            "Кам'яні воїни досі носять свої гаманці.",
+            { gold: 50 },
+          ),
+          out(
+            2,
+            "A hiss! You shut your eyes and flee, dropping coins.",
+            "Сичання! Ти заплющуєш очі й тікаєш, розсипаючи монети.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      {
+        icon: "magnifyingGlass",
+        label: both(
+          "Use a polished shield as a mirror",
+          "Скористатися щитом як дзеркалом",
+        ),
+        outcomes: [
+          out(
+            2,
+            "You watch her in the reflection and learn how she moves.",
+            "Ти стежиш за нею в відблиску й вчишся її рухам.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "The shield is too dull. You back out slowly.",
+            "Щит надто тьмяний. Ти повільно відступаєш.",
+          ),
+        ],
+      },
+      leave("You do not look back.", "Ти не озираєшся."),
+    ],
+  },
+  {
+    id: "wakanda",
+    icon: "key",
+    tint: "#7b5cc4",
+    weight: 1,
+    title: both("A shard of vibranium", "Уламок вібраніуму"),
+    text: both(
+      "A quiet trader unwraps a cloth. Inside lies a shard of metal that hums softly and swallows the light, the pride of Wakanda.",
+      "Тихий торговець розгортає тканину. Усередині лежить уламок металу, що тихо гуде й поглинає світло, — гордість Ваканди.",
+    ),
+    choices: [
+      {
+        icon: "coins",
+        label: both("Buy the shard", "Купити уламок"),
+        cost: 30,
+        outcomes: [
+          out(
+            3,
+            "A smith turns it into something remarkable for your deck.",
+            "Коваль перетворює його на дещо чудове для твоєї колоди.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "A fake. The trader is already gone.",
+            "Підробка. Торговця вже немає.",
+          ),
+        ],
+      },
+      {
+        icon: "shakingHands",
+        label: both("Trade a story for it", "Обміняти на історію"),
+        outcomes: [
+          out(
+            2,
+            "He loves your tale and pays for it in silver.",
+            "Йому подобається твоя оповідь, і він платить за неї сріблом.",
+            { gold: 25 },
+          ),
+          out(
+            2,
+            "He listens politely and says nothing.",
+            "Він чемно слухає й нічого не каже.",
+          ),
+        ],
+      },
+      leave("Some treasures are not for sale.", "Деякі скарби не продаються."),
+    ],
+  },
+  {
+    id: "strange",
+    icon: "boltSpellCast",
+    tint: "#d07a2b",
+    weight: 1,
+    title: both("The mirror dimension", "Дзеркальний вимір"),
+    text: both(
+      "The street folds like a paper fan. Doctor Strange's mirror dimension spills across the road and for a moment you can see every path at once.",
+      "Вулиця складається, наче паперове віяло. Дзеркальний вимір доктора Стрейнджа розливається по дорозі, і на мить ти бачиш усі шляхи одразу.",
+    ),
+    choices: [
+      {
+        icon: "crystalBall",
+        label: both("Step inside", "Увійти"),
+        outcomes: [
+          out(
+            2,
+            "You glimpse a better version of your own deck.",
+            "Ти бачиш кращу версію власної колоди.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "You step out with a card that was not yours yesterday.",
+            "Ти виходиш із картою, якої вчора в тебе не було.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "Time folds back. You are minus a few coins.",
+            "Час згортається назад. Ти лишаєшся без кількох монет.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "hourglass",
+        label: both(
+          "Sell a glimpse of the future",
+          "Продати проблиск майбутнього",
+        ),
+        outcomes: [
+          out(
+            1,
+            "A nervous merchant pays well for tomorrow's prices.",
+            "Знервований купець добре платить за завтрашні ціни.",
+            { gold: 35 },
+          ),
+        ],
+      },
+      leave("The street unfolds again.", "Вулиця знову розгортається."),
+    ],
+  },
+  {
+    id: "mead",
+    icon: "bread",
+    tint: "#c9852b",
+    weight: 1,
+    title: both("The mead hall", "Медова зала"),
+    text: both(
+      "Torches roar in a long timber hall. A giant of a man bellows over the din: Beowulf welcomes anyone who is brave, or thirsty.",
+      "У довгій дерев'яній залі ревуть смолоскипи. Велетень гукає крізь гамір: Беовульф вітає кожного, хто відважний чи спраглий.",
+    ),
+    choices: [
+      {
+        icon: "punch",
+        label: both("Arm-wrestle Beowulf", "Поборотися на руках із Беовульфом"),
+        outcomes: [
+          out(
+            1,
+            "Impossible, but he is a good sport. A reward follows.",
+            "Неможливо, та він добрий суперник. Слідує нагорода.",
+            { gold: 45 },
+          ),
+          out(
+            3,
+            "He wins in a blink. The hall cheers, and you buy the round.",
+            "Він перемагає миттю. Зала вітає, а ти купуєш чарку для всіх.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Feast with the warriors", "Бенкетувати з воїнами"),
+        cost: 10,
+        outcomes: [
+          out(
+            3,
+            "Between toasts, an old warrior shows you a move.",
+            "Поміж тостами старий воїн показує тобі прийом.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "You wake up with no memory and a fine hangover.",
+            "Ти прокидаєшся без спогадів і з чудовим похміллям.",
+          ),
+        ],
+      },
+      leave("Their songs fade behind you.", "Їхні пісні стихають за тобою."),
+    ],
+  },
 ];
 
 export const heroEvents = [

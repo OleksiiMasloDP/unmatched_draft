@@ -55,6 +55,10 @@ export const rogueText = {
     rogueEncounterFight: "A fight",
     rogueEncounterElite: "Elite fight",
     rogueEncounterBoss: "Final boss",
+    rogueEliteHint:
+      "A tough opponent with a bigger deck and much more health. Win to choose one of three card packs.",
+    rogueBossHint:
+      "The final boss plays his entire deck and is stronger than any foe before. Win and the run is yours.",
     rogueRewardGold: "+{n} gold",
     rogueRestTitle: "Campfire",
     rogueRestText: "Warm up and choose one.",
@@ -75,6 +79,7 @@ export const rogueText = {
     rogueEventPickUpgrade: "Choose a card to upgrade",
     rogueEventPickRemove: "Choose a card to remove",
     rogueEventSkip: "Walk away",
+    rogueEventResult: "Outcome",
     roguePacksTitle: "Elite reward: choose a pack",
     roguePacksHint: "You get all 3 cards of the pack you choose.",
     roguePackOpen: "Tap to open",
@@ -145,6 +150,10 @@ export const rogueText = {
     rogueEncounterFight: "Бій",
     rogueEncounterElite: "Елітний бій",
     rogueEncounterBoss: "Фінальний бос",
+    rogueEliteHint:
+      "Сильний суперник із більшою колодою та значно більшим здоров'ям. Переможіть, щоб обрати один із трьох паків карт.",
+    rogueBossHint:
+      "Фінальний бос грає всією своєю колодою й сильніший за всіх попередніх ворогів. Переможіть — і забіг ваш.",
     rogueRewardGold: "+{n} золота",
     rogueRestTitle: "Багаття",
     rogueRestText: "Зігрійтеся й оберіть одне.",
@@ -166,6 +175,7 @@ export const rogueText = {
     rogueEventPickUpgrade: "Оберіть карту для покращення",
     rogueEventPickRemove: "Оберіть карту, яку прибрати",
     rogueEventSkip: "Піти геть",
+    rogueEventResult: "Результат",
     roguePacksTitle: "Нагорода за еліту: оберіть пак",
     roguePacksHint: "Ви отримуєте всі 3 карти обраного паку.",
     roguePackOpen: "Натисніть, щоб відкрити",

@@ -316,15 +316,14 @@
           :art="eventArt"
           :tint="eventData.tint"
           :choices="run.event.step === 'choose' ? eventChoices : []"
+          :result="
+            run.event.step === 'result' ? eventText(run.event.result) : ''
+          "
+          :result-label="t('rogueEventResult')"
+          :gold="run.event.step === 'result' ? run.event.gold : 0"
           @choose="chooseEvent"
         />
         <template v-if="run.event.step === 'result'">
-          <p class="rogue-hint">{{ eventText(run.event.result) }}</p>
-          <div v-if="run.event.gold" class="rogue-gain">
-            <span :class="run.event.gold > 0 ? 'is-up' : 'is-down'">
-              🪙 {{ run.event.gold > 0 ? "+" : "" }}{{ run.event.gold }}
-            </span>
-          </div>
           <div v-if="removedCard" class="rogue-removed">
             <small>{{ t("rogueEventRemoved") }}</small>
             <div class="rogue-card"><PackCard :card="removedCard" /></div>
@@ -715,22 +714,6 @@ onBeforeUnmount(() => {
 
 .rogue-bestbtn:hover {
   background: rgba(138, 108, 67, 0.4);
-}
-
-.rogue-gain {
-  display: flex;
-  justify-content: center;
-  margin: 8px 0;
-  font-size: 1.4rem;
-  font-weight: 900;
-}
-
-.rogue-gain .is-up {
-  color: #f6c945;
-}
-
-.rogue-gain .is-down {
-  color: #ff7b8f;
 }
 
 .rogue-removed {
