@@ -383,7 +383,7 @@ const CARD_IMAGES = {
     files: {
       the_big_reveal: "attack",
       sleight_of_hand: "attack",
-      misdirection: "defense",
+      misdirection: "versatile",
       set_the_stage: "scheme",
       a_magician_never_reveals_his_secrets: "scheme",
       all_part_of_the_show: "defense",

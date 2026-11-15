@@ -810,7 +810,7 @@ export const houdiniCards = [
     "BOOSTED WITH: Deal 2 damage to any fighter.\nImmediately: Cancel all effects on your opponent's card.",
     "БУСТ ЦІЄЮ КАРТОЮ: завдайте 2 шкоди будь-якому бійцю.\nОдразу: скасуйте всі ефекти карти вашого суперника.",
     "any",
-    "defense",
+    "versatile",
   ],
   [
     3,
