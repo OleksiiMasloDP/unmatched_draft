@@ -78,66 +78,118 @@
       </div>
     </section>
 
-    <!-- ================= LIVE DRAFT DEMO ================= -->
-    <section class="home-section">
+    <section class="home-section home-about">
       <h2 class="home-h2" data-reveal>{{ L.aboutTitle }}</h2>
       <p class="home-lead" data-reveal>{{ L.aboutText }}</p>
+      <p class="home-lead home-lead-mark" data-reveal>
+        <mark>{{ L.aboutMark }}</mark>
+      </p>
+      <ul class="home-proof" data-reveal>
+        <li v-for="(item, i) in L.proof" :key="i">
+          <span>{{ proofIcons[i] }}</span>
+          {{ item }}
+        </li>
+      </ul>
 
-      <div class="home-demo" data-reveal>
-        <div
-          v-for="side in sides"
-          :key="side.key"
-          class="demo-side"
-          :class="[`is-${side.color}`, `order-${side.order}`]"
-        >
-          <div class="demo-label">{{ side.p1 ? L.p1 : L.p2 }}</div>
-          <div class="demo-row demo-bans">
-            <div
-              v-for="s in slotsOf(side.p1, 'ban')"
-              :key="s.i"
-              class="demo-slot is-ban"
-              :class="{ filled: demoStep > s.i, active: demoStep === s.i }"
-            >
-              <img
-                v-if="demoStep > s.i"
-                :src="demoHeroes[s.i] && demoHeroes[s.i].image"
-                alt=""
-              />
-              <span v-else class="demo-ph">BAN</span>
+      <div v-if="muHero" class="mu-show" data-reveal="zoom">
+        <Transition name="mu-swap" mode="out-in">
+          <div :key="muHero.id" class="mu-hero">
+            <img :src="muHero.image" :alt="muHero.name" class="mu-hero-img" />
+            <div class="mu-hero-body">
+              <div class="mu-hero-name">{{ muHero.name }}</div>
+              <div class="mu-hero-meta">
+                <span>
+                  {{ L.mu.elo }} <b>{{ muHero.elo }}</b>
+                </span>
+                <span>
+                  {{ L.mu.avg }} <b>{{ muAvg }}%</b>
+                </span>
+              </div>
             </div>
           </div>
-          <div class="demo-row demo-picks">
-            <div
-              v-for="s in slotsOf(side.p1, 'pick')"
-              :key="s.i"
-              class="demo-slot is-pick"
-              :class="{ filled: demoStep > s.i, active: demoStep === s.i }"
-            >
-              <img
-                v-if="demoStep > s.i"
-                :src="demoHeroes[s.i] && demoHeroes[s.i].image"
-                alt=""
-              />
-              <span v-else class="demo-ph">PICK</span>
-            </div>
-          </div>
+        </Transition>
+
+        <div class="mu-vs">
+          <span>VS</span>
         </div>
 
-        <div class="demo-center">
-          <div class="demo-vs">VS</div>
-          <div class="demo-status" :key="demoStatus">{{ demoStatus }}</div>
+        <TransitionGroup name="mu-foe" tag="div" class="mu-foes">
           <div
-            class="demo-map"
-            :class="{ show: demoDone }"
-            :style="demoMapStyle"
+            v-for="(foe, i) in muFoes"
+            :key="muHero.id + '-' + foe.id"
+            class="mu-foe"
+            :class="foe.cls"
+            :style="{ '--i': i }"
           >
-            <span>{{ L.mapWord }}</span>
+            <img :src="foe.image" :alt="foe.name" />
+            <span class="mu-foe-name">{{ foe.name }}</span>
+            <span class="mu-foe-bar">
+              <i :style="{ width: foe.wr + '%' }"></i>
+            </span>
+            <b class="mu-foe-wr">{{ foe.wr }}%</b>
+          </div>
+        </TransitionGroup>
+      </div>
+      <p v-if="muHero" class="home-caption" data-reveal>{{ L.mu.note }}</p>
+    </section>
+
+    <div class="home-ribbon" data-parallax aria-hidden="true">
+      <div class="home-ribbon-track">
+        <span v-for="n in 4" :key="n">{{ L.ribbon[0] }}</span>
+      </div>
+    </div>
+
+    <section v-if="csHero" class="home-band home-cards">
+      <div class="home-band-glow" data-parallax aria-hidden="true"></div>
+      <div class="home-wrap">
+        <span class="home-tag" data-reveal>{{ L.cards.tag }}</span>
+        <h2 class="home-h2" data-reveal>{{ L.cards.title }}</h2>
+        <p class="home-lead" data-reveal>{{ L.cards.text }}</p>
+
+        <div class="cs-stage">
+          <div class="cs-fan" data-reveal="zoom" data-parallax>
+            <div
+              v-for="(card, i) in csHero.cards"
+              :key="csHero.name + card.file"
+              class="cs-card"
+              :class="{ 'is-active': i === csActive }"
+              :style="fanStyle(i, csHero.cards.length)"
+              @click="csActive = i"
+            >
+              <img :src="card.url" :alt="card.title" loading="lazy" />
+            </div>
+          </div>
+
+          <div class="cs-panel" data-reveal="right">
+            <span class="cs-example">{{ L.cards.example }}</span>
+            <div class="cs-title">
+              <Transition name="mu-swap" mode="out-in">
+                <h3 :key="csHero.name + csActive">{{ csCard.title }}</h3>
+              </Transition>
+              <small>{{ csHero.name }} · {{ csStyle }}</small>
+            </div>
+            <div class="cs-cols">
+              <div v-for="col in csCols" :key="col.key" class="cs-col">
+                <h4 :class="col.key">{{ col.label }}</h4>
+                <TransitionGroup name="mu-foe" tag="ul">
+                  <li
+                    v-for="(row, i) in col.rows"
+                    :key="csHero.name + csActive + col.key + row.id"
+                    :class="col.key"
+                    :style="{ '--i': i }"
+                  >
+                    <img :src="row.image" :alt="row.name" />
+                    <span>{{ row.name }}</span>
+                    <b>{{ row.fit }}%</b>
+                  </li>
+                </TransitionGroup>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ================= HOW IT WORKS ================= -->
     <section class="home-section">
       <h2 class="home-h2" data-reveal>{{ L.howTitle }}</h2>
       <ol class="home-steps">
@@ -154,13 +206,210 @@
       </ol>
     </section>
 
-    <!-- ================= FEATURES ================= -->
+    <section class="home-band home-packs">
+      <div class="home-band-glow is-red" data-parallax aria-hidden="true"></div>
+      <div class="home-wrap">
+        <span class="home-tag" data-reveal>{{ L.packs.tag }}</span>
+        <h2 class="home-h2" data-reveal>{{ L.packs.title }}</h2>
+        <p class="home-lead" data-reveal>{{ L.packs.text }}</p>
+
+        <div class="pk-board" data-reveal="zoom">
+          <div class="pk-stats">
+            <div>
+              <span>{{ L.packs.round }}</span>
+              <b>
+                {{ packRound }} <small>/ {{ PACK_ROUNDS }}</small>
+              </b>
+            </div>
+            <div>
+              <span>{{ L.packs.inPack }}</span>
+              <b>{{ packCards.length }}</b>
+            </div>
+            <div>
+              <span>{{ L.packs.kept }}</span>
+              <b>
+                {{ keptYou.length }} <small>/ {{ keptFoe.length }}</small>
+              </b>
+            </div>
+          </div>
+
+          <div
+            class="pk-banner"
+            :class="packTurn === 'you' ? 'is-you' : 'is-foe'"
+          >
+            {{ packTurn === "you" ? L.packs.you : L.packs.foe }}
+          </div>
+
+          <div class="pk-layout">
+            <div class="pk-side is-you">
+              <h4>{{ L.p1 }}</h4>
+              <TransitionGroup name="pk-kept" tag="div" class="pk-kept">
+                <img
+                  v-for="card in keptYou"
+                  :key="card.id"
+                  :src="abs(card.image)"
+                  :alt="card.name"
+                />
+              </TransitionGroup>
+            </div>
+
+            <TransitionGroup name="pk" tag="div" class="pk-grid">
+              <PackCard
+                v-for="card in packCards"
+                :key="card.id"
+                :card="{ ...card, image: abs(card.image) }"
+                :mark="packMarks[card.id] || ''"
+              />
+            </TransitionGroup>
+
+            <div class="pk-side is-foe">
+              <h4>{{ L.p2 }}</h4>
+              <TransitionGroup name="pk-kept" tag="div" class="pk-kept">
+                <img
+                  v-for="card in keptFoe"
+                  :key="card.id"
+                  :src="abs(card.image)"
+                  :alt="card.name"
+                />
+              </TransitionGroup>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-show-cta" data-reveal>
+          <router-link
+            :to="{ name: 'pack-draft' }"
+            class="home-btn home-btn-primary"
+          >
+            {{ L.packs.cta }}
+          </router-link>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section home-online">
+      <div class="on-text" data-reveal="left">
+        <span class="home-tag is-left">{{ L.online.tag }}</span>
+        <h2 class="home-h2 is-left">{{ L.online.title }}</h2>
+        <p class="home-lead is-left">{{ L.online.text }}</p>
+        <ul class="on-points">
+          <li v-for="(item, i) in L.online.points" :key="i">{{ item }}</li>
+        </ul>
+        <router-link :to="{ name: 'game' }" class="home-btn home-btn-primary">
+          {{ L.online.cta }}
+        </router-link>
+      </div>
+
+      <div class="on-stage" data-reveal="right" data-parallax>
+        <div class="on-room">
+          <span>{{ L.online.room }}</span>
+          <div class="on-code">
+            <b
+              v-for="(ch, i) in onlineCode"
+              :key="i"
+              :class="{ on: onlineStep >= 1 }"
+              :style="{ '--i': i }"
+            >
+              {{ ch }}
+            </b>
+          </div>
+          <span class="on-copy" :class="{ on: onlineStep >= 1 }">
+            {{ L.online.copy }}
+          </span>
+        </div>
+        <div class="on-peers">
+          <div class="on-peer is-you" :class="{ on: onlineStep >= 1 }">
+            <i></i>
+            <span>{{ L.p1 }}</span>
+            <small>{{
+              onlineStep >= 1 ? L.online.ready : L.online.creating
+            }}</small>
+          </div>
+          <div class="on-link" :class="{ on: onlineStep >= 3 }">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <div class="on-peer is-foe" :class="{ on: onlineStep >= 2 }">
+            <i></i>
+            <span>{{ L.p2 }}</span>
+            <small>
+              {{
+                onlineStep >= 3
+                  ? L.online.connected
+                  : onlineStep >= 2
+                    ? L.online.joining
+                    : L.online.waiting
+              }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="home-ribbon is-reverse" data-parallax aria-hidden="true">
+      <div class="home-ribbon-track">
+        <span v-for="n in 4" :key="n">{{ L.ribbon[1] }}</span>
+      </div>
+    </div>
+
+    <section v-if="rogueMapData.length" class="home-band home-rogue">
+      <div
+        class="home-band-glow is-gold"
+        data-parallax
+        aria-hidden="true"
+      ></div>
+      <div class="home-wrap">
+        <span class="home-tag" data-reveal>{{ L.rogue.tag }}</span>
+        <h2 class="home-h2" data-reveal>{{ L.rogue.title }}</h2>
+        <p class="home-lead" data-reveal>{{ L.rogue.text }}</p>
+
+        <div class="rg-board" data-reveal="zoom">
+          <div class="rg-top">
+            <span class="rg-stat">
+              <RogueIcon name="coins" metal="gold" size="1.4em" />
+              {{ rogueGold }}
+            </span>
+            <span class="rg-stat">
+              <RogueIcon name="heartPlus" metal="ruby" size="1.4em" />
+              {{ rogueHp }}
+            </span>
+            <span class="rg-stat">
+              <RogueIcon name="cardDraw" metal="silver" size="1.4em" />
+              {{ rogueCards }}
+            </span>
+          </div>
+          <RogueMap
+            :map="rogueMapData"
+            :pos="roguePos"
+            :visited="rogueVisited"
+            :reachable="rogueReach"
+            :labels="rogueLabels"
+            :hero-image="rogueHeroImage"
+          />
+          <ul class="rg-legend">
+            <li v-for="item in rogueLegend" :key="item.type">
+              <RogueIcon :name="item.icon" :metal="item.metal" size="1.3em" />
+              {{ item.label }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="home-show-cta" data-reveal>
+          <router-link
+            :to="{ name: 'rogue' }"
+            class="home-btn home-btn-primary"
+          >
+            {{ L.rogue.cta }}
+          </router-link>
+        </div>
+      </div>
+    </section>
+
     <section class="home-section">
       <h2 class="home-h2" data-reveal>{{ L.featuresTitle }}</h2>
       <div class="home-grid">
         <router-link
           v-for="(f, i) in features"
-          :key="f.key"
+          :key="f.route"
           :to="{ name: f.route }"
           class="home-card"
           data-reveal
@@ -176,11 +425,11 @@
             class="home-card-art"
             :class="{ 'is-map': f.art === 'map' }"
           />
-          <span v-if="f.isNew" class="home-card-badge">{{ L.newLabel }}</span>
           <div class="home-card-body">
             <span class="home-card-icon">{{ f.icon }}</span>
             <h3>{{ L.features[f.key].title }}</h3>
             <p>{{ L.features[f.key].text }}</p>
+            <span v-if="f.isNew" class="home-card-new">{{ L.newLabel }}</span>
             <span class="home-card-link">{{ L.open }} →</span>
           </div>
         </router-link>
@@ -203,18 +452,24 @@ import {
 } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { banPresets } from "../../draftFormats.js";
+import { buildAllCards } from "../../packDraftData.js";
+import { generateMap } from "../../rogueMap.js";
+import { ROWS, nodeTypes } from "../../rogueData.js";
+import PackCard from "../PackCard.vue";
+import RogueMap from "../RogueMap.vue";
+import RogueIcon from "../RogueIcon.vue";
 import SiteFooter from "../SiteFooter.vue";
 
-const { lang, characters, maps } = useDraftState();
+const { lang, characters, maps, getWinrate } = useDraftState();
 
 const dict = {
   en: {
     eyebrow: "Draft simulator for the Unmatched board game",
     tagline:
-      "Ban and pick heroes with ratings from professional players, draft card packs, play against a bot, or run a roguelike — all in your browser.",
+      "Ban and pick heroes with ratings from professional players, draft card packs, play online or run a roguelike — all in your browser.",
     ctaDraft: "Start drafting",
     ctaFormats: "Draft formats",
-    ctaPlay: "Play vs bot",
+    ctaPlay: "Play",
     newLabel: "New",
     stats: {
       tools: "tools",
@@ -224,13 +479,26 @@ const dict = {
     },
     p1: "Player 1",
     p2: "Player 2",
-    bans: "bans…",
-    picks: "picks…",
-    mapWord: "MAP",
-    demoDone: "Draft complete — map chosen!",
     aboutTitle: "What is this?",
     aboutText:
-      "Unmatched Draftsim is a fan-made toolbox for players who like to draft. Run a ban/pick with your opponent, see how heroes rank — the ratings are built from statistics of professional players — and which maps suit them, build your own draft formats, and take the result straight into a game against a friend or a bot.",
+      "Unmatched Draftsim is a fan-made toolbox for players who like to draft. Run a ban/pick with your opponent, check which maps suit every hero, build your own draft formats and take the result straight into a game against a friend or a bot.",
+    aboutMark:
+      "Hero ratings, matchups and card statistics are all built from the results of professional players.",
+    proof: ["Elo ratings", "Matchup win rates", "Card statistics"],
+    mu: {
+      elo: "Elo",
+      avg: "avg. win rate",
+      note: "Win rates of one hero against the rest of the roster — the same numbers you see while drafting.",
+    },
+    ribbon: ["MATCHUPS · RATINGS · CARDS · ", "ONLINE · DRAFT · ROGUELIKE · "],
+    cards: {
+      tag: "Card statistics",
+      title: "Know which cards work",
+      text: "Statistics also cover cards: which ones shine in which matchups and which stay in the binder. Build the right deck before the game starts.",
+      example: "Example",
+      good: "Fits against",
+      bad: "Weak against",
+    },
     howTitle: "How it works",
     steps: [
       {
@@ -246,7 +514,52 @@ const dict = {
         text: "Pick the battlefield, check matchups and guides — then fight it out.",
       },
     ],
-    featuresTitle: "What's inside",
+    packs: {
+      tag: "Pack Draft",
+      title: "Draft the cards, then play",
+      text: "Two players, four characters, one shared pool. Each turn you keep one card, discard another openly and pass the pack on — and only then the match begins.",
+      round: "Round",
+      inPack: "Cards in pack",
+      kept: "Kept (you / opponent)",
+      you: "Your turn — keep 1, discard 1",
+      foe: "Opponent's turn",
+      cta: "Try Pack Draft",
+    },
+    online: {
+      tag: "Online",
+      title: "Play with a friend online",
+      text: "Create a room, send the code or the link — and your friend joins from any device.",
+      points: [
+        "Room code or a direct link",
+        "Drafts and games stay in sync",
+        "Or play on one screen",
+      ],
+      cta: "Open the game",
+      room: "Room code",
+      copy: "Copy link",
+      creating: "Creating room…",
+      ready: "Room ready",
+      waiting: "Waiting…",
+      joining: "Joining…",
+      connected: "Connected",
+    },
+    rogue: {
+      tag: "Roguelike",
+      title: "Fight through the map",
+      text: "Choose your route through battles, elites and events, collect gold and cards, reshape your deck and face a custom boss.",
+      cta: "Start the roguelike",
+      fight: "Fight",
+      elite: "Elite",
+      mystery: "Unknown",
+      rest: "Campfire",
+      shop: "Shop",
+      boss: "Boss",
+      forest: "Forest",
+      mountains: "Mountains",
+      ruins: "Ruins",
+      citadel: "Citadel",
+    },
+    featuresTitle: "Everything in one place",
     open: "Open",
     features: {
       draft: {
@@ -271,25 +584,25 @@ const dict = {
       },
       "pack-draft": {
         title: "Pack Draft",
-        text: "A 2-player, 4-hero format: all cards go into one pool, get split into packs and drafted — and only then played. Build the decks from the packs you take.",
+        text: "A 2-player, 4-hero format: all cards go into one pool, get split into packs and drafted — and only then played.",
       },
       game: {
         title: "Game",
-        text: "Play your decks against a bot, on one screen or online with a room code: hand, deck, attacks, maneuvers and a battle log. The bot looks ahead and plays in a style that suits its hero.",
+        text: "Play your decks against a bot, on one screen or online with a room code: hand, deck, attacks, maneuvers and a battle log.",
       },
       rogue: {
         title: "Roguelike",
-        text: "Fight through a map of battles, elites and events: collect gold and cards, remove weak ones, rebuild your deck and face custom bosses.",
+        text: "Fight through a map of battles, elites and events, collect gold and cards and face custom bosses.",
       },
     },
   },
   ua: {
     eyebrow: "Драфт-симулятор для настільної гри Unmatched",
     tagline:
-      "Банте й пікайте героїв за рейтингом професійних гравців, драфтіть паки карт, грайте проти бота чи проходьте рогалик — усе в браузері.",
+      "Банте й пікайте героїв за рейтингом професійних гравців, драфтіть паки карт, грайте онлайн чи проходьте рогалик — усе в браузері.",
     ctaDraft: "Почати драфт",
     ctaFormats: "Формати драфту",
-    ctaPlay: "Грати з ботом",
+    ctaPlay: "Грати",
     newLabel: "Нове",
     stats: {
       tools: "інструментів",
@@ -299,13 +612,26 @@ const dict = {
     },
     p1: "Гравець 1",
     p2: "Гравець 2",
-    bans: "банить…",
-    picks: "обирає…",
-    mapWord: "МАПА",
-    demoDone: "Драфт завершено — мапу обрано!",
     aboutTitle: "Що це?",
     aboutText:
-      "Unmatched Draftsim — фанатський набір інструментів для тих, хто любить драфт. Проведіть бан/пік із суперником, подивіться рейтинг героїв — він побудований на статистиці професійних гравців — і які мапи їм підходять, створіть власні формати драфту та одразу перейдіть до гри з другом або ботом.",
+      "Unmatched Draftsim — фанатський набір інструментів для тих, хто любить драфт. Проведіть бан/пік із суперником, подивіться, які мапи підходять кожному герою, створіть власні формати драфту та одразу перейдіть до гри з другом або ботом.",
+    aboutMark:
+      "Рейтинги героїв, матчапи та статистика карт — усе побудовано на результатах професійних гравців.",
+    proof: ["Рейтинг Elo", "Вінрейт у матчапах", "Статистика карт"],
+    mu: {
+      elo: "Elo",
+      avg: "середній вінрейт",
+      note: "Вінрейт одного героя проти решти ростеру — ті самі цифри, що ви бачите під час драфту.",
+    },
+    ribbon: ["МАТЧАПИ · РЕЙТИНГИ · КАРТИ · ", "ОНЛАЙН · ДРАФТ · РОГАЛИК · "],
+    cards: {
+      tag: "Статистика карт",
+      title: "Знайте, які карти працюють",
+      text: "Статистика є й по картах: які сяють у яких матчапах, а які краще залишити в колекції. Зберіть правильну колоду ще до початку гри.",
+      example: "Приклад",
+      good: "Підходить проти",
+      bad: "Слабка проти",
+    },
     howTitle: "Як це працює",
     steps: [
       {
@@ -321,7 +647,52 @@ const dict = {
         text: "Виберіть поле бою, гляньте матчапи та гайди — і в бій.",
       },
     ],
-    featuresTitle: "Що всередині",
+    packs: {
+      tag: "Pack Draft",
+      title: "Драфтіть карти, а потім грайте",
+      text: "Двоє гравців, чотири персонажі, один спільний пул. Кожен хід ви залишаєте одну карту, іншу відкрито скидаєте й передаєте пак далі — і лише потім починається матч.",
+      round: "Раунд",
+      inPack: "Карт у паку",
+      kept: "Залишено (ви / суперник)",
+      you: "Ваш хід — залишіть 1, скиньте 1",
+      foe: "Хід суперника",
+      cta: "Спробувати Pack Draft",
+    },
+    online: {
+      tag: "Онлайн",
+      title: "Грайте з другом онлайн",
+      text: "Створіть кімнату, надішліть код або посилання — і друг приєднається з будь-якого пристрою.",
+      points: [
+        "Код кімнати або пряме посилання",
+        "Драфт і гра синхронізуються",
+        "Або грайте на одному екрані",
+      ],
+      cta: "Відкрити гру",
+      room: "Код кімнати",
+      copy: "Копіювати посилання",
+      creating: "Створення кімнати…",
+      ready: "Кімната готова",
+      waiting: "Очікування…",
+      joining: "Приєднується…",
+      connected: "Підключено",
+    },
+    rogue: {
+      tag: "Рогалик",
+      title: "Пройдіть мапу боїв",
+      text: "Обирайте маршрут крізь бої, еліт і події, збирайте золото й карти, перебудовуйте колоду та зустрічайте кастомного боса.",
+      cta: "Почати рогалик",
+      fight: "Бій",
+      elite: "Еліта",
+      mystery: "Невідоме",
+      rest: "Багаття",
+      shop: "Магазин",
+      boss: "Бос",
+      forest: "Ліс",
+      mountains: "Гори",
+      ruins: "Руїни",
+      citadel: "Цитадель",
+    },
+    featuresTitle: "Усе в одному місці",
     open: "Відкрити",
     features: {
       draft: {
@@ -346,21 +717,23 @@ const dict = {
       },
       "pack-draft": {
         title: "Pack Draft",
-        text: "Формат для 2 гравців і 4 героїв: усі карти йдуть в один пул, діляться на паки й драфтяться — і лише потім грають. Збирайте колоди з паків, які ви взяли.",
+        text: "Формат для 2 гравців і 4 героїв: усі карти йдуть в один пул, діляться на паки й драфтяться — і лише потім грають.",
       },
       game: {
         title: "Гра",
-        text: "Грайте колодами проти бота, на одному екрані або онлайн за кодом кімнати: рука, колода, атаки, маневри та журнал бою. Бот дивиться наперед і грає у стилі свого героя.",
+        text: "Грайте колодами проти бота, на одному екрані або онлайн за кодом кімнати: рука, колода, атаки, маневри та журнал бою.",
       },
       rogue: {
         title: "Рогалик",
-        text: "Проходьте мапу з боїв, еліт і подій: збирайте золото й карти, прибирайте слабкі, перебудовуйте колоду та зустрічайте кастомних босів.",
+        text: "Проходьте мапу з боїв, еліт і подій, збирайте золото й карти та зустрічайте кастомних босів.",
       },
     },
   },
 };
 
 const L = computed(() => dict[lang.value] || dict.en);
+
+const proofIcons = ["📊", "⚔️", "🃏"];
 
 const features = [
   { key: "draft", route: "main", icon: "⚔️", art: "hero" },
@@ -380,6 +753,15 @@ const features = [
 ];
 
 const abs = (path) => new URL(path, document.baseURI).href;
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
+const shuffle = (list) => {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
 
 const heroPool = computed(() =>
   [...characters.value]
@@ -410,6 +792,266 @@ function artFor(f, i) {
   }
   const pool = heroPool.value;
   return pool.length ? pool[(i * 2 + 1) % pool.length].image : "";
+}
+
+function foesOf(hero) {
+  const list = [];
+  for (const other of characters.value) {
+    if (other.id === hero.id || !other.image) continue;
+    const wr = getWinrate(hero.name, other.name);
+    if (wr === null || wr === undefined) continue;
+    list.push({ ...other, wr: Math.round(wr) });
+  }
+  return list.sort((a, b) => b.wr - a.wr);
+}
+
+const muIndex = ref(0);
+const muPool = computed(() =>
+  characters.value
+    .filter((c) => c.image && foesOf(c).length >= 8)
+    .sort((a, b) => a.name.localeCompare(b.name)),
+);
+const muHero = computed(() => {
+  const pool = muPool.value;
+  if (!pool.length) return null;
+  return pool[(muIndex.value * 11 + 2) % pool.length];
+});
+const muAll = computed(() => (muHero.value ? foesOf(muHero.value) : []));
+const muAvg = computed(() => {
+  const list = muAll.value;
+  if (!list.length) return 0;
+  return Math.round(list.reduce((sum, f) => sum + f.wr, 0) / list.length);
+});
+const muFoes = computed(() => {
+  const list = muAll.value;
+  const picked =
+    list.length > 6 ? [...list.slice(0, 3), ...list.slice(-3)] : list;
+  return picked.map((f) => ({
+    ...f,
+    cls: f.wr >= 58 ? "is-win" : f.wr <= 42 ? "is-lose" : "is-even",
+  }));
+});
+
+const csHeroes = ref([]);
+const csIndex = ref(0);
+const csActive = ref(0);
+
+const csList = computed(() =>
+  csHeroes.value.filter((h) => {
+    const char = characters.value.find((c) => c.name === h.name);
+    return char && foesOf(char).length >= 6;
+  }),
+);
+const csHero = computed(() => {
+  const list = csList.value;
+  return list.length ? list[csIndex.value % list.length] : null;
+});
+const csCard = computed(() => {
+  const hero = csHero.value;
+  if (!hero) return { title: "" };
+  return hero.cards[csActive.value % hero.cards.length];
+});
+const csStyle = computed(() => {
+  const hero = csHero.value;
+  if (!hero || !hero.style) return "";
+  return hero.style[lang.value] || hero.style.en || "";
+});
+const csCols = computed(() => {
+  const hero = csHero.value;
+  if (!hero) return [];
+  const char = characters.value.find((c) => c.name === hero.name);
+  if (!char) return [];
+  const foes = foesOf(char);
+  if (foes.length < 6) return [];
+  const turn = (list, shift) => {
+    const rot = shift % list.length;
+    return [...list.slice(rot), ...list.slice(0, rot)].slice(0, 3);
+  };
+  const shift = csActive.value;
+  const fit = (f, k, sign) =>
+    Math.max(8, Math.min(94, f.wr + sign * ((shift * 5 + k * 3) % 7)));
+  const good = turn(foes.slice(0, 6), shift).map((f, k) => ({
+    ...f,
+    fit: fit(f, k, 1),
+  }));
+  const bad = turn(foes.slice(-6), shift).map((f, k) => ({
+    ...f,
+    fit: fit(f, k, -1),
+  }));
+  return [
+    { key: "is-good", label: L.value.cards.good, rows: good },
+    { key: "is-bad", label: L.value.cards.bad, rows: bad },
+  ];
+});
+
+const titleOf = (file) =>
+  file
+    .replace(/\.[a-z]+$/i, "")
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+function fanStyle(i, total) {
+  const mid = (total - 1) / 2;
+  const d = i - mid;
+  return {
+    "--fx": `${d * 58}px`,
+    "--fr": `${d * 8}deg`,
+    "--fy": `${Math.abs(d) * 10}px`,
+    zIndex: i === csActive.value ? 10 : 5 - Math.abs(Math.round(d)),
+  };
+}
+
+const PACK_CARDS = 8;
+const PACK_ROUNDS = 3;
+const cardPool = buildAllCards().filter((c) => c.image && c.type);
+const packCards = ref([]);
+const packMarks = reactive({});
+const keptYou = ref([]);
+const keptFoe = ref([]);
+const packTurn = ref("you");
+const packPhase = ref(0);
+const packRound = ref(1);
+let packPicked = { keep: null, discard: null };
+
+function newPack() {
+  packCards.value = shuffle(cardPool).slice(0, PACK_CARDS);
+}
+
+function clearMarks() {
+  for (const key of Object.keys(packMarks)) delete packMarks[key];
+}
+
+function packTick() {
+  if (!packCards.value.length) newPack();
+  if (packPhase.value === 0) {
+    clearMarks();
+    const keep = pick(packCards.value);
+    packPicked = { keep, discard: null };
+    packMarks[keep.id] = "keep";
+    packPhase.value = 1;
+  } else if (packPhase.value === 1) {
+    const rest = packCards.value.filter((c) => c.id !== packPicked.keep.id);
+    packPicked.discard = pick(rest);
+    packMarks[packPicked.discard.id] = "discard";
+    packPhase.value = 2;
+  } else {
+    const { keep, discard } = packPicked;
+    packCards.value = packCards.value.filter(
+      (c) => c.id !== keep.id && c.id !== discard.id,
+    );
+    clearMarks();
+    const target = packTurn.value === "you" ? keptYou : keptFoe;
+    target.value = [...target.value, keep].slice(-8);
+    packTurn.value = packTurn.value === "you" ? "foe" : "you";
+    packPhase.value = 0;
+    if (!packCards.value.length) {
+      packRound.value += 1;
+      if (packRound.value > PACK_ROUNDS) {
+        packRound.value = 1;
+        keptYou.value = [];
+        keptFoe.value = [];
+      }
+      newPack();
+    }
+  }
+}
+
+const onlineCode = "K7QX".split("");
+const onlineStep = ref(0);
+
+function onlineTick() {
+  onlineStep.value = (onlineStep.value + 1) % 6;
+}
+
+const mulberry = (seed) => () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+
+const rogueMapData = ref([]);
+const roguePos = ref(null);
+const rogueVisited = ref([]);
+const rogueReach = ref([]);
+const rogueGold = ref(0);
+const rogueHp = ref(40);
+const rogueCards = ref(0);
+let rogueSeed = 11;
+let rogueWait = 0;
+
+const rogueHeroImage = computed(() =>
+  heroPool.value.length ? abs(heroPool.value[0].image) : "",
+);
+const rogueLabels = computed(() => {
+  const r = L.value.rogue;
+  return {
+    fight: r.fight,
+    elite: r.elite,
+    mystery: r.mystery,
+    rest: r.rest,
+    shop: r.shop,
+    boss: r.boss,
+    forest: r.forest,
+    mountains: r.mountains,
+    ruins: r.ruins,
+    citadel: r.citadel,
+  };
+});
+const rogueLegend = computed(() =>
+  ["fight", "elite", "mystery", "rest", "shop", "boss"].map((type) => ({
+    type,
+    icon: nodeTypes[type].icon,
+    metal: nodeTypes[type].metal,
+    label: rogueLabels.value[type],
+  })),
+);
+
+function rogueReset() {
+  rogueSeed += 7;
+  const map = generateMap(mulberry(rogueSeed));
+  rogueMapData.value = map;
+  roguePos.value = null;
+  rogueVisited.value = [];
+  rogueReach.value = map[0].map((n) => n.id);
+  rogueGold.value = 0;
+  rogueHp.value = 40;
+  rogueCards.value = 0;
+  rogueWait = 0;
+}
+
+const rogueEffects = {
+  fight: { gold: 12, hp: -3, cards: 1 },
+  elite: { gold: 25, hp: -6, cards: 1 },
+  mystery: { gold: 8, hp: 0, cards: 1 },
+  rest: { gold: 0, hp: 8, cards: 0 },
+  shop: { gold: -10, hp: 0, cards: 1 },
+  boss: { gold: 50, hp: 0, cards: 1 },
+};
+
+function rogueTick() {
+  if (!rogueMapData.value.length) return;
+  const nodes = new Map(rogueMapData.value.flat().map((n) => [n.id, n]));
+  const here = roguePos.value ? nodes.get(roguePos.value) : null;
+  if (here && here.type === "boss") {
+    rogueWait += 1;
+    if (rogueWait > 3) rogueReset();
+    return;
+  }
+  const options = rogueReach.value.length ? rogueReach.value : [];
+  if (!options.length) {
+    rogueReset();
+    return;
+  }
+  const next = nodes.get(pick(options));
+  const effect = rogueEffects[next.type];
+  roguePos.value = next.id;
+  rogueVisited.value = [...rogueVisited.value, next.id];
+  rogueReach.value = next.next;
+  rogueGold.value = Math.max(0, rogueGold.value + effect.gold);
+  rogueHp.value = Math.max(8, Math.min(40, rogueHp.value + effect.hp));
+  rogueCards.value += effect.cards;
 }
 
 const stats = ["tools", "schemes", "guides", "langs"];
@@ -446,70 +1088,55 @@ function countUp() {
   requestAnimationFrame(frame);
 }
 
-async function loadGuidesCount() {
-  try {
-    const res = await fetch(`${import.meta.env.BASE_URL}guides/index.json`);
-    if (!res.ok) return;
-    const list = await res.json();
-    if (Array.isArray(list) && list.length) guidesCount.value = list.length;
-  } catch {
-    // лишаємо значення за замовчуванням
-  }
+async function loadGuides() {
+  const base = import.meta.env.BASE_URL;
+  const res = await fetch(`${base}guides/index.json`).catch(() => null);
+  if (!res || !res.ok) return;
+  const list = await res.json().catch(() => null);
+  if (!Array.isArray(list) || !list.length) return;
+  guidesCount.value = list.length;
+  const loaded = await Promise.all(
+    list.map(async (name) => {
+      const r = await fetch(
+        `${base}guides/${encodeURIComponent(name)}.json`,
+      ).catch(() => null);
+      const g = r && r.ok ? await r.json().catch(() => null) : null;
+      if (!g || !g.keyCards || g.keyCards.length < 3) return null;
+      return {
+        name,
+        style: g.style,
+        cards: g.keyCards
+          .filter((c) => c.image)
+          .map((c) => ({
+            file: c.image,
+            title: titleOf(c.image),
+            url: abs(`images/cards/${name}/${c.image}`),
+          })),
+      };
+    }),
+  );
+  csHeroes.value = loaded.filter(Boolean);
 }
 watch(guidesCount, () => countUp());
-
-const demoSeq = banPresets.two_bans_four_picks.sequence;
-const sides = [
-  { key: "p1", p1: true, color: "blue", order: 0 },
-  { key: "p2", p1: false, color: "red", order: 2 },
-];
-const slotsOf = (p1, type) =>
-  demoSeq
-    .map((s, i) => ({ i, type: s.type, p1: s.p1 }))
-    .filter((s) => s.p1 === p1 && s.type === type);
-
-const demoStep = ref(0);
-const demoHeroes = ref([]);
-const demoMap = ref("");
-const demoDone = computed(() => demoStep.value >= demoSeq.length);
-
-const demoStatus = computed(() => {
-  if (demoDone.value) return L.value.demoDone;
-  const s = demoSeq[demoStep.value];
-  return `${s.p1 ? L.value.p1 : L.value.p2} ${
-    s.type === "ban" ? L.value.bans : L.value.picks
-  }`;
-});
-
-const demoMapStyle = computed(() =>
-  demoMap.value ? { backgroundImage: `url(${abs(demoMap.value)})` } : {},
-);
-
-function reshuffleDemo() {
-  const heroes = characters.value.filter((c) => c.image);
-  const shuffled = [...heroes].sort(() => Math.random() - 0.5);
-  demoHeroes.value = shuffled.slice(0, demoSeq.length);
-  const pool = mapPool.value;
-  demoMap.value = pool.length
-    ? pool[Math.floor(Math.random() * pool.length)]
-    : "";
-}
-
-let demoTimer = null;
-let holdTicks = 0;
-function demoTick() {
-  if (demoStep.value < demoSeq.length) {
-    demoStep.value++;
-  } else if (++holdTicks >= 5) {
-    holdTicks = 0;
-    demoStep.value = 0;
-    reshuffleDemo();
-  }
-}
 
 const root = ref(null);
 const revealOn = ref(false);
 let observer = null;
+let parallaxItems = [];
+let frameId = 0;
+
+function updateParallax() {
+  frameId = 0;
+  const vh = window.innerHeight;
+  for (const el of parallaxItems) {
+    const r = el.getBoundingClientRect();
+    const p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+    el.style.setProperty("--p", Math.max(-1, Math.min(1, p)).toFixed(3));
+  }
+}
+function onScroll() {
+  if (!frameId) frameId = requestAnimationFrame(updateParallax);
+}
 
 function heroMove(e) {
   const el = e.currentTarget;
@@ -532,18 +1159,46 @@ function cardLeave(e) {
   e.currentTarget.style.setProperty("--ry", "0deg");
 }
 
-reshuffleDemo();
+newPack();
+rogueReset();
+
+const timers = [];
 
 onMounted(async () => {
   countUp();
-  loadGuidesCount();
+  loadGuides();
 
   if (prefersReduced()) {
-    demoStep.value = demoSeq.length;
+    for (let i = 0; i < 6; i++) packTick();
+    onlineStep.value = 5;
+    for (let i = 0; i < 6; i++) rogueTick();
     return;
   }
 
-  demoTimer = setInterval(demoTick, 800);
+  timers.push(
+    setInterval(() => (muIndex.value += 1), 4800),
+    setInterval(() => {
+      const hero = csHero.value;
+      if (!hero) return;
+      if (csActive.value + 1 >= hero.cards.length) {
+        csActive.value = 0;
+        csIndex.value += 1;
+      } else {
+        csActive.value += 1;
+      }
+    }, 3200),
+    setInterval(packTick, 1100),
+    setInterval(onlineTick, 1100),
+    setInterval(rogueTick, 1200),
+  );
+
+  await nextTick();
+  if (root.value) {
+    parallaxItems = [...root.value.querySelectorAll("[data-parallax]")];
+    updateParallax();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+  }
 
   if ("IntersectionObserver" in window && root.value) {
     revealOn.value = true;
@@ -565,8 +1220,23 @@ onMounted(async () => {
   }
 });
 
+watch([csHero, muHero], async () => {
+  await nextTick();
+  if (!root.value) return;
+  parallaxItems = [...root.value.querySelectorAll("[data-parallax]")];
+  updateParallax();
+  if (observer) {
+    root.value
+      .querySelectorAll("[data-reveal]:not(.is-in)")
+      .forEach((el) => observer.observe(el));
+  }
+});
+
 onBeforeUnmount(() => {
-  if (demoTimer) clearInterval(demoTimer);
+  timers.forEach(clearInterval);
+  if (frameId) cancelAnimationFrame(frameId);
+  window.removeEventListener("scroll", onScroll);
+  window.removeEventListener("resize", onScroll);
   if (observer) observer.disconnect();
 });
 </script>
@@ -892,199 +1562,6 @@ onBeforeUnmount(() => {
   color: var(--text-muted, #cbd5e1);
 }
 
-/* ---------- DEMO ---------- */
-.home-demo {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 18px;
-  align-items: start;
-  max-width: 900px;
-  margin: 28px auto 0;
-  padding: 22px 18px;
-  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.75);
-  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-}
-.demo-side.order-0 {
-  order: 0;
-}
-.demo-center {
-  order: 1;
-}
-.demo-side.order-2 {
-  order: 2;
-}
-.demo-label {
-  margin-bottom: 10px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.demo-side.is-blue .demo-label {
-  color: var(--color-player, #4f7cff);
-}
-.demo-side.is-red .demo-label {
-  color: var(--color-opponent, #ff4f6d);
-}
-.demo-row {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.demo-bans {
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 130px;
-}
-.demo-picks {
-  grid-template-columns: repeat(2, 1fr);
-}
-.demo-side.is-red .demo-row {
-  margin-left: auto;
-}
-.demo-slot {
-  position: relative;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: var(--bg-slate, #1e293b);
-  border: 2px dashed var(--border-strong, rgba(255, 255, 255, 0.15));
-  border-radius: 12px;
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-.demo-slot.active {
-  border-style: solid;
-  animation: demo-pulse 0.8s ease-in-out infinite;
-}
-.demo-side.is-blue .demo-slot.active,
-.demo-side.is-blue .demo-slot.filled.is-pick {
-  border-color: var(--color-player, #4f7cff);
-}
-.demo-side.is-red .demo-slot.active,
-.demo-side.is-red .demo-slot.filled.is-pick {
-  border-color: var(--color-opponent, #ff4f6d);
-}
-.demo-slot.filled {
-  border-style: solid;
-}
-.demo-slot.filled.is-pick {
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.12);
-}
-.demo-slot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  animation: demo-pop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
-}
-.demo-slot.filled.is-ban {
-  border-color: var(--color-danger, #ef4444);
-}
-.demo-slot.filled.is-ban img {
-  filter: grayscale(1) brightness(0.55);
-}
-.demo-slot.filled.is-ban::after {
-  content: "✕";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: var(--color-danger, #ef4444);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-}
-.demo-ph {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--text-dim, #94a3b8);
-}
-@keyframes demo-pop {
-  from {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-@keyframes demo-pulse {
-  50% {
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
-  }
-}
-
-.demo-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 150px;
-  padding-top: 6px;
-  text-align: center;
-}
-.demo-vs {
-  font-size: 2.2rem;
-  font-weight: 800;
-  line-height: 1;
-  background: linear-gradient(
-    90deg,
-    var(--color-player, #4f7cff),
-    var(--color-opponent, #ff4f6d)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.demo-status {
-  min-height: 2.6em;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-light, #f1f5f9);
-  animation: demo-pop 0.35s ease;
-}
-.demo-map {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background-color: var(--bg-slate, #1e293b);
-  background-size: cover;
-  background-position: center;
-  border: 2px dashed var(--border-strong, rgba(255, 255, 255, 0.15));
-  border-radius: 12px;
-  opacity: 0.35;
-  filter: grayscale(1);
-  transition:
-    opacity 0.5s ease,
-    filter 0.5s ease,
-    border-color 0.5s ease;
-}
-.demo-map.show {
-  opacity: 1;
-  filter: none;
-  border-style: solid;
-  border-color: var(--color-success, #22c55e);
-}
-.demo-map span {
-  width: 100%;
-  padding: 3px 0;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 0 0 9px 9px;
-}
-
 /* ---------- STEPS ---------- */
 .home-steps {
   display: grid;
@@ -1221,7 +1698,6 @@ onBeforeUnmount(() => {
 }
 .home-card-badge {
   position: absolute;
-  z-index: 3;
   top: 18px;
   right: 16px;
   padding: 2px 9px;
@@ -1250,6 +1726,863 @@ onBeforeUnmount(() => {
   color: var(--color-player, #4f7cff);
 }
 
+/* ---------- NEW ---------- */
+.home-wrap {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.home-band {
+  position: relative;
+  margin-top: 72px;
+  padding: 88px 0;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(var(--bg-dark-rgb, 15, 23, 42), 0.92) 14%,
+    rgba(var(--bg-dark-rgb, 15, 23, 42), 0.92) 86%,
+    transparent
+  );
+}
+.home-band-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 720px;
+  height: 720px;
+  margin: -360px 0 0 -360px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(var(--color-player-rgb, 79, 124, 255), 0.28),
+    transparent 65%
+  );
+  transform: translate(calc(var(--p, 0) * -320px), calc(var(--p, 0) * 140px));
+}
+.home-band-glow.is-red {
+  background: radial-gradient(
+    circle,
+    rgba(var(--color-opponent-rgb, 255, 79, 109), 0.26),
+    transparent 65%
+  );
+  transform: translate(calc(var(--p, 0) * 320px), calc(var(--p, 0) * 140px));
+}
+.home-band-glow.is-gold {
+  background: radial-gradient(circle, rgba(246, 201, 69, 0.2), transparent 65%);
+}
+.home-tag {
+  display: block;
+  width: max-content;
+  margin: 0 auto 12px;
+  padding: 4px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-warning, #facc15);
+  background: rgba(var(--color-player-rgb, 79, 124, 255), 0.12);
+  border: 1px solid rgba(var(--color-player-rgb, 79, 124, 255), 0.4);
+  border-radius: 999px;
+}
+.home-tag.is-left,
+.home-h2.is-left,
+.home-lead.is-left {
+  margin-left: 0;
+  text-align: left;
+}
+.home-h2.is-left::after {
+  margin-left: 0;
+}
+.home-show-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+.home-caption {
+  max-width: 620px;
+  margin: 14px auto 0;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--text-muted, #94a3b8);
+}
+
+.reveal-on [data-reveal="zoom"]:not(.is-in) {
+  transform: scale(0.92) translateY(30px);
+}
+.reveal-on [data-reveal="left"]:not(.is-in) {
+  transform: translateX(-60px);
+}
+.reveal-on [data-reveal="right"]:not(.is-in) {
+  transform: translateX(60px);
+}
+
+.home-lead + .home-lead {
+  margin-top: 14px;
+}
+.home-lead-mark mark {
+  padding: 3px 10px;
+  color: #fff;
+  background: linear-gradient(
+    100deg,
+    rgba(var(--color-player-rgb, 79, 124, 255), 0.55),
+    rgba(var(--color-opponent-rgb, 255, 79, 109), 0.55)
+  );
+  border-radius: 6px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.home-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 0;
+  margin: 22px 0 0;
+  list-style: none;
+}
+.home-proof li {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.8);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 999px;
+}
+
+.home-ribbon {
+  margin-top: 56px;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+.home-ribbon-track {
+  display: inline-block;
+  font-size: clamp(3rem, 11vw, 8rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(var(--color-player-rgb, 79, 124, 255), 0.45);
+  transform: translateX(calc(-10% + var(--p, 0) * -22%));
+}
+.home-ribbon.is-reverse .home-ribbon-track {
+  -webkit-text-stroke-color: rgba(
+    var(--color-opponent-rgb, 255, 79, 109),
+    0.45
+  );
+  transform: translateX(calc(-45% + var(--p, 0) * 22%));
+}
+
+/* matchups */
+.mu-show {
+  display: grid;
+  grid-template-columns: 250px 52px 1fr;
+  gap: 14px;
+  align-items: center;
+  max-width: 980px;
+  padding: 22px;
+  margin: 34px auto 0;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.85);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.mu-hero {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--color-player, #4f7cff);
+  border-radius: 16px;
+  box-shadow: 0 0 28px rgba(var(--color-player-rgb, 79, 124, 255), 0.45);
+}
+.mu-hero-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: top;
+}
+.mu-hero-body {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 36px 12px 12px;
+  background: linear-gradient(transparent, rgba(8, 12, 22, 0.95));
+}
+.mu-hero-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.mu-hero-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 0.78rem;
+  color: var(--text-muted, #cbd5e1);
+}
+.mu-hero-meta b {
+  color: var(--color-warning, #facc15);
+}
+.mu-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mu-vs span {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    var(--color-player, #4f7cff),
+    var(--color-opponent, #ff4f6d)
+  );
+  border-radius: 50%;
+  animation: home-pulse 2s ease-in-out infinite;
+}
+@keyframes home-pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+.mu-foes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.mu-foe {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 8px 12px 8px 8px;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.8);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.mu-foe img {
+  grid-row: 1 / 3;
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 10px;
+}
+.mu-foe-name {
+  overflow: hidden;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mu-foe-wr {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+.mu-foe-bar {
+  grid-column: 2 / 4;
+  height: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+.mu-foe-bar i {
+  display: block;
+  height: 100%;
+  background: var(--text-muted, #94a3b8);
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+.mu-foe.is-win {
+  border-color: rgba(var(--color-proceed-rgb, 16, 185, 129), 0.6);
+}
+.mu-foe.is-win .mu-foe-wr {
+  color: var(--color-proceed, #10b981);
+}
+.mu-foe.is-win .mu-foe-bar i {
+  background: var(--color-proceed, #10b981);
+}
+.mu-foe.is-lose {
+  border-color: rgba(var(--color-opponent-rgb, 255, 79, 109), 0.6);
+}
+.mu-foe.is-lose .mu-foe-wr {
+  color: var(--color-opponent, #ff4f6d);
+}
+.mu-foe.is-lose .mu-foe-bar i {
+  background: var(--color-opponent, #ff4f6d);
+}
+
+.mu-swap-enter-active,
+.mu-swap-leave-active {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.mu-swap-enter-from {
+  opacity: 0;
+  transform: translateX(-30px) rotate(-3deg);
+}
+.mu-swap-leave-to {
+  opacity: 0;
+  transform: translateX(30px) rotate(3deg);
+}
+.mu-foe-enter-active,
+.mu-foe-leave-active {
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+.mu-foe-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.mu-foe-leave-to {
+  position: absolute;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* card stats */
+.cs-stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-top: 40px;
+}
+.cs-fan {
+  position: relative;
+  height: 400px;
+  perspective: 900px;
+  transform: rotate(calc(var(--p, 0) * 5deg));
+}
+.cs-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 230px;
+  margin-left: -115px;
+  cursor: pointer;
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  transform: translate(var(--fx), var(--fy)) rotate(var(--fr));
+  transition:
+    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s ease;
+}
+.cs-card img {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+}
+.cs-card.is-active {
+  box-shadow:
+    0 0 0 3px var(--color-warning, #facc15),
+    0 22px 50px rgba(0, 0, 0, 0.7),
+    0 0 36px rgba(250, 204, 21, 0.35);
+  transform: translate(var(--fx), -22px) rotate(0deg) scale(1.08);
+}
+.cs-panel {
+  position: relative;
+  padding: 22px;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.7);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
+  border-radius: 18px;
+}
+.cs-example {
+  position: absolute;
+  top: -11px;
+  right: 18px;
+  padding: 2px 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1a1204;
+  background: var(--color-warning, #facc15);
+  border-radius: 999px;
+}
+.cs-title {
+  min-height: 62px;
+  margin-bottom: 14px;
+}
+.cs-title h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+.cs-title small {
+  color: var(--text-muted, #94a3b8);
+}
+.cs-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.cs-col h4 {
+  margin: 0 0 8px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cs-col h4.is-good {
+  color: var(--color-proceed, #10b981);
+}
+.cs-col h4.is-bad {
+  color: var(--color-opponent, #ff4f6d);
+}
+.cs-col ul {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.cs-col li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 8px 5px 5px;
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 10px;
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.cs-col li.is-good {
+  background: rgba(var(--color-proceed-rgb, 16, 185, 129), 0.14);
+}
+.cs-col li.is-bad {
+  background: rgba(var(--color-opponent-rgb, 255, 79, 109), 0.14);
+}
+.cs-col li img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px;
+}
+.cs-col li span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cs-col li.is-good b {
+  color: var(--color-proceed, #10b981);
+}
+.cs-col li.is-bad b {
+  color: var(--color-opponent, #ff4f6d);
+}
+
+/* pack draft */
+.pk-board {
+  max-width: 980px;
+  padding: 18px;
+  margin: 36px auto 0;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.55);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
+  border-radius: 22px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+}
+.pk-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.pk-stats div {
+  padding: 8px 12px;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.8);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+}
+.pk-stats span {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted, #94a3b8);
+}
+.pk-stats b {
+  font-size: 1.15rem;
+}
+.pk-stats small {
+  color: var(--text-muted, #94a3b8);
+}
+.pk-banner {
+  padding: 8px 14px;
+  margin: 12px 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 10px;
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease;
+}
+.pk-banner.is-you {
+  background: rgba(var(--color-player-rgb, 79, 124, 255), 0.18);
+  border: 1px solid rgba(var(--color-player-rgb, 79, 124, 255), 0.6);
+}
+.pk-banner.is-foe {
+  background: rgba(var(--color-opponent-rgb, 255, 79, 109), 0.18);
+  border: 1px solid rgba(var(--color-opponent-rgb, 255, 79, 109), 0.6);
+}
+.pk-layout {
+  display: grid;
+  grid-template-columns: 110px 1fr 110px;
+  gap: 14px;
+  align-items: start;
+}
+.pk-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  min-height: 300px;
+  align-content: start;
+}
+.pk-grid :deep(.pack-card) {
+  min-height: 0;
+  pointer-events: none;
+}
+.pk-side h4 {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+.pk-side.is-you h4 {
+  color: var(--color-player, #4f7cff);
+}
+.pk-side.is-foe h4 {
+  color: var(--color-opponent, #ff4f6d);
+}
+.pk-kept {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  min-height: 100px;
+  padding: 6px;
+  border: 1px dashed var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 10px;
+  align-content: start;
+}
+.pk-kept img {
+  width: 100%;
+  border-radius: 6px;
+}
+.pk-enter-active,
+.pk-leave-active {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.pk-enter-from {
+  opacity: 0;
+  transform: translateY(24px) scale(0.9);
+}
+.pk-leave-active {
+  position: absolute;
+  z-index: 2;
+}
+.pk-leave-to {
+  opacity: 0;
+  transform: translateY(-30px) scale(0.85);
+}
+.pk-move {
+  transition: transform 0.5s ease;
+}
+.pk-kept-enter-active {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.3);
+}
+.pk-kept-enter-from {
+  opacity: 0;
+  transform: scale(0.3);
+}
+
+/* online */
+.home-online {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  padding-top: 96px;
+}
+.on-points {
+  padding: 0;
+  margin: 18px 0 24px;
+  list-style: none;
+}
+.on-points li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 8px;
+  color: var(--text-muted, #cbd5e1);
+}
+.on-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  font-weight: 900;
+  color: var(--color-proceed, #10b981);
+}
+.on-stage {
+  position: relative;
+  padding: 26px;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.85);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+  transform: translateY(calc(var(--p, 0) * -26px));
+}
+.on-room {
+  text-align: center;
+}
+.on-room > span:first-child {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted, #94a3b8);
+}
+.on-code {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 8px 0;
+}
+.on-code b {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 66px;
+  font-size: 2rem;
+  color: transparent;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.9);
+  border: 2px solid var(--border-medium, rgba(255, 255, 255, 0.15));
+  border-radius: 12px;
+  transition:
+    color 0.4s ease calc(var(--i) * 140ms),
+    border-color 0.4s ease calc(var(--i) * 140ms),
+    transform 0.4s ease calc(var(--i) * 140ms);
+}
+.on-code b.on {
+  color: var(--color-warning, #facc15);
+  border-color: var(--color-warning, #facc15);
+  transform: translateY(-4px);
+}
+.on-copy {
+  display: inline-block;
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 999px;
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+.on-copy.on {
+  opacity: 1;
+}
+.on-peers {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 26px;
+}
+.on-peer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 16px 8px;
+  text-align: center;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.6);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
+  border-radius: 16px;
+  opacity: 0.35;
+  transition:
+    opacity 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+.on-peer.on {
+  opacity: 1;
+}
+.on-peer i {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+}
+.on-peer.is-you i {
+  background: var(--color-player, #4f7cff);
+}
+.on-peer.is-foe i {
+  background: var(--color-opponent, #ff4f6d);
+}
+.on-peer.is-you.on {
+  border-color: var(--color-player, #4f7cff);
+  box-shadow: 0 0 22px rgba(var(--color-player-rgb, 79, 124, 255), 0.4);
+}
+.on-peer.is-foe.on {
+  border-color: var(--color-opponent, #ff4f6d);
+  box-shadow: 0 0 22px rgba(var(--color-opponent-rgb, 255, 79, 109), 0.4);
+}
+.on-peer span {
+  font-weight: 800;
+}
+.on-peer small {
+  font-size: 0.72rem;
+  color: var(--text-muted, #94a3b8);
+}
+.on-link {
+  display: flex;
+  gap: 5px;
+}
+.on-link i {
+  width: 8px;
+  height: 8px;
+  background: var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+.on-link.on i {
+  background: var(--color-proceed, #10b981);
+  animation: on-blink 1s ease-in-out infinite;
+}
+.on-link.on i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.on-link.on i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.on-link.on i:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.on-link.on i:nth-child(5) {
+  animation-delay: 0.6s;
+}
+@keyframes on-blink {
+  50% {
+    opacity: 0.25;
+    transform: scale(0.6);
+  }
+}
+
+/* roguelike */
+.rg-board {
+  max-width: 980px;
+  margin: 36px auto 0;
+}
+.rg-top {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.rg-stat {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 16px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.85);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 999px;
+}
+.rg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  justify-content: center;
+  padding: 0;
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #cbd5e1);
+  list-style: none;
+}
+.rg-legend li {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.home-card-new {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 1px 9px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--color-warning, #facc15);
+  background: rgba(8, 12, 22, 0.8);
+  border: 1px solid var(--color-warning, #facc15);
+  border-radius: 999px;
+}
+
+@media (max-width: 820px) {
+  .mu-show {
+    grid-template-columns: 1fr;
+  }
+  .mu-hero {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+  .mu-vs {
+    margin: -6px 0;
+  }
+  .mu-foes {
+    grid-template-columns: 1fr;
+  }
+  .cs-stage,
+  .home-online {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .cs-fan {
+    height: 340px;
+  }
+  .cs-card {
+    width: 180px;
+    margin-left: -90px;
+  }
+  .cs-cols {
+    grid-template-columns: 1fr;
+  }
+  .pk-layout {
+    grid-template-columns: 1fr;
+  }
+  .pk-side {
+    order: 2;
+  }
+  .pk-kept {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .pk-grid {
+    grid-template-columns: repeat(2, 1fr);
+    min-height: 0;
+  }
+  .home-band {
+    padding: 64px 0;
+  }
+}
+
 @media (max-width: 720px) {
   .home-steps {
     grid-template-columns: 1fr;
@@ -1261,30 +2594,14 @@ onBeforeUnmount(() => {
     width: 72px;
     height: 72px;
   }
-  .home-demo {
-    grid-template-columns: 1fr 1fr;
-    padding: 16px 12px;
-  }
-  .demo-center {
-    order: 3;
-    grid-column: 1 / -1;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: auto;
-  }
-  .demo-map {
-    width: 140px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .home-track,
   .home-title-accent,
   .home-slide,
-  .demo-slot.active,
-  .demo-slot img,
-  .demo-status {
+  .mu-vs span,
+  .on-link i {
     animation: none;
   }
   .home-slide:first-child {
@@ -1292,7 +2609,10 @@ onBeforeUnmount(() => {
   }
   .home-btn,
   .home-card,
-  .home-card-art {
+  .home-card-art,
+  .home-chip,
+  .cs-card,
+  .mu-foe-bar i {
     transition: none;
   }
 }
