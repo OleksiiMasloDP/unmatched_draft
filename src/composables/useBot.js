@@ -4,6 +4,7 @@ import { getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { botProfiles } from "../botProfiles.js";
 import {
+  cardId,
   cardInfo,
   heroInfo,
   heroSettingKeys,
@@ -49,6 +50,11 @@ function graphOf(mapId) {
   return graphCache.get(mapId);
 }
 
+const LEVEL_WEIGHTS = {
+  normal: { budget: 700, samples: 3 },
+  hard: { budget: 1600, samples: 5 },
+};
+
 export function useBot(options = {}) {
   const engine = useGame();
   const { game } = engine;
@@ -64,6 +70,22 @@ export function useBot(options = {}) {
   const rate = (card) => cardInfo(card, store);
 
   const styleOf = () => profile.style ?? BOT_STYLES.NEUTRAL;
+
+  const usesAllowed = (card, context) => {
+    if (!card) return true;
+    const uses = rate(card).uses;
+    return !uses || uses.includes(context);
+  };
+  const fitAttack = (card) => isAttackCard(card) && usesAllowed(card, "attack");
+  const fitDefense = (card) =>
+    isDefenseCard(card) && usesAllowed(card, "defense");
+  const deadBoost = (card) => {
+    if (!card) return false;
+    const uses = rate(card).uses;
+    return Boolean(
+      uses && uses.length && uses.every((u) => u === "boostManeuver"),
+    );
+  };
 
   const profileOf = (seat) => {
     const heroKey = game.players[seat]?.heroId;
@@ -373,7 +395,7 @@ export function useBot(options = {}) {
       (profile.aggro ?? 1) * (styleOf() === BOT_STYLES.PRESSURE ? 1.25 : 1);
     const early = game.turnNo <= 3;
     const cards = handOf(bot);
-    const bare = cards.length < 6 && !cards.some(isDefenseCard);
+    const bare = cards.length < 6 && !cards.some(fitDefense);
     let contain = 0;
     if (profile.contain && fighter.isHero) {
       const zone = [...byId().keys()].filter((id) =>
@@ -386,7 +408,7 @@ export function useBot(options = {}) {
         zone * 0.04;
     }
     const needsClose = cards.some(
-      (card) => isAttackCard(card) && /adjacent/i.test(textOf(card)),
+      (card) => fitAttack(card) && /adjacent/i.test(textOf(card)),
     );
     const hugging =
       fighter.attack === "range" &&
@@ -493,7 +515,7 @@ export function useBot(options = {}) {
       known = true;
     }
     if (/gain 1 (free )?action/.test(text)) {
-      value += handOf(bot).some(isAttackCard) ? 1 : 0.5;
+      value += handOf(bot).some(fitAttack) ? 1 : 0.5;
       known = true;
     }
     if (
@@ -531,7 +553,7 @@ export function useBot(options = {}) {
 
   const bestScheme = (bot) =>
     handOf(bot)
-      .filter((card) => card.type === "scheme")
+      .filter((card) => card.type === "scheme" && usesAllowed(card, "scheme"))
       .reduce(
         (best, card) => {
           const value = schemeValue(card, bot);
@@ -542,7 +564,7 @@ export function useBot(options = {}) {
 
   const attackUtility = (bot) => {
     const known = knowledge(bot);
-    const cards = handOf(bot).filter(isAttackCard);
+    const cards = handOf(bot).filter(fitAttack);
     if (!cards.length) return 0;
     const top = cards.reduce((best, card) =>
       attackPower(card) > attackPower(best) ? card : best,
@@ -558,7 +580,7 @@ export function useBot(options = {}) {
     if (hand.some((card) => (profile.keepInHand || []).includes(card.key))) {
       return engine.chooseMulligan(false, bot);
     }
-    const good = hand.filter(isAttackCard).length;
+    const good = hand.filter(fitAttack).length;
     const power = hand.reduce((sum, card) => sum + cardPower(card), 0);
     engine.chooseMulligan(
       good < 2 || power / Math.max(hand.length, 1) < 2.2,
@@ -616,7 +638,7 @@ export function useBot(options = {}) {
           ? Math.max(...targets.map(targetScore))
           : -10;
         const prefer = handOf(bot)
-          .filter(isAttackCard)
+          .filter(fitAttack)
           .map((card) => (rate(card).who - 5) / 5);
         const lean = prefer.length
           ? prefer.reduce((sum, value) => sum + value, 0) / prefer.length
@@ -641,6 +663,14 @@ export function useBot(options = {}) {
     ) {
       const boost = boostToReach(prompt, bot);
       if (boost) return { boost };
+      const spare = prompt.boostOptions
+        .map(getCard)
+        .filter((card) => card && card.boost > 0 && deadBoost(card));
+      if (spare.length && handOf(bot).length >= 5) {
+        return {
+          boost: spare.reduce((a, b) => (b.boost > a.boost ? b : a)).id,
+        };
+      }
     }
     if (title === "promptMoveFoe" && fightersOf(bot).some((f) => f.isHero)) {
       const lead = game.players[bot].heroId === "tomoe-gozen";
@@ -710,7 +740,7 @@ export function useBot(options = {}) {
 
   const boostToReach = (prompt, bot) => {
     const hand = handOf(bot);
-    if (!hand.some(isAttackCard)) return null;
+    if (!hand.some(fitAttack)) return null;
     const movers = prompt.fighter
       ? fightersOf(bot).filter((item) => item.id === prompt.fighter)
       : fightersOf(bot);
@@ -722,8 +752,9 @@ export function useBot(options = {}) {
         (card) =>
           card &&
           card.boost > 0 &&
+          usesAllowed(card, "boostManeuver") &&
           !profile.keep?.includes(card.key) &&
-          hand.some((item) => item.id !== card.id && isAttackCard(item)),
+          hand.some((item) => item.id !== card.id && fitAttack(item)),
       )
       .sort(
         (a, b) =>
@@ -787,9 +818,32 @@ export function useBot(options = {}) {
     return target.max > 2 && (card.value ?? 0) >= target.hp;
   };
 
+  const promptContext = (prompt, bot) => {
+    const title = prompt.title;
+    if (title === "promptAttackCard") return "attack";
+    if (title === "promptDefenseCard") return "defense";
+    if (title === "promptSchemeCard") return "scheme";
+    if (title === "promptBoost") {
+      return game.combat?.attacker === bot ? "boostAttack" : "boostDefense";
+    }
+    return null;
+  };
+
+  const cardAllowed = (prompt, id, bot) => {
+    const context = promptContext(prompt, bot);
+    if (!context) return true;
+    const card = getCard(id);
+    return !card || usesAllowed(card, context);
+  };
+
   const answerCards = (prompt, bot) => {
     let options = prompt.options.map(getCard).filter(Boolean);
     const title = prompt.title;
+    const context = promptContext(prompt, bot);
+    if (context) {
+      const allowed = options.filter((card) => usesAllowed(card, context));
+      if (allowed.length || !prompt.min) options = allowed;
+    }
     if (title === "promptDefenseCard" || title === "promptAttackCard") {
       const attacking = title === "promptAttackCard";
       const fit = options.filter(
@@ -835,7 +889,7 @@ export function useBot(options = {}) {
           return [bait[bait.length - 1].id];
         }
       }
-      const guards = handOf(bot).filter(isDefenseCard).length;
+      const guards = handOf(bot).filter(fitDefense).length;
       const pure = sorted.filter((card) => card.type !== "versatile");
       const spare = (guards <= 2 && pure.length ? pure : sorted).filter(
         (card) => !profile.keep?.includes(card.key) && !rate(card).hold,
@@ -903,7 +957,7 @@ export function useBot(options = {}) {
         }
       }
       const low = game.players[bot].hp <= 8;
-      const guards = handOf(bot).filter(isDefenseCard).length;
+      const guards = handOf(bot).filter(fitDefense).length;
       const fodder = options.filter(
         (card) =>
           card.boost &&
@@ -930,10 +984,10 @@ export function useBot(options = {}) {
       ];
     }
     if (title === "promptSearchDeck") {
-      const guards = handOf(bot).filter(isDefenseCard).length;
+      const guards = handOf(bot).filter(fitDefense).length;
       const wanted = guards
-        ? options.filter(isAttackCard)
-        : options.filter(isDefenseCard);
+        ? options.filter(fitAttack)
+        : options.filter(fitDefense);
       const pool = wanted.length ? wanted : options;
       return [pool.reduce((a, b) => (cardPower(b) > cardPower(a) ? b : a)).id];
     }
@@ -1023,9 +1077,51 @@ export function useBot(options = {}) {
     }
   };
 
+  const applyLessons = (prompt, reply, bot) => {
+    if (!Array.isArray(reply) || !(store.lessons || []).length) return reply;
+    const hero = game.players[bot]?.heroId;
+    const list = store.lessons.filter(
+      (item) => item.hero === hero && item.title === prompt.title,
+    );
+    if (!list.length) return reply;
+    const keyOf = (id) => {
+      const card = getCard(id);
+      return card ? cardId(card) : null;
+    };
+    const byKey = new Map(prompt.options.map((id) => [keyOf(id), id]));
+    let next = [...reply];
+    for (const lesson of list) {
+      if (lesson.kind === "use") {
+        const id = byKey.get(lesson.card);
+        if (!id) continue;
+        if (
+          lesson.use &&
+          !next.includes(id) &&
+          next.length < (prompt.max ?? 99)
+        ) {
+          next.push(id);
+        }
+        if (
+          !lesson.use &&
+          next.includes(id) &&
+          next.length > (prompt.min ?? 0)
+        ) {
+          next = next.filter((item) => item !== id);
+        }
+      } else if (lesson.kind === "prefer") {
+        const better = byKey.get(lesson.better);
+        const at = next.findIndex((id) => keyOf(id) === lesson.worse);
+        if (better && at >= 0 && !next.includes(better)) next[at] = better;
+      }
+    }
+    return validReply(prompt, next) ? next : reply;
+  };
+
   const answer = (prompt, bot) => {
     if (prompt.kind === "space") return answerSpace(prompt, bot);
-    if (prompt.kind === "cards") return answerCards(prompt, bot);
+    if (prompt.kind === "cards") {
+      return applyLessons(prompt, answerCards(prompt, bot), bot);
+    }
     if (prompt.kind === "confirm") return answerConfirm(prompt, bot);
     if (prompt.kind === "choice") return answerChoice(prompt, bot);
     return true;
@@ -1058,7 +1154,7 @@ export function useBot(options = {}) {
         (foeHand.length > 1 ? bestBoost(foeHand) : 0)
       : 0;
     const mine = handOf(bot);
-    const cards = mine.filter(isAttackCard);
+    const cards = mine.filter(fitAttack);
     const reach = fightersOf(bot).some((fighter) =>
       canHit(fighter, fighter.space, foeHero.space),
     );
@@ -1091,8 +1187,9 @@ export function useBot(options = {}) {
 
   const act = (bot) => {
     if (!inSim) planned = null;
-    const available = engine.availableActions(true);
+    const available = { ...engine.availableActions(true) };
     const hand = handOf(bot);
+    if (!hand.some(fitAttack)) available.attack = false;
     const state = plan(bot);
     if (!inSim) reachCache.clear();
     if (state.finisher && available.scheme) return engine.doScheme();
@@ -1102,7 +1199,7 @@ export function useBot(options = {}) {
     if (
       available.attack &&
       !handOf(other(bot)).some(isDefenseCard) &&
-      hand.some(isDefenseCard)
+      hand.some(fitDefense)
     ) {
       return engine.doAttack();
     }
@@ -1134,7 +1231,7 @@ export function useBot(options = {}) {
                 : 0.5),
       ]);
     }
-    const defenders = hand.filter(isDefenseCard).length;
+    const defenders = hand.filter(fitDefense).length;
     const crowded = hand.length >= 6;
     const afterMove = turnManeuvers > 0;
     if (scheme?.card && scheme.value >= (afterMove ? 0.6 : 0.8)) {
@@ -1176,7 +1273,11 @@ export function useBot(options = {}) {
       options.push(["maneuver", draw + styleDraw + need + repeat + gain]);
     }
     if (!options.length) return;
-    if (!inSim && !(game.noSearch || []).includes(bot)) {
+    if (
+      !inSim &&
+      game.botLevel !== "easy" &&
+      !(game.noSearch || []).includes(bot)
+    ) {
       const prior = Object.fromEntries(options);
       const key = `${game.turnNo}:${game.actions}`;
       const reuse = pending && pending.key === key && pending.seat === bot;
@@ -1217,6 +1318,7 @@ export function useBot(options = {}) {
     game,
     weightsOf: (seat) => ({
       ...DEFAULT_WEIGHTS,
+      ...(LEVEL_WEIGHTS[game.botLevel] || {}),
       ...(game.weights?.[seat] || game.weights?.all || {}),
     }),
     fightersOf,
@@ -1226,10 +1328,13 @@ export function useBot(options = {}) {
       positionScore(fighter, space, bot, false),
     nearestFoe,
     canHit,
-    isAttackCard,
-    isDefenseCard,
+    isAttackCard: fitAttack,
+    isDefenseCard: fitDefense,
+    cardAllowed: (prompt, id, seat) => cardAllowed(prompt, id, seat),
     fallback,
     styleOf: (seat) => profileOf(seat).style ?? BOT_STYLES.NEUTRAL,
+    profileOf,
+    importanceOf: (card) => rate(card).importance,
     decide: (prompt, seat) => withSeat(seat, () => answer(prompt, seat)),
     step: (seat) =>
       withSeat(seat, () => {
@@ -1339,6 +1444,28 @@ export function useBot(options = {}) {
     return pending && pending.seat === seat ? pending : null;
   };
 
+  const preview = (seat) => {
+    const prompt = game.prompt;
+    if (!prompt || prompt.player !== seat) return null;
+    store = loadBotData();
+    currentStore = store;
+    profile = profileOf(seat);
+    const forced = planned?.list.get(planned.index);
+    if (
+      forced &&
+      forced.title === prompt.title &&
+      validReply(prompt, forced.value)
+    ) {
+      return { reply: forced.value };
+    }
+    return withSeat(seat, () => ({ reply: answer(prompt, seat) }));
+  };
+
+  const forget = () => {
+    planned = null;
+    pending = null;
+  };
+
   const choose = (action) => {
     if (!pending) return;
     pending.found = { ...pending.found, action, overrides: new Map() };
@@ -1357,5 +1484,5 @@ export function useBot(options = {}) {
 
   onBeforeUnmount(() => clearInterval(timer));
 
-  return { step, propose, choose };
+  return { step, propose, choose, preview, forget };
 }

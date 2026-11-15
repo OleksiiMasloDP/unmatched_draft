@@ -1,7 +1,424 @@
 {
   "version": 1,
-  "types": {},
-  "cards": {},
-  "sidekicks": {},
-  "heroes": {}
+  "cards": {
+    "harry-houdini:the-big-reveal": {
+      "importance": 10,
+      "timing": 0,
+      "cancelCare": 7,
+      "who": 10,
+      "boostWill": 0
+    },
+    "harry-houdini:vanishing-act": {
+      "importance": 2,
+      "timing": 7,
+      "boostWill": 6
+    },
+    "harry-houdini:smoke-and-mirrors": {
+      "importance": 3,
+      "boostWill": 3,
+      "lean": 0,
+      "timing": 7
+    },
+    "harry-houdini:sleight-of-hand": {
+      "importance": 9,
+      "timing": 9,
+      "cancelCare": 9,
+      "who": 10,
+      "boostWill": 4,
+      "uses": ["boostAttack"]
+    },
+    "harry-houdini:set-the-stage": {
+      "importance": 10,
+      "boostWill": 10,
+      "timing": 10,
+      "who": 10
+    },
+    "harry-houdini:misdirection": {
+      "importance": 10,
+      "boostWill": 10,
+      "who": 10,
+      "uses": ["boostManeuver"]
+    },
+    "harry-houdini:and-the-beautiful-bess": {
+      "importance": 2,
+      "boostWill": 10,
+      "uses": ["boostManeuver"]
+    },
+    "harry-houdini:for-my-next-trick": {
+      "importance": 4,
+      "timing": 10,
+      "who": 10,
+      "boostWill": 2
+    },
+    "harry-houdini:a-magician-never-reveals-his-secrets": {
+      "importance": 10,
+      "boostWill": 10,
+      "timing": 0,
+      "uses": ["boostAttack"]
+    },
+    "doctor-strange:no-really-i-m-a-doctor": {
+      "importance": 10
+    },
+    "doctor-strange:eye-of-agamotto": {
+      "importance": 10
+    },
+    "doctor-strange:the-winds-of-watoomb": {
+      "importance": 1
+    },
+    "doctor-strange:the-rings-of-raggadorr": {
+      "importance": 10,
+      "timing": 0
+    },
+    "doctor-strange:the-mists-of-munnopor": {
+      "importance": 7
+    },
+    "doctor-strange:bolts-of-balthakk": {
+      "importance": 8
+    },
+    "doctor-strange:master-of-kamar-taj": {
+      "importance": 4
+    },
+    "doctor-strange:steadfast-disciple": {
+      "importance": 3
+    },
+    "winter-soldier:a-boy-named-bucky": {
+      "importance": 0,
+      "boostWill": 10,
+      "timing": 0
+    },
+    "winter-soldier:programmed-to-kill": {
+      "importance": 0,
+      "boostWill": 10,
+      "timing": 0
+    },
+    "winter-soldier:reprogram": {
+      "importance": 10,
+      "lean": 10,
+      "timing": 4,
+      "boostWill": 0
+    },
+    "winter-soldier:without-remorse": {
+      "importance": 2,
+      "timing": 7,
+      "who": 7,
+      "boostWill": 9
+    },
+    "winter-soldier:marksman": {
+      "boostWill": 10,
+      "importance": 0,
+      "timing": 7
+    },
+    "winter-soldier:wily-fighting": {
+      "boostWill": 0,
+      "who": 4,
+      "timing": 7,
+      "lean": 3
+    },
+    "black-panther:analyze-and-adjust": {
+      "importance": 9,
+      "timing": 10,
+      "cancelCare": 6,
+      "boostWill": 2
+    },
+    "black-panther:ancestral-insight": {
+      "importance": 8,
+      "lean": 0,
+      "timing": 8,
+      "boostWill": 0
+    },
+    "black-panther:anti-metal-claws": {
+      "importance": 2,
+      "who": 10
+    },
+    "black-panther:cat-like-reflexes": {
+      "importance": 1,
+      "boostWill": 6
+    },
+    "black-panther:evade": {
+      "importance": 3,
+      "timing": 10
+    },
+    "black-panther:tactical-remote-scanning": {
+      "importance": 10,
+      "timing": 10,
+      "who": 0,
+      "boostWill": 0
+    },
+    "black-panther:feint": {
+      "lean": 2
+    },
+    "black-panther:nanotriage-processor": {
+      "timing": 3,
+      "boostWill": 7
+    },
+    "black-panther:wakanda-forever": {
+      "importance": 10,
+      "lean": 10,
+      "timing": 3,
+      "cancelCare": 8,
+      "who": 10
+    },
+    "black-panther:regroup": {
+      "importance": 0,
+      "lean": 10,
+      "timing": 10,
+      "boostWill": 8
+    },
+    "black-panther:stalking-panther": {
+      "importance": 1,
+      "who": 7,
+      "boostWill": 7
+    },
+    "black-panther:vibranium-shockwave": {
+      "timing": 7,
+      "cancelCare": 3,
+      "who": 6,
+      "boostWill": 6
+    },
+    "black-panther:microweave-mesh": {
+      "importance": 1,
+      "timing": 8,
+      "boostWill": 7
+    },
+    "winter-soldier:bionic-arm": {
+      "importance": 3,
+      "boostWill": 10
+    },
+    "winter-soldier:complete-the-mission": {
+      "boostWill": 0,
+      "importance": 9,
+      "timing": 7
+    },
+    "winter-soldier:feint": {
+      "importance": 7,
+      "lean": 2,
+      "timing": 7,
+      "boostWill": 2
+    },
+    "winter-soldier:manipulation": {
+      "importance": 7,
+      "timing": 2,
+      "boostWill": 2
+    },
+    "winter-soldier:reflex-memories": {
+      "importance": 8,
+      "lean": 3,
+      "timing": 2,
+      "boostWill": 0
+    },
+    "winter-soldier:born-in-the-barracks": {
+      "importance": 9,
+      "lean": 2,
+      "timing": 3,
+      "boostWill": 0
+    },
+    "tomoe-gozen:witness-my-last-battle": {
+      "importance": 10,
+      "timing": 3,
+      "who": 10,
+      "boostWill": 0
+    },
+    "tomoe-gozen:fearsome-strength": {
+      "importance": 6,
+      "timing": 8,
+      "cancelCare": 2,
+      "who": 4,
+      "boostWill": 2
+    },
+    "tomoe-gozen:five-against-thousands": {
+      "importance": 6,
+      "boostWill": 1
+    },
+    "tomoe-gozen:a-warrior-s-way": {
+      "importance": 7,
+      "timing": 10,
+      "cancelCare": 3,
+      "who": 10,
+      "boostWill": 0
+    },
+    "tomoe-gozen:piercing-shot": {
+      "timing": 7
+    },
+    "tomoe-gozen:confront-any-demon-or-god": {
+      "lean": 0,
+      "timing": 7,
+      "importance": 9,
+      "cancelCare": 2,
+      "boostWill": 0
+    },
+    "tomoe-gozen:a-worthy-opponent": {
+      "importance": 9,
+      "lean": 10,
+      "timing": 8,
+      "cancelCare": 9,
+      "boostWill": 0
+    },
+    "tomoe-gozen:flash-of-steel": {
+      "lean": 2,
+      "who": 6,
+      "boostWill": 1
+    },
+    "tomoe-gozen:skirmish": {
+      "who": 8,
+      "boostWill": 1
+    },
+    "tomoe-gozen:refuse-to-retreat": {
+      "importance": 6,
+      "timing": 8,
+      "boostWill": 1
+    },
+    "tomoe-gozen:deeds-of-valor": {
+      "boostWill": 4,
+      "timing": 4
+    },
+    "tomoe-gozen:lord-kiso-s-final-stand": {
+      "importance": 8,
+      "timing": 3,
+      "boostWill": 2
+    },
+    "raptors:eviscerate": {
+      "importance": 10,
+      "timing": 8,
+      "who": 10,
+      "boostWill": 0
+    },
+    "raptors:disengage": {
+      "who": 10,
+      "boostWill": 4
+    },
+    "raptors:pack-hunters": {
+      "importance": 10,
+      "timing": 9,
+      "who": 10,
+      "boostWill": 2
+    },
+    "raptors:clever-girl": {
+      "importance": 10,
+      "timing": 10,
+      "who": 10,
+      "boostWill": 0
+    },
+    "raptors:they-remember": {
+      "importance": 10,
+      "timing": 10,
+      "who": 10,
+      "boostWill": 0
+    },
+    "raptors:ambush": {
+      "importance": 10,
+      "timing": 10,
+      "who": 10,
+      "boostWill": 0
+    },
+    "raptors:eaten-alive": {
+      "importance": 7,
+      "lean": 3,
+      "boostWill": 0
+    },
+    "raptors:feint": {
+      "lean": 0,
+      "timing": 8,
+      "boostWill": 2
+    },
+    "raptors:decoy": {
+      "importance": 8,
+      "timing": 10,
+      "boostWill": 1
+    },
+    "raptors:working-things-out": {
+      "boostWill": 8,
+      "timing": 6,
+      "importance": 0
+    },
+    "raptors:coordinated-attack-pattern": {
+      "importance": 0,
+      "timing": 0,
+      "boostWill": 10
+    },
+    "harry-houdini:grand-escape": {
+      "timing": 6,
+      "boostWill": 8
+    },
+    "harry-houdini:flourish": {
+      "boostWill": 6,
+      "timing": 7,
+      "cancelCare": 2,
+      "who": 10
+    },
+    "harry-houdini:an-illusion-of-my-own-design": {
+      "importance": 6,
+      "timing": 8,
+      "cancelCare": 1,
+      "boostWill": 0,
+      "who": 10
+    },
+    "harry-houdini:all-part-of-the-show": {
+      "importance": 6,
+      "timing": 2
+    }
+  },
+  "sidekicks": {
+    "harry-houdini": {
+      "importance": 0,
+      "block": 10
+    },
+    "doctor-strange": {
+      "importance": 7,
+      "block": 5
+    },
+    "black-panther": {
+      "importance": 10,
+      "block": 0
+    },
+    "raptors": {
+      "importance": 0,
+      "block": 0
+    }
+  },
+  "heroes": {
+    "harry-houdini": {
+      "aggro": 2,
+      "heroFocus": 10,
+      "fatigue": 0,
+      "kidFear": 0,
+      "boostHand": 4,
+      "notes": "Гудини любит агрессивную игру и прессинг с первых же ходов. Все карты Бесс он играет в буст манёвра. Misderection играется только в буст манёвра или в лучшем случае в буст для The big reveal и потом возвращается назад. Never reveals secret играется в буст атаки, как и sleight of hand."
+    },
+    "doctor-strange": {
+      "aggro": 1.1
+    },
+    "winter-soldier": {
+      "aggro": 0.5,
+      "refill": 5,
+      "heroFocus": 8,
+      "fatigue": 2,
+      "kidFear": 0,
+      "boostHand": 6,
+      "notes": "Играет на фатиг. Легко растаётся с картами атаки, т.к. хочет создать фиолетово-синюю колоду, чтобы всегда защищаться от атак противника."
+    },
+    "black-panther": {
+      "aggro": 0.5,
+      "heroFocus": 8,
+      "kidFear": 2,
+      "boostHand": 6,
+      "fatigue": 2
+    },
+    "tomoe-gozen": {
+      "aggro": 2,
+      "heroFocus": 10,
+      "fatigue": 1.4,
+      "kidFear": 0,
+      "boostHand": 6,
+      "notes": "Она хочет максимально использовать свою абилку против героев соперника, чтобы наносить им автоурон. Также передвигат их с помощью эффектов карт, именно героя соперника, а не себя.",
+      "style": "pressure"
+    },
+    "raptors": {
+      "aggro": 2,
+      "heroFocus": 10,
+      "fatigue": 0.3,
+      "kidFear": 0,
+      "boostHand": 4,
+      "notes": "Рапторы хотят быстро забить соперника, пока их несколько. Они окружают противника насколько могут большим количеством Рапторов и начинают атаковать с дополнительными действиями. У них мало защит и жизней, поэтому лучше иметь что-то на руке, но им больше важна агрессия."
+    }
+  }
 }

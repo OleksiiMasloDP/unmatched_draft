@@ -24,6 +24,14 @@
         :cy="space.y"
         :r="map.radius + 4"
       />
+      <circle
+        v-if="marks[space.id]"
+        class="mark-ring"
+        :class="'is-' + marks[space.id]"
+        :cx="space.x"
+        :cy="space.y"
+        :r="map.radius + 9"
+      />
     </g>
 
     <defs>
@@ -242,6 +250,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  marks: {
+    type: Object,
+    default: () => ({}),
+  },
   active: {
     type: Object,
     default: null,
@@ -427,6 +439,25 @@ const initials = (heroId) =>
 
 .space-hit {
   fill: transparent;
+}
+
+.mark-ring {
+  fill: none;
+  stroke-width: 6;
+  pointer-events: none;
+}
+
+.mark-ring.is-bot {
+  stroke: #4f7cff;
+  stroke-dasharray: 10 6;
+}
+
+.mark-ring.is-mine {
+  stroke: #2ecc71;
+}
+
+.mark-ring.is-both {
+  stroke: #f6c945;
 }
 
 .board-space.is-option {

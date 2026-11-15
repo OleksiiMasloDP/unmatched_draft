@@ -46,7 +46,7 @@ export const DEFAULT_WEIGHTS = {
 export function createSearch(api) {
   const { engine, game } = api;
   const BUDGET = () => api.weightsOf(null).budget ?? 700;
-  const SAMPLES = 3;
+  const SAMPLES = () => api.weightsOf(null).samples ?? 3;
   const DEPTH = 7;
 
   const evaluate = (bot) => {
@@ -56,32 +56,43 @@ export function createSearch(api) {
     const me = game.players[bot];
     const them = game.players[foe];
     const style = api.styleOf(bot);
+    const profile = api.profileOf(bot);
     const kidHp = (state) =>
       (state.sidekicks || [])
         .filter((kid) => !kid.down)
         .reduce((sum, kid) => sum + kid.hp, 0);
     const kidCount = (state) =>
       (state.sidekicks || []).filter((kid) => !kid.down).length;
-    const dmgWeight = style === BOT_STYLES.PRESSURE ? 1.25 : 1;
+    const aggro = Math.min(2.5, Math.max(0.4, profile.aggro ?? 1));
+    const dmgWeight =
+      (style === BOT_STYLES.PRESSURE ? 1.25 : 1) * Math.pow(aggro, 0.6);
     const cardWeight = style === BOT_STYLES.PASS ? 1.3 : 1;
     let score = 0;
     score += (me.hp - them.hp * dmgWeight) * w.hp;
     score += (kidHp(me) - kidHp(them) * dmgWeight) * w.kidHp;
-    score += (kidCount(me) - kidCount(them)) * w.kidCount;
+    score +=
+      (kidCount(me) - kidCount(them)) *
+      w.kidCount *
+      (1 + 0.25 * (profile.kidFear ?? 0));
     const hand = api.handOf(bot);
     const foeHand = api.handOf(foe);
     const defenders = hand.filter(api.isDefenseCard).length;
     const attackers = hand.filter(api.isAttackCard).length;
-    const size = Math.min(hand.length, 7);
-    score += size * w.card * cardWeight;
-    if (hand.length < 4) score -= (4 - hand.length) * w.lowHand;
+    const worth = (cards) =>
+      cards
+        .slice(0, 7)
+        .reduce((sum, card) => sum + 0.6 + 0.08 * api.importanceOf(card), 0);
+    score += worth(hand) * w.card * cardWeight;
+    const floor = Math.min(5, Math.max(3, profile.boostHand ?? 4));
+    if (hand.length < floor) score -= (floor - hand.length) * w.lowHand;
     if (!defenders) score -= w.noDefense;
     if (!attackers) score -= w.noAttack;
-    score -= Math.min(foeHand.length, 7) * w.card * cardWeight;
+    score -= worth(foeHand) * w.card * cardWeight;
     score += (me.deck.length - them.deck.length) * w.deck;
     score +=
       api.fatigueEdge(bot) *
-      (style === BOT_STYLES.PASS ? w.fatiguePass : w.fatigue);
+      (style === BOT_STYLES.PASS ? w.fatiguePass : w.fatigue) *
+      (profile.fatigue ?? 1);
     const hero = api.fightersOf(bot).find((item) => item.isHero);
     const foeHero = api.fightersOf(foe).find((item) => item.isHero);
     if (hero && foeHero) {
@@ -123,9 +134,9 @@ export function createSearch(api) {
     else if (prompt.kind === "choice") {
       for (const item of prompt.choices) add(item.value);
     } else if (prompt.kind === "cards") {
-      const ids = [...prompt.options].sort(
-        (a, b) => (getCard(b)?.value ?? 0) - (getCard(a)?.value ?? 0),
-      );
+      const ids = prompt.options
+        .filter((id) => api.cardAllowed(prompt, id, bot))
+        .sort((a, b) => (getCard(b)?.value ?? 0) - (getCard(a)?.value ?? 0));
       if ((prompt.max ?? 0) === 1) for (const id of ids.slice(0, 5)) add([id]);
       if (!prompt.min) add([]);
     } else if (prompt.kind === "space") {
@@ -235,7 +246,7 @@ export function createSearch(api) {
           scores: [],
           trace: [],
         }));
-        for (let round = 0; round < SAMPLES; round++) {
+        for (let round = 0; round < SAMPLES(); round++) {
           for (const row of rows) {
             if (round && over()) continue;
             row.scores.push(

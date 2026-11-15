@@ -44,7 +44,8 @@
           <span>{{ t("botWatchPause") }}</span>
           <select v-model="pauseOn">
             <option value="every">{{ t("botWatchEvery") }}</option>
-            <option value="attack">{{ t("botWatchAttacks") }}</option>
+            <option value="cards">{{ t("botWatchAttacks") }}</option>
+            <option value="actions">{{ t("botWatchActionsOnly") }}</option>
             <option value="never">{{ t("botWatchNever") }}</option>
           </select>
         </label>
@@ -70,53 +71,165 @@
       <GameBoard
         :map="map"
         :players="game.players"
-        :options="[]"
+        :options="spaceOptions"
+        :marks="spaceMarks"
         :active="null"
         :fx="game.fx"
         :tokens="game.tokens"
         :hide-heroes="game.phase === 'startpick'"
-        @select="() => {}"
+        @select="pickSpace"
       />
 
-      <section v-if="proposal" class="bot-watch-panel bot-watch-decision">
+      <section
+        v-if="proposal"
+        class="bot-watch-panel bot-watch-decision"
+        :class="'is-' + proposal.seat"
+      >
         <h3>
-          {{ t("botWatchDecision") }} · {{ seatLabel(proposal.seat) }} ·
-          {{ t("botWatchTurn") }} {{ game.turnNo }}
+          {{ seatLabel(proposal.seat) }} · {{ t("botWatchTurn") }}
+          {{ game.turnNo }}
         </h3>
-        <div class="bot-watch-options">
+        <p class="bot-watch-question">{{ question }}</p>
+
+        <div v-if="proposal.kind === 'action'" class="bot-watch-options">
           <button
             v-for="row in proposal.rows"
             :key="row.action"
             type="button"
             class="bot-watch-option"
             :class="{
-              'is-picked': row.action === proposal.action,
-              'is-bot': row.action === proposal.botAction,
+              'is-picked': row.action === proposal.mine,
+              'is-bot': row.action === proposal.bot,
             }"
-            @click="proposal.action = row.action"
+            @click="proposal.mine = row.action"
           >
             <b>{{ actionLabel(row.action) }}</b>
             <span>{{ row.score.toFixed(1) }}</span>
+            <small v-if="row.action === proposal.bot">
+              {{ t("botWatchBot") }}
+            </small>
           </button>
         </div>
+
+        <template v-else-if="proposal.kind === 'cards'">
+          <div class="bot-watch-cardrow">
+            <div
+              v-for="(card, index) in proposalCards"
+              :key="card.id + index"
+              class="bot-watch-card"
+            >
+              <PackCard
+                :card="card"
+                :selected="proposal.mine.includes(card.id)"
+                :clickable="true"
+                @select="toggleCard(card.id)"
+              >
+                <template #overlay>
+                  <span
+                    v-if="proposal.bot.includes(card.id)"
+                    class="bot-watch-badge"
+                  >
+                    BOT
+                  </span>
+                </template>
+              </PackCard>
+            </div>
+            <span v-if="!proposalCards.length" class="bot-watch-meta">
+              {{ t("botWatchEmptyHand") }}
+            </span>
+          </div>
+          <div class="bot-watch-meta">
+            {{ proposal.mine.length }}/{{ proposal.max }}
+            <button
+              v-if="!proposal.min"
+              type="button"
+              class="bot-watch-btn"
+              @click="proposal.mine = []"
+            >
+              {{ t("botWatchStay") }}
+            </button>
+          </div>
+        </template>
+
+        <template v-else-if="proposal.kind === 'space'">
+          <div class="bot-watch-pickline">
+            <span>
+              {{ t("botWatchBot") }}:
+              <b>{{ describe(proposal.bot) }}</b>
+            </span>
+            <span>
+              {{ t("botWatchMine") }}:
+              <b>{{ describe(proposal.mine) }}</b>
+            </span>
+            <button type="button" class="bot-watch-btn" @click="skipSpace">
+              {{ t("botWatchStay") }}
+            </button>
+          </div>
+          <div v-if="proposalBoosts.length" class="bot-watch-cardrow">
+            <div
+              v-for="card in proposalBoosts"
+              :key="card.id"
+              class="bot-watch-card"
+            >
+              <PackCard
+                :card="card"
+                :selected="proposal.mine && proposal.mine.boost === card.id"
+                :clickable="true"
+                @select="proposal.mine = { boost: card.id }"
+              >
+                <template #overlay>
+                  <span
+                    v-if="proposal.bot && proposal.bot.boost === card.id"
+                    class="bot-watch-badge"
+                  >
+                    BOT
+                  </span>
+                </template>
+              </PackCard>
+            </div>
+          </div>
+        </template>
+
+        <div v-else class="bot-watch-options">
+          <button
+            v-for="row in proposal.rows"
+            :key="String(row.value)"
+            type="button"
+            class="bot-watch-option"
+            :class="{
+              'is-picked': row.value === proposal.mine,
+              'is-bot': row.value === proposal.bot,
+            }"
+            @click="proposal.mine = row.value"
+          >
+            <b>{{ row.label }}</b>
+            <small v-if="row.value === proposal.bot">
+              {{ t("botWatchBot") }}
+            </small>
+          </button>
+        </div>
+
         <textarea
           v-model="note"
           class="bot-watch-note"
           :placeholder="t('botWatchNote')"
           rows="2"
         ></textarea>
+
+        <label v-if="canTeach" class="bot-watch-teach">
+          <input v-model="teach" type="checkbox" />
+          {{ t("botWatchTeach") }}
+          <small>{{ t("botWatchTeachHint") }}</small>
+        </label>
+
         <div class="bot-watch-buttons">
           <button type="button" class="bot-watch-btn is-main" @click="accept">
-            {{
-              proposal.action === proposal.botAction
-                ? t("botWatchOk")
-                : t("botWatchOther")
-            }}
+            {{ changed ? t("botWatchApply") : t("botWatchOk") }}
           </button>
           <button
             type="button"
             class="bot-watch-btn"
-            :disabled="!note && proposal.action === proposal.botAction"
+            :disabled="!note && !changed"
             @click="remark"
           >
             {{ t("botWatchSaveNote") }}
@@ -129,6 +242,7 @@
           v-for="seat in ['p1', 'p2']"
           :key="seat"
           class="bot-watch-panel"
+          :class="'is-' + seat"
         >
           <h3>
             {{ seatLabel(seat) }} · {{ game.players[seat].hp }}/{{
@@ -140,25 +254,42 @@
           </h3>
           <div class="bot-watch-meta">
             {{ t("botWatchDeck") }}: {{ game.players[seat].deck.length }} ·
-            {{ t("botWatchHand") }}: {{ handCards(seat).length }}
+            {{ t("botWatchHandOf") }}: {{ handCards(seat).length }}
           </div>
-          <ul class="bot-watch-cards">
-            <li v-for="(card, index) in handCards(seat)" :key="index">
-              <b>{{ card.name }}</b>
-              <span>
-                {{ card.type || "scheme" }}
-                <template
-                  v-if="card.value !== null && card.value !== undefined"
-                >
-                  {{ card.value }}
-                </template>
-                <template v-if="card.boost"> +{{ card.boost }}</template>
-              </span>
-            </li>
-          </ul>
+          <div class="bot-watch-cardrow is-small">
+            <div
+              v-for="(card, index) in handCards(seat)"
+              :key="card.id + index"
+              class="bot-watch-card"
+            >
+              <PackCard :card="card" />
+            </div>
+            <span v-if="!handCards(seat).length" class="bot-watch-meta">
+              {{ t("botWatchEmptyHand") }}
+            </span>
+          </div>
         </section>
       </div>
     </template>
+
+    <section class="bot-watch-panel">
+      <h3>{{ t("botWatchLessons") }}</h3>
+      <p v-if="!lessons.length" class="bot-watch-meta">
+        {{ t("botWatchNoLessons") }}
+      </p>
+      <ul v-else class="bot-watch-remarks">
+        <li v-for="lesson in lessons" :key="lessonText(lesson)">
+          {{ lessonText(lesson) }}
+          <button
+            type="button"
+            class="bot-watch-link"
+            @click="dropLesson(lesson)"
+          >
+            {{ t("botWatchRemove") }}
+          </button>
+        </li>
+      </ul>
+    </section>
 
     <section class="bot-watch-panel">
       <h3>{{ t("botWatchRemarks") }}</h3>
@@ -168,10 +299,8 @@
       <ul v-else class="bot-watch-remarks">
         <li v-for="(item, index) in remarks" :key="index">
           <b>{{ item.hero }} · {{ item.turn }}</b>
-          {{ item.botAction
-          }}<template v-if="item.userAction !== item.botAction">
-            → {{ item.userAction }}</template
-          >
+          {{ item.question }}: {{ item.bot }}
+          <template v-if="item.mine !== item.bot"> → {{ item.mine }}</template>
           <i v-if="item.note"> — {{ item.note }}</i>
         </li>
       </ul>
@@ -198,10 +327,12 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame.js";
 import { useBot } from "../../composables/useBot.js";
+import { validReply } from "../../composables/botSearch.js";
+import { addLessons, cardId, loadBotData, removeLesson } from "../../botData";
 import { gameMaps } from "../../gameMaps.js";
 import { getCard } from "../../gameDecks.js";
 import {
@@ -210,6 +341,7 @@ import {
   everyHero,
 } from "../../packDraftData.js";
 import GameBoard from "../GameBoard.vue";
+import PackCard from "../PackCard.vue";
 
 const { t } = useDraftState();
 const engine = useGame();
@@ -228,7 +360,9 @@ const pauseOn = ref("every");
 const delay = ref(400);
 const proposal = ref(null);
 const note = ref("");
+const teach = ref(false);
 const copied = ref(false);
+const lessons = ref(loadBotData().lessons || []);
 
 const loadRemarks = () => {
   try {
@@ -248,6 +382,7 @@ const saveRemarks = () => {
 
 let timer = null;
 const cards = [...buildAllCards(), ...buildCustomCards()];
+const cardNames = new Map(cards.map((card) => [cardId(card), card.name]));
 
 const seatLabel = (seat) => {
   if (!seat || !game.players[seat]) return "";
@@ -277,6 +412,136 @@ const schedule = (ms = delay.value) => {
   if (running.value) timer = setTimeout(tick, ms);
 };
 
+const sameValue = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+const describe = (value) => {
+  if (value === null || value === undefined) return t("botWatchStay");
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return `${getCard(value.boost)?.name ?? value.boost}`;
+  }
+  return String(value);
+};
+
+const describeAnswer = (item) => {
+  if (!item) return "";
+  if (item.kind === "action") return actionLabel(item.value);
+  if (item.kind === "cards") {
+    return item.value.length
+      ? item.value.map((id) => getCard(id)?.name ?? id).join(", ")
+      : t("botWatchStay");
+  }
+  if (item.kind === "space") return describe(item.value);
+  if (item.kind === "confirm") {
+    return item.value ? t("botWatchYes") : t("botWatchNo");
+  }
+  const row = item.rows?.find((entry) => entry.value === item.value);
+  return row ? row.label : String(item.value);
+};
+
+const questionOf = (item) => {
+  if (item.kind === "action") return t("botWatchPickAction");
+  if (item.kind === "space")
+    return `${t(item.title)} — ${t("botWatchPickZone")}`;
+  if (item.kind === "cards")
+    return `${t(item.title)} — ${t("botWatchPickCards")}`;
+  return `${t(item.title)} — ${t("botWatchPickAnswer")}`;
+};
+
+const question = computed(() =>
+  proposal.value ? questionOf(proposal.value) : "",
+);
+
+const proposalCards = computed(() =>
+  proposal.value?.kind === "cards"
+    ? proposal.value.options.map((id) => getCard(id)).filter(Boolean)
+    : [],
+);
+const proposalBoosts = computed(() =>
+  proposal.value?.kind === "space"
+    ? (proposal.value.boostOptions || [])
+        .map((id) => getCard(id))
+        .filter(Boolean)
+    : [],
+);
+const spaceOptions = computed(() =>
+  proposal.value?.kind === "space" ? proposal.value.options : [],
+);
+const spaceMarks = computed(() => {
+  const p = proposal.value;
+  if (!p || p.kind !== "space") return {};
+  const out = {};
+  if (typeof p.bot === "string") out[p.bot] = "bot";
+  if (typeof p.mine === "string") {
+    out[p.mine] = out[p.mine] ? "both" : "mine";
+  }
+  return out;
+});
+
+const changed = computed(() => {
+  const p = proposal.value;
+  return Boolean(p) && !sameValue(p.mine, p.bot);
+});
+
+const canTeach = computed(() => {
+  const p = proposal.value;
+  return Boolean(p) && p.kind === "cards" && changed.value;
+});
+
+const pickSpace = (id) => {
+  if (proposal.value?.kind === "space") proposal.value.mine = id;
+};
+const skipSpace = () => {
+  if (proposal.value?.kind === "space") proposal.value.mine = null;
+};
+
+const toggleCard = (id) => {
+  const p = proposal.value;
+  if (!p || p.kind !== "cards") return;
+  if (p.mine.includes(id)) {
+    p.mine = p.mine.filter((item) => item !== id);
+  } else if (p.max <= 1) {
+    p.mine = [id];
+  } else if (p.mine.length < p.max) {
+    p.mine = [...p.mine, id];
+  }
+};
+
+const wantsPause = (prompt) => {
+  if (pauseOn.value === "every") return true;
+  if (pauseOn.value === "cards") return prompt.kind === "cards";
+  return false;
+};
+
+const openPrompt = (seat, prompt, reply) => {
+  const rows =
+    prompt.kind === "choice"
+      ? prompt.choices.map((item) => ({
+          value: item.value,
+          label: item.label ? t(item.label) : String(item.value),
+        }))
+      : prompt.kind === "confirm"
+        ? [
+            { value: true, label: t("botWatchYes") },
+            { value: false, label: t("botWatchNo") },
+          ]
+        : [];
+  note.value = "";
+  teach.value = false;
+  proposal.value = {
+    kind: prompt.kind,
+    seat,
+    title: prompt.title,
+    options: prompt.options ? [...prompt.options] : [],
+    boostOptions: prompt.boostOptions ? [...prompt.boostOptions] : [],
+    choices: prompt.choices ? prompt.choices.map((item) => ({ ...item })) : [],
+    min: prompt.min ?? 0,
+    max: prompt.max ?? 1,
+    rows,
+    bot: reply,
+    mine: Array.isArray(reply) ? [...reply] : reply,
+  };
+};
+
 const tick = () => {
   timer = null;
   if (!running.value || proposal.value) return;
@@ -299,24 +564,33 @@ const tick = () => {
       schedule();
       return;
     }
-    const seat = game.prompt?.player || game.turn;
+    const prompt = game.prompt;
+    const seat = prompt?.player || game.turn;
     game.bot = seat;
-    if (!game.prompt && pauseOn.value !== "never") {
+    if (prompt && prompt.player && wantsPause(prompt)) {
+      const found = bots[seat].preview(seat);
+      if (found && validReply(prompt, found.reply)) {
+        openPrompt(seat, prompt, found.reply);
+        return;
+      }
+    }
+    if (!prompt && pauseOn.value !== "never") {
       const found = bots[seat].propose(seat);
       if (found) {
         const rows = (found.found.scores || []).map(([action, score]) => ({
           action,
           score,
         }));
-        const stop =
-          pauseOn.value === "every" || found.found.action === "attack";
-        if (stop) {
+        {
           note.value = "";
+          teach.value = false;
           proposal.value = {
+            kind: "action",
             seat,
+            title: "botWatchPickAction",
             rows,
-            action: found.found.action,
-            botAction: found.found.action,
+            bot: found.found.action,
+            mine: found.found.action,
           };
           return;
         }
@@ -348,17 +622,36 @@ const stop = () => {
   game.bot = null;
 };
 
+const positions = () => {
+  const out = {};
+  for (const seat of ["p1", "p2"]) {
+    const state = game.players[seat];
+    out[seat] = {
+      hero: state.space,
+      sidekicks: kidsOf(seat).map((kid) => kid.space),
+      hp: state.hp,
+    };
+  }
+  return out;
+};
+
 const addRemark = () => {
   const p = proposal.value;
   remarks.value.push({
     hero: seatLabel(p.seat),
     turn: `${t("botWatchTurn")} ${game.turnNo}`,
-    botAction: actionLabel(p.botAction),
-    userAction: actionLabel(p.action),
+    question: t(p.title),
+    title: p.title,
+    options:
+      p.kind === "cards"
+        ? p.options.map((id) => getCard(id)?.name ?? id)
+        : p.options,
+    bot: describeAnswer({ ...p, value: p.bot }),
+    mine: describeAnswer({ ...p, value: p.mine }),
     note: note.value.trim(),
     state: {
       map: game.mapId,
-      hp: { p1: game.players.p1.hp, p2: game.players.p2.hp },
+      positions: positions(),
       hands: {
         p1: handCards("p1").map((c) => c.name),
         p2: handCards("p2").map((c) => c.name),
@@ -374,20 +667,96 @@ const remark = () => {
   note.value = "";
 };
 
+const keyOf = (id) => {
+  const card = getCard(id);
+  return card ? cardId(card) : null;
+};
+
+const learn = (p) => {
+  const hero = game.players[p.seat]?.heroId;
+  const added = p.mine.filter((id) => !p.bot.includes(id));
+  const removed = p.bot.filter((id) => !p.mine.includes(id));
+  const items = [];
+  if (p.max <= 1 && added.length === 1 && removed.length === 1) {
+    items.push({
+      kind: "prefer",
+      hero,
+      title: p.title,
+      better: keyOf(added[0]),
+      worse: keyOf(removed[0]),
+    });
+  } else {
+    for (const id of added) {
+      items.push({
+        kind: "use",
+        hero,
+        title: p.title,
+        card: keyOf(id),
+        use: true,
+      });
+    }
+    for (const id of removed) {
+      items.push({
+        kind: "use",
+        hero,
+        title: p.title,
+        card: keyOf(id),
+        use: false,
+      });
+    }
+  }
+  const valid = items.filter((item) =>
+    item.kind === "prefer" ? item.better && item.worse : item.card,
+  );
+  if (valid.length) addLessons(valid);
+  lessons.value = loadBotData().lessons || [];
+};
+
 const accept = () => {
   const p = proposal.value;
   if (!p) return;
-  if (note.value.trim() || p.action !== p.botAction) addRemark();
+  if (note.value.trim() || changed.value) addRemark();
+  if (teach.value && canTeach.value) learn(p);
   game.bot = p.seat;
-  if (p.action !== p.botAction) bots[p.seat].choose(p.action);
+  const seat = p.seat;
+  const mine = p.mine;
   proposal.value = null;
   note.value = "";
+  teach.value = false;
   try {
-    bots[p.seat].step();
+    if (p.kind === "action") {
+      if (mine !== p.bot) bots[seat].choose(mine);
+      bots[seat].step();
+    } else if (sameValue(mine, p.bot)) {
+      bots[seat].step();
+    } else {
+      bots[seat].forget();
+      engine.answerPrompt(mine);
+    }
   } catch (error) {
     console.error(error);
   }
   schedule();
+};
+
+const lessonText = (lesson) => {
+  const hero = everyHero.find((item) => item.id === lesson.hero)?.name ?? "";
+  const name = (key) => cardNames.get(key) ?? key;
+  const body =
+    lesson.kind === "prefer"
+      ? t("botWatchPreferOver")
+          .replace("{better}", name(lesson.better))
+          .replace("{worse}", name(lesson.worse))
+      : (lesson.use ? t("botWatchUseCard") : t("botWatchAvoidCard")).replace(
+          "{card}",
+          name(lesson.card),
+        );
+  return `${hero} · ${t(lesson.title)}: ${body}`;
+};
+
+const dropLesson = (lesson) => {
+  removeLesson(lesson);
+  lessons.value = loadBotData().lessons || [];
 };
 
 const copy = async () => {
@@ -418,15 +787,15 @@ onBeforeUnmount(() => {
 }
 
 .bot-watch-hint {
-  color: var(--text-muted, #888);
   margin-bottom: 16px;
+  color: var(--text-muted, #888);
 }
 
 .bot-watch-panel {
-  border: 1px solid var(--border, rgba(128, 128, 128, 0.35));
-  border-radius: 10px;
   padding: 14px;
   margin-bottom: 14px;
+  border: 1px solid var(--border, rgba(128, 128, 128, 0.35));
+  border-radius: 10px;
 }
 
 .bot-watch-setup,
@@ -447,114 +816,206 @@ onBeforeUnmount(() => {
 .bot-watch-field select,
 .bot-watch-note {
   padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border, rgba(128, 128, 128, 0.5));
-  background: transparent;
   color: inherit;
-  font: inherit;
+  background: rgba(128, 128, 128, 0.12);
+  border: 1px solid rgba(128, 128, 128, 0.4);
+  border-radius: 6px;
 }
 
 .bot-watch-note {
+  box-sizing: border-box;
   width: 100%;
   margin: 10px 0;
-  resize: vertical;
 }
 
 .bot-watch-btn {
   padding: 7px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border, rgba(128, 128, 128, 0.5));
-  background: transparent;
   color: inherit;
-  font: inherit;
   cursor: pointer;
+  background: rgba(128, 128, 128, 0.15);
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 6px;
 }
 
 .bot-watch-btn.is-main {
-  background: var(--accent, #c0392b);
-  border-color: var(--accent, #c0392b);
   color: #fff;
+  background: #2f6fed;
+  border-color: #2f6fed;
 }
 
 .bot-watch-btn:disabled {
+  cursor: default;
   opacity: 0.45;
-  cursor: not-allowed;
+}
+
+.bot-watch-link {
+  padding: 0 6px;
+  margin-left: 8px;
+  color: #ff7b7b;
+  cursor: pointer;
+  background: none;
+  border: none;
 }
 
 .bot-watch-turn {
-  flex: 1;
+  margin-left: auto;
   font-size: 0.9rem;
 }
 
 .bot-watch-over {
+  padding: 10px;
   margin-bottom: 12px;
   font-weight: 700;
+  text-align: center;
+  background: rgba(46, 204, 113, 0.18);
+  border-radius: 8px;
+}
+
+.bot-watch-decision {
+  position: sticky;
+  bottom: 8px;
+  z-index: 5;
+  background: var(--bg-dark, #12182a);
+  border-width: 2px;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+}
+
+.bot-watch-decision.is-p1 {
+  border-color: var(--color-player, #4f7cff);
+}
+
+.bot-watch-decision.is-p2 {
+  border-color: var(--color-opponent, #ff4f6d);
+}
+
+.bot-watch-question {
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .bot-watch-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .bot-watch-option {
   display: flex;
-  gap: 8px;
-  align-items: baseline;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border, rgba(128, 128, 128, 0.5));
-  background: transparent;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  min-width: 120px;
+  padding: 10px 14px;
   color: inherit;
-  font: inherit;
   cursor: pointer;
+  background: rgba(128, 128, 128, 0.12);
+  border: 2px solid transparent;
+  border-radius: 8px;
 }
 
 .bot-watch-option.is-bot {
+  border-color: #4f7cff;
   border-style: dashed;
 }
 
 .bot-watch-option.is-picked {
-  border-color: var(--accent, #c0392b);
-  box-shadow: 0 0 0 1px var(--accent, #c0392b);
+  background: rgba(46, 204, 113, 0.2);
+  border-color: #2ecc71;
+  border-style: solid;
+}
+
+.bot-watch-option small {
+  font-size: 0.7rem;
+  color: #4f7cff;
+}
+
+.bot-watch-pickline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bot-watch-cardrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.bot-watch-card {
+  position: relative;
+  width: 150px;
+}
+
+.bot-watch-cardrow.is-small .bot-watch-card {
+  width: 110px;
+}
+
+.bot-watch-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  background: #4f7cff;
+  border-radius: 999px;
+}
+
+.bot-watch-teach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.bot-watch-teach small {
+  flex-basis: 100%;
+  color: var(--text-muted, #888);
 }
 
 .bot-watch-buttons {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .bot-watch-hands {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
+.bot-watch-hands .bot-watch-panel.is-p1 {
+  border-color: var(--color-player, #4f7cff);
+}
+
+.bot-watch-hands .bot-watch-panel.is-p2 {
+  border-color: var(--color-opponent, #ff4f6d);
+}
+
 .bot-watch-meta {
-  font-size: 0.85rem;
-  opacity: 0.75;
   margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #888);
 }
 
-.bot-watch-cards,
 .bot-watch-remarks {
-  list-style: none;
-  margin: 0 0 10px;
-  padding: 0;
-}
-
-.bot-watch-cards li {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  padding-left: 18px;
+  margin-bottom: 10px;
   font-size: 0.9rem;
 }
 
-.bot-watch-remarks li {
-  padding: 4px 0;
-  font-size: 0.9rem;
+@media (max-width: 900px) {
+  .bot-watch-hands {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

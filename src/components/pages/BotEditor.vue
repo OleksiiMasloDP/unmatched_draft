@@ -216,6 +216,35 @@
               <span>{{ t(control.name + "Right") }}</span>
             </div>
           </div>
+          <div
+            class="bot-editor-row bot-editor-uses"
+            :class="{ changed: usesChanged(card) }"
+          >
+            <div class="bot-editor-rowhead">
+              <span>{{ usesText.title }}</span>
+              <button
+                v-if="usesChanged(card)"
+                class="bot-editor-undo"
+                :title="t('botEdResetOne')"
+                @click="resetUses(card)"
+              >
+                ↺
+              </button>
+            </div>
+            <div class="bot-editor-chips">
+              <button
+                v-for="context in useContexts"
+                :key="context"
+                type="button"
+                class="bot-editor-chip"
+                :class="{ on: usesHas(card, context) }"
+                @click="toggleUse(card, context)"
+              >
+                {{ usesText.names[context] }}
+              </button>
+            </div>
+            <span class="bot-editor-muted">{{ usesText.hint }}</span>
+          </div>
           <button
             v-if="cardTouched(card)"
             class="btn btn-sm btn-outline-warning"
@@ -272,6 +301,7 @@ import {
   kidDefaults,
   loadBotData,
   typeDefaults,
+  useContexts,
 } from "../../botData";
 import { BOT_STYLES } from "../../botStyles";
 import { botProfiles } from "../../botProfiles";
@@ -282,7 +312,35 @@ import {
 } from "../../packDraftData";
 import PackCard from "../PackCard.vue";
 
-const { t } = useDraftState();
+const { t, lang } = useDraftState();
+
+const usesTexts = {
+  en: {
+    title: "Where the bot may play this card",
+    hint: "Hard rule. Turn off a place and the bot never uses the card there.",
+    names: {
+      attack: "Attack",
+      defense: "Defense",
+      scheme: "Scheme",
+      boostAttack: "Boost attack",
+      boostDefense: "Boost defense",
+      boostManeuver: "Boost maneuver",
+    },
+  },
+  ua: {
+    title: "Де бот може грати цю карту",
+    hint: "Жорстке правило. Вимкніть місце — і бот ніколи не зіграє карту там.",
+    names: {
+      attack: "Атака",
+      defense: "Захист",
+      scheme: "Схема",
+      boostAttack: "Буст атаки",
+      boostDefense: "Буст захисту",
+      boostManeuver: "Буст маневру",
+    },
+  },
+};
+const usesText = computed(() => usesTexts[lang.value] || usesTexts.en);
 
 const types = Object.keys(typeDefaults);
 const data = reactive(loadBotData());
@@ -445,6 +503,36 @@ function resetCardValue(card, key) {
   else delete data.cards[id];
 }
 
+const usesOf = (card) => data.cards[cardId(card)]?.uses;
+const usesHas = (card, context) => {
+  const uses = usesOf(card);
+  return !uses || uses.includes(context);
+};
+const usesChanged = (card) => Array.isArray(usesOf(card));
+
+function commitUses(card, uses) {
+  const id = cardId(card);
+  const next = { ...(data.cards[id] || {}) };
+  if (uses.length === useContexts.length) delete next.uses;
+  else next.uses = uses;
+  if (Object.keys(next).length) data.cards[id] = next;
+  else delete data.cards[id];
+}
+
+function toggleUse(card, context) {
+  const now = usesOf(card) || useContexts;
+  commitUses(
+    card,
+    useContexts.filter((item) =>
+      item === context ? !now.includes(item) : now.includes(item),
+    ),
+  );
+}
+
+function resetUses(card) {
+  commitUses(card, useContexts);
+}
+
 function resetCard(card) {
   delete data.cards[cardId(card)];
 }
@@ -455,6 +543,7 @@ const json = computed(() => {
   for (const key of ["cards", "sidekicks", "heroes"]) {
     if (Object.keys(data[key]).length) out[key] = { ...data[key] };
   }
+  if (data.lessons.length) out.lessons = [...data.lessons];
   return JSON.stringify(out, null, 2);
 });
 
@@ -477,6 +566,7 @@ function replaceAll(next) {
   data.cards = { ...(next.cards || {}) };
   data.sidekicks = { ...(next.sidekicks || {}) };
   data.heroes = { ...(next.heroes || {}) };
+  data.lessons = [...(next.lessons || [])];
 }
 
 function resetAll() {
@@ -690,6 +780,29 @@ function download() {
   gap: 8px;
   font-size: 13px;
   color: var(--text-light);
+}
+
+.bot-editor-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.bot-editor-chip {
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  color: #8a94a7;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #3a4560;
+  border-radius: 999px;
+}
+
+.bot-editor-chip.on {
+  color: #fff;
+  background: rgba(79, 124, 255, 0.35);
+  border-color: #4f7cff;
 }
 
 .bot-editor-notes input {

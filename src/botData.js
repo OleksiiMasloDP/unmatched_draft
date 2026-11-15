@@ -19,6 +19,15 @@ export const heroSettingKeys = [
   "fatigue",
 ];
 
+export const useContexts = [
+  "attack",
+  "defense",
+  "scheme",
+  "boostAttack",
+  "boostDefense",
+  "boostManeuver",
+];
+
 export const kidDefaults = { importance: 5, block: 0 };
 
 const empty = () => ({
@@ -27,6 +36,7 @@ const empty = () => ({
   cards: {},
   sidekicks: {},
   heroes: {},
+  lessons: [],
 });
 
 export const cardDefaults = {
@@ -50,12 +60,24 @@ const normalizeCards = (cards = {}) => {
   return out;
 };
 
+const lessonKey = (lesson) =>
+  lesson.kind === "use"
+    ? [lesson.hero, lesson.title, lesson.card].join("|")
+    : [lesson.hero, lesson.title, lesson.better, lesson.worse].sort().join("|");
+
+const uniqueLessons = (list) => {
+  const seen = new Map();
+  for (const lesson of list) seen.set(lessonKey(lesson), lesson);
+  return [...seen.values()];
+};
+
 const merge = (first, second) => ({
   version: 1,
   types: { ...first.types, ...second.types },
   cards: { ...first.cards, ...normalizeCards(second.cards) },
   sidekicks: { ...first.sidekicks, ...second.sidekicks },
   heroes: { ...first.heroes, ...second.heroes },
+  lessons: uniqueLessons([...(first.lessons || []), ...(second.lessons || [])]),
 });
 
 export function readStored() {
@@ -83,6 +105,7 @@ export function cardInfo(card, data = loadBotData()) {
     cancelCare: own.cancelCare ?? cardDefaults.cancelCare,
     who: own.who ?? cardDefaults.who,
     boostWill: own.boostWill ?? cardDefaults.boostWill,
+    uses: Array.isArray(own.uses) ? own.uses : null,
     hold: (own.timing ?? cardDefaults.timing) <= 1,
     fodder: (own.boostWill ?? cardDefaults.boostWill) >= 8,
   };
@@ -95,3 +118,27 @@ export function kidInfo(heroId, data = loadBotData()) {
 export function heroInfo(heroId, data = loadBotData()) {
   return data.heroes[heroId] || {};
 }
+
+function editStored(change) {
+  let raw = {};
+  try {
+    raw = JSON.parse(localStorage.getItem(BOT_DATA_KEY) || "{}") || {};
+  } catch {
+    raw = {};
+  }
+  raw.version = 1;
+  raw.lessons = uniqueLessons(change(raw.lessons || []));
+  try {
+    localStorage.setItem(BOT_DATA_KEY, JSON.stringify(raw, null, 2));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export const addLessons = (items) => editStored((list) => [...list, ...items]);
+
+export const removeLesson = (lesson) =>
+  editStored((list) =>
+    list.filter((item) => lessonKey(item) !== lessonKey(lesson)),
+  );
