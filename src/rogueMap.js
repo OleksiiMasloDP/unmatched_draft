@@ -3,14 +3,29 @@ import { ROWS } from "./rogueData.js";
 export const LANES = 5;
 
 const pickType = (rng, row) => {
-  const roll = rng();
   if (row === 0) return "fight";
   if (row === ROWS - 1) return "rest";
-  if (roll < 0.3) return "fight";
-  if (roll < 0.55) return "mystery";
-  if (roll < 0.7 && row >= 2) return "rest";
-  if (roll < 0.78 && row >= 2) return "shop";
-  if (roll < 0.92 && row >= 3) return "elite";
+  const progress = row / (ROWS - 1);
+  const weights = {
+    fight: 0.5 - 0.15 * progress,
+    mystery: 0.24,
+    rest: row >= 2 ? 0.08 + 0.04 * progress : 0,
+    shop: row >= 2 ? 0.08 : 0,
+    elite: row >= 3 ? 0.03 + 0.1 * progress : 0,
+  };
+  if (row === ROWS - 2) {
+    weights.rest = 0;
+    weights.shop = 0.04;
+    weights.mystery = 0.1;
+    weights.fight = 0.66;
+    weights.elite = 0.2;
+  }
+  const total = Object.values(weights).reduce((sum, value) => sum + value, 0);
+  let roll = rng() * total;
+  for (const [type, weight] of Object.entries(weights)) {
+    roll -= weight;
+    if (roll < 0) return type;
+  }
   return "fight";
 };
 

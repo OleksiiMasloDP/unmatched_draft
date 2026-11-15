@@ -158,7 +158,9 @@
             :metal="node.metal"
             :size="node.type === 'boss' ? '38px' : '28px'"
           />
-          <span v-if="node.visited" class="rmap-seal">✔</span>
+          <span v-if="node.visited" class="rmap-seal">
+            <RogueIcon name="laurels" metal="gold" size="14px" />
+          </span>
         </span>
         <span class="rmap-tip">{{ node.label }}</span>
       </button>

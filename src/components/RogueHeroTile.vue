@@ -16,14 +16,25 @@
       <div class="rhero-name">{{ hero.name }}</div>
     </div>
     <div class="rhero-stats">
-      <span class="rhero-chip is-hp">❤ {{ hpValue ?? hero.hp }}</span>
-      <span class="rhero-chip">👣 {{ hero.move }}</span>
+      <span class="rhero-chip is-hp"
+        ><RogueIcon name="heartPlus" metal="ruby" size="1.1em" />
+        {{ hpValue ?? hero.hp }}</span
+      >
+      <span class="rhero-chip"
+        ><RogueIcon name="footsteps" metal="bronze" size="1.1em" />
+        {{ hero.move }}</span
+      >
       <span class="rhero-chip">
-        {{ hero.attack === "melee" ? "⚔️" : "🏹" }}
+        <RogueIcon
+          :name="hero.attack === 'melee' ? 'crossedSwords' : 'boltSpellCast'"
+          metal="silver"
+          size="1.1em"
+        />
         {{ t("packAttack" + capitalized(hero.attack)) }}
       </span>
       <span v-if="hero.sidekick" class="rhero-chip">
-        🛡 {{ hero.sidekick.name }}
+        <RogueIcon name="castle" metal="silver" size="1.1em" />
+        {{ hero.sidekick.name }}
       </span>
     </div>
     <button type="button" class="rhero-toggle" @click.stop="open = !open">
@@ -37,6 +48,7 @@
 
 <script setup>
 import { ref } from "vue";
+import RogueIcon from "./RogueIcon.vue";
 import { useDraftState } from "../composables/useDraftState";
 
 defineProps({

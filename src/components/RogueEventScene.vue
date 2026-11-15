@@ -27,7 +27,8 @@
           class="rev-gold"
           :class="gold > 0 ? 'is-up' : 'is-down'"
         >
-          🪙 {{ gold > 0 ? "+" : "" }}{{ gold }}
+          <RogueIcon name="coins" metal="gold" size="1.1em" />
+          {{ gold > 0 ? "+" : "" }}{{ gold }}
         </span>
       </div>
       <ul v-if="choices.length" class="rev-choices">

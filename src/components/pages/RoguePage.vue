@@ -10,7 +10,8 @@
           class="rogue-bestbtn"
           @click="historyOpen = true"
         >
-          🏆 {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
+          <RogueIcon name="trophy" metal="gold" size="1.2em" />
+          {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
         </button>
         <button
           v-if="inRun && run.phase !== 'battle'"
@@ -103,11 +104,18 @@
         <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
         <div class="rogue-toolbar">
           <button class="rogue-deckbtn" @click="deckOpen = true">
-            <span>📚</span>
+            <RogueIcon name="bookPile" metal="gold" size="1.4em" />
             <b>{{ t("rogueDeckButton") }}</b>
             <i>{{ run.deck.length }}</i>
           </button>
-          <span class="rogue-gold">💰 {{ run.gold }}</span>
+          <span class="rogue-gold">
+            <RogueIcon name="coins" metal="gold" size="1.3em" />
+            {{ run.gold }}
+          </span>
+          <span class="rogue-gold">
+            <RogueIcon name="heartPlus" metal="ruby" size="1.3em" />
+            {{ run.hp }} / {{ run.maxHp }}
+          </span>
         </div>
         <RogueMap
           :map="run.map"
@@ -134,7 +142,7 @@
               :hero="myHero"
               side="me"
               :tag="t('rogueYourHp')"
-              :hp-value="scaledHp(myHero.hp, myScale)"
+              :hp-value="run.hp"
             />
           </div>
           <div class="rogue-vsbadge rogue-anim">VS</div>
@@ -160,7 +168,8 @@
         </div>
         <div class="rogue-toolbar rogue-center">
           <button class="btn btn-success rogue-fight" @click="startBattle">
-            ⚔️ {{ t("rogueFight") }}
+            <RogueIcon name="crossedSwords" metal="bronze" size="1.2em" />
+            {{ t("rogueFight") }}
           </button>
         </div>
       </section>
@@ -208,32 +217,82 @@
       </section>
 
       <section v-else-if="run.phase === 'rest'" class="rogue-restscene">
-        <div class="rogue-fire">🔥</div>
+        <div class="rogue-fire">
+          <RogueIcon name="campfire" metal="bronze" size="100%" />
+        </div>
         <h2 class="rogue-subtitle">{{ t("rogueRestTitle") }}</h2>
-        <p class="rogue-hint">{{ t("rogueRestText") }}</p>
-        <div class="rogue-toolbar rogue-center">
-          <button class="btn btn-success" @click="leave">
-            {{ t("rogueLeave") }}
-          </button>
-        </div>
-        <p v-if="run.deck.length > constants.MIN_DECK" class="rogue-hint">
-          {{ t("rogueRestPickRemove") }}
-        </p>
-        <p v-else class="rogue-hint">{{ t("rogueDeckTooSmall") }}</p>
-        <div v-if="run.deck.length > constants.MIN_DECK" class="rogue-cards">
-          <div
-            v-for="(card, i) in myDeck"
-            :key="card.id + i"
-            class="rogue-card rogue-anim"
-          >
-            <PackCard :card="card" clickable @select="restPick" />
+        <template v-if="run.rest?.mode !== 'remove'">
+          <p class="rogue-hint">{{ t("rogueRestText") }}</p>
+          <div class="rogue-restchoices">
+            <button
+              type="button"
+              class="rogue-restchoice"
+              :disabled="!canRestHeal()"
+              @click="restHeal"
+            >
+              <RogueIcon name="heartPlus" metal="ruby" size="48px" />
+              <b>{{ t("rogueRestHeal") }}</b>
+              <span>
+                {{
+                  canRestHeal()
+                    ? t("rogueRestHealText")
+                        .replace("{n}", healAmount())
+                        .replace("{hp}", run.hp)
+                        .replace("{max}", run.maxHp)
+                    : t("rogueRestHealFull")
+                }}
+              </span>
+            </button>
+            <button
+              type="button"
+              class="rogue-restchoice"
+              :disabled="!canRestRemove()"
+              @click="restRemove"
+            >
+              <RogueIcon name="ghost" metal="silver" size="48px" />
+              <b>{{ t("rogueRestRemove") }}</b>
+              <span>
+                {{
+                  canRestRemove()
+                    ? t("rogueRestRemoveText")
+                    : t("rogueDeckTooSmall")
+                }}
+              </span>
+            </button>
           </div>
-        </div>
+          <div
+            v-if="!canRestHeal() && !canRestRemove()"
+            class="rogue-toolbar rogue-center"
+          >
+            <button class="btn btn-success" @click="leave">
+              {{ t("rogueLeave") }}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <p class="rogue-hint">{{ t("rogueRestPickRemove") }}</p>
+          <div class="rogue-toolbar rogue-center">
+            <button class="rogue-restback" @click="restBack">
+              {{ t("rogueRestBack") }}
+            </button>
+          </div>
+          <div class="rogue-cards">
+            <div
+              v-for="(card, i) in myDeck"
+              :key="card.id + i"
+              class="rogue-card rogue-anim"
+            >
+              <PackCard :card="card" clickable @select="restPick" />
+            </div>
+          </div>
+        </template>
       </section>
 
       <section v-else-if="run.phase === 'shop'" class="rogue-shop">
         <div class="rogue-shop-head">
-          <div class="rogue-shopkeeper">🧙</div>
+          <div class="rogue-shopkeeper">
+            <RogueIcon name="pointyHat" metal="gold" size="100%" />
+          </div>
           <div class="rogue-bubble">
             <b>{{ t("rogueShopTitle") }}</b>
             <span>{{ t("rogueShopKeeper") }}</span>
@@ -261,7 +320,7 @@
                 :disabled="item.sold || run.gold < item.price"
                 @click="buy(i)"
               >
-                <span class="rogue-coin">🪙</span>
+                <RogueIcon name="coins" metal="gold" size="1.3em" />
                 <b>{{ item.price }}</b>
                 <small>{{ t("rogueShopBuy") }}</small>
               </button>
@@ -276,9 +335,14 @@
               "
               @click="startShopRemove"
             >
-              <span class="rogue-service-icon">✂️</span>
+              <span class="rogue-service-icon">
+                <RogueIcon name="ghost" metal="silver" size="100%" />
+              </span>
               <span>{{ t("rogueShopRemoveSign") }}</span>
-              <b>🪙 {{ removePrice(run.shop.removed) }}</b>
+              <b>
+                <RogueIcon name="coins" metal="gold" size="1.1em" />
+                {{ removePrice(run.shop.removed) }}
+              </b>
             </button>
             <button class="btn btn-success" @click="leave">
               {{ t("rogueShopLeave") }}
@@ -400,8 +464,12 @@
       class="rogue-fab"
       @click="deckOpen = true"
     >
-      📚 <b>{{ run.deck.length }}</b>
-      <span class="rogue-fab-gold">💰 {{ run.gold }}</span>
+      <RogueIcon name="bookPile" metal="gold" size="1.2em" />
+      <b>{{ run.deck.length }}</b>
+      <span class="rogue-fab-gold">
+        <RogueIcon name="coins" metal="gold" size="1.1em" />
+        {{ run.gold }}
+      </span>
     </button>
     <RogueHistoryModal
       v-if="historyOpen"
@@ -454,6 +522,7 @@ import RogueHistoryModal from "../RogueHistoryModal.vue";
 import RogueDeckModal from "../RogueDeckModal.vue";
 import RogueHeroTile from "../RogueHeroTile.vue";
 import RogueEventScene from "../RogueEventScene.vue";
+import RogueIcon from "../RogueIcon.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
 
@@ -469,7 +538,6 @@ const {
   reachable,
   nodeById,
   kindOf,
-  hpScale,
   foeScale,
   botLevelFor,
   constants,
@@ -484,6 +552,12 @@ const {
   pickPack,
   leavePacks,
   restPick,
+  restHeal,
+  restRemove,
+  restBack,
+  canRestHeal,
+  canRestRemove,
+  healAmount,
   buy,
   startShopRemove,
   shopRemove,
@@ -527,9 +601,6 @@ const myDeck = computed(() => cardsOf(run.deck));
 const rewardCards = computed(() => cardsOf(run.rewards));
 const currentNode = computed(() => (run.node ? nodeById(run.node) : null));
 const enemyKind = computed(() => run.enemy?.kind || "fight");
-const myScale = computed(() =>
-  currentNode.value ? hpScale(currentNode.value) : 1,
-);
 const foePercent = computed(() =>
   currentNode.value ? foeScale(currentNode.value) : 1,
 );
@@ -969,7 +1040,14 @@ onBeforeUnmount(() => {
   font-weight: 800;
 }
 
+.rogue-gold + .rogue-gold {
+  margin-left: 0;
+}
+
 .rogue-gold {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
   margin-left: auto;
   padding: 3px 12px;
   border-radius: 999px;
@@ -1164,12 +1242,63 @@ onBeforeUnmount(() => {
   text-align: center;
 }
 
+.rogue-restback {
+  padding: 6px 18px;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+}
+
+.rogue-restchoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.rogue-restchoice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 260px;
+  padding: 20px 16px;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(255, 159, 67, 0.08);
+  border: 2px solid rgba(255, 159, 67, 0.5);
+  border-radius: 14px;
+  transition:
+    transform 0.15s,
+    background 0.15s;
+}
+
+.rogue-restchoice:hover:not(:disabled) {
+  background: rgba(255, 159, 67, 0.18);
+  transform: translateY(-3px);
+}
+
+.rogue-restchoice:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.rogue-restchoice span {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
 .rogue-restscene .rogue-cards {
   text-align: left;
 }
 
 .rogue-fire {
-  font-size: 72px;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto;
   filter: drop-shadow(0 0 22px #ff9f43);
   animation: rogue-flicker 1.4s ease-in-out infinite alternate;
 }
@@ -1205,7 +1334,8 @@ onBeforeUnmount(() => {
 }
 
 .rogue-shopkeeper {
-  font-size: 56px;
+  width: 64px;
+  height: 64px;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
 }
 
@@ -1344,7 +1474,9 @@ onBeforeUnmount(() => {
 }
 
 .rogue-service-icon {
-  font-size: 1.4rem;
+  display: inline-flex;
+  width: 1.8rem;
+  height: 1.8rem;
 }
 
 @media (max-width: 720px) {

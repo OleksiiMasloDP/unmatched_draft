@@ -2,9 +2,12 @@
   <div class="rdeck" @click.self="emit('close')">
     <div class="rdeck-box">
       <div class="rdeck-head">
-        <h3>📚 {{ t("rogueYourDeck").replace("{n}", cards.length) }}</h3>
+        <h3>
+          <RogueIcon name="bookPile" metal="gold" size="1.2em" />
+          {{ t("rogueYourDeck").replace("{n}", cards.length) }}
+        </h3>
         <button type="button" class="rdeck-close" @click="emit('close')">
-          ✕
+          ×
         </button>
       </div>
       <div class="rdeck-grid">
@@ -35,6 +38,7 @@
 import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import PackCard from "./PackCard.vue";
+import RogueIcon from "./RogueIcon.vue";
 
 const props = defineProps({
   cards: { type: Array, required: true },

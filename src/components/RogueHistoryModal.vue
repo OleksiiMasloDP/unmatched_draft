@@ -2,9 +2,12 @@
   <div class="rhist" @click.self="emit('close')">
     <div class="rhist-box">
       <div class="rhist-head">
-        <h3>🏆 {{ t("rogueBest") }}</h3>
+        <h3>
+          <RogueIcon name="trophy" metal="gold" size="1.2em" />
+          {{ t("rogueBest") }}
+        </h3>
         <button type="button" class="rhist-close" @click="emit('close')">
-          ✕
+          ×
         </button>
       </div>
       <div class="rhist-tabs">
@@ -37,11 +40,12 @@
             </td>
             <td>
               <span class="rhist-badge" :class="{ win: row.victory }">
-                {{
-                  row.victory
-                    ? "👑 " + t("rogueVictory")
-                    : "☠ " + t("rogueDefeat")
-                }}
+                <RogueIcon
+                  :name="row.victory ? 'laurels' : 'skullCrossedBones'"
+                  :metal="row.victory ? 'gold' : 'ruby'"
+                  size="1.1em"
+                />
+                {{ row.victory ? t("rogueVictory") : t("rogueDefeat") }}
               </span>
             </td>
             <td>
@@ -60,6 +64,7 @@ import { computed, ref } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { getHero } from "../gameDecks";
 import { packDraftHeroes } from "../packDraftData";
+import RogueIcon from "./RogueIcon.vue";
 
 const props = defineProps({
   history: { type: Array, required: true },

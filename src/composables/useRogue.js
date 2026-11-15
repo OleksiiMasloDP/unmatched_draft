@@ -61,6 +61,8 @@ const emptyRun = () => ({
   shop: null,
   event: null,
   rest: null,
+  hp: null,
+  maxHp: null,
   victory: false,
   best: 0,
 });
@@ -68,7 +70,14 @@ const emptyRun = () => ({
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && saved.phase) return { ...emptyRun(), ...saved };
+    if (saved && saved.phase) {
+      const loaded = { ...emptyRun(), ...saved };
+      if (loaded.heroId && loaded.deck.length && loaded.hp == null) {
+        loaded.maxHp = getHero(loaded.heroId).hp;
+        loaded.hp = loaded.maxHp;
+      }
+      return loaded;
+    }
   } catch {
     return emptyRun();
   }
@@ -263,6 +272,8 @@ export function useRogue() {
     if (run.phase !== "deck" || cardIds.length !== BASE_DECK) return;
     run.deck = [...cardIds];
     run.gold = START_GOLD;
+    run.maxHp = getHero(run.heroId).hp;
+    run.hp = run.maxHp;
     run.map = generateMap(mulberry32(Math.floor(Math.random() * 2 ** 31)));
     run.pos = null;
     run.visited = [];
@@ -296,7 +307,7 @@ export function useRogue() {
       makeEnemy(node);
       run.phase = "encounter";
     } else if (kind === "rest") {
-      run.rest = { mode: "remove" };
+      run.rest = { mode: "choose" };
       run.phase = "rest";
     } else if (kind === "shop") {
       makeShop();
@@ -324,7 +335,8 @@ export function useRogue() {
       },
       {
         mapId: run.enemy.mapId,
-        scale: hpScale(node),
+        scale: 1,
+        heroHp: run.hp,
         foeScale: foeScale(node),
         botLevel: botLevelFor(node),
         first: Math.random() < 0.5 ? "p1" : "p2",
@@ -339,6 +351,7 @@ export function useRogue() {
     if (run.phase !== "battle") return;
     if (game.phase === "over" && game.winner) {
       if (game.winner === "p1") {
+        run.hp = Math.max(1, game.players.p1.hp);
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
         run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
@@ -383,8 +396,36 @@ export function useRogue() {
     if (run.phase === "packs") finishNode();
   }
 
-  function restPick(cardId) {
+  const healAmount = () => Math.ceil((run.maxHp || 0) * 0.35);
+
+  function canRestHeal() {
+    return run.phase === "rest" && run.hp < run.maxHp;
+  }
+
+  function canRestRemove() {
+    return run.phase === "rest" && run.deck.length > MIN_DECK;
+  }
+
+  function restHeal() {
+    if (!canRestHeal()) return;
+    run.hp = Math.min(run.maxHp, run.hp + healAmount());
+    finishNode();
+  }
+
+  function restRemove() {
+    if (!canRestRemove()) return;
+    run.rest = { mode: "remove" };
+    save();
+  }
+
+  function restBack() {
     if (run.phase !== "rest") return;
+    run.rest = { mode: "choose" };
+    save();
+  }
+
+  function restPick(cardId) {
+    if (run.phase !== "rest" || run.rest?.mode !== "remove") return;
     removeCard(cardId);
     finishNode();
   }
@@ -589,6 +630,12 @@ export function useRogue() {
     pickPack,
     leavePacks,
     restPick,
+    restHeal,
+    restRemove,
+    restBack,
+    canRestHeal,
+    canRestRemove,
+    healAmount,
     buy,
     startShopRemove,
     shopRemove,
