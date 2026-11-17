@@ -203,10 +203,8 @@ const emit = defineEmits(["enter"]);
 
 const root = ref(null);
 let context = null;
-let query = null;
 
 const wide = ref(true);
-const onQuery = () => (wide.value = query.matches);
 
 const total = computed(() => props.map.length);
 
@@ -516,16 +514,12 @@ watch(
 );
 
 onMounted(async () => {
-  query = window.matchMedia("(min-width: 900px)");
-  wide.value = query.matches;
-  query.addEventListener("change", onQuery);
   await nextTick();
   animate();
 });
 
 onBeforeUnmount(() => {
   context?.revert();
-  query?.removeEventListener("change", onQuery);
 });
 </script>
 
@@ -558,7 +552,7 @@ onBeforeUnmount(() => {
 }
 
 .rmap.is-wide .rmap-frame {
-  min-width: 1100px;
+  min-width: 960px;
   max-width: 1500px;
 }
 

@@ -1880,7 +1880,8 @@ onBeforeUnmount(() => {
   --rx: 0deg;
   --ry: 0deg;
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   min-height: 220px;
   color: inherit;
@@ -1945,7 +1946,7 @@ onBeforeUnmount(() => {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   padding: 22px 20px 18px;
 }
 .home-card-icon {
