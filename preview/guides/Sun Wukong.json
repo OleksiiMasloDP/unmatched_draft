@@ -1,0 +1,461 @@
+{
+  "complexity": 3.5,
+  "keyCards": [
+    {
+      "image": "ox_form.webp"
+    },
+    {
+      "image": "72_transformations.webp"
+    },
+    {
+      "image": "golden_chain_mail.webp"
+    },
+    {
+      "image": "phoenix_form.webp"
+    }
+  ],
+  "style": {
+    "en": "Value / Wall / Combo",
+    "ua": "Велью / Стіна / Комбо"
+  },
+  "features": {
+    "en": [
+      "His ability lets him summon a clone every turn (at the cost of 1 HP to himself or the clone), building a wall that simply shuts down most melee fighters regardless of how hard they hit — they can't get through to him at all.",
+      "Keeps attacking relentlessly to bait out one or two of the opponent's cards while he plays his own patient value game.",
+      "Can heal through Phoenix Form, bottom unwanted cards from the opponent's hand, and his sidekicks can play any card in his deck.",
+      "A key attack card whose effect cannot be cancelled, making it excellent value even on token-based maps."
+    ],
+    "ua": [
+      "Здібність дозволяє щохода приклика­ти клона (ціною 1 HP собі або клону), вибудовуючи стіну, яка просто зупиняє більшість бійців ближнього бою — вони до нього фізично не доходять.",
+      "Постійно атакує, щоб виманити одну-дві карти опонента, паралельно граючи власну терпляку велью-гру.",
+      "Може лікуватися через Форму Фенікса, відправляти небажані карти опонента на низ колоди, а помічники здатні розігрувати будь-яку карту з колоди.",
+      "Ключова атака з ефектом, який не можна скасувати — сильна навіть на картах з жетонами."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "No scheme, feint, or cancel effects at all — characters built around repeated maneuvering and disengaging (e.g. Winter Soldier) can just outplay him turn after turn with nothing he can do about it.",
+      "No card draw, so aggressive ranged fighters can still pressure and outrace him.",
+      "Depends on drawing his cards in matchups where he actually has to play the real game instead of just walling up with clones."
+    ],
+    "ua": [
+      "Взагалі немає каверз, фінтів чи скасування ефектів — персонажі, побудовані на постійному маневруванні й відриві (наприклад Зимовий Солдат), можуть просто переграти його раз за разом без жодної відповіді з його боку.",
+      "Немає добору карт, тож агресивні далекобійні персонажі все одно можуть його пресувати й обганяти.",
+      "Залежить від заходу карт в тих матчапах, де доводиться реально грати, а не просто закриватися клонами."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Against most melee fighters, just build the clone wall and let the matchup play itself out — they simply can't get through.",
+      "Against ranged/maneuver-heavy opponents who ignore the clones, you have to actually play the value game: bait with your attacks, hold your best defenses for the moments that matter, and keep your 72 transformation engine running.",
+      "Guard your uncancellable card and your redirect-damage defense carefully — they're your biggest value swings and your best answer to boosted burst damage.",
+      "Sustain matters a lot — treat your heal/pass card as one of your two or three most important cards in almost every matchup, since it both heals and buys you tempo.",
+      "Know which matchups need you to play actively and aggressively instead of passively walling up — several 'even' matchups are only even if you actually pressure back rather than just hiding behind clones."
+    ],
+    "ua": [
+      "Проти більшості бійців ближнього бою просто будуйте стіну клонів і дайте матчапу зіграти самому — вони фізично не дійдуть до вас.",
+      "Проти далекобійних/маневрових суперників, яким байдуже на клонів, доведеться реально грати у велью: виманюйте атаками, бережіть найкращі захисти на важливі моменти й підтримуйте двигун 72 трансформації.",
+      "Бережіть карту з ефектом, який не можна скасувати, і захист з перенаправленням шкоди — це ваші найбільші величини й найкраща відповідь на посилену шкоду.",
+      "Витривалість важлива — вважайте карту лікування/пасу однією з двох-трьох найважливіших карт майже в кожному матчапі, бо вона одночасно лікує й дає темп.",
+      "Знайте, де потрібно грати активно й агресивно, а не пасивно ховатися за клонами — кілька 'рівних' матчапів рівні лише тоді, коли ви самі тиснете, а не просто відсиджуєтесь."
+    ]
+  },
+  "matchups": {
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "An easy matchup — he dumps his big attacks into your clones and has no real way to get through the wall.",
+          "Even if he does reach you, throw your 0 or your redirect-damage defense, retreat, and rebuild the wall."
+        ],
+        "ua": [
+          "Легкий матчап — він зливає свої великі атаки в клонів і не має способу пробити стіну.",
+          "Навіть якщо він до вас дійде — кидайте 0 або кольчугу, відходьте і знову закривайтеся клонами."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "She has no answer to the clone wall.",
+          "Your 7s land especially well here specifically because of the clones."
+        ],
+        "ua": [
+          "Вона нічого не може зробити зі стіною клонів.",
+          "Ваші сімки заходять тут особливо добре саме завдяки клонам."
+        ]
+      }
+    },
+    "Donatello": {
+      "tips": {
+        "en": [
+          "Correct positioning and walling up with clones is everything — many of his attacks simply get lost in them.",
+          "Keep running, save your defenses, and read his interactions correctly."
+        ],
+        "ua": [
+          "Правильне позиціонування й закриття клонами — це все. Багато його атак просто губляться в них.",
+          "Тікайте, бережіть захисти й правильно вгадуйте взаємодії."
+        ]
+      }
+    },
+    "Leonardo": {
+      "tips": {
+        "en": [
+          "Correct positioning and walling up with clones is everything — many of his attacks simply get lost in them.",
+          "Keep running, save your defenses, and read his interactions correctly."
+        ],
+        "ua": [
+          "Правильне позиціонування й закриття клонами — це все. Багато його атак просто губляться в них.",
+          "Тікайте, бережіть захисти й правильно вгадуйте взаємодії."
+        ]
+      }
+    },
+    "Michelangelo": {
+      "tips": {
+        "en": [
+          "Easy in practice, even though he theoretically has a shot if you misplay — he mostly just breaks his extra actions on your clones."
+        ],
+        "ua": [
+          "На практиці легкий, хоч теоретично шанс у нього є при вашій помилці — переважно він просто зливає додаткові дії об клонів."
+        ]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": [
+          "Favorable but not trivial — as a ranged fighter he can try to shoot you down, pressure you, and win on value if you're not careful."
+        ],
+        "ua": [
+          "Вигідний, але не тривіальний — як далекобійний персонаж він може вас відстрілювати, тиснути й вигравати по велью, якщо не пильнувати."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "Favors you, but he can bait a couple of guesses with his maneuvers — misread those and you can fail to close him out and lose on value instead."
+        ],
+        "ua": [
+          "На вашу користь, але він може виманити пару вгадувань своїми маневрами — помилитесь, і можете не встигнути його добити та програти по велью."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "Easier for you overall, though a skilled Golden Bat on a large map can maneuver around and win on discards/value — still, the matchup is more comfortable on your side.",
+          "Since you have no cancel effects, he can discard your cards fairly freely — a lot hinges on which cards he discards and what he shuffles back into his deck."
+        ],
+        "ua": [
+          "Загалом простіше для вас, хоча вмілий Golden Bat на великій карті може заманеврувати й вигравати на скидах/велью — все ж матчап зручніший вам.",
+          "Оскільки у вас немає каверз, він доволі вільно може скидати ваші карти — багато залежить від того, які карти він скине і що поверне в колоду перемішуванням."
+        ]
+      }
+    },
+    "Bullseye": {
+      "tips": {
+        "en": [
+          "Look for a map with a range-5 center for a more comfortable game.",
+          "Expect him to pressure hard and try to bait out your defenses."
+        ],
+        "ua": [
+          "Шукайте карту з центром на 5 для спокійнішої гри.",
+          "Очікуйте сильного пресингу з його боку та спроб виманити ваші захисти."
+        ]
+      }
+    },
+    "Leshen": {
+      "tips": {
+        "en": [
+          "Play actively — a passive game just lets Leshen outlast you.",
+          "Getting rid of his wolves matters, but don't spend a 7 on them.",
+          "Use your extra-action turns to pressure him into using up his defenses, then finish him off with a 7 — hold that combo and plan for it.",
+          "Use your redirect-damage defense against his +3 attack."
+        ],
+        "ua": [
+          "Грайте активно — пасивна гра просто дозволить Лєшому вас пережити.",
+          "Прибрати його вовків важливо, але не витрачайте на них сімку.",
+          "Використовуйте ходи з додатковими діями, щоб виманити в нього захисти, а потім добийте сімкою — тримайте це комбо напоготові й плануйте його.",
+          "Проти його атаки з +3 використовуйте захист з перенаправленням шкоди (кольчугу)."
+        ]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "Very map-dependent and somewhat coin-flippy — take the map center early and it's largely decided, though he can still try to pressure."
+        ],
+        "ua": [
+          "Дуже залежить від карти й доволі рандомний — займіть центр рано, і матчап переважно вирішено, хоча він все ще може пресувати."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Trickier than most favorable matchups — it comes down to how fast you kill her sidekick and how much value she banks from her schemes before that happens."
+        ],
+        "ua": [
+          "Складніше за більшість вигідних матчапів — все залежить від того, як швидко ви заб'єте її помічницю і скільки велью вона встигне назбирати зі своїх схем."
+        ]
+      }
+    },
+    "Titania": {
+      "tips": {
+        "en": [
+          "Favorable overall, but a skilled Titania player can still win through a well-timed combo."
+        ],
+        "ua": [
+          "Загалом вигідний, але вмілий гравець на Титанії все ще може виграти через вчасне комбо."
+        ]
+      }
+    },
+    "Shredder": {
+      "tips": {
+        "en": [
+          "Roughly favorable for you, but if he catches you without a good ultimate defense in hand, his big multi-action combo can shred through you fast — always keep one in reserve."
+        ],
+        "ua": [
+          "Приблизно вигідний, але якщо він застане вас без хорошого ультимативного захисту в руці, його потужне комбо на кілька дій може швидко вас 'зістругати' — завжди тримайте один захист про запас."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "Winnable, but she needs good luck from her ability box (particularly a boost) and reasonable defense cards to compete — otherwise your pressure is too much for her."
+        ],
+        "ua": [
+          "Виграшний, але їй потрібен хороший захід коробки (зокрема буст) і пристойні картки захисту, щоб конкурувати — інакше ваш тиск для неї завеликий."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "A genuine even matchup about healing timing and positioning — draw Phoenix Form early and you survive comfortably; go without it too long, especially on a tight-centered map, and he can grind you down."
+        ],
+        "ua": [
+          "Справді рівний матчап про таймінг лікування й позиціонування — рано дістанете Форму Фенікса, і переживете спокійно; довго без неї, особливо на карті з тісним центром, і він може вас задушити."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Since this is an uphill fight, don't rely on stalling behind a clone wall — a long grind favors her healing. Spread your clones across separate cells rather than stacking them, since her attack and mobility let her pick through them regardless.",
+          "Look to commit your 7s and finish the game early rather than waiting for a perfect setup.",
+          "Her uncancellable attack can endlessly chip away at your clones.",
+          "She has movement effects that let her close the distance to you quickly."
+        ],
+        "ua": [
+          "Оскільки матчап важкий, не покладайтеся на відсиджування за стіною клонів — довга гра на її користь через лікування. Розставляйте клонів по різних комірках, а не стопкою, бо її атака й мобільність все одно дістануть їх.",
+          "Прагніть якомога раніше вкласти сімки й закрити гру, а не чекати ідеального сетапу.",
+          "Її атака, яку не можна скасувати, здатна нескінченно виносити ваших клонів.",
+          "У неї є ефекти руху, які дозволяють швидко скорочувати дистанцію до вас."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "Usually best played without leaning on clones at all — chase him down and race him with your big attacks, since he'll flatten stacked clones in one maneuver otherwise.",
+          "If you do use clones, spread them out so he can't wipe more than one per maneuver. His only free defenses are limited — most of his real defense costs him Hellfire."
+        ],
+        "ua": [
+          "Зазвичай краще грати взагалі без опори на клонів — доганяйте і женіть його великими атаками, бо стопку клонів він знесе одним маневром.",
+          "Якщо все ж використовуєте клонів — розставляйте їх так, щоб він не знищив більше одного за маневр. Безкоштовних захистів у нього обмаль — за більшість реального захисту йому доведеться платити Хеллфаєром."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": [
+          "A real interaction matchup — he has to actually play against you or you'll simply beat him down, and you have to actually play against him or his scheme engine will strangle you."
+        ],
+        "ua": [
+          "Справжній матчап на взаємодію — йому доведеться реально грати проти вас, інакше ви його заб'єте, а вам доведеться реально грати проти нього, інакше його схемний двигун вас задушить."
+        ]
+      }
+    },
+    "Harry Houdini": {
+      "tips": {
+        "en": [
+          "Swings heavily on who goes first. Assuming he goes first (the harder version of this matchup for you), pick tight, closeable maps rather than open ones — he can otherwise deal a lot of damage before your wall is up.",
+          "If he goes second instead, the matchup becomes strongly in your favor."
+        ],
+        "ua": [
+          "Дуже залежить від того, хто ходить першим. Якщо перший він (важчий для вас варіант) — обирайте тісні карти, які можна закрити, а не відкриті, бо інакше він встигне завдати чимало шкоди до того, як стіна побудується.",
+          "Якщо ж другий — матчап сильно на вашу користь."
+        ]
+      }
+    },
+    "The Genie": {
+      "tips": {
+        "en": [
+          "An aggressive ranged fighter who can pressure you through the clone tax — a genuinely even fight where you're trying to avoid getting caught by his big combo turn while grinding him down slowly."
+        ],
+        "ua": [
+          "Агресивний далекобійний персонаж, здатний пресувати вас попри ціну клонів — справді рівний бій, де ви уникаєте його великого комбо-ходу, паралельно повільно його виснажуючи."
+        ]
+      }
+    },
+    "Black Widow": {
+      "tips": {
+        "en": [
+          "Depends heavily on whether The Kinshasa Directive lands for her — if it does, she can discard your important cards or a large chunk of your hand and grind out the game comfortably; play positionally and carefully either way."
+        ],
+        "ua": [
+          "Сильно залежить від того, чи зайде їй The Kinshasa Directive — якщо так, вона може скидати ваші важливі карти чи велику частину руки й спокійно тягнути гру; в будь-якому разі грайте позиційно й обережно."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "A genuinely nasty, heavily random matchup because of one of her cards, which can hand you exactly what you need or exactly nothing — completely out of your control either way.",
+          "Her other big effects are unpleasant too, but you do have tools against them: your ultimate defenses answer her strongest attacks, and your ignore-effect attacks force extra discards. Winnable on value, but honestly not a fun matchup either way."
+        ],
+        "ua": [
+          "Дійсно неприємний, сильно рандомний матчап через одну з її карт, яка може дати вам саме те, що треба, або взагалі нічого — і це поза вашим контролем.",
+          "Інші її сильні ефекти теж неприємні, але проти них є інструменти: ультимативні захисти відповідають на найсильніші атаки, а атаки з ігнором змушують до додаткових скидів. Виграшний по велью, але чесно — задоволення від цього матчапу мало в будь-якому разі."
+        ]
+      }
+    },
+    "Blackbeard": {
+      "tips": {
+        "en": [
+          "A genuinely interesting matchup built around his doubloon-fueled discards versus your clone positioning — whether he can accumulate enough doubloons to strip your key cards before you overwhelm him with clones and pressure."
+        ],
+        "ua": [
+          "Дійсно цікавий матчап навколо його скидів на дублонах проти вашого позиціонування клонами — чи встигне він накопичити достатньо дублонів, щоб зняти ваші ключові карти, поки ви не задавите його клонами й тиском."
+        ]
+      }
+    },
+    "Ciri": {
+      "tips": {
+        "en": [
+          "Surprisingly even given she's melee, thanks to her huge amount of auto-damage and random hand discards that chip you down regardless of clones.",
+          "Use your hand-peek scheme to bottom her key returnable cards — it meaningfully cuts into her recursion."
+        ],
+        "ua": [
+          "Несподівано рівний, попри те що вона ближнього бою — через величезну кількість авто-урону й випадкових скидів руки, які виснажують вас незалежно від клонів.",
+          "Використовуйте схему на перегляд руки, щоб відправляти на низ її ключові карти повернення — це відчутно ріже її рекурсію."
+        ]
+      }
+    },
+    "Yennefer & Triss": {
+      "tips": {
+        "en": [
+          "A very strong value hero — if she gets the initiative, her maneuver-echo-boost loop can grind down almost anyone alone, so you can't just wall up passively here.",
+          "Play actively and aggressively: pressure her, force discards and maneuvers, and don't let her sit comfortably and loop her value engine. Slightly favors her overall, but a skilled Wukong can win it."
+        ],
+        "ua": [
+          "Дуже сильний велью-персонаж — якщо забере ініціативу, її цикл маневр-ехо-буст може виснажити майже будь-кого сам по собі, тож просто пасивно стіною тут не відсидітись.",
+          "Грайте активно й агресивно: тисніть, змушуйте до скидів і маневрів, не давайте їй спокійно крутити двигун велью. Загалом трохи на її користь, але вмілий Вуконг може це виграти."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "She has a huge health pool, her point-blank/cone attacks kill clones outright, and her double-attacks strip cards from your hand.",
+          "She can comfortably absorb two 7s by redirecting the damage into your clones.",
+          "Don't lean on the clone wall as your main plan here — you need to actually pressure and close the game out rather than stall, since her large health pool means a slow grind favors her.",
+          "Try to bait out her archers or point-blank tools before you commit your big attacks, rather than throwing them into a fresh board state."
+        ],
+        "ua": [
+          "У неї величезний запас здоров'я, її постріли впритул/конусом вбивають клонів напряму, а подвійні атаки виривають карти з вашої руки.",
+          "Вона спокійно витримує дві сімки, перенаправляючи шкоду в ваших клонів.",
+          "Не покладайтеся тут на стіну клонів як основний план — потрібно реально тиснути й закривати гру, а не тягнути, бо великий запас здоров'я грає їй на руку в довгій дистанції.",
+          "Намагайтеся виманити її лучників чи інструменти впритул до того, як вкладати великі атаки, а не кидати їх одразу."
+        ]
+      }
+    },
+    "Daredevil": {
+      "tips": {
+        "en": [
+          "A slow, unpleasant matchup — he mostly just runs from you and periodically lands a card that shuffles several of your cards away, on repeat."
+        ],
+        "ua": [
+          "Повільний, неприємний матчап — він переважно просто тікає від вас і час від часу влучає карту, яка перемішує кілька ваших карт, і так по колу."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Rough matchup — her ability kills clones, and her turtle-into-gaze combo is an instant loss if it lands. Outside of that, you can grind, kite, and bait her down carefully."
+        ],
+        "ua": [
+          "Важкий матчап — її здібність вбиває клонів, а комбо погляд-в-черепаху це миттєвий програш, якщо влучить. Поза цим можна обережно виснажувати, тікати й виманювати."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "He has a strong combo including an attack that cancels your redirect-defense and teleport, plus a punch that shreds clones too.",
+          "He can also just win through random 4-5 discards backed by a card that returns his cancel attack, so it's not only about the combo."
+        ],
+        "ua": [
+          "У нього сильне комбо, включно з атакою, що скасовує ваш захист-перенаправлення й телепорт, плюс удар, що теж косить клонів.",
+          "Він також може просто виграти через випадкові скиди на 4-5 у поєднанні з картою, що повертає його скасовуючу атаку, тож справа не тільки в комбо."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "Wins through combo regardless of your clones, simply trampling through the wall."
+        ],
+        "ua": [
+          "Виграє через комбо незалежно від клонів, просто проходячи крізь стіну."
+        ]
+      }
+    },
+    "Winter Soldier": {
+      "tips": {
+        "en": [
+          "Repositions, cycles his cards, and slowly grinds you out with nothing you can really answer."
+        ],
+        "ua": [
+          "Перепозиціонується, крутить свої карти й повільно виснажує вас без реальної відповіді з вашого боку."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "His zone auto-damage, remote movement control, and ignore-value attacks are all very strong against you.",
+          "You want his damage effects landing on your 0/ignore defense specifically (it's a flat 2 damage no matter how much he boosts) — you don't want his discard/extra-action/cancel effects landing on your redirect defense or your 0."
+        ],
+        "ua": [
+          "Його авто-урон по зоні, дистанційний контроль руху й атаки з ігнором значення дуже сильні проти вас.",
+          "Ви хочете, щоб його шкода прилітала саме у ваш 0/ігнор-захист (це фіксовані 2 шкоди незалежно від посилення) — і не хочете, щоб його ефекти скиду/додаткової дії/скасування прилітали в ваш захист-перенаправлення чи в 0."
+        ]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": ["She just runs from you — you won't be able to do much to her."],
+        "ua": [
+          "Вона просто тікає від вас — ви навряд чи зможете щось їй заподіяти."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "He discards and ignores your attack cards.",
+          "He heals by dumping value into your clones with his 4.",
+          "Avoid feeding him easy value by attacking predictably — vary your approach and try to force him to spend cards he doesn't want to."
+        ],
+        "ua": [
+          "Він скидає й ігнорує ваші атакувальні карти.",
+          "Лікується, скидаючи значення своєї 4-ки у ваших клонів.",
+          "Не годуйте його легким велью, атакуючи передбачувано — варіюйте підхід і намагайтеся змусити його витрачати карти, які він не хоче витрачати."
+        ]
+      }
+    }
+  }
+}

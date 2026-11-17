@@ -1,0 +1,159 @@
+{
+  "complexity": 3.0,
+  "keyCards": [
+    {
+      "image": "the_big_reveal.webp"
+    },
+    {
+      "image": "sleight_of_hand.webp"
+    },
+    {
+      "image": "misdirection.webp"
+    },
+    {
+      "image": "set_the_stage.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Combo",
+    "ua": "Агро / Комбо"
+  },
+  "features": {
+    "en": [
+      "Breaks the game in multiple ways, feeling like cheating with unfair tricks",
+      "Incredible damage output with crazy combos and insane lethal thresholds",
+      "Guaranteed damage and occasional first-turn kills through aggressive openings",
+      "Strong hand disruption to remove key cards from the opponent",
+      "Massive action gain and ability to teleport at will across the board",
+      "All cards have multiple uses, allowing for both large-hand combo or full aggro playstyles",
+      "Creative problem solving with powerful defensive and positioning tools"
+    ],
+    "ua": [
+      "Ламає гру різними способами, створюючи відчуття шахрайства завдяки нечесним трюкам",
+      "Неймовірний потенціал шкоди з божевільними комбо та високими пороговими значеннями леталу",
+      "Гарантована шкода та випадкові вбивства на першому ходу через агресивні дебюти",
+      "Сильний контроль руки для видалення ключових карт суперника",
+      "Масовий приріст дій та здатність переміщуватися телепортацією по дошці за бажанням",
+      "Усі карти мають кілька застосувань, що дозволяє грати як через комбо з великою рукою, так і в повному агро-стилі",
+      "Креативне вирішення проблем за допомогою потужних захисних та позиційних інструментів"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Struggles against fighters who are very hard to kill, especially those who can deny resources or aggress him",
+      "Vulnerable to opponents with strong sustain, healing, and resurrection mechanics",
+      "Fighters who can pressure his card economy can disrupt his setup turns"
+    ],
+    "ua": [
+      "Страждає проти бійців, яких дуже важко вбити, особливо тих, хто може забирати ресурси або тиснути на нього",
+      "Вразливий до супротивників із сильним виживанням, лікуванням та механіками воскресіння",
+      "Бійці, які можуть тиснути на його економіку карт, здатні зірвати його підготовчі ходи"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Offense is your best defense — remember that you can take some attacks to set up your counter-offensives",
+      "Boosting on defense can effectively set up your upcoming turn and secure key resources",
+      "Avoid boosting your maneuver when it is not necessary to preserve valuable cards",
+      "If you have guaranteed lethal in your deck, wait for the right moment to unleash it",
+      "Bess is actually very useful; do not underestimate her presence and contributions on the board",
+      "Find ways to confirm your damage whenever possible, utilizing swaps, boostable defenses, and revives",
+      "Every decision you make — boosting, defending, maneuvering — should serve the purpose of finding maximum damage safely and quickly"
+    ],
+    "ua": [
+      "Атака — ваш найкращий захист: пам'ятайте, що ви можете прийняти деякі атаки, щоб підготувати контратаку",
+      "Буст на захисті може ефективно підготувати ваш наступний хід і забезпечити ключові ресурси",
+      "Уникайте бусту на маневрі, коли це не потрібно, щоб зберегти цінні карти",
+      "Якщо у вашій колоді є гарантований летал, дочекайтеся правильного моменту, щоб розкрити його",
+      "Бесс насправді дуже корисна; не недооцінюйте її присутність та внесок на дошці",
+      "Знаходьте способи підтвердити свою шкоду за будь-якої можливості, використовуючи мінялки, захист з бустом та воскресіння",
+      "Кожне ваше рішення — буст, захист, маневр — має служити меті завдати максимальної шкоди безпечно та швидко"
+    ]
+  },
+  "matchups": {
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Bigfoot is very hard to kill and can heavily pressure Houdini with massive damage output.",
+          "Deny his resource setup and do not let him dictate the pace of the game."
+        ],
+        "ua": [
+          "Бігфута дуже важко вбити, і він може сильно тиснути на Гудіні масивною шкодою.",
+          "Запобігайте налаштуванню його ресурсів і не дозволяйте йому диктувати темп гри."
+        ]
+      }
+    },
+    "Geralt": {
+      "tips": {
+        "en": [
+          "Geralt's versatility and resilience make it difficult to secure quick kills.",
+          "Carefully time your combos to bypass his defensive setups."
+        ],
+        "ua": [
+          "Універсальність та стійкість Геральта ускладнюють швидкі вбивства.",
+          "Ретельно обирайте час для комбо, щоб обійти його захисні побудови."
+        ]
+      }
+    },
+    "Dr. Sattler": {
+      "tips": {
+        "en": [
+          "Control the spacing carefully to prevent Sattler from dictating trades.",
+          "Use high-damage bursts to overwhelm her before she can establish field control."
+        ],
+        "ua": [
+          "Ретельно контролюйте дистанцію, щоб Саттлер не диктувала умови розмінів.",
+          "Використовуйте великі бусти, щоб задавити її шкоди до того, як вона встановить контроль над полем."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "Robin Hood's ranged pressure and outlaws can severely restrict Houdini's movement.",
+          "Close the distance quickly and eliminate obstacles before executing your main combos."
+        ],
+        "ua": [
+          "Дальнобійний тиск Робін Гуда та розбійники можуть сильно обмежити пересування Гудіні.",
+          "Швидко скорочуйте дистанцію та усувайте перешкоди перед виконанням головних комбо."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "Medusa's gaze and ranged attacks punish poor positioning.",
+          "Use teleportation and misdirection to avoid her line of sight and strike safely."
+        ],
+        "ua": [
+          "Погляд Медузи та дальні атаки карають за погане позиціонування.",
+          "Використовуйте телепортацію щоб уникати її зони та безпечно завдавати ударів."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "She-Hulk has strong defensive options and powerful counters.",
+          "Avoid predictable attack patterns and use high-boost cards to break through her guards."
+        ],
+        "ua": [
+          "Жінка-Халк має сильні захисні опції та потужні контрзаходи.",
+          "Уникайте передбачуваних паттернів атак і використовуйте карти з високим бустом, щоб пробити її захист."
+        ]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "Black Panther's mobility and armor-like effects make trades difficult.",
+          "Bait out his defensive responses with smaller attacks before committing heavy combo pieces."
+        ],
+        "ua": [
+          "Мобільність Чорної Пантери та ефекти броні ускладнюють розміни.",
+          "Виманюйте його захисні карти меншими атаками перед тим, як витрачати важкі комбо-карти."
+        ]
+      }
+    }
+  }
+}

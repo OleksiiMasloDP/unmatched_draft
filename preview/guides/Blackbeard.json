@@ -1,0 +1,300 @@
+{
+  "complexity": 4.0,
+  "keyCards": [
+    {
+      "image": "avast_ye.webp"
+    },
+    {
+      "image": "fearsome_and_calculating.webp"
+    },
+    {
+      "image": "plunder.webp"
+    }
+  ],
+  "style": {
+    "en": "Aggro / Value / Hand Control",
+    "ua": "Агро / Велью / Контроль руки"
+  },
+  "features": {
+    "en": [
+      "Extremely flexible ability allows switching between aggressive pressure and slow value play",
+      "Dubloons enable powerful extra-action turns and are the core resource of the character",
+      "Strong hand disruption can remove key cards from the opponent before they can be used",
+      "Excellent value from card effects when the opponent cannot pay the ransom",
+      "Strong ranged pressure combined with two disposable sidekicks",
+      "Can generate multiple attacks and movement actions in a single turn",
+      "Healing and sidekick recursion provide strong sustain in longer games"
+    ],
+    "ua": [
+      "Надзвичайно гнучка здібність дозволяє перемикатися між агресивним тиском і повільною грою на велью",
+      "Дублони дають додаткові дії та є головним ресурсом персонажа",
+      "Сильний контроль руки дозволяє забирати ключові карти суперника до того, як він їх використає",
+      "Величезне велью від ефектів карт, коли суперник не може заплатити викуп",
+      "Сильний дальній тиск у поєднанні з двома одноразовими помічниками",
+      "Може створювати ходи з кількома атаками та переміщеннями",
+      "Лікування та повернення помічників забезпечують хороше виживання у довгих іграх"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Very few defensive cards make him vulnerable to sustained aggression",
+      "Loses a large part of his gameplan if the opponent can consistently steal Dubloons",
+      "Limited card draw makes running out of cards a serious threat",
+      "Strong ranged fighters can pressure him while denying access to Dubloons",
+      "His strongest effects become much less reliable when the opponent has enough Dubloons to pay for them",
+      "Can struggle against fighters who can repeatedly force him to spend cards defensively"
+    ],
+    "ua": [
+      "Дуже мало захистів у колоді робить його вразливим до постійного тиску",
+      "Втрачає значну частину свого геймплану, якщо суперник стабільно забирає дублони",
+      "Обмежений добір карт робить виснаження колоди серйозною загрозою",
+      "Сильні дальники можуть тиснути на нього, одночасно не даючи забирати дублони",
+      "Найсильніші ефекти стають значно менш надійними, коли суперник має достатньо дублонів для викупу",
+      "Може сильно страждати проти бійців, які постійно змушують його витрачати карти в захист"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Track Dubloons constantly — your entire gameplan changes depending on who controls them",
+      "Use your extra action when it creates real value: double attacks, attack plus movement, or closing the game",
+      "Do not underestimate your third action — it can generate cards, force defenses, chase fighters, or finish sidekicks",
+      "Use Plunder to take the opponent's last Dubloon without interacting with them",
+      "Fearsome and Calculating is your most important card — use it when the opponent has no Dubloons",
+      "Use hand disruption to remove the opponent's key cards before committing to your strongest attacks",
+      "Do not always play aggressively — against fighters who cannot reach or steal your Dubloons, slow value play can be much stronger",
+      "Keep your sidekicks relevant and use them to create pressure, block movement, or enable strong attacks",
+      "When you have the resources, look for turns where an extra action converts directly into multiple attacks",
+      "Against aggressive fighters, use your defensive cards carefully — you cannot afford to spend them unnecessarily",
+      "Your goal is not simply to collect Dubloons, but to turn them into tempo, card advantage, and pressure",
+      "If the opponent cannot consistently take your Dubloons, Blackbeard can overwhelm them through superior value"
+    ],
+    "ua": [
+      "Постійно слідкуйте за дублонами — весь ваш геймплан змінюється залежно від того, у кого вони знаходяться",
+      "Використовуйте додаткову дію, коли вона дає реальне велью: дві атаки, атака плюс переміщення або добивання",
+      "Не недооцінюйте третю дію — вона може дати добір, змусити витрачати захист, дозволити наздогнати суперника або добити помічника",
+      "Використовуйте Plunder, щоб забрати останній дублон суперника без прямої взаємодії",
+      "Fearsome and Calculating — ваша найважливіша карта; грайте її, коли в суперника немає дублонів",
+      "Використовуйте контроль руки, щоб прибирати ключові карти суперника перед сильними атаками",
+      "Не завжди грайте агресивно — проти бійців, які не можуть дістатися до вас або забрати дублони, повільна гра на велью може бути значно сильнішою",
+      "Підтримуйте помічників у грі та використовуйте їх для тиску, блокування руху або підготовки сильних атак",
+      "Коли маєте ресурси, шукайте ходи, де додаткова дія безпосередньо перетворюється на кілька атак",
+      "Проти агресивних бійців обережно використовуйте захист — ви не можете дозволити собі витрачати його без необхідності",
+      "Ваша мета — не просто накопичувати дублони, а перетворювати їх на темп, перевагу по картах і тиск",
+      "Якщо суперник не може стабільно забирати ваші дублони, Чорна Борода здатна задавити його перевагою у велью"
+    ]
+  },
+  "matchups": {
+    "Ciri": {
+      "tips": {
+        "en": [
+          "Ciri struggles to withstand Blackbeard's pressure and hand disruption.",
+          "She has a hard time taking Dubloons, which leaves Blackbeard free to generate value.",
+          "Use your pressure and discard effects to keep her from setting up her gameplan."
+        ],
+        "ua": [
+          "Цирі важко витримувати тиск і скидання карт Чорної Бороди.",
+          "Їй складно забирати дублони, тому Чорна Борода може спокійно генерувати велью.",
+          "Тисніть і використовуйте скидання, щоб не дати їй нормально розіграти свій геймплан."
+        ]
+      }
+    },
+    "Donatello": {
+      "tips": {
+        "en": [
+          "Donatello struggles to take Dubloons and has difficulty reaching Blackbeard.",
+          "Use your ranged pressure and hand disruption to keep him from setting up his combo.",
+          "Do not give him time to build his resources and prepare a big combo turn."
+        ],
+        "ua": [
+          "Донателло важко забирати дублони, а також йому складно дістатися до Чорної Бороди.",
+          "Використовуйте дальній тиск і скидання, щоб не дати йому підготувати комбо.",
+          "Не давайте йому часу накопичити ресурси та підготувати великий комбо-хід."
+        ]
+      }
+    },
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "Yennenga struggles to take Dubloons and cannot easily reach Blackbeard.",
+          "Use your ranged pressure and hand disruption to keep her under pressure.",
+          "Your strong defenses make it difficult for her to convert her attacks into Dubloon steals."
+        ],
+        "ua": [
+          "Єнензі складно забирати дублони, а також їй важко дістатися до Чорної Бороди.",
+          "Використовуйте дальній тиск і скидання, щоб постійно тримати її під тиском.",
+          "Сильні захисти ускладнюють їй можливість перетворювати атаки на крадіжку дублонів."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "Blackbeard can disrupt Hood's Symbols very effectively.",
+          "Use your discard effects to remove the cards she needs before she can convert them into value.",
+          "Keep pressure on her so she cannot comfortably set up her Symbols."
+        ],
+        "ua": [
+          "Чорна Борода дуже ефективно ламає символи Шапочки.",
+          "Використовуйте скидання, щоб прибирати потрібні їй карти до того, як вона зможе перетворити їх на велью.",
+          "Постійно тисніть, щоб не дати їй спокійно підготувати свої символи."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "This is a relatively even matchup where both fighters can generate value through discard.",
+          "Dubloons are less reliable here, so the game becomes a battle over whose important cards get discarded.",
+          "Do not rely entirely on your Dubloon advantage — focus on disrupting her key cards."
+        ],
+        "ua": [
+          "Це відносно рівний матчап, де обидва бійці можуть отримувати велью через скидання.",
+          "Дублони тут менш надійні, тому гра перетворюється на боротьбу за те, хто кому скине важливі карти.",
+          "Не покладайтеся лише на перевагу в дублонах — зосередьтеся на скиданні її ключових карт."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": [
+          "Sherlock cannot comfortably play his usual passive game because Blackbeard's pressure will overwhelm him.",
+          "Force him to interact instead of allowing him to sit back and generate value.",
+          "Use your pressure and hand disruption to make him spend his resources."
+        ],
+        "ua": [
+          "Шерлок не може комфортно грати свою звичну пасивну гру, бо тиск Чорної Бороди його задавить.",
+          "Змушуйте його взаємодіяти, а не дозволяйте спокійно сидіти та генерувати велью.",
+          "Використовуйте тиск і скидання, щоб змушувати його витрачати ресурси."
+        ]
+      }
+    },
+    "Robin Hood": {
+      "tips": {
+        "en": [
+          "Robin Hood is dangerous because he can steal Dubloons and apply constant ranged pressure.",
+          "You have limited card draw, so be prepared to spend many cards defending yourself.",
+          "Do not allow him to freely control the distance and repeatedly take your Dubloons."
+        ],
+        "ua": [
+          "Робін Гуд небезпечний тим, що може забирати дублони та постійно тиснути на відстані.",
+          "У вас обмежений добір карт, тому будьте готові витратити багато карт на захист.",
+          "Не дозволяйте йому безкарно контролювати дистанцію та постійно забирати ваші дублони."
+        ]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "Bigfoot can hit Blackbeard extremely hard and punish the lack of defenses.",
+          "Do not underestimate his damage output even if the matchup is statistically favorable.",
+          "Use your ranged pressure and hand disruption to prevent him from getting comfortable."
+        ],
+        "ua": [
+          "Бігфут може дуже боляче пробивати Чорну Бороду та карати за нестачу захисту.",
+          "Не недооцінюйте його шкоду, навіть якщо статистично матчап на користь Бороди.",
+          "Використовуйте дальній тиск і скидання, щоб не дати йому комфортно грати."
+        ]
+      }
+    },
+    "Achilles": {
+      "tips": {
+        "en": [
+          "Achilles can punish Blackbeard heavily through his strong attacks.",
+          "Your lack of defenses makes getting pressured by Achilles particularly dangerous.",
+          "Try to keep him at range and disrupt his important cards before he can establish pressure."
+        ],
+        "ua": [
+          "Ахіллес може дуже сильно карати Чорну Бороду своїми сильними атаками.",
+          "Нестача захисту робить постійний тиск Ахіллеса особливо небезпечним.",
+          "Намагайтеся тримати його на дистанції та скидати важливі карти до того, як він розкрутить тиск."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "Luke can break through Blackbeard's defenses with his strong attacks.",
+          "Avoid letting him establish sustained pressure.",
+          "Use ranged attacks and hand disruption to control his resources before committing to a close fight."
+        ],
+        "ua": [
+          "Люк може пробивати захист Чорної Бороди своїми сильними атаками.",
+          "Не дозволяйте йому створити постійний тиск.",
+          "Використовуйте дальні атаки та скидання, щоб контролювати його ресурси перед переходом у ближній бій."
+        ]
+      }
+    },
+    "Bullseye": {
+      "tips": {
+        "en": [
+          "This is primarily an aggression matchup.",
+          "Marked can win confidently if he gets his Schemes at the right time.",
+          "Use your discard effects to remove his Schemes — without them, his gameplan falls apart."
+        ],
+        "ua": [
+          "Це насамперед матчап на агресію.",
+          "Мічений може впевнено виграти, якщо вчасно отримує свої схеми.",
+          "Використовуйте скидання, щоб прибирати його схеми — без них його геймплан розсипається."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": [
+          "The matchup is highly random and depends heavily on the interactions you hit.",
+          "Blackbeard has good defensive cards against many of Hulk's effects, but Lady Justice is a major problem.",
+          "Try to predict and defend Hulk's high-value attacks while using your pistols to punish Lady Justice."
+        ],
+        "ua": [
+          "Матчап дуже залежить від рандому та конкретних взаємодій.",
+          "У Чорної Бороди є хороші захисти проти багатьох ефектів Халка, але Lady Justice є великою проблемою.",
+          "Намагайтеся вгадувати її сильні атаки та карати Lady Justice своїми пістолетами."
+        ]
+      }
+    },
+    "Raphael": {
+      "tips": {
+        "en": [
+          "This is a volatile matchup that depends heavily on the map.",
+          "Discarding Unbridled or Relentless is particularly valuable.",
+          "On Raphael's map he can overwhelm Blackbeard with mobility and pressure."
+        ],
+        "ua": [
+          "Це складний матчап, який сильно залежить від карти.",
+          "Особливо приємно скидати Unbridled або Relentless.",
+          "На карті Рафаеля він може задавити Чорну Бороду мобільністю та тиском."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Jill has a lot of value and strong defenses.",
+          "The matchup depends heavily on how quickly you can eliminate Daisy.",
+          "Remove Daisy early to make the rest of the matchup much more manageable."
+        ],
+        "ua": [
+          "Джилл має багато велью та сильні захисти.",
+          "Матчап сильно залежить від того, наскільки швидко ви зможете вбити Дейзі.",
+          "Вбивайте Дейзі якомога раніше, щоб значно спростити подальшу гру."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "The matchup contains a lot of randomness because of Strange's Fog interactions.",
+          "Blackbeard has enough cards to punish Strange's healing and keep his health under pressure.",
+          "Force Strange to spend health and resources rather than allowing him to play his usual passive game.",
+          "Map choice can change the matchup significantly."
+        ],
+        "ua": [
+          "У матчапі багато рандому через взаємодію зі здібностями Стренджа та туманами.",
+          "У Чорної Бороди достатньо карт, щоб карати його лікування та постійно тиснути по здоров'ю.",
+          "Змушуйте Стренджа витрачати здоров'я та ресурси, а не дозволяйте йому спокійно грати свою стандартну гру.",
+          "Карта може дуже сильно змінити цей матчап."
+        ]
+      }
+    }
+  }
+}

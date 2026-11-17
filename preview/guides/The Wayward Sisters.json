@@ -1,0 +1,459 @@
+{
+  "complexity": 4.5,
+  "keyCards": [
+    {
+      "image": "all_seeing_familiar.webp"
+    },
+    {
+      "image": "double_double.webp"
+    },
+    {
+      "image": "pricking_of_my_thumbs.webp"
+    },
+    {
+      "image": "something_wicked_this_way_comes.webp"
+    }
+  ],
+  "style": {
+    "en": "Value / Combo",
+    "ua": "Велью / Комбо"
+  },
+  "features": {
+    "en": [
+      "Unlike other 3-figure fighters who cluster to gang up on a target, the Sisters prefer spreading across separate zones of the map so the opponent has nowhere to hide — and on many maps they can reach without a movement boost.",
+      "Can hide a wounded Sister and heal her while fighting with a healthy one instead, making it very hard for the opponent to finish her off — damage they deal just gets erased over time.",
+      "On item-based maps, having three bodies simply lets you claim and control more items than most fighters."
+    ],
+    "ua": [
+      "На відміну від інших трифігуркових бійців, які збираються разом, щоб оточити ціль, Сестри люблять розтягуватися по різних зонах мапи — супернику ніде подітись, і на багатьох мапах вони дістають без посилення руху.",
+      "Можна ховати поранену Сестру і лікувати її, поки б'єтесь здоровою — супернику дуже важко добити поранену, бо завдана шкода поступово нівелюється лікуванням.",
+      "На мапах з предметами три тіла банально дозволяють займати й контролювати більше предметів, ніж більшість персонажів."
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Cauldron management is fiddly — most cards are low printed value, and letting too many cards pile up in the cauldron without spending them on a spell wastes resources.",
+      "Several of her strongest cards (the 0-value zone-count attack/defense in particular) are printed at very low base value, making them extremely vulnerable to strong cancel/ignore-value effects.",
+      "Tempting to overuse the extra-action spell, but extra actions cost extra resources and don't always bring you closer to winning — especially against defense-heavy, high-healing, or high-draw opponents."
+    ],
+    "ua": [
+      "Керування казаном доволі муторне — більшість карт мають низьке надруковане значення, і якщо накопичувати карти в казані, не витрачаючи на закляття, ресурси просто марнуються.",
+      "Кілька найсильніших карт (особливо атака/захист на значення 0, що дорівнює кількості зон) мають дуже низьке базове значення, тому вкрай вразливі до сильних ефектів скасування/ігнору значення.",
+      "Легко захопитися заклинанням додаткової дії, але додаткові дії коштують додаткових ресурсів і не завжди наближають до перемоги — особливо проти суперників з сильним захистом, лікуванням чи великим добором."
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Spread your three Sisters across different zones rather than clustering them together.",
+      "Try to have at least one or two of your key scaling attack/defense cards in your opening hand — realizing their potential is central to the character.",
+      "Only reach for the extra-action spell when you have a strong follow-up combo or you're facing a low-defense opponent — otherwise it usually isn't worth the resources.",
+      "Don't let cards pile up unspent in the cauldron; look to cash them in on a spell rather than let the resource go to waste.",
+      "This is not a fatigue/attrition character — she doesn't have the tools to grind out a long war of attrition, so look to close games out decisively rather than stall."
+    ],
+    "ua": [
+      "Розтягуйте трьох Сестер по різних зонах мари, а не тримайте разом.",
+      "Намагайтеся мати хоча б одну-дві ключові карти, що масштабуються атакою/захистом, у стартовій руці — реалізація їхнього потенціалу критично важлива для персонажа.",
+      "Тягніться до заклинання додаткової дії лише коли є сильне продовження комбо або суперник зі слабким захистом — інакше зазвичай не варте ресурсів.",
+      "Не давайте картам накопичуватись у казані невитраченими — намагайтеся реалізовувати їх у заклинання, а не марнувати ресурс.",
+      "Це не персонаж на фатіг/виснаження — немає інструментів тягнути довгу війну на виснаження, тож краще закривати ігри рішуче, а не затягувати."
+    ]
+  },
+  "matchups": {
+    "Yennenga": {
+      "tips": {
+        "en": [
+          "She has too much health, too many effects, and too many resources for you to win this fight."
+        ],
+        "ua": [
+          "У неї забагато здоров'я, забагато ефектів і ресурсів, щоб виграти цю битву."
+        ]
+      }
+    },
+    "Black Panther": {
+      "tips": {
+        "en": [
+          "If he manages to take your key cards, you simply won't have enough damage to pierce him.",
+          "His attacks are too strong for you to survive.",
+          "Redirecting damage back doesn't help much, since he mostly controls how much damage he deals through boosts."
+        ],
+        "ua": [
+          "Якщо йому вдасться забрати ваші ключові карти, шкоди просто не вистачить його пробити.",
+          "Його атаки занадто сильні, щоб їх пережити.",
+          "Повернення шкоди назад не дуже допомагає, бо він переважно контролює кількість шкоди бустами."
+        ]
+      }
+    },
+    "Dr. Sattler": {
+      "tips": {
+        "en": [
+          "If she gets to play her healing, you simply won't have enough damage left to kill her.",
+          "You need to finish her off before that happens."
+        ],
+        "ua": [
+          "Якщо вона зіграє лікування, шкоди просто не вистачить її вбити.",
+          "Потрібно встигнути забити її до цього."
+        ]
+      }
+    },
+    "Sherlock Holmes": {
+      "tips": {
+        "en": [
+          "Too much health for you to kill him — he'll both outlast you and manage to pierce you."
+        ],
+        "ua": [
+          "Забагато здоров'я, щоб ви змогли його вбити — він і переживе вас, і зможе пробивати."
+        ]
+      }
+    },
+    "Elektra": {
+      "tips": {
+        "en": [
+          "She outlasts you easily — too much survivability, and too many sidekicks."
+        ],
+        "ua": [
+          "Вона легко вас переживає — забагато живучості й забагато помічників."
+        ]
+      }
+    },
+    "Doctor Strange": {
+      "tips": {
+        "en": [
+          "He always has cards in hand and strong defensive effects.",
+          "You have no way to cancel his healing."
+        ],
+        "ua": [
+          "У нього завжди є карти в руці та сильні ефекти в захисті.",
+          "Його лікування ви ніяк не можете скасувати."
+        ]
+      }
+    },
+    "Luke Cage": {
+      "tips": {
+        "en": [
+          "Too many strong attacks for you to handle.",
+          "You can try to lean on auto-damage, but he can keep attacking you through his sidekick.",
+          "His passive also makes even the Sisters' strongest attacks too weak against him."
+        ],
+        "ua": [
+          "Забагато сильних атак, щоб з ними впоратись.",
+          "Можна орієнтуватись на авто-урон, але він може постійно атакувати вас через помічника.",
+          "Через його пасивку навіть найсильніші атаки Сестер стають надто слабкими проти нього."
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "You can't cancel her effect, so even 2 attacks from her can kill one of the Sisters."
+        ],
+        "ua": [
+          "Ви не можете скасувати її ефект, через що навіть за 2 атаки вона може вбити одну із Сестер."
+        ]
+      }
+    },
+    "Moon Knight": {
+      "tips": {
+        "en": [
+          "In Khonshu form he ignores your auto-damage, and can kill one of the Sisters in just 2 attacks.",
+          "You can only attack him in Moon Knight form, and that alone simply isn't enough to kill him."
+        ],
+        "ua": [
+          "У формі Хоншу він ігнорує ваш авто-урон і може вбити одну із Сестер за 2 атаки.",
+          "Атакувати його можна лише у формі Moon Knight, а цього просто не вистачає, щоб його вбити."
+        ]
+      }
+    },
+    "Jill Trent": {
+      "tips": {
+        "en": [
+          "Not enough damage to pierce her — too much healing and defense."
+        ],
+        "ua": ["Не вистачає шкоди її пробити — забагато лікування й захисту."]
+      }
+    },
+    "Titania": {
+      "tips": {
+        "en": ["Too much healing and good defenses."],
+        "ua": ["Забагато лікування і хороших захистів."]
+      }
+    },
+    "Daredevil": {
+      "tips": {
+        "en": [
+          "Your only option is to pin him down and try to combo him out.",
+          "The problem is he can run away, and since there's nothing to cancel, he's guaranteed to either reshuffle his deck or heal."
+        ],
+        "ua": [
+          "Єдиний варіант — затиснути й спробувати забити комбо.",
+          "Проблема в тому, що він може втекти, а оскільки скасувань немає, він гарантовано або перетасовує колоду, або лікується."
+        ]
+      }
+    },
+    "Medusa": {
+      "tips": {
+        "en": [
+          "You'll need to use everything you have — strong attacks, auto-damage, and careful card control.",
+          "Her discards can sometimes actually work in your favor — discard the cards you need into the cauldron.",
+          "A good map for the Sisters is essential here."
+        ],
+        "ua": [
+          "Доведеться використати все, що є — сильні атаки, авто-урон і правильний контроль мапи.",
+          "Її скиди іноді можуть грати вам на руку — скидайте в казан ті карти, які вам потрібні.",
+          "Тут обов'язково потрібна хороша мапа для Сестер."
+        ]
+      }
+    },
+    "Eredin": {
+      "tips": {
+        "en": [
+          "Don't let him hold onto his auto-damage-ignore card for long — it can really wreck your game.",
+          "Hope he doesn't draw the cards he needs, and play aggressively so he burns through defenses or runs out of them entirely."
+        ],
+        "ua": [
+          "Не давайте йому довго тримати карту з ігнором авто-урону — вона може серйозно зіпсувати вам гру.",
+          "Сподівайтесь, що йому не прийдуть потрібні карти, і грайте агресивно, щоб він витрачав захисти або взагалі лишився без них."
+        ]
+      }
+    },
+    "Sun Wukong": {
+      "tips": {
+        "en": [
+          "He has no cancel effects, which is a big plus for you.",
+          "Better to go first so you can impose your game before he has clones out.",
+          "Play aggressively and try to hit him as much as possible."
+        ],
+        "ua": [
+          "У нього немає скасувань ефектів, це велика перевага для вас.",
+          "Краще ходити першими, щоб нав'язати свою гру, поки в нього ще немає клонів.",
+          "Грайте агресивно і максимально намагайтесь його бити."
+        ]
+      }
+    },
+    "Ciri": {
+      "tips": {
+        "en": [
+          "Despite having a lot of defenses, she often doesn't want to play many of them early on, or she won't get full value from them.",
+          "If she fails to find her healing, you can finish her off."
+        ],
+        "ua": [
+          "Попри велику кількість захистів, багато з них вона не хоче грати на початку гри, інакше не отримає з них повної цінності.",
+          "Якщо вона не знайде лікування — ви зможете її забити."
+        ]
+      }
+    },
+    "She-Hulk": {
+      "tips": {
+        "en": ["Play with constant pressure and consistently strong attacks."],
+        "ua": ["Грайте постійним пресингом і постійно сильними атаками."]
+      }
+    },
+    "Bigfoot": {
+      "tips": {
+        "en": [
+          "You'll need to focus specifically on Bigfoot himself — you won't have enough resources to kill both him and his sidekick.",
+          "Lean on the auto-damage from your cards and effects."
+        ],
+        "ua": [
+          "Доведеться фокусуватись саме на Бігфуті, бо ресурсів вбити обох просто не вистачить.",
+          "Розраховуйте на авто-урон від ваших карт і ефектів."
+        ]
+      }
+    },
+    "Yennefer & Triss": {
+      "tips": {
+        "en": [
+          "Keep your Sisters alive as long as possible and pressure her gradually.",
+          "Sooner or later she'll run out of defenses (or not draw them), and that's your moment to finish her off — but you'll need to read the interactions correctly."
+        ],
+        "ua": [
+          "Тримайте Сестер живими якомога довше і потихеньку пресингуйте.",
+          "Рано чи пізно в неї закінчаться захисти (або вони просто не прийдуть) — це і буде ваш момент, щоб добити, але доведеться вгадувати взаємодії."
+        ]
+      }
+    },
+    "Nikola Tesla": {
+      "tips": {
+        "en": [
+          "Pressure him and land strong attacks, don't let his coils stay charged.",
+          "The map matters a lot here.",
+          "Watch out for his zone auto-damage.",
+          "Remember he can heal."
+        ],
+        "ua": [
+          "Пресингуйте його й проводьте сильні атаки, не давайте його котушкам заряджатися.",
+          "Тут дуже важлива мапа.",
+          "Бережіться його авто-урону по зоні.",
+          "Пам'ятайте, що він може лікуватись."
+        ]
+      }
+    },
+    "T-Rex": {
+      "tips": {
+        "en": [
+          "You need a good map and correct positioning.",
+          "With no cancel effects on either side, it comes down to who bites through the other first.",
+          "Don't let him kill a Sister in a single turn."
+        ],
+        "ua": [
+          "Потрібна хороша мапа і правильне позиціонування.",
+          "Через відсутність скасувань з обох боків це битва, хто кого швидше загризе.",
+          "Не дайте йому вбити Сестру за один хід."
+        ]
+      }
+    },
+    "Robert Muldoon": {
+      "tips": {
+        "en": [
+          "He has few defenses — you need to pull him out from behind his wall of workers and traps (for example with a scheme for 2 spells, or by attacking a worker and then moving).",
+          "You'll have to chip him down gradually, since he can run away using his cards and hide behind the wall again."
+        ],
+        "ua": [
+          "У нього мало захистів — треба витягнути його з-за стіни робітників і пасток (наприклад, схемою на 2 заклинання, або атакувавши робітника й потім перемістившись).",
+          "Доведеться гризти його потроху, бо він вміє тікати картами й знову ховатись за стіною."
+        ]
+      }
+    },
+    "Winter Soldier": {
+      "tips": {
+        "en": [
+          "Attack constantly — it all comes down to a single interaction and his lack of defenses.",
+          "Don't pick a map with tokens against him."
+        ],
+        "ua": [
+          "Атакуйте постійно — все зводиться до одного вгаданого взаємодії й відсутності в нього захистів.",
+          "Не беріть проти нього мапу з токенами."
+        ]
+      }
+    },
+    "Bruce Lee": {
+      "tips": {
+        "en": [
+          "You need to read interactions correctly, redirect damage back at him, reposition, and so on.",
+          "He often wants to play his 3 in defense, which lets you play your 0 in attack and pierce him well."
+        ],
+        "ua": [
+          "Потрібно правильно вгадувати взаємодії, повертати йому шкоду, переміщуватись і так далі.",
+          "Він часто хоче грати свою 3 в захист, що дозволяє вам грати 0 в атаку і добре його пробивати."
+        ]
+      }
+    },
+    "Philippa": {
+      "tips": {
+        "en": [
+          "Her defenses are fairly low, so there's a good chance to bring her health down quickly.",
+          "Keep in mind she can deal damage across a whole zone, hitting several Sisters at once."
+        ],
+        "ua": [
+          "У неї доволі низькі захисти, тож є шанс досить швидко опустити їй здоров'я.",
+          "Враховуйте, що вона може завдавати шкоди по всій зоні, зачіпаючи одразу кількох Сестер."
+        ]
+      }
+    },
+    "Bloody Mary": {
+      "tips": {
+        "en": [
+          "You'll need to read her interactions and play them correctly, otherwise things can go badly wrong."
+        ],
+        "ua": [
+          "Доведеться вгадувати її взаємодії і грати їх правильно, інакше все може піти не так."
+        ]
+      }
+    },
+    "Golden Bat": {
+      "tips": {
+        "en": [
+          "He doesn't have that many defenses and many of them aren't high value, so sustained pressure eventually wears him down.",
+          "The right map and positioning gives you easy access to hit him with any of the Sisters.",
+          "He may try to bait out your damage-redirect card — if it doesn't land, he takes a lot of damage."
+        ],
+        "ua": [
+          "У нього небагато захистів, і багато з них невисокого значення, тож постійний пресинг рано чи пізно він не витримує.",
+          "Правильна мапа й позиціонування дають легкий доступ дістати до нього будь-якою з Сестер.",
+          "Він може намагатися виманити ваш захист з поверненням шкоди — якщо не вийде, він отримає дуже багато ушкоджень."
+        ]
+      }
+    },
+    "Tomoe Gozen": {
+      "tips": {
+        "en": [
+          "She lacks health and resources, especially if you gradually heal the Sisters.",
+          "Playing her 7 in attack is risky for her since you can redirect the damage back — hold your redirect cards specifically for that, and pressure her slowly."
+        ],
+        "ua": [
+          "Їй бракує здоров'я й ресурсів, особливо якщо потроху лікувати Сестер.",
+          "Грати її 7 в атаку для неї ризиковано, бо ви можете повернути шкоду назад — бережіть карти повернення саме на цей випадок і потихеньку пресингуйте."
+        ]
+      }
+    },
+    "The Genie": {
+      "tips": {
+        "en": [
+          "It can come down to the very last cards, but it's hard for him to kill 3 targets standing apart from each other."
+        ],
+        "ua": [
+          "Все може дійти до останніх карт, але йому складно вбити 3 цілі, які стоять окремо одна від одної."
+        ]
+      }
+    },
+    "Ghost Rider": {
+      "tips": {
+        "en": [
+          "Be careful of his combo where he can move himself and one Sister next to a second one, then deal 5 damage to himself and both of them in the attack.",
+          "Pick a map with clearly-cut zones."
+        ],
+        "ua": [
+          "Обережно з його комбо, коли він може підсунути себе й одну із Сестер до другої, а потім атакою завдати по 5 шкоди собі й обом сестрам.",
+          "Обирайте мапу з чітко нарізаними зонами."
+        ]
+      }
+    },
+    "Pandora": {
+      "tips": {
+        "en": [
+          "She risks hurting herself with her own ability quite a bit.",
+          "Play aggressively and she'll eventually crack under the pressure."
+        ],
+        "ua": [
+          "Вона доволі сильно ризикує нашкодити собі власною здібністю.",
+          "Грайте агресивно, і в якийсь момент вона не витримає."
+        ]
+      }
+    },
+    "Loki": {
+      "tips": {
+        "en": [
+          "He lacks the card draw to stop your pressure.",
+          "You can safely play into his 4, healing the Sisters afterward.",
+          "Be aggressive against him."
+        ],
+        "ua": [
+          "Йому бракує добору, щоб зупинити ваш пресинг.",
+          "Можна спокійно грати проти його 4-ки, лікуючи Сестер після цього.",
+          "Будьте агресивні проти нього."
+        ]
+      }
+    },
+    "Leshen": {
+      "tips": {
+        "en": [
+          "Very few defenses — you can catch him with a combo.",
+          "Keep 'By the Pricking of My Thumbs' in hand to punish him from his second attack."
+        ],
+        "ua": [
+          "Дуже мало захистів — можна підловити його комбо.",
+          "Бережіть 'В мене палець засвербів', щоб покарати його за другу атаку."
+        ]
+      }
+    },
+    "Annie Christmas": {
+      "tips": {
+        "en": [
+          "Her ability doesn't work against you, meaning she can't realize its full potential."
+        ],
+        "ua": [
+          "Її здібність проти вас не працює, а отже вона не може реалізувати себе наповну."
+        ]
+      }
+    }
+  }
+}

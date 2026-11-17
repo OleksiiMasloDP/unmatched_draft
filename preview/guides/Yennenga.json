@@ -1,0 +1,86 @@
+{
+  "complexity": 3.5,
+  "keyCards": [
+    { "image": "surprise_volley.webp" },
+    { "image": "rain_of_arrows.webp" },
+    { "image": "shield_formation.webp" }
+  ],
+  "style": {
+    "en": "Value / Tempo / Aggro / Combo",
+    "ua": "Велью / Темпо / Агро / Комбо"
+  },
+  "features": {
+    "en": [
+      "Extreme flexibility: can easily switch between standard slow value, aggressive tempo, pure aggro, or combo setups",
+      "Incredible survivability using good base defense and unique mechanics to disperse damage onto respawnable 2-HP archer sidekicks",
+      "High skill expression that rewards strong game fundamentals and deep matchup spread knowledge",
+      "Potential to gain massive action advantage and even burst down certain fighters in a single turn"
+    ],
+    "ua": [
+      "Екстремальна гнучкість: здатна легко перемикатися між повільним велью, агресивним темпом, чистим агро чи комбо-стратегіями",
+      "Неймовірна виживаність завдяки хорошому базовому захисту та механіці перенаправлення шкоди на лучників (помічники з 2 HP)",
+      "Високий поріг майстерності, який щедро винагороджує за хороше знання фундаментальних основ гри та матчапів",
+      "Здатність отримувати величезну перевагу в діях та знищувати деяких бійців за один єдиний хід"
+    ]
+  },
+  "weaknesses": {
+    "en": [
+      "Suffers heavily against hyper-value fighters who can continuously cheat infinite value into play",
+      "Lacks direct cancel effects, making her highly vulnerable to fighters with exceptionally powerful card effects",
+      "Requires precise positioning and tricky archer management; grouping them leaves them open to dangerous area-of-effect damage"
+    ],
+    "ua": [
+      "Страждає проти гіпер-велью персонажів, які здатні безкінечно генерувати ресурси на полі бою",
+      "Повна відсутність карток скасування ефектів (увімкнень), що робить її вразливою до надпотужних ворожих прийомів",
+      "Вимагає ювелірного позиціонування; скупчення лучників в одній зоні робить їх легкою мішенню для масової шкоди (AoE)"
+    ]
+  },
+  "generalTips": {
+    "en": [
+      "Recognize your win condition early: know when to poke for a combo, when to control tempo, and when to rush the enemy down",
+      "Master archer deployment: spread them out to control map space and avoid enemy boost combos, or body-block to shield Yennenga",
+      "Carefully balance your choices between respawning archers for defense or taking action gains for aggressive tempo swings",
+      "Synergize movement effects to setup point-blank shots, land high-value Momentum Shifts, or trap enemies into Jaws of the Beast",
+      "Use clever baits and mix-ups to control the board, minimize your own boosts, and abuse auto-damage when pressured"
+    ],
+    "ua": [
+      "Вчасно визначайте свій план на гру: знайте, кого потрібно повільно виснажувати, а кого — наздоганяти й вибухово знищувати",
+      "Грамотно керуйте лучниками: розділяйте їх для контролю карти або використовуйте як живий щит для захисту самої Йенненги",
+      "Балансуйте вибір: вчасно вирішуйте, коли краще відродити лучників для захисту, а коли — взяти додаткові дії для темпу",
+      "Поєднуйте ефекти переміщення для реалізації пострілів впритул, потужних зсувів імпульсу або пасток у Щелепи звіра",
+      "Використовуйте блеф, контролюйте карту та витискайте максимум з авто-шкоди, якщо опонент намагається затиснути вас"
+    ]
+  },
+  "matchups": {
+    "Donatello": {
+      "tips": {
+        "en": [
+          "Donatello's winning plan is built around baiting out and using up all of your defense cards with a value of 4, so watch how many of those you're spending",
+          "Play proactively — spend extra-action turns to actively pressure Donatello rather than waiting for him to come to you",
+          "Use that pressure to bait out his defense cards, then land a couple of attacks into the opening once they're gone",
+          "Ignore Metalhead completely — it's not worth reacting to at all",
+          "Keeping him under constant pressure also keeps his hand small, which is what actually takes the danger out of his big combo turn",
+          "He also grinds his carts against your archers for free value along the way — don't let that go completely unanswered"
+        ],
+        "ua": [
+          "Виграшний план Донателло будується на тому, щоб виманити й витратити всі ваші картки захисту зі значенням 4 — стежте, скільки їх ви розмінюєте",
+          "Грайте проактивно — використовуйте ходи з додатковими діями, щоб самим пресувати Донателло, а не чекати, поки він піде на вас",
+          "Цим тиском виманюйте його захисти, а потім вписуйте пару атак у порожнє, коли захисту вже немає",
+          "Металхеда ігноруйте повністю — реагувати на нього не варто взагалі",
+          "Постійний тиск заодно тримає його руку маленькою — а саме мала рука і забирає небезпеку з його великого комбо-ходу",
+          "Він також безкоштовно розкручує вагончики об ваших лучників по ходу гри — не давайте йому робити це зовсім безкарно"
+        ]
+      }
+    },
+    "Little Red Riding Hood": {
+      "tips": {
+        "en": [
+          "As Yennenga, you can largely disregard her Huntsman — don't waste effort reacting to it and just keep your offense focused directly on Little Red Riding Hood herself"
+        ],
+        "ua": [
+          "За Йеннегу можна сміливо забити на її Мисливця — не витрачайте зусилля на реакцію на нього, а тримайте тиск напряму на саму Червону Шапочку"
+        ]
+      }
+    }
+  }
+}
