@@ -1451,7 +1451,7 @@ onMounted(async () => {
 
   timers.push(
     setInterval(() => (muIndex.value += 1), 4800),
-    setInterval(packTick, 1100),
+    setInterval(packTick, 2000),
     setInterval(onlineTick, 1100),
     setInterval(nextTool, 6000),
   );
@@ -2338,15 +2338,15 @@ onBeforeUnmount(() => {
   color: var(--text-muted, #94a3b8);
 }
 .pk-banner {
-  padding: 8px 14px;
-  margin: 12px 0;
+  padding: 10px 14px;
+  margin: 22px 0 18px;
   font-size: 0.88rem;
   font-weight: 700;
   text-align: center;
   border-radius: 10px;
   transition:
-    background 0.4s ease,
-    border-color 0.4s ease;
+    background 0.8s ease,
+    border-color 0.8s ease;
 }
 .pk-banner.is-you {
   background: rgba(var(--color-player-rgb, 79, 124, 255), 0.18);
@@ -2407,32 +2407,33 @@ onBeforeUnmount(() => {
 .pk-enter-active,
 .pk-leave-active {
   transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
+    opacity 0.9s ease,
+    transform 0.9s ease;
 }
 .pk-enter-from {
   opacity: 0;
-  transform: translateY(24px) scale(0.9);
+  transform: translateY(14px) scale(0.96);
 }
 .pk-leave-active {
   position: absolute;
   z-index: 2;
+  width: calc((100% - 30px) / 4);
 }
 .pk-leave-to {
   opacity: 0;
-  transform: translateY(-30px) scale(0.85);
+  transform: translateY(-12px) scale(0.96);
 }
 .pk-move {
-  transition: transform 0.5s ease;
+  transition: transform 0.9s ease;
 }
 .pk-kept-enter-active {
   transition:
-    opacity 0.5s ease,
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.3);
+    opacity 0.9s ease,
+    transform 0.9s ease;
 }
 .pk-kept-enter-from {
   opacity: 0;
-  transform: scale(0.3);
+  transform: scale(0.85);
 }
 
 /* online */
@@ -2679,7 +2680,7 @@ onBeforeUnmount(() => {
 /* tools */
 .tl-grid {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 480px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
   gap: 40px;
   align-items: center;
   margin-top: 36px;
@@ -3060,7 +3061,7 @@ onBeforeUnmount(() => {
 
 @media (max-width: 820px) {
   .mu-slide {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .mu-hero {
     max-width: 260px;
@@ -3070,22 +3071,34 @@ onBeforeUnmount(() => {
     margin: -6px 0;
   }
   .mu-foes {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .tl-grid,
   .rg-grid,
   .home-online {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
   }
+  .tl-grid > *,
+  .rg-grid > *,
+  .home-online > * {
+    min-width: 0;
+  }
+  .tl-stage {
+    aspect-ratio: auto;
+    min-height: 420px;
+  }
   .pk-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .pk-side {
     order: 2;
   }
   .pk-kept {
     grid-template-columns: repeat(4, 1fr);
+  }
+  .pk-leave-active {
+    width: calc((100% - 10px) / 2);
   }
   .pk-grid {
     grid-template-columns: repeat(2, 1fr);
