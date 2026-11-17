@@ -1,175 +1,177 @@
 <template>
   <div ref="root" class="rmap" :class="{ 'is-wide': wide }">
-    <div class="rmap-frame">
-      <svg
-        class="rmap-svg"
-        :viewBox="`0 0 ${W} ${H}`"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <linearGradient
-            id="rmap-sky"
-            :x1="0"
-            :y1="wide ? 0 : 1"
-            :x2="wide ? 1 : 0"
-            :y2="0"
-          >
-            <stop offset="0" stop-color="#0d1f14" />
-            <stop offset="0.3" stop-color="#16301f" />
-            <stop offset="0.55" stop-color="#1d2433" />
-            <stop offset="0.8" stop-color="#2b1a2e" />
-            <stop offset="1" stop-color="#2a0d18" />
-          </linearGradient>
-          <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
-            <stop offset="0.6" stop-color="#000" stop-opacity="0" />
-            <stop offset="1" stop-color="#000" stop-opacity="0.75" />
-          </radialGradient>
-          <radialGradient id="rmap-glow" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0" stop-color="#ff4d6d" stop-opacity="0.55" />
-            <stop offset="1" stop-color="#ff4d6d" stop-opacity="0" />
-          </radialGradient>
-          <linearGradient
-            v-for="zone in zones"
-            :id="`rmap-zone-${zone.id}`"
-            :key="zone.id"
-            x1="0"
-            y1="0"
-            :x2="wide ? 1 : 0"
-            :y2="wide ? 0 : 1"
-          >
-            <stop offset="0" :stop-color="zone.tint" stop-opacity="0" />
-            <stop offset="0.5" :stop-color="zone.tint" stop-opacity="0.22" />
-            <stop offset="1" :stop-color="zone.tint" stop-opacity="0" />
-          </linearGradient>
-          <filter id="rmap-ink">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.04"
-              numOctaves="2"
-              seed="3"
-            />
-            <feDisplacementMap in="SourceGraphic" scale="3" />
-          </filter>
-        </defs>
-        <rect :width="W" :height="H" fill="url(#rmap-sky)" />
-        <circle
-          :cx="bossSpot.x"
-          :cy="bossSpot.y"
-          r="190"
-          fill="url(#rmap-glow)"
-          class="rmap-bossglow"
-        />
-        <g v-for="item in scenery" :key="item.key" :opacity="item.opacity">
-          <g v-if="item.kind === 'mountain'">
-            <polygon :points="item.points" :fill="item.fill" />
-            <polygon :points="item.cap" fill="#c9d3e0" opacity="0.55" />
+    <div class="rmap-scroll">
+      <div class="rmap-frame">
+        <svg
+          class="rmap-svg"
+          :viewBox="`0 0 ${W} ${H}`"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <linearGradient
+              id="rmap-sky"
+              :x1="0"
+              :y1="wide ? 0 : 1"
+              :x2="wide ? 1 : 0"
+              :y2="0"
+            >
+              <stop offset="0" stop-color="#0d1f14" />
+              <stop offset="0.3" stop-color="#16301f" />
+              <stop offset="0.55" stop-color="#1d2433" />
+              <stop offset="0.8" stop-color="#2b1a2e" />
+              <stop offset="1" stop-color="#2a0d18" />
+            </linearGradient>
+            <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
+              <stop offset="0.6" stop-color="#000" stop-opacity="0" />
+              <stop offset="1" stop-color="#000" stop-opacity="0.75" />
+            </radialGradient>
+            <radialGradient id="rmap-glow" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#ff4d6d" stop-opacity="0.55" />
+              <stop offset="1" stop-color="#ff4d6d" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient
+              v-for="zone in zones"
+              :id="`rmap-zone-${zone.id}`"
+              :key="zone.id"
+              x1="0"
+              y1="0"
+              :x2="wide ? 1 : 0"
+              :y2="wide ? 0 : 1"
+            >
+              <stop offset="0" :stop-color="zone.tint" stop-opacity="0" />
+              <stop offset="0.5" :stop-color="zone.tint" stop-opacity="0.22" />
+              <stop offset="1" :stop-color="zone.tint" stop-opacity="0" />
+            </linearGradient>
+            <filter id="rmap-ink">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.04"
+                numOctaves="2"
+                seed="3"
+              />
+              <feDisplacementMap in="SourceGraphic" scale="3" />
+            </filter>
+          </defs>
+          <rect :width="W" :height="H" fill="url(#rmap-sky)" />
+          <circle
+            :cx="bossSpot.x"
+            :cy="bossSpot.y"
+            r="190"
+            fill="url(#rmap-glow)"
+            class="rmap-bossglow"
+          />
+          <g v-for="item in scenery" :key="item.key" :opacity="item.opacity">
+            <g v-if="item.kind === 'mountain'">
+              <polygon :points="item.points" :fill="item.fill" />
+              <polygon :points="item.cap" fill="#c9d3e0" opacity="0.55" />
+            </g>
+            <g v-else-if="item.kind === 'pine'" :fill="item.fill">
+              <polygon :points="item.points" />
+              <polygon :points="item.points2" />
+              <rect :x="item.x - 2" :y="item.y" width="4" height="9" />
+            </g>
+            <g v-else-if="item.kind === 'pillar'" :fill="item.fill">
+              <rect :x="item.x" :y="item.y" :width="item.w" :height="item.h" />
+              <rect
+                :x="item.x - 3"
+                :y="item.y - 5"
+                :width="item.w + 6"
+                height="6"
+              />
+            </g>
+            <g v-else-if="item.kind === 'tower'" :fill="item.fill">
+              <rect :x="item.x" :y="item.y" :width="item.w" :height="item.h" />
+              <polygon :points="item.points" />
+              <rect
+                :x="item.x + item.w / 2 - 2"
+                :y="item.y + 14"
+                width="4"
+                height="9"
+                fill="#ff9f43"
+                opacity="0.8"
+              />
+            </g>
           </g>
-          <g v-else-if="item.kind === 'pine'" :fill="item.fill">
-            <polygon :points="item.points" />
-            <polygon :points="item.points2" />
-            <rect :x="item.x - 2" :y="item.y" width="4" height="9" />
-          </g>
-          <g v-else-if="item.kind === 'pillar'" :fill="item.fill">
-            <rect :x="item.x" :y="item.y" :width="item.w" :height="item.h" />
+          <g v-for="zone in zones" :key="zone.id">
             <rect
-              :x="item.x - 3"
-              :y="item.y - 5"
-              :width="item.w + 6"
-              height="6"
+              :x="zone.x"
+              :y="zone.y"
+              :width="zone.w"
+              :height="zone.h"
+              :fill="`url(#rmap-zone-${zone.id})`"
+            />
+            <text
+              :x="zone.x + 18"
+              :y="wide ? H - 16 : zone.y + 26"
+              class="rmap-zone"
+            >
+              {{ labels[zone.id] || "" }}
+            </text>
+          </g>
+          <g class="rmap-fog">
+            <ellipse
+              v-for="fog in fogs"
+              :key="fog.key"
+              :cx="fog.x"
+              :cy="fog.y"
+              :rx="fog.rx"
+              :ry="fog.ry"
+              fill="#fff"
+              opacity="0.05"
             />
           </g>
-          <g v-else-if="item.kind === 'tower'" :fill="item.fill">
-            <rect :x="item.x" :y="item.y" :width="item.w" :height="item.h" />
-            <polygon :points="item.points" />
-            <rect
-              :x="item.x + item.w / 2 - 2"
-              :y="item.y + 14"
-              width="4"
-              height="9"
-              fill="#ff9f43"
-              opacity="0.8"
+          <g filter="url(#rmap-ink)" fill="none" stroke-linecap="round">
+            <path
+              v-for="edge in edges"
+              :key="edge.key"
+              class="rmap-edge"
+              :class="{ 'is-live': edge.live, 'is-walked': edge.walked }"
+              :d="edge.d"
             />
           </g>
-        </g>
-        <g v-for="zone in zones" :key="zone.id">
-          <rect
-            :x="zone.x"
-            :y="zone.y"
-            :width="zone.w"
-            :height="zone.h"
-            :fill="`url(#rmap-zone-${zone.id})`"
-          />
-          <text
-            :x="zone.x + 18"
-            :y="wide ? H - 16 : zone.y + 26"
-            class="rmap-zone"
-          >
-            {{ labels[zone.id] || "" }}
-          </text>
-        </g>
-        <g class="rmap-fog">
-          <ellipse
-            v-for="fog in fogs"
-            :key="fog.key"
-            :cx="fog.x"
-            :cy="fog.y"
-            :rx="fog.rx"
-            :ry="fog.ry"
-            fill="#fff"
-            opacity="0.05"
-          />
-        </g>
-        <g filter="url(#rmap-ink)" fill="none" stroke-linecap="round">
-          <path
-            v-for="edge in edges"
-            :key="edge.key"
-            class="rmap-edge"
-            :class="{ 'is-live': edge.live, 'is-walked': edge.walked }"
-            :d="edge.d"
-          />
-        </g>
-        <rect :width="W" :height="H" fill="url(#rmap-vig)" />
-      </svg>
-      <button
-        v-for="node in nodes"
-        :key="node.id"
-        class="rmap-node"
-        :class="[
-          'm-' + node.metal,
-          {
-            'is-live': node.live,
-            'is-visited': node.visited,
-            'is-current': node.current,
-            'is-locked': !node.live && !node.visited,
-            'is-boss': node.type === 'boss',
-          },
-        ]"
-        :style="{
-          left: node.left + '%',
-          top: node.top + '%',
-          '--c': node.color,
-        }"
-        :disabled="!node.live"
-        @click="emit('enter', node.id)"
-      >
-        <span class="rmap-medal">
-          <RogueIcon
-            :name="node.icon"
-            :metal="node.metal"
-            :size="node.type === 'boss' ? '38px' : '28px'"
-          />
-          <span v-if="node.visited" class="rmap-seal">
-            <RogueIcon name="laurels" metal="gold" size="14px" />
+          <rect :width="W" :height="H" fill="url(#rmap-vig)" />
+        </svg>
+        <button
+          v-for="node in nodes"
+          :key="node.id"
+          class="rmap-node"
+          :class="[
+            'm-' + node.metal,
+            {
+              'is-live': node.live,
+              'is-visited': node.visited,
+              'is-current': node.current,
+              'is-locked': !node.live && !node.visited,
+              'is-boss': node.type === 'boss',
+            },
+          ]"
+          :style="{
+            left: node.left + '%',
+            top: node.top + '%',
+            '--c': node.color,
+          }"
+          :disabled="!node.live"
+          @click="emit('enter', node.id)"
+        >
+          <span class="rmap-medal">
+            <RogueIcon
+              :name="node.icon"
+              :metal="node.metal"
+              :size="node.type === 'boss' ? '38px' : '28px'"
+            />
+            <span v-if="node.visited" class="rmap-seal">
+              <RogueIcon name="laurels" metal="gold" size="14px" />
+            </span>
           </span>
-        </span>
-        <span class="rmap-tip">{{ node.label }}</span>
-      </button>
-      <div
-        v-if="heroImage"
-        class="rmap-token"
-        :style="{ left: tokenSpot.left + '%', top: tokenSpot.top + '%' }"
-      >
-        <img :src="heroImage" alt="" />
+          <span class="rmap-tip">{{ node.label }}</span>
+        </button>
+        <div
+          v-if="heroImage"
+          class="rmap-token"
+          :style="{ left: tokenSpot.left + '%', top: tokenSpot.top + '%' }"
+        >
+          <img :src="heroImage" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -483,11 +485,24 @@ function animate() {
       duration: 0.9,
       ease: "sine.inOut",
     });
-    if (!wide.value) {
-      const focus =
-        root.value.querySelector(".rmap-node.is-live") ||
-        root.value.querySelector(".rmap-token");
-      focus?.scrollIntoView({ block: "center", behavior: "smooth" });
+    const focus =
+      root.value.querySelector(".rmap-node.is-live") ||
+      root.value.querySelector(".rmap-token");
+    const box = root.value.querySelector(".rmap-scroll");
+    if (!focus) return;
+    if (wide.value) {
+      const spot = focus.getBoundingClientRect();
+      const frame = box.getBoundingClientRect();
+      box.scrollTo({
+        left: box.scrollLeft + spot.left - frame.left - frame.width / 2,
+        behavior: "smooth",
+      });
+    } else {
+      focus.scrollIntoView({
+        block: "center",
+        inline: "center",
+        behavior: "smooth",
+      });
     }
   }, root.value);
 }
@@ -517,16 +532,22 @@ onBeforeUnmount(() => {
 <style scoped>
 .rmap {
   width: 100%;
-  max-width: 640px;
   margin: 0 auto;
 }
 
-.rmap.is-wide {
-  max-width: 1400px;
+.rmap-scroll {
+  overflow: auto;
+  max-width: 100%;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .rmap-frame {
   position: relative;
+  width: 100%;
+  min-width: 600px;
+  max-width: 760px;
+  margin: 0 auto;
   border: 3px solid #5a4630;
   border-radius: 14px;
   box-shadow:
@@ -534,6 +555,11 @@ onBeforeUnmount(() => {
     0 0 0 5px #8a6c43,
     0 24px 50px rgba(0, 0, 0, 0.6);
   overflow: hidden;
+}
+
+.rmap.is-wide .rmap-frame {
+  min-width: 1100px;
+  max-width: 1500px;
 }
 
 .rmap-svg {

@@ -5,7 +5,12 @@
       :result-label="t('rogueAfterBattle')"
       @result-action="afterBattle"
     />
-    <div v-else class="rogue-page container" ref="root">
+    <div
+      v-else
+      class="rogue-page container"
+      :class="{ 'is-map': run.phase === 'map' }"
+      ref="root"
+    >
       <div class="rogue-title-row">
         <h1 class="page-main-title">{{ t("rogueTitle") }}</h1>
         <span class="rogue-beta">{{ t("rogueBeta") }}</span>
@@ -1501,5 +1506,9 @@ onBeforeUnmount(() => {
 }
 .rogue-page {
   padding-bottom: 84px;
+}
+
+.rogue-page.is-map {
+  max-width: 1560px;
 }
 </style>
