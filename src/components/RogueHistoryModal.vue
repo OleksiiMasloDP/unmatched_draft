@@ -112,8 +112,8 @@ const rows = computed(() => {
 }
 
 .rhist-box {
-  width: min(640px, 100%);
-  max-height: 88vh;
+  width: min(1040px, 100%);
+  max-height: 94vh;
   overflow-y: auto;
   padding: 16px;
   border: 2px solid #8a6c43;
@@ -181,6 +181,11 @@ const rows = computed(() => {
   text-align: left;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.rhist-table td,
+.rhist-table th {
+  white-space: nowrap;
 }
 
 .rhist-table td {

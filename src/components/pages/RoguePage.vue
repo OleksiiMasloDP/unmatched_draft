@@ -1,6 +1,10 @@
 <template>
   <div class="rogue-root">
-    <GamePage v-if="run.phase === 'battle'" />
+    <GamePage
+      v-if="run.phase === 'battle'"
+      :result-label="t('rogueAfterBattle')"
+      @result-action="afterBattle"
+    />
     <div v-else class="rogue-page container" ref="root">
       <div class="rogue-title-row">
         <h1 class="page-main-title">{{ t("rogueTitle") }}</h1>
@@ -51,13 +55,7 @@
       </section>
 
       <section v-else-if="run.phase === 'hero'">
-        <h2 class="rogue-subtitle">{{ t("rogueChooseHero") }}</h2>
-        <p class="rogue-hint">{{ t("rogueChooseHeroHint") }}</p>
-        <div class="rogue-heroes">
-          <div v-for="hero in heroOptions" :key="hero.id" class="rogue-anim">
-            <RogueHeroTile :hero="hero" clickable @select="pickHero" />
-          </div>
-        </div>
+        <RogueHeroPick :heroes="heroOptions" @select="pickHero" />
       </section>
 
       <section v-else-if="run.phase === 'deck'">
@@ -385,6 +383,7 @@
           "
           :result-label="t('rogueEventResult')"
           :gold="run.event.step === 'result' ? run.event.gold : 0"
+          :hp="run.event.step === 'result' ? run.event.hp || 0 : 0"
           @choose="chooseEvent"
         />
         <template v-if="run.event.step === 'result'">
@@ -515,12 +514,13 @@ import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useRogue } from "../../composables/useRogue";
 import { getHero } from "../../gameDecks";
-import { packDraftHeroes } from "../../packDraftData";
+import { everyHero, packDraftHeroes } from "../../packDraftData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
 import RogueHistoryModal from "../RogueHistoryModal.vue";
 import RogueDeckModal from "../RogueDeckModal.vue";
 import RogueHeroTile from "../RogueHeroTile.vue";
+import RogueHeroPick from "../RogueHeroPick.vue";
 import RogueEventScene from "../RogueEventScene.vue";
 import RogueIcon from "../RogueIcon.vue";
 import RogueMap from "../RogueMap.vue";
@@ -584,7 +584,7 @@ let context = null;
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const heroName = (id) => (id ? getHero(id).name : "");
-const heroOf = (id) => packDraftHeroes.find((hero) => hero.id === id);
+const heroOf = (id) => everyHero.find((hero) => hero.id === id);
 const cardsOf = (ids) => ids.map(getCard).filter(Boolean);
 
 const inRun = computed(
@@ -862,13 +862,6 @@ onBeforeUnmount(() => {
 
 .rogue-hint {
   color: var(--text-dim);
-}
-
-.rogue-heroes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  max-width: 820px;
 }
 
 .rogue-toolbar {

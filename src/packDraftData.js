@@ -11,6 +11,14 @@ import {
   robinHoodCards,
   jillTrentCards,
   raptorsCards,
+  invisibleManCards,
+  hamletCards,
+  odaNobunagaCards,
+  draculaCards,
+  chupacabraCards,
+  lukeCageCards,
+  sheHulkCards,
+  annieChristmasCards,
 } from "./packDraftCards.js";
 
 import { customHeroes } from "./customHeroes.js";
@@ -253,6 +261,171 @@ export const packDraftHeroes = [
     cards: raptorsCards,
   },
   {
+    id: "invisible-man",
+    name: "Invisible Man",
+    hp: 15,
+    move: 2,
+    attack: "melee",
+    image: "images/invisible_man.webp",
+    passive: {
+      name: "Fog",
+      text: {
+        en: "At the start of the game, after you place Invisible Man, place 3 fog tokens in separate spaces in his zone. When Invisible Man is on a space with a fog token, add 1 to the value of his defense cards. Invisible Man may move between two spaces with fog tokens as if they were adjacent.",
+        ua: "На початку гри, після того як ви поставили Invisible Man, розмістіть 3 жетони туману на різних клітинках його зони. Коли Invisible Man стоїть на клітинці з жетоном туману, додайте 1 до значення його карт захисту. Invisible Man може переміщуватися між двома клітинками з жетонами туману так, ніби вони сусідні.",
+      },
+    },
+    sidekick: null,
+    cards: invisibleManCards,
+  },
+  {
+    id: "hamlet",
+    name: "Hamlet",
+    hp: 15,
+    move: 2,
+    attack: "melee",
+    image: "images/hamlet.webp",
+    passive: {
+      name: "The Question",
+      text: {
+        en: "At the start of your turn, choose TO BE or NOT TO BE. If you choose NOT TO BE, deal 2 damage to one of your fighters. TO BE: When you maneuver, draw 1 additional card. NOT TO BE: Add +2 to the value of Hamlet's attacks.",
+        ua: "На початку вашого ходу оберіть TO BE або NOT TO BE. Якщо ви обрали NOT TO BE, завдайте 2 шкоди одному зі своїх бійців. TO BE: коли ви робите маневр, візьміть 1 додаткову карту. NOT TO BE: додайте +2 до значення атак Hamlet.",
+      },
+    },
+    sidekick: {
+      name: "Rosencrantz & Guildenstern",
+      hp: 6,
+      attack: "melee",
+      image: "images/hamlet.webp",
+    },
+    cards: hamletCards,
+  },
+  {
+    id: "oda-nobunaga",
+    name: "Oda Nobunaga",
+    hp: 13,
+    move: 2,
+    attack: "melee",
+    image: "images/oda.webp",
+    passive: {
+      name: "Master Strategist",
+      text: {
+        en: "Other friendly fighters in Oda Nobunaga's zone add +1 to the value of their played combat cards. (Oda Nobunaga does not benefit from this ability.)",
+        ua: "Інші дружні бійці в зоні Oda Nobunaga додають +1 до значення своїх зіграних бойових карт. (Oda Nobunaga не отримує переваги від цієї здібності.)",
+      },
+    },
+    sidekick: {
+      name: "Honor Guard",
+      hp: 6,
+      attack: "melee",
+      image: "images/oda.webp",
+      count: 2,
+    },
+    cards: odaNobunagaCards,
+  },
+  {
+    id: "dracula",
+    name: "Dracula",
+    hp: 13,
+    move: 2,
+    attack: "melee",
+    image: "images/dracula.webp",
+    passive: {
+      name: "Bloodthirst",
+      text: {
+        en: "At the start of your turn, you may deal 1 damage to a fighter adjacent to Dracula. If you do, draw a card.",
+        ua: "На початку вашого ходу ви можете завдати 1 шкоди бійцю, сусідньому з Dracula. Якщо ви це зробили, візьміть карту.",
+      },
+    },
+    sidekick: {
+      name: "The Sisters",
+      hp: 1,
+      attack: "melee",
+      image: "images/dracula.webp",
+      count: 3,
+    },
+    cards: draculaCards,
+  },
+  {
+    id: "chupacabra",
+    name: "Chupacabra",
+    hp: 14,
+    move: 3,
+    attack: "melee",
+    image: "images/chupacabra.webp",
+    passive: {
+      name: "The Hunger",
+      text: {
+        en: "After you attack, you may draw a card.",
+        ua: "Після вашої атаки ви можете взяти карту.",
+      },
+    },
+    sidekick: null,
+    cards: chupacabraCards,
+  },
+  {
+    id: "luke-cage",
+    name: "Luke Cage",
+    hp: 13,
+    move: 2,
+    attack: "melee",
+    image: "images/luke_cage.webp",
+    passive: {
+      name: "Unbreakable",
+      text: {
+        en: "Luke Cage takes 2 less combat damage from attacks.",
+        ua: "Luke Cage отримує на 2 менше бойової шкоди від атак.",
+      },
+    },
+    sidekick: {
+      name: "Misty Knight",
+      hp: 6,
+      attack: "range",
+      image: "images/luke_cage.webp",
+      count: 1,
+    },
+    cards: lukeCageCards,
+  },
+  {
+    id: "she-hulk",
+    name: "She-Hulk",
+    hp: 20,
+    move: 2,
+    attack: "melee",
+    image: "images/she_hulk.webp",
+    passive: {
+      name: "Just Throw Something",
+      text: {
+        en: "At the start of your turn, you may discard a card to deal damage equal to its BOOST value to a fighter in your zone.",
+        ua: "На початку вашого ходу ви можете скинути карту, щоб завдати шкоди, що дорівнює її значенню БУСТУ, бійцю у вашій зоні.",
+      },
+    },
+    sidekick: null,
+    cards: sheHulkCards,
+  },
+  {
+    id: "annie-christmas",
+    name: "Annie Christmas",
+    hp: 14,
+    move: 2,
+    attack: "melee",
+    image: "images/annie_christmas.webp",
+    passive: {
+      name: "Necklace of Pearls",
+      text: {
+        en: "Add +2 to the value of Annie's attacks if she has less health than the defender.",
+        ua: "Додайте +2 до значення атак Annie, якщо в неї менше здоров'я, ніж у захисника.",
+      },
+    },
+    sidekick: {
+      name: "Charlie",
+      hp: 8,
+      attack: "range",
+      image: "images/annie_christmas.webp",
+      count: 1,
+    },
+    cards: annieChristmasCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -465,6 +638,52 @@ const CARD_IMAGES = {
       utility_belt: "versatile",
     },
   },
+  "oda-nobunaga": {
+    dir: "Oda Nobunaga",
+    cover: false,
+    files: {},
+  },
+  "annie-christmas": {
+    dir: "Annie Christmas",
+    cover: false,
+    files: {},
+  },
+  "she-hulk": {
+    dir: "She-Hulk",
+    cover: false,
+    files: {},
+  },
+  "luke-cage": {
+    dir: "Luke Cage",
+    cover: false,
+    files: {},
+  },
+  chupacabra: {
+    dir: "Chupacabra",
+    cover: false,
+    files: {},
+  },
+  dracula: {
+    dir: "Dracula",
+    cover: false,
+    files: {},
+  },
+  hamlet: {
+    dir: "Hamlet",
+    cover: false,
+    files: {},
+  },
+  "invisible-man": {
+    dir: "Invisible Man",
+    cover: false,
+    files: {
+      impossible_to_see: "versatile",
+      reign_of_terror: "scheme",
+      step_lightly: "scheme",
+      surprise_attack: "attack",
+      vanish: "scheme",
+    },
+  },
   raptors: {
     dir: "Raptors",
     files: {
@@ -483,6 +702,12 @@ const CARD_IMAGES = {
       working_things_out: "scheme",
     },
   },
+};
+
+CARD_IMAGES["deadman-danny"] = {
+  dir: "Deadman Danny",
+  cover: false,
+  files: {},
 };
 
 CARD_IMAGES["agent-venom"] = {

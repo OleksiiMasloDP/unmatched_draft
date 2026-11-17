@@ -1,7 +1,11 @@
 import { reactive } from "vue";
 import { getCard, getHero } from "../gameDecks.js";
 import { gameMaps } from "../gameMaps.js";
-import { buildAllCards, packDraftHeroes } from "../packDraftData.js";
+import {
+  buildAllCards,
+  buildCustomCards,
+  packDraftHeroes,
+} from "../packDraftData.js";
 import { generateMap } from "../rogueMap.js";
 import {
   BASE_DECK,
@@ -22,6 +26,8 @@ import { useGame } from "./useGame.js";
 const STORAGE_KEY = "unmatched-rogue-run-v2";
 
 const allCards = buildAllCards();
+const bossCards = buildCustomCards();
+const FINAL_BOSS = "deadman-danny";
 
 const mulberry32 = (seed) => {
   let state = seed >>> 0;
@@ -178,10 +184,13 @@ function makePacks() {
 }
 
 function makeEnemy(node) {
-  const heroes = packDraftHeroes.filter((hero) => hero.id !== run.heroId);
-  const hero = heroes[Math.floor(Math.random() * heroes.length)];
   const kind = kindOf(node);
-  const pool = allCards
+  const heroes = packDraftHeroes.filter((item) => item.id !== run.heroId);
+  const hero =
+    kind === "boss"
+      ? getHero(FINAL_BOSS)
+      : heroes[Math.floor(Math.random() * heroes.length)];
+  const pool = [...allCards, ...bossCards]
     .filter((card) => card.heroId === hero.id)
     .map((card) => card.id);
   const wanted = Math.max(
@@ -371,7 +380,7 @@ export function useRogue() {
       return;
     }
     if (game.phase === "setup" || !game.players.p1) {
-      run.phase = "encounter";
+      endRun(false);
       save();
     }
   }
@@ -487,6 +496,7 @@ export function useRogue() {
         ? others[Math.floor(Math.random() * others.length)].id
         : null,
       step: "choose",
+      hp: 0,
       result: null,
       options: [],
       cards: [],
@@ -511,6 +521,11 @@ export function useRogue() {
     const before = run.gold;
     run.gold = Math.max(0, run.gold + (outcome.gold || 0));
     run.event.gold += run.gold - before;
+    if (outcome.health) {
+      const hpBefore = run.hp;
+      run.hp = Math.max(1, Math.min(run.maxHp, run.hp + outcome.health));
+      run.event.hp = (run.event.hp || 0) + run.hp - hpBefore;
+    }
     if (outcome.card) {
       const card = eventCardFor(outcome.card);
       if (card) {

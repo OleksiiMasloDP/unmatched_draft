@@ -68,6 +68,11 @@ function attempt(rng) {
     for (let row = 0; row < ROWS; row += 1) {
       for (let col = 0; col < LANES; col += 1) {
         if (!present[row][col]) continue;
+        if (row < ROWS - 1) {
+          for (const lane of [...out[row][col]]) {
+            if (!present[row + 1][lane]) out[row][col].delete(lane);
+          }
+        }
         const hasOut = row === ROWS - 1 || out[row][col].size > 0;
         const hasIn =
           row === 0 ||

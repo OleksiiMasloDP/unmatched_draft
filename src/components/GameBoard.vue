@@ -91,9 +91,19 @@
       />
     </g>
 
+    <g v-for="id in fog" :key="'fog-' + id" class="board-fog">
+      <circle
+        v-for="(puff, i) in fogPuffs"
+        :key="i"
+        :cx="byId.get(id).x + puff.x"
+        :cy="byId.get(id).y + puff.y"
+        :r="puff.r"
+      />
+    </g>
+
     <g v-for="player in ['p1', 'p2']" :key="player">
       <g
-        v-if="players[player] && !hideHeroes"
+        v-if="players[player] && !players[player].hidden && !hideHeroes"
         class="board-hero"
         :transform="heroScale(player)"
         :class="[
@@ -266,6 +276,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  fog: {
+    type: Array,
+    default: () => [],
+  },
   hideHeroes: {
     type: Boolean,
     default: false,
@@ -292,6 +306,13 @@ const ghostSpace = computed(() => {
 
 const visibleKids = (player) =>
   (props.players[player]?.sidekicks || []).filter((kid) => !kid.unplaced);
+
+const fogPuffs = [
+  { x: -22, y: 8, r: 24 },
+  { x: 4, y: -14, r: 28 },
+  { x: 24, y: 10, r: 24 },
+  { x: -4, y: 18, r: 22 },
+];
 
 const hoverToken = ref(null);
 const pinToken = ref(null);
@@ -477,6 +498,15 @@ const initials = (heroId) =>
 
 .board-token {
   cursor: pointer;
+}
+
+.board-fog {
+  pointer-events: none;
+}
+
+.board-fog circle {
+  fill: rgba(190, 215, 235, 0.5);
+  filter: blur(3px);
 }
 
 .board-ghost {
