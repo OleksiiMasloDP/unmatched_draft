@@ -2191,7 +2191,11 @@ function* useSchemeToken(me, fighter) {
 }
 
 function* scheme(me) {
-  const options = pl(me).hand.filter((id) => isScheme(getCard(id)));
+  const alive = fightersOf(me);
+  const options = pl(me).hand.filter((id) => {
+    const card = getCard(id);
+    return isScheme(card) && alive.some((fighter) => allowedFor(card, fighter));
+  });
   const carriers = tokenFighters(me, "scheme");
   if (!options.length && !carriers.length) return false;
   let source = "card";
