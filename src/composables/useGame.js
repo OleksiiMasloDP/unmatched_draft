@@ -2960,7 +2960,10 @@ function placeSidekicks() {
   }
 }
 
+let orderByStart = false;
+
 function startGame(deckA, deckB, first = "p1", chooser = "p2") {
+  orderByStart = false;
   game.notice = null;
   if (deckA.heroId === deckB.heroId) return;
   const setup = (deck, player) => {
@@ -3061,6 +3064,11 @@ function applyStartPick(player, spaceId) {
   pl(other(player)).space = rest;
   pick.taken.push(spaceId, rest);
   pick.index += 1;
+  if (orderByStart) {
+    game.turn = pl("p1").space === active.map.starts.p1 ? "p1" : "p2";
+    game.log = game.log.filter((entry) => entry.key !== "logFirstPlayer");
+    game.log.unshift({ key: "logFirstPlayer", params: { player: game.turn } });
+  }
   if (pick.index >= pick.order.length) {
     placeSidekicks();
     game.startPick = null;
@@ -3249,6 +3257,11 @@ function startRogueBattle(deckA, deckB, options) {
   game.mapId = options.mapId;
   useMapId(options.mapId);
   startGame(deckA, deckB, options.first, "p2");
+  orderByStart = true;
+  if (game.startPick) {
+    const { p1, p2 } = active.map.starts;
+    applyStartPick("p2", Math.random() < 0.5 ? p1 : p2);
+  }
   for (const seat of ["p1", "p2"]) {
     const state = game.players[seat];
     if (!state) return;
