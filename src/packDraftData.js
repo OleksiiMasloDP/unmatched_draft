@@ -650,8 +650,20 @@ const CARD_IMAGES = {
   },
   "she-hulk": {
     dir: "She-Hulk",
-    cover: false,
-    files: {},
+    files: {
+      double_jeopardy: "scheme",
+      leap_toward: "scheme",
+      jennifer_walters_esq: "scheme",
+      legalese: "versatile",
+      lady_justice: "defense",
+      the_defense_rests: "defense",
+      cease_and_desist: "versatile",
+      nerve_cluster_strike: "versatile",
+      green_energy: "versatile",
+      the_savage_she_hulk: "attack",
+      sensational: "attack",
+      omega_level_threat: "attack",
+    },
   },
   "luke-cage": {
     dir: "Luke Cage",
