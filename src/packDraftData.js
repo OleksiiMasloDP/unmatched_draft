@@ -697,8 +697,19 @@ const CARD_IMAGES = {
   },
   chupacabra: {
     dir: "Chupacabra",
-    cover: false,
-    files: {},
+    files: {
+      blood_in_the_air: "attack",
+      feeding: "attack",
+      ambush: "attack",
+      the_more_they_struggle: "attack",
+      wounded_beast: "versatile",
+      ravenous_lunge: "versatile",
+      feint: "versatile",
+      tooth_and_tail: "versatile",
+      natural_toughness: "defense",
+      traveler_of_the_night: "scheme",
+      unsettle: "scheme",
+    },
   },
   dracula: {
     dir: "Dracula",
