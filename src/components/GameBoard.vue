@@ -35,6 +35,28 @@
     </g>
 
     <defs>
+      <pattern id="fog-dots" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.8" fill="#e8f5fb" />
+        <circle cx="3" cy="3" r="0.8" fill="#e8f5fb" />
+      </pattern>
+      <g id="fog-wisp">
+        <path
+          class="fog-ink"
+          d="M-24 6 C-34 -8 -18 -22 -4 -16 C-2 -32 22 -38 30 -22 C44 -22 50 -2 38 6 C44 20 24 30 12 22 C2 32 -18 28 -24 6 Z"
+        />
+        <path
+          class="fog-body"
+          d="M-24 6 C-34 -8 -18 -22 -4 -16 C-2 -32 22 -38 30 -22 C44 -22 50 -2 38 6 C44 20 24 30 12 22 C2 32 -18 28 -24 6 Z"
+        />
+        <path
+          class="fog-dots"
+          d="M-24 6 C-34 -8 -18 -22 -4 -16 C-2 -32 22 -38 30 -22 C44 -22 50 -2 38 6 C44 20 24 30 12 22 C2 32 -18 28 -24 6 Z"
+        />
+        <path
+          class="fog-curl"
+          d="M-8 4 C-10 -6 6 -10 10 -2 C14 6 2 12 -2 6 M18 -14 C26 -14 30 -6 26 0 M20 12 C26 12 30 8 31 4"
+        />
+      </g>
       <clipPath v-if="ghostSpace" id="ghost-clip">
         <circle :cx="ghostSpace.x" :cy="ghostSpace.y" r="30" />
       </clipPath>
@@ -91,14 +113,19 @@
       />
     </g>
 
-    <g v-for="id in fog" :key="'fog-' + id" class="board-fog">
-      <circle
-        v-for="(puff, i) in fogPuffs"
-        :key="i"
-        :cx="byId.get(id).x + puff.x"
-        :cy="byId.get(id).y + puff.y"
-        :r="puff.r"
-      />
+    <g
+      v-for="id in fog"
+      :key="'fog-' + id"
+      class="board-fog"
+      :transform="`translate(${byId.get(id).x} ${byId.get(id).y})`"
+    >
+      <g v-for="(wisp, i) in fogWisps" :key="i" :transform="wisp.t">
+        <use
+          class="fog-wisp"
+          href="#fog-wisp"
+          :style="{ animationDelay: wisp.d }"
+        />
+      </g>
     </g>
 
     <g v-for="player in ['p1', 'p2']" :key="player">
@@ -307,11 +334,11 @@ const ghostSpace = computed(() => {
 const visibleKids = (player) =>
   (props.players[player]?.sidekicks || []).filter((kid) => !kid.unplaced);
 
-const fogPuffs = [
-  { x: -22, y: 8, r: 24 },
-  { x: 4, y: -14, r: 28 },
-  { x: 24, y: 10, r: 24 },
-  { x: -4, y: 18, r: 22 },
+const fogWisps = [
+  { t: "translate(-34 22) rotate(-8) scale(0.9)", d: "0s" },
+  { t: "translate(30 -30) rotate(14) scale(0.8)", d: "-2s" },
+  { t: "translate(36 30) rotate(-20) scale(0.7)", d: "-4s" },
+  { t: "translate(-30 -34) rotate(22) scale(0.7)", d: "-6s" },
 ];
 
 const hoverToken = ref(null);
@@ -504,9 +531,52 @@ const initials = (heroId) =>
   pointer-events: none;
 }
 
-.board-fog circle {
-  fill: rgba(190, 215, 235, 0.5);
-  filter: blur(3px);
+.fog-wisp {
+  animation: fog-drift 8s ease-in-out infinite;
+}
+
+.fog-ink {
+  fill: none;
+  stroke: #0d2230;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  opacity: 0.55;
+}
+
+.fog-body {
+  fill: rgba(170, 205, 225, 0.38);
+  stroke: #eaf6fb;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.fog-dots {
+  fill: url(#fog-dots);
+  opacity: 0.45;
+}
+
+.fog-curl {
+  fill: none;
+  stroke: #eaf6fb;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+@keyframes fog-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(3px, -3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fog-wisp {
+    animation: none;
+  }
 }
 
 .board-ghost {
