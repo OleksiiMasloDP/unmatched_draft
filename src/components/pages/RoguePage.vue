@@ -53,7 +53,7 @@
       </div>
 
       <section v-if="run.phase === 'idle'" class="rogue-intro rogue-anim">
-        <p>{{ t("rogueIntro") }}</p>
+        <p>{{ t("rogueIntro").replace("{n}", base) }}</p>
         <button class="btn btn-success" @click="startRun">
           {{ t("rogueStart") }}
         </button>
@@ -64,7 +64,9 @@
       </section>
 
       <section v-else-if="run.phase === 'deck'">
-        <h2 class="rogue-subtitle">{{ t("rogueDeckTitle") }}</h2>
+        <h2 class="rogue-subtitle">
+          {{ t("rogueDeckTitle").replace("{n}", base) }}
+        </h2>
         <div class="rogue-toolbar">
           <span class="rogue-count" :class="{ ready: picked.length === base }">
             {{
@@ -74,7 +76,7 @@
             }}
           </span>
           <button class="btn btn-sm btn-outline-secondary" @click="randomDeck">
-            {{ t("rogueDeckAuto") }}
+            {{ t("rogueDeckAuto").replace("{n}", base) }}
           </button>
           <button class="btn btn-sm btn-outline-secondary" @click="picked = []">
             {{ t("rogueDeckClear") }}
