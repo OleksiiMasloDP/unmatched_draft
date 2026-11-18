@@ -540,11 +540,11 @@ const initials = (heroId) =>
   stroke: #0d2230;
   stroke-width: 4;
   stroke-linejoin: round;
-  opacity: 0.55;
+  opacity: 0.8;
 }
 
 .fog-body {
-  fill: rgba(170, 205, 225, 0.38);
+  fill: rgba(176, 212, 232, 0.6);
   stroke: #eaf6fb;
   stroke-width: 1.6;
   stroke-linejoin: round;
@@ -552,7 +552,7 @@ const initials = (heroId) =>
 
 .fog-dots {
   fill: url(#fog-dots);
-  opacity: 0.45;
+  opacity: 0.6;
 }
 
 .fog-curl {
