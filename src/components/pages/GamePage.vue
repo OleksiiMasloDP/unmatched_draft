@@ -97,9 +97,15 @@
               {{ t("packDraftTitle") }}
             </router-link>
           </p>
+          <input
+            v-model="deckSearch[player]"
+            type="search"
+            class="game-search"
+            :placeholder="t('gameSearch')"
+          />
           <div class="deck-tiles">
             <div
-              v-for="deck in decksFor(player)"
+              v-for="deck in filteredDecks(player)"
               :key="deck.id"
               class="deck-tile"
               :class="{
@@ -186,9 +192,15 @@
               : replacePlayer("diceChooser", game.toss.winner)
           }}
         </p>
+        <input
+          v-model="mapSearch"
+          type="search"
+          class="game-search"
+          :placeholder="t('gameSearch')"
+        />
         <div class="map-tiles">
           <button
-            v-for="item in maps"
+            v-for="item in filteredMaps"
             :key="item.id"
             type="button"
             class="map-tile"
@@ -1279,7 +1291,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import GameHistory from "../GameHistory.vue";
 
 const props = defineProps({
@@ -1432,6 +1444,26 @@ const decksFor = (player) =>
     : deckSource.value[player] === "custom"
       ? customDecks
       : testDecks;
+const deckSearch = reactive({ p1: "", p2: "" });
+const mapSearch = ref("");
+const matchesSearch = (query, ...names) => {
+  const needle = query.trim().toLowerCase();
+  return (
+    !needle || names.some((name) => (name || "").toLowerCase().includes(needle))
+  );
+};
+const filteredDecks = (player) =>
+  decksFor(player).filter(
+    (deck) =>
+      deck.id === selected.value[player] ||
+      matchesSearch(deckSearch[player], deck.name, getHero(deck.heroId)?.name),
+  );
+const filteredMaps = computed(() =>
+  maps.filter(
+    (item) =>
+      item.id === game.mapId || matchesSearch(mapSearch.value, item.name),
+  ),
+);
 const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
 
@@ -2316,14 +2348,46 @@ function onResultAction() {
 
 .map-tiles,
 .deck-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  gap: 8px;
+  max-height: 360px;
+  padding: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(var(--bg-dark-rgb), 0.35);
+}
+
+.deck-tiles {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+
+.map-tiles {
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  max-height: 420px;
+}
+
+.game-search {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  background: rgba(var(--bg-dark-rgb), 0.6);
+  color: var(--text-white);
+  font-size: 14px;
+}
+
+.game-search:focus {
+  outline: none;
+  border-color: var(--color-info);
 }
 
 .map-tile {
-  width: 180px;
-  padding: 6px;
+  width: auto;
+  padding: 5px;
   border-radius: 10px;
   border: 2px solid var(--border-light);
   background: rgba(var(--bg-slate-rgb), 0.8);
@@ -2356,9 +2420,9 @@ function onResultAction() {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 260px;
-  padding: 8px 40px 8px 8px;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 30px 6px 6px;
   border-radius: 10px;
   border: 2px solid var(--border-light);
   background: rgba(var(--bg-slate-rgb), 0.8);
@@ -2367,8 +2431,8 @@ function onResultAction() {
 
 .deck-tile img {
   flex: 0 0 auto;
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   object-fit: cover;
   object-position: top;

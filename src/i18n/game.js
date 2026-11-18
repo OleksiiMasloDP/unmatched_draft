@@ -4,6 +4,7 @@ export const gameText = {
     gameTestNote:
       "Test project: simplified rules. Attack cards can only attack, defense cards can only defend, versatile cards do both. Play on one screen and pass the device when asked, or play online.",
     gameMapLabel: "Map",
+    gameSearch: "Search…",
     gameStart: "Start game",
     gameNewGame: "New game",
     gameVictory: "Victory",
@@ -160,6 +161,7 @@ export const gameText = {
     gameTestNote:
       "Тестовий проєкт: спрощені правила. Карти атаки можуть лише атакувати, карти захисту лише захищати, універсальні роблять і те, і інше. Грайте на одному екрані та передавайте пристрій, коли про це просить гра, або грайте онлайн.",
     gameMapLabel: "Мапа",
+    gameSearch: "Пошук…",
     gameStart: "Почати гру",
     gameNewGame: "Нова гра",
     gameVictory: "Перемога",
