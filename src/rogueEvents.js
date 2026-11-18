@@ -700,7 +700,7 @@ export const events = [
     icon: "treasureMap",
     tint: "#2f7f9d",
     weight: 1,
-    title: both("Blackbeard's buried loot", "Закопана здобич Чорної Бороди"),
+    title: both("Buried pirate loot", "Закопана здобич пірата"),
     text: both(
       "A tattered map is nailed to a driftwood post. An X marks the spot, and a skull is scratched beside it: Edward Teach never shared his plunder willingly.",
       "До дошки з викинутого морем дерева прибито потріпану карту. Хрестик позначає місце, а поруч видряпано череп: Едвард Тіч ніколи не ділився здобиччю охоче.",
@@ -812,7 +812,7 @@ export const events = [
     icon: "lockedChest",
     tint: "#b06bd1",
     weight: 1,
-    title: both("Pandora's jar", "Глек Пандори"),
+    title: both("The jar that stays shut", "Глек, що має лишатися закритим"),
     text: both(
       "A sealed clay jar hums on a flat rock. A tiny voice inside whispers that something good is left at the very bottom.",
       "Запечатаний глиняний глек гуде на пласкому камені. Тихенький голос усередині шепоче, що на дні лишилося щось добре.",
@@ -863,8 +863,8 @@ export const events = [
     weight: 1,
     title: both("Peaches of immortality", "Персики безсмертя"),
     text: both(
-      "An orchard of golden peaches sways above the clouds. Sun Wukong has already raided it once, and the guards remember.",
-      "Сад золотих персиків гойдається над хмарами. Сунь Укун уже обносив його одного разу, і охоронці це пам'ятають.",
+      "An orchard of golden peaches sways above the clouds. A monkey in golden armor has already raided it once, and the guards remember.",
+      "Сад золотих персиків гойдається над хмарами. Мавпа в золотих обладунках уже обносила його одного разу, і охоронці це пам'ятають.",
     ),
     choices: [
       {
@@ -913,8 +913,8 @@ export const events = [
     weight: 1,
     title: both("The great escape", "Велика втеча"),
     text: both(
-      "A crowd gathers around a man in chains hanging over a river. Harry Houdini grins: he has never failed to escape, and neither will he today.",
-      "Натовп збирається навколо чоловіка в ланцюгах, що висить над річкою. Гаррі Гудіні усміхається: він ще ніколи не провалював втечу, не провалить і сьогодні.",
+      "A crowd gathers around a man in chains hanging over a river. The man grins: he has never failed to escape, and neither will he today.",
+      "Натовп збирається навколо чоловіка в ланцюгах, що висить над річкою. Чоловік усміхається: він ще ніколи не провалював втечу, не провалить і сьогодні.",
     ),
     choices: [
       {
@@ -960,8 +960,8 @@ export const events = [
           ),
           out(
             1,
-            "Houdini spots you mid-trick and fines you from the stage.",
-            "Гудіні помічає тебе просто посеред фокуса й штрафує зі сцени.",
+            "The escape artist spots you mid-trick and fines you from the stage.",
+            "Ілюзіоніст помічає тебе просто посеред фокуса й штрафує зі сцени.",
             { gold: -20 },
           ),
         ],
@@ -976,8 +976,8 @@ export const events = [
     weight: 1,
     title: both("The Sherwood contest", "Змагання в Шервуді"),
     text: both(
-      "Targets line a clearing under the old oaks. A silver arrow is the prize, and Robin of Locksley is the man to beat.",
-      "Мішені стоять у лісовому проламі під старими дубами. Нагорода — срібна стріла, а Робін із Локслі — той, кого треба перемогти.",
+      "Targets line a clearing under the old oaks. A silver arrow is the prize, and a hooded archer in green is the man to beat.",
+      "Мішені стоять у лісовому проламі під старими дубами. Нагорода — срібна стріла, а лучник у зеленому каптурі — той, кого треба перемогти.",
     ),
     choices: [
       {
@@ -993,8 +993,8 @@ export const events = [
           ),
           out(
             2,
-            "Second place, but Robin teaches you how to split an arrow.",
-            "Друге місце, зате Робін показує, як розколоти стрілу.",
+            "Second place, but the archer teaches you how to split an arrow.",
+            "Друге місце, зате лучник показує, як розколоти стрілу.",
             { card: "any" },
           ),
           out(
@@ -1006,7 +1006,7 @@ export const events = [
       },
       {
         icon: "coins",
-        label: both("Bet on Robin", "Поставити на Робіна"),
+        label: both("Bet on the archer", "Поставити на лучника"),
         cost: 15,
         outcomes: [
           out(
@@ -1032,8 +1032,8 @@ export const events = [
     weight: 1,
     title: both("A flask of green liquid", "Колба зі смарагдовою рідиною"),
     text: both(
-      "In a dim laboratory, a flask bubbles on its own. A note in neat handwriting reads: Dr. Jekyll accepts no responsibility for Mr. Hyde.",
-      "У темній лабораторії колба булькоче сама по собі. Записка охайним почерком: доктор Джекіл не відповідає за містера Гайда.",
+      "In a dim laboratory, a flask bubbles on its own. A note in neat handwriting reads: the doctor accepts no responsibility for his other self.",
+      "У темній лабораторії колба булькоче сама по собі. Записка охайним почерком: лікар не відповідає за свою другу особистість.",
     ),
     choices: [
       {
@@ -1066,8 +1066,8 @@ export const events = [
           ),
           out(
             1,
-            "A colleague of Jekyll pays you for the research.",
-            "Колега Джекіла платить тобі за дослідження.",
+            "A colleague of the doctor pays you for the research.",
+            "Колега лікаря платить тобі за дослідження.",
             { gold: 30 },
           ),
         ],
@@ -1085,8 +1085,8 @@ export const events = [
     weight: 1,
     title: both("An invitation from the castle", "Запрошення із замку"),
     text: both(
-      "A black carriage waits at the crossroads. Count Dracula's seal glows on the invitation, and the horses do not breathe.",
-      "На роздоріжжі чекає чорна карета. На запрошенні мерехтить печатка графа Дракули, а коні не дихають.",
+      "A black carriage waits at the crossroads. A pale count's seal glows on the invitation, and the horses do not breathe.",
+      "На роздоріжжі чекає чорна карета. На запрошенні мерехтить печатка блідого графа, а коні не дихають.",
     ),
     choices: [
       {
@@ -1135,8 +1135,8 @@ export const events = [
     weight: 1,
     title: both("The grinning cat", "Усміхнений кіт"),
     text: both(
-      "A striped grin hangs in the air above a branch. The Cheshire Cat purrs: answer my riddle, or don't, it makes no difference to me.",
-      "Смугаста усмішка висить у повітрі над гілкою. Чеширський Кіт муркоче: відповідай на мою загадку, чи ні, мені однаково.",
+      "A striped grin hangs in the air above a branch. The cat purrs: answer my riddle, or don't, it makes no difference to me.",
+      "Смугаста усмішка висить у повітрі над гілкою. Кіт муркоче: відповідай на мою загадку, чи ні, мені однаково.",
     ),
     choices: [
       {
@@ -1200,14 +1200,14 @@ export const events = [
         outcomes: [
           out(
             3,
-            "Gold rains down. The Genie smirks: you didn't say whose.",
-            "Золото сиплеться дощем. Джин пирхає: ти не уточнив, чиє.",
+            "Gold rains down. The spirit smirks: you didn't say whose.",
+            "Золото сиплеться дощем. Дух пирхає: ти не уточнив, чиє.",
             { gold: 45 },
           ),
           out(
             1,
-            "The Genie grants it literally: one gold coin.",
-            "Джин виконує буквально: одна золота монета.",
+            "The spirit grants it literally: one gold coin.",
+            "Дух виконує буквально: одна золота монета.",
             { gold: 1 },
           ),
         ],
@@ -1235,8 +1235,8 @@ export const events = [
         outcomes: [
           out(
             1,
-            "The Genie sighs and throws you a card to shut you up.",
-            "Джин зітхає й кидає тобі карту, щоб ти замовк.",
+            "The spirit sighs and throws you a card to shut you up.",
+            "Дух зітхає й кидає тобі карту, щоб ти замовк.",
             { card: "any" },
           ),
           out(
@@ -1257,8 +1257,8 @@ export const events = [
     weight: 1,
     title: both("A trickster's offer", "Пропозиція трикстера"),
     text: both(
-      "A stranger with a green smile sits on your road. Loki spreads his hands: a small wager, nothing you cannot afford to lose.",
-      "На твоїй дорозі сидить незнайомець із зеленою усмішкою. Локі розводить руками: невеличке парі, нічого, що ти не зміг би дозволити собі втратити.",
+      "A stranger with a green smile sits on your road. He spreads his hands: a small wager, nothing you cannot afford to lose.",
+      "На твоїй дорозі сидить незнайомець із зеленою усмішкою. Він розводить руками: невеличке парі, нічого, що ти не зміг би дозволити собі втратити.",
     ),
     choices: [
       {
@@ -1363,8 +1363,8 @@ export const events = [
     weight: 1,
     title: both("The garden of statues", "Сад статуй"),
     text: both(
-      "A courtyard crowded with stone warriors, each frozen mid-scream. Something hisses overhead. Medusa never forgets a face.",
-      "Двір, заповнений кам'яними воїнами, кожен завмер посеред крику. Згори чути сичання. Медуза ніколи не забуває облич.",
+      "A courtyard crowded with stone warriors, each frozen mid-scream. Something hisses overhead. The serpent-haired queen never forgets a face.",
+      "Двір, заповнений кам'яними воїнами, кожен завмер посеред крику. Згори чути сичання. Королева зі зміями замість волосся ніколи не забуває облич.",
     ),
     choices: [
       {
@@ -1415,8 +1415,8 @@ export const events = [
     weight: 1,
     title: both("A shard of vibranium", "Уламок вібраніуму"),
     text: both(
-      "A quiet trader unwraps a cloth. Inside lies a shard of metal that hums softly and swallows the light, the pride of Wakanda.",
-      "Тихий торговець розгортає тканину. Усередині лежить уламок металу, що тихо гуде й поглинає світло, — гордість Ваканди.",
+      "A quiet trader unwraps a cloth. Inside lies a shard of metal that hums softly and swallows the light, the pride of a hidden kingdom.",
+      "Тихий торговець розгортає тканину. Усередині лежить уламок металу, що тихо гуде й поглинає світло, — гордість прихованого королівства.",
     ),
     choices: [
       {
@@ -1464,8 +1464,8 @@ export const events = [
     weight: 1,
     title: both("The mirror dimension", "Дзеркальний вимір"),
     text: both(
-      "The street folds like a paper fan. Doctor Strange's mirror dimension spills across the road and for a moment you can see every path at once.",
-      "Вулиця складається, наче паперове віяло. Дзеркальний вимір доктора Стрейнджа розливається по дорозі, і на мить ти бачиш усі шляхи одразу.",
+      "The street folds like a paper fan. A sorcerer's mirror dimension spills across the road and for a moment you can see every path at once.",
+      "Вулиця складається, наче паперове віяло. Дзеркальний вимір чародія розливається по дорозі, і на мить ти бачиш усі шляхи одразу.",
     ),
     choices: [
       {
@@ -1517,13 +1517,13 @@ export const events = [
     weight: 1,
     title: both("The mead hall", "Медова зала"),
     text: both(
-      "Torches roar in a long timber hall. A giant of a man bellows over the din: Beowulf welcomes anyone who is brave, or thirsty.",
-      "У довгій дерев'яній залі ревуть смолоскипи. Велетень гукає крізь гамір: Беовульф вітає кожного, хто відважний чи спраглий.",
+      "Torches roar in a long timber hall. A giant of a man bellows over the din: he welcomes anyone who is brave, or thirsty.",
+      "У довгій дерев'яній залі ревуть смолоскипи. Велетень гукає крізь гамір: він вітає кожного, хто відважний чи спраглий.",
     ),
     choices: [
       {
         icon: "punch",
-        label: both("Arm-wrestle Beowulf", "Поборотися на руках із Беовульфом"),
+        label: both("Arm-wrestle the giant", "Поборотися на руках із велетнем"),
         outcomes: [
           out(
             1,
@@ -1663,8 +1663,8 @@ export const events = [
           ),
           out(
             1,
-            "You turn up a buried purse. Poor Yorick would not mind.",
-            "Ти відкопуєш закопаний гаманець. Бідний Йорік не заперечив би.",
+            "You turn up a buried purse. The skull would not mind.",
+            "Ти відкопуєш закопаний гаманець. Череп не заперечив би.",
             { gold: 60 },
           ),
         ],
@@ -1926,8 +1926,8 @@ export const events = [
     weight: 1,
     title: both("The bridge duel", "Двобій на мосту"),
     text: both(
-      "A woman in ornate armor stands motionless on a narrow bridge, a naginata at her side. Tomoe Gozen nods: nobody crosses without a duel.",
-      "Жінка в розкішному обладунку нерухомо стоїть на вузькому мосту з нагінатою біля ноги. Томоє Годзен киває: ніхто не перейде без двобою.",
+      "A woman in ornate armor stands motionless on a narrow bridge, a naginata at her side. She nods: nobody crosses without a duel.",
+      "Жінка в розкішному обладунку нерухомо стоїть на вузькому мосту з нагінатою біля ноги. Вона киває: ніхто не перейде без двобою.",
     ),
     choices: [
       {
@@ -2041,8 +2041,8 @@ export const events = [
     weight: 1,
     title: both("The doctor's clinic", "Клініка доктора"),
     text: both(
-      'A small clinic smells of tinctures and old books. A calm woman in a white coat sets a swinging pendulum between you. "Look closely," Dr. Jill Trent says.',
-      "У невеликій клініці пахне настоянками та старими книжками. Спокійна жінка в білому халаті розгойдує між вами маятник. «Дивись уважно», каже доктор Джилл Трент.",
+      'A small clinic smells of tinctures and old books. A calm woman in a white coat sets a swinging pendulum between you. "Look closely," she says.',
+      "У невеликій клініці пахне настоянками та старими книжками. Спокійна жінка в білому халаті розгойдує між вами маятник. «Дивись уважно», каже вона.",
     ),
     choices: [
       {
@@ -2096,8 +2096,8 @@ export const events = [
     weight: 1,
     title: both("High noon", "Опівдні"),
     text: both(
-      "The town is empty at noon, save for a lawman leaning on a rail and a stranger at the other end of the street. Wyatt Earp tips his hat to you.",
-      "Опівдні містечко порожнє, лише шериф спирається на поруччя, а на іншому кінці вулиці стоїть незнайомець. Вайатт Ерп киває тобі.",
+      "The town is empty at noon, save for a lawman leaning on a rail and a stranger at the other end of the street. The lawman tips his hat to you.",
+      "Опівдні містечко порожнє, лише шериф спирається на поруччя, а на іншому кінці вулиці стоїть незнайомець. Шериф киває тобі.",
     ),
     choices: [
       {
@@ -2131,8 +2131,8 @@ export const events = [
           ),
           out(
             3,
-            "Wyatt is faster. You lose the bet.",
-            "Вайатт швидший. Ставка програна.",
+            "The lawman is faster. You lose the bet.",
+            "Шериф швидший. Ставка програна.",
           ),
         ],
       },
@@ -2167,8 +2167,8 @@ export const events = [
     weight: 1,
     title: both("A whispering shadow", "Шепіт у тіні"),
     text: both(
-      'A soldier crouches in an alley, arguing with something in his own shadow. Black tendrils curl at his collar. "Quiet," Agent Venom mutters. "It likes you."',
-      "Солдат сидить навпочіпки в завулку й сперечається з чимось у власній тіні. Чорні щупальця звиваються біля його коміра. «Тихо», бурмоче Agent Venom. «Ти йому подобаєшся».",
+      'A soldier crouches in an alley, arguing with something in his own shadow. Black tendrils curl at his collar. "Quiet," he mutters. "It likes you."',
+      "Солдат сидить навпочіпки в завулку й сперечається з чимось у власній тіні. Чорні щупальця звиваються біля його коміра. «Тихо», бурмоче він. «Ти йому подобаєшся».",
     ),
     choices: [
       {
@@ -2235,8 +2235,8 @@ export const events = [
     weight: 1,
     title: both("Photo for the front page", "Фото на першу шпальту"),
     text: both(
-      "Spider-Man drops down in front of you, swinging a camera on a strap. 'Hey! Perfect timing! Stand still and let me snap your portrait for the Bugle, Jameson pays a fortune for fresh legends!'",
-      "Людина-павук падає перед вами, розгойдуючи камеру на ремінці. «Гей! Ідеальний момент! Стій смирно і дай я зроблю твій портрет для «Дейлі Б'юґл», Джеймсон платить шалені гроші за свіжі легенди!»",
+      "A masked man in a red and blue suit drops down in front of you, swinging a camera on a strap. 'Hey! Perfect timing! Stand still and let me snap your portrait for the city paper, my editor pays a fortune for fresh legends!'",
+      "Чоловік у червоно-синьому костюмі й масці падає перед вами, розгойдуючи камеру на ремінці. «Гей! Ідеальний момент! Стій смирно і дай я зроблю твій портрет для міської газети, мій редактор платить шалені гроші за свіжі легенди!»",
     ),
     choices: [
       {
@@ -2248,8 +2248,8 @@ export const events = [
         outcomes: [
           out(
             2,
-            "The shot turns out epic. Jameson prints it on the front page, and you get a generous cut.",
-            "Знімок виходить епічним. Джеймсон друкує його на першій шпальті, і ти отримуєш щедру частку.",
+            "The shot turns out epic. The editor prints it on the front page, and you get a generous cut.",
+            "Знімок виходить епічним. Редактор друкує його на першій шпальті, і ти отримуєш щедру частку.",
             { gold: 60 },
           ),
           out(
@@ -2670,221 +2670,505 @@ export const events = [
 
 export const heroEvents = [
   {
-    id: "help",
-    tint: "#4a7bd6",
-    weight: 2,
-    title: both("{hero} blocks the road", "{hero} перегороджує шлях"),
+    id: "shehulk_court",
+    hero: "she-hulk",
+    icon: "scales",
+    tint: "#5aa63c",
+    weight: 1,
+    title: both("Court is in session", "Засідання суду"),
     text: both(
-      'A familiar fighter steps out of the shadows. "You look like you could use an ally," {hero} says.',
-      "Знайомий боєць виходить із тіні. «Схоже, тобі стане в пригоді союзник», каже {hero}.",
+      "In a half-ruined hall, a tall green woman in a sharp suit sits behind the judge's bench with a stack of files and a very calm smile. You are the defendant, apparently. The charge: trespassing on a road that nobody owns.",
+      "У напівзруйнованій залі за суддівським столом сидить висока зелена жінка в бездоганному костюмі зі стосом справ і дуже спокійною усмішкою. Підсудний, схоже, ти. Звинувачення: прохід дорогою, яка нікому не належить.",
     ),
     choices: [
       {
+        icon: "scrollUnfurled",
+        label: both("Defend yourself", "Захищатися самому"),
+        outcomes: [
+          out(
+            2,
+            "Your speech is so clumsy that she takes pity on you, dismisses the case and slides a card across the bench.",
+            "Твоя промова така незграбна, що вона жаліє тебе, закриває справу й підсуває через стіл карту.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "She dismantles every argument, one calm sentence at a time. The fine is steep.",
+            "Вона розбирає кожен аргумент по одному спокійному реченню. Штраф кусається.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      {
         icon: "shakingHands",
-        label: both("Accept their help", "Прийняти допомогу"),
+        label: both("Settle out of court", "Домовитися без суду"),
+        cost: 25,
+        outcomes: [
+          out(
+            3,
+            "The paperwork vanishes. She also hands you a trick from her own briefcase as a courtesy.",
+            "Папери зникають. Із ввічливості вона ще й дає тобі прийом зі свого портфеля.",
+            { card: "ally" },
+          ),
+          out(
+            1,
+            "She pockets the money and recommends a better lawyer next time.",
+            "Вона ховає гроші й радить наступного разу взяти кращого адвоката.",
+          ),
+        ],
+      },
+      {
+        icon: "muscleUp",
+        label: both("Object loudly", "Голосно заперечити"),
+        outcomes: [
+          out(
+            2,
+            "The judge's patience snaps. A green fist cracks the bench in half, and the bailiff pays you hush money to leave.",
+            "Терпіння судді увірвалося. Зелений кулак розколює стіл навпіл, і пристав платить тобі, щоб ти мовчав і пішов.",
+            { gold: 40 },
+          ),
+          out(
+            2,
+            "Contempt of court. You spend a night in a cell, thinking about your life choices.",
+            "Неповага до суду. Ніч у камері, і час подумати про свої вибори.",
+            { health: -4 },
+          ),
+        ],
+      },
+      {
+        icon: "monkFace",
+        label: both("Plead guilty to old sins", "Зізнатися в давніх гріхах"),
+        remove: true,
+        gold: 0,
+        text: both(
+          "She strikes your oldest bad habit from the record. Case closed, and your deck is lighter.",
+          "Вона викреслює твою найстаршу погану звичку з протоколу. Справу закрито, а колода легша.",
+        ),
+      },
+      leave(
+        "You slip out through the side door while the gavel is still in the air.",
+        "Ти вислизаєш бічними дверима, поки молоток ще в повітрі.",
+      ),
+    ],
+  },
+  {
+    id: "lukecage_wall",
+    hero: "luke-cage",
+    icon: "punch",
+    tint: "#d6a21f",
+    weight: 1,
+    title: both("The man bullets can't stop", "Людина, яку не беруть кулі"),
+    text: both(
+      "A broad-shouldered man in a bright yellow shirt leans on a brick wall pitted with bullet holes. A gang of thugs is emptying magazines into his chest, and he looks mostly annoyed about the shirt.",
+      "Широкоплечий чоловік у яскраво-жовтій сорочці стоїть, спершись на цегляну стіну, всіяну слідами куль. Банда бандитів розстрілює в нього обойми, і найбільше його, здається, турбує сорочка.",
+    ),
+    choices: [
+      {
+        icon: "crossedSwords",
+        label: both("Join the brawl", "Вступити в бійку"),
+        outcomes: [
+          out(
+            3,
+            "Back to back, you clear the alley. He teaches you how to take a hit properly.",
+            "Спина до спини, ви розчищаєте завулок. Він показує, як правильно приймати удар.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "You take a few punches meant for him. At least the thugs' pockets are full.",
+            "Ти ловиш кілька ударів, призначених йому. Зате кишені бандитів не порожні.",
+            { health: -3, gold: 35 },
+          ),
+        ],
+      },
+      {
+        icon: "punch",
+        label: both("Test his skin with a punch", "Перевірити шкіру ударом"),
         outcomes: [
           out(
             1,
-            "{hero} shares a trick and it joins your deck.",
-            "{hero} ділиться прийомом, і він потрапляє до твоєї колоди.",
+            "It feels like punching a bank vault. He laughs, and you walk away with a sore hand and a good story.",
+            "Наче б'єш по дверях сейфа. Він сміється, а ти йдеш із побитою рукою й гарною історією.",
+            { health: -2 },
+          ),
+          out(
+            2,
+            "He lets you take one clean swing, then pays you for the entertainment.",
+            "Він дає тобі один чистий замах, а тоді платить за видовище.",
+            { gold: 25 },
+          ),
+        ],
+      },
+      {
+        icon: "coins",
+        label: both("Ask who pays him", "Запитати, хто йому платить"),
+        cost: 15,
+        outcomes: [
+          out(
+            2,
+            '"Whoever\'s offering the most," he says, and writes the name of a hiring desk on your palm.',
+            "«Той, хто дає найбільше», каже він і пише на твоїй долоні адресу, де наймають.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            'He shrugs. "Pay first, talk later." You are lighter and none the wiser.',
+            "Він знизує плечима. «Спершу плати, потім говори». Ти легший на гаманець і не мудрішій.",
+          ),
+        ],
+      },
+      {
+        icon: "firstAidKit",
+        label: both("Patch him up anyway", "Все одно перев'язати його"),
+        outcomes: [
+          out(
+            1,
+            "There is nothing to patch. He thanks you for the thought and offers a lift to the next town.",
+            "Перев'язувати нічого. Він дякує за турботу й підвозить до наступного міста.",
+            { health: 4 },
+          ),
+        ],
+      },
+      leave(
+        "The echo of gunfire follows you for three streets.",
+        "Луна пострілів іде за тобою три вулиці.",
+      ),
+    ],
+  },
+  {
+    id: "annie_riverboat",
+    hero: "annie-christmas",
+    icon: "rollingDices",
+    tint: "#b8434a",
+    weight: 1,
+    title: both("Poker on the paddle steamer", "Покер на колісному пароплаві"),
+    text: both(
+      "A paddle steamer rocks at the dock, lanterns swinging. At the main table a towering woman with a string of pearls and a cold stare deals cards with one hand and keeps the other on a very large pot. A chair stands empty across from her.",
+      "До причалу гойдається колісний пароплав, гойдаються ліхтарі. За головним столом висока жінка з ниткою перлів і холодним поглядом роздає карти однією рукою, а другу тримає на дуже великому банку. Навпроти неї вільний стілець.",
+    ),
+    choices: [
+      {
+        icon: "rollingDices",
+        label: both("Sit down and play", "Сісти за стіл"),
+        cost: 20,
+        outcomes: [
+          out(
+            2,
+            "You bluff through three rounds and clear the table. She slides the pot over with a respectful nod.",
+            "Ти блефуєш три раунди й забираєш банк. Вона підсуває його з повагою в погляді.",
+            { gold: 80 },
+          ),
+          out(
+            2,
+            "The fourth card is a trap. She wins the hand and keeps the pearl she took from your sleeve.",
+            "Четверта карта була пасткою. Вона виграє роздачу й залишає собі перлину, яку витягла з твого рукава.",
+          ),
+        ],
+      },
+      {
+        icon: "robberHand",
+        label: both("Cheat from the shadows", "Шахраювати з тіні"),
+        outcomes: [
+          out(
+            2,
+            "You swap one card and nobody notices. Nobody except the dealer, who respects it enough to pay you off.",
+            "Ти підміняєш одну карту, і ніхто не помічає. Крім дилерки, яка поважає таку майстерність і платить, щоб ти мовчав.",
+            { gold: 50 },
+          ),
+          out(
+            2,
+            "A giant hand lifts you by the collar and drops you into the river.",
+            "Величезна рука підіймає тебе за комір і кидає в річку.",
+            { health: -3, gold: -20 },
+          ),
+        ],
+      },
+      {
+        icon: "waterDrop",
+        label: both("Ask about the river", "Розпитати про річку"),
+        outcomes: [
+          out(
+            2,
+            "She tells a tall tale of a rope, a monster and a bet she never lost. By the end she is teaching you one of her own tricks.",
+            "Вона розповідає неймовірну історію про канат, чудовисько й парі, яке вона ніколи не програвала. Під кінець навчає тебе одному зі своїх прийомів.",
             { card: "ally" },
+          ),
+          out(
+            1,
+            "She laughs at your questions and sells you a drink instead.",
+            "Вона сміється з твоїх питань і замість відповіді продає напій.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      {
+        icon: "monkFace",
+        label: both("Walk the gangplank at dawn", "Зійти трапом на світанку"),
+        remove: true,
+        gold: 15,
+        text: both(
+          "You leave a bad habit on the table, and she quietly pays you the small change.",
+          "Ти залишаєш за столом погану звичку, а вона мовчки віддає тобі дрібні гроші.",
+        ),
+      },
+      leave(
+        "The steamer's whistle sounds behind you like a farewell.",
+        "Гудок пароплава лунає за тобою, наче прощання.",
+      ),
+    ],
+  },
+  {
+    id: "oda_tea",
+    hero: "oda-nobunaga",
+    icon: "torch",
+    tint: "#b32d2d",
+    weight: 1,
+    title: both("Tea before the fire", "Чай перед пожежею"),
+    text: both(
+      "A castle burns on the hill behind a warlord in a horned demon helmet. He kneels in a pavilion and prepares tea with perfect calm, while his guards wait in silence in two straight lines. He gestures to the empty mat opposite.",
+      "Позаду воєначальника в шоломі з рогами демона на пагорбі горить замок. Він стоїть навколішки в павільйоні й спокійно готує чай, а охоронці мовчки чекають двома рівними шеренгами. Він показує на порожню циновку навпроти.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Drink the tea", "Випити чаю"),
+        outcomes: [
+          out(
+            3,
+            "He asks one question about your last battle, listens, and answers it with a lesson in patience.",
+            "Він ставить одне питання про твою останню битву, слухає й відповідає уроком терпіння.",
+            { card: "ally" },
+          ),
+          out(
+            1,
+            "The tea is bitter. So is his silence. You leave steadier than you came.",
+            "Чай гіркий. Мовчання теж. Ти йдеш твердішим, ніж прийшов.",
+            { health: 3 },
           ),
         ],
       },
       {
         icon: "swordman",
-        label: both("Refuse politely", "Ввічливо відмовитись"),
+        label: both("Challenge the guards", "Викликати охоронців"),
         outcomes: [
           out(
-            1,
-            "You trust your own strength and rediscover a card of your own.",
-            "Ти покладаєшся на власні сили й знаходиш карту зі свого арсеналу.",
-            { card: "own" },
-          ),
-        ],
-      },
-      {
-        icon: "crossedSwords",
-        label: both(
-          "Challenge them to a friendly spar",
-          "Запропонувати дружній спаринг",
-        ),
-        outcomes: [
-          out(
-            1,
-            "{hero} grins, loses on purpose, and hands you a card.",
-            "{hero} усміхається, програє навмисно й віддає тобі карту.",
-            { card: "ally" },
+            2,
+            "Two guards fall in formation against you. You win with luck and a sprained wrist, and he tosses you a purse of silver.",
+            "Двоє охоронців шикуються проти тебе. Ти виграєш завдяки везінню й розтягнутому зап'ястку, а він кидає тобі гаманець зі сріблом.",
+            { gold: 45, health: -2 },
           ),
           out(
-            1,
-            "{hero} wins and collects the stake.",
-            "{hero} перемагає й забирає ставку.",
-            { gold: -15 },
+            2,
+            "The guards never break their line. You learn about flanking the hard way.",
+            "Охоронці не порушують строю ні на мить. Урок про оточення ти засвоюєш болісно.",
+            { health: -4 },
           ),
         ],
       },
       {
         icon: "scrollUnfurled",
-        label: both("Ask for advice", "Попросити поради"),
+        label: both("Offer a plan for the siege", "Запропонувати план облоги"),
+        cost: 10,
         outcomes: [
           out(
-            1,
-            "Good advice is worth coin, and {hero} pays you for yours.",
-            "Добра порада варта монет, і {hero} платить тобі за твою.",
-            { gold: 25 },
+            2,
+            "He studies your sketch, nods once and pays for the idea in coin.",
+            "Він вивчає твій малюнок, киває і платить за ідею золотом.",
+            { gold: 55 },
           ),
           out(
-            1,
-            "The advice turns out to be a card.",
-            "Порада виявляється картою.",
+            2,
+            "He studies your sketch, smiles faintly and hands you a better one.",
+            "Він вивчає твій малюнок, ледь усміхається й віддає тобі кращий.",
             { card: "any" },
           ),
         ],
       },
       {
-        icon: "ninjaMask",
-        label: both("Slip past unseen", "Прослизнути непоміченим"),
-        outcomes: [
-          out(1, "{hero} never turns around.", "{hero} навіть не обертається."),
-        ],
+        icon: "monkFace",
+        label: both("Let the old castle burn", "Дати старому замку згоріти"),
+        remove: true,
+        gold: 0,
+        text: both(
+          "You watch the flames and let go of what you no longer need. He pours you a second cup.",
+          "Ти дивишся на полум'я й відпускаєш те, що вже не потрібне. Він наливає тобі другу чашку.",
+        ),
       },
+      leave(
+        "You bow and back away. Nobody moves.",
+        "Ти вклоняєшся й відступаєш. Ніхто не ворушиться.",
+      ),
     ],
   },
   {
-    id: "train",
-    tint: "#d6743b",
+    id: "chupacabra_pen",
+    hero: "chupacabra",
+    icon: "hornedSkull",
+    tint: "#7a3fa0",
     weight: 1,
-    title: both("{hero} offers to train", "{hero} пропонує тренування"),
+    title: both("Empty goat pens", "Порожні загони для кіз"),
     text: both(
-      '{hero} spins a practice blade. "One round, no hard feelings."',
-      "{hero} крутить тренувальний клинок. «Один раунд, без образ».",
+      "A farmer shows you three goat pens drained of every animal without a single drop of blood on the ground. In the dust there are long clawed tracks, and on the barn roof something spined and red-eyed is watching you both.",
+      "Фермер показує тобі три порожні загони, де зникла вся худоба, а на землі жодної краплі крові. У пилюці довгі сліди з кігтями, а на даху стодоли за вами обома стежить щось із шипами й червоними очима.",
     ),
     choices: [
       {
-        icon: "muscleUp",
-        label: both("Train together", "Потренуватись разом"),
-        pickAlly: 3,
-      },
-      {
-        icon: "punch",
-        label: both("Spar hard", "Битися всерйоз"),
+        icon: "torch",
+        label: both("Hunt it with the farmer", "Піти на полювання з фермером"),
         outcomes: [
           out(
             2,
-            "You hold your ground, and {hero} teaches you a finishing move.",
-            "Ти тримаєшся, і {hero} навчає тебе завершальному прийому.",
+            "You corner the creature in the barn. It wriggles out with half your supplies, but the farmer pays for the effort.",
+            "Ви заганяєте істоту в кут стодоли. Вона вислизає з половиною твоїх припасів, але фермер платить за старання.",
+            { gold: 35 },
+          ),
+          out(
+            2,
+            "It leaps from the dark. You wake up bandaged in the farmhouse, with a strange new trick in your head.",
+            "Воно вистрибує з темряви. Ти приходиш до тями перев'язаним у хаті, а в голові з'являється дивний новий прийом.",
+            { health: -4, card: "ally" },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Leave it a goat", "Залишити йому козу"),
+        cost: 15,
+        outcomes: [
+          out(
+            3,
+            "A red-eyed shape takes the goat and, a few moments later, leaves something shiny in return.",
+            "Червоноока тінь забирає козу й за кілька митей лишає на її місці щось блискуче.",
             { card: "ally" },
           ),
           out(
             1,
-            "You pay for the lesson in bruises and coin.",
-            "Ти платиш за урок синцями й монетами.",
+            "The goat vanishes. Nothing else happens. Somewhere a satisfied belch.",
+            "Коза зникає. Більше нічого. Десь чути задоволене гикання.",
+          ),
+        ],
+      },
+      {
+        icon: "magnifyingGlass",
+        label: both("Follow the tracks alone", "Піти за слідами самому"),
+        outcomes: [
+          out(
+            2,
+            "The tracks lead to a cave stuffed with stolen trinkets and one very guilty goat.",
+            "Сліди ведуть до печери, повної вкраденого дріб'язку та однієї дуже винної кози.",
+            { gold: 50 },
+          ),
+          out(
+            1,
+            "The tracks lead in a circle. You finish the walk exactly where you started, and lighter.",
+            "Сліди ведуть колом. Ти повертаєшся туди, звідки почав, і з легшим гаманцем.",
             { gold: -20 },
           ),
-        ],
-      },
-      {
-        icon: "swordman",
-        label: both("Practice on your own", "Тренуватись самому"),
-        outcomes: [
           out(
             1,
-            "You drill alone until a forgotten lesson returns.",
-            "Ти тренуєшся наодинці, доки не повертається забутий урок.",
+            "Under a rock you find a notebook of crude hunting tricks.",
+            "Під каменем лежить зошит із грубими мисливськими прийомами.",
             { card: "own" },
           ),
-          out(
-            1,
-            "{hero} watches, impressed, and tosses you a purse.",
-            "{hero} дивиться із захватом і кидає тобі гаманець.",
-            { gold: 25 },
-          ),
         ],
       },
       {
-        icon: "footsteps",
-        label: both("Go on alone", "Іти далі самому"),
-        outcomes: [
-          out(
-            1,
-            "{hero} tips their hat and tosses you a purse.",
-            "{hero} киває й кидає тобі гаманець.",
-            { gold: 25 },
-          ),
-        ],
+        icon: "monkFace",
+        label: both("Face your fear", "Подивитись страху в очі"),
+        remove: true,
+        gold: 10,
+        text: both(
+          "You stare into the red eyes without blinking. The creature blinks first and slinks away, and a burden leaves with it.",
+          "Ти дивишся в червоні очі й не кліпаєш. Істота кліпає першою й тікає, а разом із нею іде тягар.",
+        ),
       },
+      leave(
+        "You pull your coat tight and walk away without looking back.",
+        "Ти запахуєшся в плащ і йдеш, не озираючись.",
+      ),
     ],
   },
   {
-    id: "bargain",
-    tint: "#c9a227",
+    id: "danny_wreck",
+    hero: "deadman-danny",
+    icon: "hornedSkull",
+    tint: "#e0592a",
     weight: 1,
-    title: both("{hero} the trader", "{hero} торговець"),
+    title: both("A lifetime warranty", "Довічна гарантія"),
     text: both(
-      '{hero} lays out a few cards on a cloak. "Take one, if you can pay."',
-      "{hero} розкладає кілька карт на плащі. «Бери одну, якщо маєш чим платити».",
+      'A scorched wreck of a spaceship smokes at the roadside. On its hood sits a grinning salesman in a burnt suit and a rocket pack, waving a stack of papers. "Barely used! One careful owner! Lifetime warranty, and trust me, I am a lifetime."',
+      "На узбіччі димить обгорілий уламок космічного корабля. На капоті сидить усміхнений торговець у підпаленому костюмі з реактивним ранцем і махає стосом паперів. «Майже новий! Один дбайливий власник! Довічна гарантія, а я, повір, безсмертний».",
     ),
     choices: [
       {
-        icon: "coinsPile",
-        label: both("Pay for a card", "Заплатити за карту"),
-        cost: 30,
-        pickAlly: 3,
-      },
-      {
-        icon: "scales",
-        label: both("Haggle", "Поторгуватись"),
+        icon: "shakingHands",
+        label: both("Buy the ship", "Купити корабель"),
+        cost: 40,
         outcomes: [
           out(
-            1,
-            "{hero} sighs and hands one over to be rid of you.",
-            "{hero} зітхає й віддає одну, щоб позбутися тебе.",
+            2,
+            "It starts on the third try and leaves a trail of fire. In the glovebox you find a manual with a very useful page.",
+            "Він заводиться з третього разу й залишає вогняний слід. У бардачку лежить інструкція з дуже корисною сторінкою.",
             { card: "ally" },
           ),
           out(
-            1,
-            "{hero} laughs and lightens your purse.",
-            "{hero} сміється й полегшує твій гаманець.",
-            { gold: -15 },
+            2,
+            "The engine explodes before you finish signing. The warranty, he says cheerfully, does not cover that.",
+            "Двигун вибухає, ще до того як ти підписав папери. Гарантія, весело каже він, такого не покриває.",
+            { health: -5 },
           ),
         ],
       },
       {
-        icon: "knapsack",
-        label: both("Buy the whole kit", "Купити весь набір"),
-        cost: 60,
-        pickAlly: 5,
+        icon: "rollingDices",
+        label: both("Haggle the price down", "Збити ціну"),
+        outcomes: [
+          out(
+            2,
+            "He sighs, throws in a fire extinguisher and a card from his coat pocket to be rid of you.",
+            "Він зітхає, докладає вогнегасник і карту з кишені пальта, аби позбутися тебе.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "He haggles better than you. You leave with a signed receipt for nothing and a lighter purse.",
+            "Він торгується краще за тебе. Ти йдеш із підписаною квитанцією ні за що й легшим гаманцем.",
+            { gold: -25 },
+          ),
+        ],
       },
       {
         icon: "robberHand",
-        label: both("Try to snatch a card", "Спробувати поцупити карту"),
+        label: both("Strip the wreck for parts", "Розібрати уламок на деталі"),
         outcomes: [
           out(
-            1,
-            "Your fingers are quicker than {hero}'s eyes.",
-            "Твої пальці швидші за очі {hero}.",
-            { card: "ally" },
+            3,
+            "Under the scorched plating you find a pouch of fuel coupons worth real coin.",
+            "Під обгорілою обшивкою ти знаходиш мішечок купонів на паливо, які коштують справжніх грошей.",
+            { gold: 45 },
           ),
           out(
-            2,
-            "{hero} catches your wrist and charges you for the trouble.",
-            "{hero} хапає тебе за зап'ясток і виставляє рахунок за клопіт.",
-            { gold: -40 },
+            1,
+            "A hidden fuel tank ignites. The salesman applauds your commitment.",
+            "Прихований паливний бак спалахує. Торговець аплодує твоїй відданості справі.",
+            { health: -3 },
           ),
         ],
       },
       {
-        icon: "footsteps",
-        label: both("Walk away", "Піти геть"),
-        outcomes: [
-          out(
-            1,
-            "{hero} shrugs and packs the cards away.",
-            "{hero} знизує плечима й ховає карти.",
-          ),
-        ],
+        icon: "monkFace",
+        label: both("Void the old warranty", "Анулювати стару гарантію"),
+        remove: true,
+        gold: 0,
+        text: both(
+          'He stamps a card as "void" with a flourish and it burns out of your deck in a puff of smoke.',
+          "Він урочисто ставить штамп «анульовано» на карті, і та згоряє з колоди хмаринкою диму.",
+        ),
       },
+      leave(
+        "You hear him shouting prices at your back until you turn the corner.",
+        "Ти чуєш, як він викрикує ціни тобі вслід, аж поки не завертаєш за ріг.",
+      ),
     ],
   },
 ];

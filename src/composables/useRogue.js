@@ -479,22 +479,23 @@ export function useRogue() {
 
   const eventData = () => {
     if (!run.event) return null;
-    const list = run.event.hero ? heroEvents : events;
-    return list.find((item) => item.id === run.event.id) || null;
+    return (
+      [...events, ...heroEvents].find((item) => item.id === run.event.id) ||
+      null
+    );
   };
 
   function startEvent() {
-    const heroChance = Math.random() < 0.4;
-    const list = heroChance ? heroEvents : events;
+    const list = [
+      ...events,
+      ...heroEvents.filter((item) => item.hero !== run.heroId),
+    ];
     const total = list.reduce((sum, item) => sum + (item.weight || 1), 0);
     let roll = Math.random() * total;
     const pick = list.find((item) => (roll -= item.weight || 1) < 0) || list[0];
-    const others = packDraftHeroes.filter((hero) => hero.id !== run.heroId);
     run.event = {
       id: pick.id,
-      hero: heroChance
-        ? others[Math.floor(Math.random() * others.length)].id
-        : null,
+      hero: pick.hero || null,
       step: "choose",
       hp: 0,
       result: null,

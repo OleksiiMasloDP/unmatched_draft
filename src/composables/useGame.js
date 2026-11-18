@@ -431,6 +431,7 @@ function damage(player, amount, fighter = cur[player]) {
   if (amount > 0) turnFlags.hurt[player] = true;
   log(source() ? "logDamageSrc" : "logDamage", {
     player,
+    who: hero(player).name,
     n: amount,
     src: source(),
   });
@@ -455,7 +456,7 @@ function heal(player, amount, fighter = cur[player]) {
   const target = pl(player);
   const healed = Math.min(amount, target.maxHp - target.hp);
   target.hp += healed;
-  log("logHeal", { player, n: healed });
+  log("logHeal", { player, who: hero(player).name, n: healed });
   if (healed > 0) fx("heal", player, { n: healed, fighter: "hero" });
 }
 
