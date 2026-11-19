@@ -356,6 +356,12 @@ export function useRogue() {
     return true;
   }
 
+  function resumeBattle() {
+    if (run.phase !== "battle") return;
+    run.phase = run.enemy ? "encounter" : "map";
+    save();
+  }
+
   function syncBattle() {
     if (run.phase !== "battle") return;
     if (game.phase === "over" && game.winner) {
@@ -642,6 +648,7 @@ export function useRogue() {
     enterNode,
     startBattle,
     syncBattle,
+    resumeBattle,
     pickReward,
     pickPack,
     leavePacks,

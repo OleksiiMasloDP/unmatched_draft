@@ -555,6 +555,7 @@ const {
   enterNode,
   startBattle,
   syncBattle,
+  resumeBattle,
   pickReward,
   pickPack,
   leavePacks,
@@ -740,7 +741,10 @@ watch(
 );
 
 onMounted(async () => {
-  if (run.phase === "battle" && game.phase !== "play") syncBattle();
+  if (run.phase === "battle" && game.phase !== "play") {
+    if (game.phase === "setup" || !game.players.p1) resumeBattle();
+    else syncBattle();
+  }
   await nextTick();
   animate();
 });
