@@ -348,6 +348,13 @@
             <ActionIcon name="attack" />{{ t("gameAttack") }}
           </button>
           <button
+            v-if="canSkipFree"
+            class="btn btn-sm action-btn game-skip"
+            @click="doSkipFree"
+          >
+            <ActionIcon name="skip" />{{ t("gameEndTurn") }}
+          </button>
+          <button
             v-if="spacePrompt"
             class="btn btn-sm action-btn game-skip"
             @click="answerPrompt(null)"
@@ -1332,6 +1339,7 @@ const {
   doManeuver,
   doScheme,
   doAttack,
+  doSkipFree,
   doUndo,
   surrender,
   availableActions,
@@ -1468,6 +1476,16 @@ const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
 
 const available = computed(() => availableActions());
+
+const canSkipFree = computed(
+  () =>
+    game.phase === "play" &&
+    !game.prompt &&
+    game.freeAttacks.length > 0 &&
+    game.actions > 0 &&
+    game.actions <= game.freeAttacks.length &&
+    (!online.value || game.turn === meSeat.value),
+);
 
 const canBoost = computed(() =>
   Boolean(spacePrompt.value?.boostOptions?.length),

@@ -3435,6 +3435,15 @@ function applyAction(type, seat) {
     run(maneuver(game.turn));
   } else if (type === "scheme" && canAct() && regularActions() > 0) {
     run(scheme(game.turn));
+  } else if (
+    type === "skipFree" &&
+    canAct() &&
+    game.freeAttacks.length &&
+    regularActions() === 0
+  ) {
+    game.freeAttacks = [];
+    game.actions = 0;
+    run(endTurn());
   } else if (type === "attack" && canAct() && attackChoices(game.turn).length) {
     takeSnapshot();
     run(attack(game.turn));
@@ -3478,6 +3487,7 @@ const doManeuver = () => doAction("maneuver");
 const doScheme = () => doAction("scheme");
 const doAttack = () => doAction("attack");
 const doUndo = () => doAction("undo");
+const doSkipFree = () => doAction("skipFree");
 
 function validDeck(deck) {
   return (
@@ -3688,6 +3698,7 @@ export function useGame() {
     doManeuver,
     doScheme,
     doAttack,
+    doSkipFree,
     doUndo,
     surrender,
     availableActions,
