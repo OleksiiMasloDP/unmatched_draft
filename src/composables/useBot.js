@@ -1295,7 +1295,10 @@ export function useBot(options = {}) {
       const gain = bestMoveGain(bot) * (available.attack ? 0.4 : 1);
       options.push(["maneuver", draw + styleDraw + need + repeat + gain]);
     }
-    if (!options.length) return;
+    if (!options.length) {
+      if (!inSim && !dry) engine.forceEndTurn();
+      return;
+    }
     if (
       !inSim &&
       game.botLevel !== "easy" &&

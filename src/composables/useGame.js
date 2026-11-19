@@ -3676,6 +3676,13 @@ function startOnlineGame() {
   rollToss();
 }
 
+function forceEndTurn() {
+  if (game.phase !== "play" || game.prompt || flow) return;
+  game.freeAttacks = [];
+  game.actions = 0;
+  run(endTurn());
+}
+
 function availableActions(forBot = false) {
   const none = { maneuver: false, scheme: false, attack: false };
   if (game.phase !== "play" || (!forBot && blocked())) return none;
@@ -3742,6 +3749,7 @@ export function useGame() {
     setBot,
     setBotLevel,
     exportBattle,
+    forceEndTurn,
     importBattle,
     startRogueBattle,
     chooseDeck,
