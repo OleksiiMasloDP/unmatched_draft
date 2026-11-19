@@ -229,11 +229,74 @@ const rows = computed(() => {
 }
 
 @media (max-width: 560px) {
+  .rhist {
+    padding: 8px;
+  }
+
+  .rhist-box {
+    padding: 12px;
+  }
+
+  .rhist-table {
+    table-layout: fixed;
+    font-size: 0.8rem;
+  }
+
+  .rhist-table th,
+  .rhist-table td {
+    padding: 6px 4px;
+  }
+
+  .rhist-table th:first-child,
+  .rhist-table td:first-child {
+    display: none;
+  }
+
+  .rhist-table th:nth-child(2) {
+    width: 40%;
+  }
+
+  .rhist-table th:nth-child(3) {
+    width: 20%;
+  }
+
+  .rhist-table th:nth-child(4) {
+    width: 16%;
+  }
+
+  .rhist-hero {
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .rhist-hero img {
+    flex: none;
+    width: 26px;
+    height: 26px;
+  }
+
   .rhist-hero span {
-    max-width: 80px;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .rhist-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0;
+  }
+
+  .rhist-badge :deep(svg),
+  .rhist-badge :deep(img) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .rhist-table th {
+    letter-spacing: 0;
+    white-space: normal;
   }
 }
 </style>
