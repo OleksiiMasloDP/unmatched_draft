@@ -666,7 +666,7 @@ export function useBot(options = {}) {
       const spare = prompt.boostOptions
         .map(getCard)
         .filter((card) => card && card.boost > 0 && deadBoost(card));
-      if (spare.length && handOf(bot).length >= 5) {
+      if (spare.length && handOf(bot).length >= 7) {
         return {
           boost: spare.reduce((a, b) => (b.boost > a.boost ? b : a)).id,
         };
@@ -701,9 +701,32 @@ export function useBot(options = {}) {
       const me = fightersOf(bot).find((item) => item.id === prompt.fighter);
       if (!me) return null;
       const now = positionScore(me, me.space, bot, state.turtle);
+      const left = prompt.left ?? me.move;
+      if (handOf(bot).some(fitAttack)) {
+        const foes = fightersOf(other(bot));
+        const taken = new Set(
+          [...fightersOf(bot), ...foes]
+            .filter((item) => item.space !== me.space)
+            .map((item) => item.space),
+        );
+        const strikes = (spot) =>
+          !taken.has(spot) && foes.some((foe) => canHit(me, spot, foe.space));
+        if (strikes(me.space)) return null;
+        const toStrike = options.filter(
+          (id) =>
+            strikes(id) ||
+            [...reachSet(id, Math.max(left - 1, 0))].some(strikes),
+        );
+        if (toStrike.length) {
+          const direct = toStrike.filter(strikes);
+          return bestBy(direct.length ? direct : toStrike, (id) =>
+            positionScore(me, id, bot, state.turtle),
+          );
+        }
+      }
       const ahead = (id) => {
         let best = positionScore(me, id, bot, state.turtle);
-        for (const spot of reachSet(id, Math.max(me.move - 1, 1))) {
+        for (const spot of reachSet(id, Math.max(left - 1, 1))) {
           if (spot === id) continue;
           best = Math.max(best, positionScore(me, spot, bot, state.turtle));
         }
