@@ -212,15 +212,11 @@ function makePacks() {
 
 function makeEnemy(node) {
   const kind = kindOf(node);
-  const extra = ["agent-venom", ...(kind === "elite" ? [FINAL_BOSS] : [])]
-    .map((id) => getHero(id))
-    .filter(Boolean);
-  const heroes = [...packDraftHeroes, ...extra].filter(
-    (item) => item.id !== run.heroId,
-  );
+  const heroes = packDraftHeroes.filter((item) => item.id !== run.heroId);
+  const bosses = [FINAL_BOSS, "agent-venom"].filter((id) => id !== run.heroId);
   const hero =
     kind === "boss"
-      ? getHero(FINAL_BOSS)
+      ? getHero(bosses[Math.floor(Math.random() * bosses.length)])
       : heroes[Math.floor(Math.random() * heroes.length)];
   const pool = [...allCards, ...bossCards]
     .filter((card) => card.heroId === hero.id)

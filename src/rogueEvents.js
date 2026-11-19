@@ -3171,6 +3171,878 @@ export const heroEvents = [
       ),
     ],
   },
+  {
+    id: "dracula_crypt",
+    hero: "dracula",
+    icon: "candleFlame",
+    tint: "#8d1f33",
+    weight: 1,
+    title: both("The crypt of mirrors", "Склеп дзеркал"),
+    text: both(
+      "Every wall of the crypt is a mirror, and none of them shows you a reflection. Instead a pale figure in a high collar stands among them, and he is very pleased to have company.",
+      "Усі стіни склепу вкриті дзеркалами, і жодне не відбиває тебе. Натомість між ними стоїть блідий чоловік у високому комірі, дуже задоволений гостем.",
+    ),
+    choices: [
+      {
+        icon: "magnifyingGlass",
+        label: both("Study the mirrors", "Роздивитися дзеркала"),
+        outcomes: [
+          out(
+            2,
+            "You find the one mirror that is only a window. Behind it lies a forgotten cache.",
+            "Ти знаходиш єдине дзеркало, що насправді вікно. За ним лежить забутий схрон.",
+            { gold: 45 },
+          ),
+          out(
+            2,
+            "A reflection that is not yours reaches out and takes something from your pocket.",
+            "Відображення, яке не твоє, простягає руку й забирає щось із твоєї кишені.",
+            { gold: -25 },
+          ),
+        ],
+      },
+      {
+        icon: "pentacle",
+        label: both("Shatter one on purpose", "Розбити одне навмисно"),
+        outcomes: [
+          out(
+            2,
+            "The shards whisper a lesson as they fall. You leave knowing a trick you did not know before.",
+            "Уламки шепочуть урок, поки падають. Ти йдеш, знаючи прийом, якого не знав.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "Seven years of bad luck arrive in about seven seconds.",
+            "Сім років нещастя приходять приблизно за сім секунд.",
+            { health: -4 },
+          ),
+        ],
+      },
+      {
+        icon: "shakingHands",
+        label: both("Accept his hospitality", "Прийняти його гостинність"),
+        outcomes: [
+          out(
+            3,
+            "He pours something dark into a very old glass. You wake up refreshed and slightly suspicious.",
+            "Він наливає щось темне в дуже старий келих. Прокидаєшся бадьорим і трохи підозріливим.",
+            { health: 5 },
+          ),
+          out(
+            1,
+            "The glass is empty, and so, afterwards, is your purse.",
+            "Келих порожній, і після цього твій гаманець теж.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "dracula_feast",
+    hero: "dracula",
+    icon: "bread",
+    tint: "#a3253a",
+    weight: 1,
+    title: both("A very pale dinner", "Дуже бліда вечеря"),
+    text: both(
+      "A long table is laid in a ruined hall. Candles burn, the wine is thick and red, and at the head sits an elegant figure who does not seem to eat anything himself. A place has been set for you, though you were not expected.",
+      "У зруйнованій залі накрито довгий стіл. Горять свічки, вино густе й червоне, а на чолі сидить елегантна постать, яка, здається, нічого не їсть. Для тебе поставлено прибор, хоч тебе й не чекали.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Eat and drink", "Їсти й пити"),
+        outcomes: [
+          out(
+            3,
+            "The food is wonderful and the company is disturbingly charming. You leave warm and well rested.",
+            "Їжа чудова, а товариство тривожно чарівне. Ти йдеш ситим і відпочилим.",
+            { health: 6 },
+          ),
+          out(
+            1,
+            "You wake up in a corridor with a headache and a lighter purse.",
+            "Ти прокидаєшся в коридорі з головним болем і легшим гаманцем.",
+            { gold: -20, health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "scrollUnfurled",
+        label: both("Trade stories", "Помінятися історіями"),
+        outcomes: [
+          out(
+            2,
+            "He has seen four centuries of fights and shares one move with a shrug.",
+            "Він бачив чотири століття боїв і знизує плечима, ділячись одним прийомом.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "He finds your story dull and pays you to stop.",
+            "Він вважає твою історію нудною й платить, щоб ти замовк.",
+            { gold: 30 },
+          ),
+        ],
+      },
+      {
+        icon: "hornedSkull",
+        label: both("Refuse the invitation", "Відмовитися"),
+        outcomes: [
+          out(
+            2,
+            "The doors close behind you. In the courtyard lies a coin purse someone dropped in a hurry.",
+            "Двері зачиняються за тобою. У дворі лежить гаманець, який хтось упустив у поспіху.",
+            { gold: 25 },
+          ),
+          out(
+            2,
+            "The figure is offended. The night gets a great deal longer.",
+            "Постать ображена. Ніч стає значно довшою.",
+            { health: -3 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "annie_lagniappe",
+    hero: "annie-christmas",
+    icon: "coins",
+    tint: "#c9892a",
+    weight: 1,
+    title: both("Something extra on the house", "Щось додому від господині"),
+    text: both(
+      "In the middle of a loud river market a huge woman with a string of pearls is selling spiced food and giving away a little extra to everybody. She waves you over as if you were an old friend.",
+      "Серед гамірного річкового ринку величезна жінка з ниткою перлів продає гостру їжу й кожному додає дещо зверху. Вона махає тобі, ніби старому знайомому.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Buy a plate", "Купити порцію"),
+        cost: 15,
+        outcomes: [
+          out(
+            3,
+            "She piles the plate high and adds a little extra for free. You eat like a king.",
+            "Вона накладає гору їжі й додає зверху безкоштовно. Ти їси як король.",
+            { health: 5 },
+          ),
+          out(
+            1,
+            "It is much hotter than it looked. You pay for the milk afterwards.",
+            "Це набагато гостріше, ніж здавалося. Потім платиш за молоко.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      {
+        icon: "rollingDices",
+        label: both("Bet on the dice game", "Поставити на кості"),
+        outcomes: [
+          out(
+            2,
+            "Beginner's luck is real, and she grudgingly admits it.",
+            "Щастя новачка існує, і вона неохоче це визнає.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "The dice are suspiciously friendly to her. You walk away lighter.",
+            "Кості підозріло прихильні до неї. Ти йдеш легшим.",
+            { gold: -30 },
+          ),
+        ],
+      },
+      {
+        icon: "shakingHands",
+        label: both("Ask for work", "Попросити роботу"),
+        outcomes: [
+          out(
+            2,
+            "She puts you on the crate-lifting crew for an afternoon and teaches you how to hold your ground.",
+            "Вона ставить тебе на ящики на день і вчить стояти на своєму.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "You carry crates until sunset. The pay is honest and small.",
+            "Ти носиш ящики до заходу сонця. Платня чесна й невелика.",
+            { gold: 25 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "annie_bayou",
+    hero: "annie-christmas",
+    icon: "waterDrop",
+    tint: "#2f7d6a",
+    weight: 1,
+    title: both("Lights over the bayou", "Вогні над болотом"),
+    text: both(
+      "Green lights bob over black water, and somewhere a long way off someone is humming. A flat boat waits at the shore with a lantern and a very long pole, but its owner is nowhere in sight.",
+      "Зелені вогники погойдуються над чорною водою, а десь далеко хтось наспівує. На березі чекає плоский човен із ліхтарем і довгим жердиною, але господаря не видно.",
+    ),
+    choices: [
+      {
+        icon: "footsteps",
+        label: both("Follow the lights", "Піти за вогнями"),
+        outcomes: [
+          out(
+            2,
+            "The lights lead to a hollow tree with a stash of old river coins inside.",
+            "Вогні ведуть до дуплистого дерева, де лежить схрон старих річкових монет.",
+            { gold: 50 },
+          ),
+          out(
+            2,
+            "The lights lead into mud up to your knees, and something laughs.",
+            "Вогні заводять у багнюку по коліна, і щось сміється.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "swordman",
+        label: both("Take the boat", "Взяти човен"),
+        outcomes: [
+          out(
+            2,
+            "You pole across and meet a ferryman who owes the owner a favour. He pays you in knowledge.",
+            "Ти переправляєшся й зустрічаєш перевізника, що винен господарю послугу. Він платить знанням.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "The owner turns out to be very large and very angry. You pay for the boat.",
+            "Господар виявляється дуже великим і дуже розлюченим. Ти платиш за човен.",
+            { gold: -25 },
+          ),
+        ],
+      },
+      {
+        icon: "torch",
+        label: both("Wait for morning", "Дочекатися ранку"),
+        outcomes: [
+          out(
+            3,
+            "Dawn burns off the mist, and you rest as well as the mosquitoes allow.",
+            "Світанок розганяє туман, і ти відпочиваєш, наскільки дозволяють комарі.",
+            { health: 3 },
+          ),
+          out(
+            1,
+            "The mosquitoes allow nothing.",
+            "Комарі не дозволяють нічого.",
+            {},
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "oda_gunsmith",
+    hero: "oda-nobunaga",
+    icon: "crossedSwords",
+    tint: "#a82a2a",
+    weight: 1,
+    title: both("Rows of matchlocks", "Ряди ґнотових рушниць"),
+    text: both(
+      "On a muddy field, three long rows of musketeers kneel behind wooden fences. A grim commander in a black cloak walks along them, checking every barrel. He looks at you and at your weapons and does not seem impressed.",
+      "На розкислому полі три довгі шеренги мушкетерів стоять навколішки за дерев'яними загорожами. Похмурий командир у чорному плащі обходить їх, перевіряючи кожен ствол. Він дивиться на тебе й на твою зброю і, здається, не вражений.",
+    ),
+    choices: [
+      {
+        icon: "swordman",
+        label: both("Offer a duel", "Запропонувати двобій"),
+        outcomes: [
+          out(
+            2,
+            "He declines the duel and gives you a lesson in why it was a bad idea.",
+            "Він відмовляється від двобою й дає урок, чому це була погана ідея.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "One volley kicks up the mud at your feet. You decide to withdraw.",
+            "Один залп здіймає багнюку біля твоїх ніг. Ти вирішуєш відступити.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "coinsPile",
+        label: both("Sell him supplies", "Продати йому припаси"),
+        outcomes: [
+          out(
+            3,
+            "He pays in full and on time. That is rarer than it sounds.",
+            "Він платить повністю й вчасно. Це рідкість.",
+            { gold: 45 },
+          ),
+          out(
+            1,
+            "He pays in full, minus a fee for being late.",
+            "Він платить повністю, мінус штраф за запізнення.",
+            { gold: 15 },
+          ),
+        ],
+      },
+      {
+        icon: "scrollUnfurled",
+        label: both("Ask about the formation", "Розпитати про шеренги"),
+        outcomes: [
+          out(
+            2,
+            "He explains how rows trade places so that the line never stops. You take careful notes.",
+            "Він пояснює, як шеренги міняються місцями, щоб лінія не переривалася. Ти старанно записуєш.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "He tells you to stop wasting his time and leave.",
+            "Він велить не гаяти його час і йти.",
+            {},
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "oda_gate",
+    hero: "oda-nobunaga",
+    icon: "torch",
+    tint: "#c0392b",
+    weight: 1,
+    title: both("The gate that burns", "Брама, що горить"),
+    text: both(
+      "A tall wooden gate stands wrapped in flames, and the road leads straight through it. Beside the gate a stern figure in red armour and a horned helmet watches you without blinking. He seems to be waiting to see what you do.",
+      "Висока дерев'яна брама стоїть охоплена полум'ям, і дорога веде прямо крізь неї. Поруч суворий воїн у червоних обладунках і рогатому шоломі дивиться на тебе, не кліпаючи. Здається, він чекає, що ти зробиш.",
+    ),
+    choices: [
+      {
+        icon: "muscleUp",
+        label: both("Run straight through", "Пробігти крізь вогонь"),
+        outcomes: [
+          out(
+            2,
+            "The flames only lick your cloak. The watcher nods, and throws you a coin.",
+            "Полум'я лише лиже твій плащ. Воїн киває й кидає тобі монету.",
+            { gold: 35 },
+          ),
+          out(
+            2,
+            "You are not as fast as you thought.",
+            "Ти не такий швидкий, як думав.",
+            { health: -5 },
+          ),
+        ],
+      },
+      {
+        icon: "hourglass",
+        label: both("Wait for it to burn down", "Дочекатися, поки вигорить"),
+        outcomes: [
+          out(
+            3,
+            "By morning only embers remain, and the watcher is gone. He left a note in the ashes.",
+            "До ранку лишаються лише жарини, а воїн зник. У попелі він залишив записку.",
+            { card: "ally" },
+          ),
+          out(
+            1,
+            "By morning it has burned down, and the road has been taken by someone else.",
+            "До ранку вона вигоряє, а дорогу вже зайняв хтось інший.",
+            {},
+          ),
+        ],
+      },
+      {
+        icon: "waterDrop",
+        label: both("Douse the flames", "Загасити вогонь"),
+        outcomes: [
+          out(
+            2,
+            "A bucket chain, a lot of shouting, and finally some respect from the watcher.",
+            "Ланцюжок відер, багато крику й нарешті трохи поваги від воїна.",
+            { health: 3 },
+          ),
+          out(
+            2,
+            "The water is the wrong kind. The flames flare up.",
+            "Вода не тієї якості. Полум'я спалахує сильніше.",
+            { health: -3, gold: -10 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "chupacabra_roof",
+    hero: "chupacabra",
+    icon: "ghost",
+    tint: "#6a2a2a",
+    weight: 1,
+    title: both("Something on the rooftop", "Щось на даху"),
+    text: both(
+      "A farm lies silent under the moon. Something crouches on the barn roof, spined and thin, with eyes like two hot coins. It watches you, and does not blink.",
+      "Ферма мовчить під місяцем. На даху клуні сидить щось худе й шипасте з очима, як дві розпечені монети. Воно дивиться на тебе й не кліпає.",
+    ),
+    choices: [
+      {
+        icon: "torch",
+        label: both("Hold up a lantern", "Підняти ліхтар"),
+        outcomes: [
+          out(
+            2,
+            "The creature flinches from the light and scrambles away, dropping something shiny.",
+            "Створіння відсахується від світла й тікає, впускаючи щось блискуче.",
+            { gold: 35 },
+          ),
+          out(
+            2,
+            "The creature isn't scared of lanterns. It takes the lantern.",
+            "Створіння не боїться ліхтарів. Воно забирає ліхтар.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Leave out some meat", "Залишити шматок м'яса"),
+        outcomes: [
+          out(
+            3,
+            "It eats, studies you for a long while, and then lets you pass. It shows you a trick on the way out.",
+            "Воно їсть, довго вивчає тебе й пропускає. Дорогою показує прийом.",
+            { card: "ally" },
+          ),
+          out(
+            1,
+            "The meat is gone, and it is still looking at you.",
+            "М'ясо зникло, а воно все ще дивиться на тебе.",
+            {},
+          ),
+        ],
+      },
+      {
+        icon: "crowbar",
+        label: both(
+          "Climb up and confront it",
+          "Залізти й зустрітися лицем до лиця",
+        ),
+        outcomes: [
+          out(
+            1,
+            "You are faster than expected. The creature vanishes, leaving its nest of shiny things behind.",
+            "Ти швидший, ніж чекалося. Створіння зникає, залишивши гніздо з блискучими речами.",
+            { gold: 60 },
+          ),
+          out(
+            3,
+            "It is faster than you expected. You get down the hard way.",
+            "Воно швидше, ніж ти очікував. Спускаєшся по-важкому.",
+            { health: -5 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "chupacabra_market",
+    hero: "chupacabra",
+    icon: "uncertainty",
+    tint: "#7a3d2a",
+    weight: 1,
+    title: both("Rumours at the night market", "Чутки на нічному ринку"),
+    text: both(
+      "Under flickering lamps a night market sells everything from salt to nightmares. Every second stall whispers about the same thing: a thin shape that drains goats. A stooped woman at a stall of charms nods at you.",
+      "Під мерехтливими лампами нічний ринок продає все від солі до жахіть. Кожна друга ятка шепоче про одне: худа тінь, яка висушує кіз. Згорблена жінка біля ятки з оберегами киває тобі.",
+    ),
+    choices: [
+      {
+        icon: "coins",
+        label: both("Buy a charm", "Купити оберіг"),
+        cost: 20,
+        outcomes: [
+          out(
+            3,
+            "The charm hums warmly in your pocket. You feel safer already.",
+            "Оберіг тепло гуде в кишені. Тобі вже спокійніше.",
+            { health: 4 },
+          ),
+          out(
+            1,
+            "It is just a painted stone. A lovely painted stone.",
+            "Це просто розфарбований камінь. Гарний розфарбований камінь.",
+            {},
+          ),
+        ],
+      },
+      {
+        icon: "magnifyingGlass",
+        label: both(
+          "Ask where it was last seen",
+          "Спитати, де його бачили востаннє",
+        ),
+        outcomes: [
+          out(
+            2,
+            "A trader sells you a map to a place the creature avoids. It saves you a long night.",
+            "Торговець продає мапу до місця, яке створіння обходить. Це рятує від довгої ночі.",
+            { gold: 20 },
+          ),
+          out(
+            2,
+            "The trader's information cost more than it was worth.",
+            "Інформація торговця коштує більше, ніж варта.",
+            { gold: -20 },
+          ),
+        ],
+      },
+      {
+        icon: "ninjaMask",
+        label: both("Offer to hunt it", "Запропонувати вполювати"),
+        outcomes: [
+          out(
+            2,
+            "You come back at dawn with scratches and a reward from the village.",
+            "Ти повертаєшся на світанку з подряпинами та нагородою від села.",
+            { gold: 50, health: -2 },
+          ),
+          out(
+            2,
+            "You come back at dawn with scratches, and a lesson in respect.",
+            "Ти повертаєшся на світанку з подряпинами й уроком поваги.",
+            { card: "ally", health: -2 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "shehulk_gala",
+    hero: "she-hulk",
+    icon: "scales",
+    tint: "#4f9d3a",
+    weight: 1,
+    title: both("A gala with a lawsuit", "Гала зі судовим позовом"),
+    text: both(
+      "A glittering charity gala fills a marble hall. At the centre of the crowd a tall green woman in an evening gown is serving papers to a man who clearly did not expect any. She notices you and raises a glass.",
+      "Виблискуюча благодійна гала заповнює мармурову залу. Посеред натовпу висока зелена жінка у вечірній сукні вручає документи чоловікові, який явно їх не чекав. Вона помічає тебе й піднімає келих.",
+    ),
+    choices: [
+      {
+        icon: "scrollUnfurled",
+        label: both("Volunteer as a witness", "Стати свідком"),
+        outcomes: [
+          out(
+            2,
+            "Your testimony wins the case. She pays you a witness fee and a professional compliment.",
+            "Твої свідчення виграють справу. Вона платить за свідчення й робить професійний комплімент.",
+            { gold: 45 },
+          ),
+          out(
+            2,
+            "The other side's lawyer takes your testimony apart with a smile.",
+            "Адвокат супротивника з усмішкою розбирає твої свідчення.",
+            { gold: -20 },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Raid the buffet", "Накинутися на фуршет"),
+        outcomes: [
+          out(
+            3,
+            "The buffet is excellent, and everyone is too busy to notice you.",
+            "Фуршет чудовий, а всі надто зайняті, щоб помітити тебе.",
+            { health: 4 },
+          ),
+          out(
+            1,
+            "A waiter notices, and the bill is not small.",
+            "Офіціант помічає, і рахунок немалий.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "muscleUp",
+        label: both("Break up a brawl", "Розборонити бійку"),
+        outcomes: [
+          out(
+            2,
+            "A fight breaks out near the buffet. She watches you step in, and pays you back in advice.",
+            "Біля фуршету спалахує бійка. Вона дивиться, як ти втручаєшся, і платить порадою.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "You step between two angry men. They both punch you.",
+            "Ти стаєш між двома розлюченими чоловіками. Обидва б'ють тебе.",
+            { health: -4 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "shehulk_storm",
+    hero: "she-hulk",
+    icon: "punch",
+    tint: "#3f8c2c",
+    weight: 1,
+    title: both("A green storm downtown", "Зелена буря в центрі міста"),
+    text: both(
+      "A street lies half wrecked, with a crashed truck and a crowd of onlookers. A towering green woman in torn clothes stands in the middle with a lamp post over her shoulder, panting. She looks like she is about to lose her temper completely.",
+      "Вулиця напівзруйнована: розбита вантажівка й натовп роззяв. Посеред стоїть велетенська зелена жінка в подертому одязі з ліхтарним стовпом на плечі й важко дихає. Здається, вона ось-ось остаточно втратить самовладання.",
+    ),
+    choices: [
+      {
+        icon: "shakingHands",
+        label: both("Calm her down", "Заспокоїти її"),
+        outcomes: [
+          out(
+            2,
+            "You talk her down, and she's grateful. She lifts the truck off the road and gives you a reward.",
+            "Ти заспокоюєш її, і вона вдячна. Вона піднімає вантажівку з дороги й дає тобі нагороду.",
+            { gold: 40 },
+          ),
+          out(
+            2,
+            "Talking turns out to be the wrong tool. A lamp post whistles past your ear.",
+            "Розмова виявляється не тим інструментом. Ліхтарний стовп свистить повз вухо.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "knapsack",
+        label: both("Loot the wreck", "Обшукати уламки"),
+        outcomes: [
+          out(
+            2,
+            "The truck's cargo is mostly intact. You carry away what you can.",
+            "Вантаж вантажівки здебільшого цілий. Ти забираєш, що можеш.",
+            { gold: 55 },
+          ),
+          out(
+            2,
+            "A crowd of onlookers is less friendly than you expected.",
+            "Натовп роззяв менш привітний, ніж ти очікував.",
+            { gold: -15, health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "punch",
+        label: both("Spar with her", "Позмагатися з нею"),
+        outcomes: [
+          out(
+            2,
+            "She takes the match seriously and then shows you her favourite counter.",
+            "Вона сприймає поєдинок серйозно, а потім показує свій улюблений контрприйом.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "The match lasts about two seconds.",
+            "Поєдинок триває секунди дві.",
+            { health: -5 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "lukecage_barber",
+    hero: "luke-cage",
+    icon: "monkFace",
+    tint: "#e0b020",
+    weight: 1,
+    title: both("The barbershop on the corner", "Перукарня на розі"),
+    text: both(
+      "A busy barbershop on the corner has a line out of the door. Inside, a huge bald man in a yellow shirt sits in a chair with perfectly calm authority while three barbers argue about the ball game. Everyone falls quiet when you walk in.",
+      "У жвавої перукарні на розі черга аж за двері. Усередині величезний лисий чоловік у жовтій сорочці сидить у кріслі з цілком спокійною владою, поки троє перукарів сперечаються про матч. Усі змовкають, коли ти заходиш.",
+    ),
+    choices: [
+      {
+        icon: "bread",
+        label: both("Wait your turn", "Дочекатися своєї черги"),
+        outcomes: [
+          out(
+            3,
+            "After a long wait you get a trim and the best gossip on the block.",
+            "Після довгого очікування ти отримуєш стрижку й найкращі плітки кварталу.",
+            { health: 3 },
+          ),
+          out(
+            1,
+            "After a long wait the barbershop closes.",
+            "Після довгого очікування перукарня зачиняється.",
+            {},
+          ),
+        ],
+      },
+      {
+        icon: "robberHand",
+        label: both("Skip the line", "Пройти без черги"),
+        outcomes: [
+          out(
+            1,
+            "Nobody objects. The big man just looks at you over the top of his newspaper.",
+            "Ніхто не заперечує. Великий чоловік лише дивиться на тебе поверх газети.",
+            { gold: 10 },
+          ),
+          out(
+            3,
+            "The big man puts down the newspaper. The conversation that follows is short.",
+            "Великий чоловік кладе газету. Розмова, що за цим слідує, коротка.",
+            { health: -4, gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "scrollUnfurled",
+        label: both("Listen to the neighbourhood", "Послухати квартал"),
+        outcomes: [
+          out(
+            2,
+            "Someone mentions a job that pays well, and someone else tells you how to survive it.",
+            "Хтось згадує добре оплачувану роботу, а хтось інший розповідає, як її пережити.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "The neighbourhood talks about nothing but the game. You tip the barber for the show.",
+            "Квартал говорить лише про матч. Ти даєш перукареві чайові за виставу.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
+  {
+    id: "lukecage_bounty",
+    hero: "luke-cage",
+    icon: "coinsPile",
+    tint: "#d6a21f",
+    weight: 1,
+    title: both("A job for hire", "Робота за гроші"),
+    text: both(
+      "A nervous shopkeeper stands outside a shuttered store with a handful of crumpled bills. A group of men in matching jackets has been leaning on him for weeks. He looks at your gear, then at you, and asks how much you charge.",
+      "Знервований крамар стоїть біля зачиненої крамниці з жменею зім'ятих купюр. Група чоловіків в однакових куртках тисне на нього вже кілька тижнів. Він дивиться на твоє спорядження, потім на тебе й питає, скільки ти береш.",
+    ),
+    choices: [
+      {
+        icon: "crossedSwords",
+        label: both("Take the job", "Взяти роботу"),
+        outcomes: [
+          out(
+            2,
+            "The men in jackets leave the neighbourhood by the end of the afternoon. The shopkeeper pays, and then pays again.",
+            "Чоловіки в куртках залишають квартал до кінця дня. Крамар платить, а потім платить ще раз.",
+            { gold: 65, health: -2 },
+          ),
+          out(
+            2,
+            "They hit harder than you expected, and the shopkeeper's money does not cover the dentist.",
+            "Вони б'ють сильніше, ніж ти очікував, і грошей крамаря не вистачає на стоматолога.",
+            { health: -6, gold: 20 },
+          ),
+        ],
+      },
+      {
+        icon: "shakingHands",
+        label: both("Do it for free", "Зробити безкоштовно"),
+        outcomes: [
+          out(
+            2,
+            "The shopkeeper is grateful, and the neighbourhood remembers. A friend returns the favour later.",
+            "Крамар вдячний, а квартал пам'ятає. Друг повертає послугу пізніше.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "The shopkeeper is grateful and has nothing else to give but food.",
+            "Крамар вдячний і не має нічого, крім їжі.",
+            { health: 3 },
+          ),
+        ],
+      },
+      {
+        icon: "footsteps",
+        label: both("Say it isn't your fight", "Сказати, що це не твоя справа"),
+        outcomes: [
+          out(
+            2,
+            "The shopkeeper sighs and offers you a drink for the road.",
+            "Крамар зітхає й пропонує напій на дорогу.",
+            { health: 1 },
+          ),
+          out(
+            2,
+            "The shopkeeper says nothing, but the street does.",
+            "Крамар мовчить, але вулиця говорить.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      leave(
+        "You turn away before anything else can happen.",
+        "Ти відвертаєшся, поки нічого іншого не сталося.",
+      ),
+    ],
+  },
 ];
 
 export const eventArts = {
@@ -3218,5 +4090,17 @@ export const eventArts = {
   lukecage_wall: "Luke Cage/power_man",
   annie_riverboat: "Annie Christmas/mississippi_queen",
   oda_tea: "Oda Nobunaga/patience_and_strategy",
+  dracula_crypt: "Dracula/mistform",
+  dracula_feast: "Dracula/thirst_for_sustenance",
+  annie_lagniappe: "Annie Christmas/lagniappe",
+  annie_bayou: "Annie Christmas/long_shot",
+  oda_gunsmith: "Oda Nobunaga/lightning_and_thunder",
+  oda_gate: "Oda Nobunaga/fire_and_flames",
+  chupacabra_roof: "Chupacabra/ambush",
+  chupacabra_market: "Chupacabra/unsettle",
+  shehulk_gala: "She-Hulk/jennifer_walters_esq",
+  shehulk_storm: "She-Hulk/the_savage_she_hulk",
+  lukecage_barber: "Luke Cage/trash_talk",
+  lukecage_bounty: "Luke Cage/hero_for_hire",
   chupacabra_pen: "Chupacabra/feeding",
 };
