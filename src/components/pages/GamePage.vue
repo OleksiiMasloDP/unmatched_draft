@@ -1182,7 +1182,7 @@
         👁 {{ t("gameShowPopup") }}
       </button>
       <EffectDialog
-        v-if="effectEntry && !effectHidden && !needsPass"
+        v-if="effectEntry && !effectHidden && !needsPass && !spacePrompt"
         :entry="effectEntry"
         :lines="effectLines"
         :picks="effectPicks"
