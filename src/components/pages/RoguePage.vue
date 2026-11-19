@@ -628,8 +628,7 @@ const eventText = (value) =>
   );
 const eventArt = computed(() => {
   const id = run.event?.id;
-  if (id && eventArts[id])
-    return assetUrl(`images/cards/${eventArts[id]}.webp`);
+  if (id && eventArts[id]) return assetUrl(`images/rogue/events/${id}.webp`);
   if (eventHero.value) return assetUrl(eventHero.value.image);
   return "";
 });

@@ -4069,7 +4069,7 @@ export const eventArts = {
   raptors: "Raptors/ambush",
   medusa: "Luke Cage/still_standing",
   wakanda: "Black Panther/vibranium_shockwave",
-  strange: "Krang/pan_dimension_portal",
+  strange: "Doctor Strange/the_rings_of_raggadorr",
   mead: "Loki/fall_of_balder",
   invisible: "Invisible Man/impossible_to_see",
   hamlet: "Hamlet/to_sleep_perchance_to_dream",
