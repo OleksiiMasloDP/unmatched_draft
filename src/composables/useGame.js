@@ -130,6 +130,7 @@ const pl = (player) => game.players[player];
 const hero = (player) => getHero(pl(player).heroId);
 const fighterHp = (player, fighter) =>
   fighter === "hero" ? pl(player).hp : (kidOf(player, fighter)?.hp ?? 0);
+const isTokenKid = (kid) => kid.maxHp <= 2;
 const kidOf = (player, fighter) =>
   fighter === "hero"
     ? null
@@ -1538,14 +1539,19 @@ const api = {
   placeFighter: (player, fighter, spaceId) =>
     withFighter(player, fighter, () => place(player, spaceId)),
   hasDefeatedKid: (player) =>
-    Boolean(pl(player).fallen?.length) ||
-    pl(player).sidekicks.some((kid) => kid.down),
+    Boolean(
+      pl(player).fallen?.some(isTokenKid) ||
+      pl(player).sidekicks.some((kid) => kid.down && isTokenKid(kid)),
+    ),
   reviveKid: (player, spaceId) => {
     const target = pl(player);
-    let kid = target.sidekicks.find((item) => item.down);
-    if (!kid && target.fallen?.length) {
-      kid = target.fallen.shift();
-      target.sidekicks.push(kid);
+    let kid = target.sidekicks.find((item) => item.down && isTokenKid(item));
+    if (!kid) {
+      const index = target.fallen?.findIndex(isTokenKid) ?? -1;
+      if (index >= 0) {
+        kid = target.fallen.splice(index, 1)[0];
+        target.sidekicks.push(kid);
+      }
     }
     if (!kid) return;
     kid.down = false;

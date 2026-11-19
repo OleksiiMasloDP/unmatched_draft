@@ -980,7 +980,7 @@ export const cardEffects = {
     uncancelable: true,
     rescue: true,
     *boosted(c) {
-      if (c.g.hero(c.me).id === "harry-houdini") c.g.heal(c.me, 2, "hero");
+      c.g.heal(c.me, 2, "hero");
     },
     *after(c) {
       if (!c.g.rescueFighter(c.me, 4)) return;
