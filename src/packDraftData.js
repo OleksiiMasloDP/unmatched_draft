@@ -802,8 +802,20 @@ const CARD_IMAGES = {
 
 CARD_IMAGES["deadman-danny"] = {
   dir: "Deadman Danny",
-  cover: false,
-  files: {},
+  files: {
+    crash_landing: "attack",
+    strix_salvo: "attack",
+    hard_sell: "attack",
+    walking_hazard: "attack",
+    jettison_fuel: "versatile",
+    rocket_jump: "versatile",
+    feint: "versatile",
+    close_the_deal: "versatile",
+    the_most_painful_death_yet: "defense",
+    fairfax_guarantee: "defense",
+    warranty_void: "scheme",
+    killer_deal: "scheme",
+  },
 };
 
 CARD_IMAGES["agent-venom"] = {

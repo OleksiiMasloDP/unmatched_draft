@@ -520,6 +520,10 @@
           <div
             v-if="heroOf(player).id === 'deadman-danny'"
             class="game-sidekick"
+            role="button"
+            tabindex="0"
+            @click="abilityView = 'hero'"
+            @keydown.enter="abilityView = 'hero'"
           >
             <span class="game-sidekick-name">
               🔥 {{ game.players[player].heat }} / 3
@@ -988,6 +992,41 @@
               @click="
                 gadgetView = gadgetView === 'tonic' ? 'hypnoray' : 'tonic'
               "
+            >
+              ⇄ {{ t("gadgetFlip") }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-if="abilityView"
+        class="game-modal"
+        @click.self="abilityView = null"
+      >
+        <div class="game-modal-box is-logcard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="abilityView = null"
+          >
+            ✕
+          </button>
+          <img
+            class="game-gadget-full"
+            :src="
+              abilityView === 'hero'
+                ? 'images/tokens/danny_hero.webp'
+                : 'images/tokens/danny_overheat.webp'
+            "
+            alt="Deadman Danny"
+          />
+          <div class="game-modal-actions is-center">
+            <button
+              type="button"
+              class="action-btn"
+              @click="abilityView = abilityView === 'hero' ? 'rule' : 'hero'"
             >
               ⇄ {{ t("gadgetFlip") }}
             </button>
@@ -2087,6 +2126,7 @@ function formatLog(entry) {
 
 const findDeck = (id) => allDecks.value.find((deck) => deck.id === id);
 const gadgetView = ref(null);
+const abilityView = ref(null);
 const gadgetImage = (value) =>
   value === "tonic"
     ? "images/tokens/tonic.webp"
