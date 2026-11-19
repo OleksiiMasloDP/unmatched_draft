@@ -757,6 +757,16 @@ watch(
   { flush: "post" },
 );
 
+watch(
+  () => game.phase,
+  (phase) => {
+    if (phase === "setup" && run.phase === "battle") {
+      syncBattle();
+      engine.setBot(null);
+    }
+  },
+);
+
 onBeforeUnmount(() => {
   context?.revert();
   if (run.phase === "battle") {
