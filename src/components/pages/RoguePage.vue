@@ -532,6 +532,7 @@ import RogueEventScene from "../RogueEventScene.vue";
 import RogueIcon from "../RogueIcon.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
+import { eventArts } from "../../rogueEvents.js";
 
 const { t, lang } = useDraftState();
 const engine = useGame();
@@ -626,8 +627,11 @@ const eventText = (value) =>
     run.event?.hero ? heroName(run.event.hero) : "",
   );
 const eventArt = computed(() => {
+  const id = run.event?.id;
+  if (id && eventArts[id])
+    return assetUrl(`images/cards/${eventArts[id]}.webp`);
   if (eventHero.value) return assetUrl(eventHero.value.image);
-  return run.event ? assetUrl(`images/rogue/events/${run.event.id}.webp`) : "";
+  return "";
 });
 const eventChoices = computed(() =>
   (eventData.value?.choices || []).map((choice) => ({
