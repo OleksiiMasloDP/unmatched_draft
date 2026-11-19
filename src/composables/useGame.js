@@ -2734,13 +2734,8 @@ function* attack(me) {
   }
 
   if (game.combat) game.combat.stage = "after";
-  const afterOrder = [...players].sort(
-    (a, b) =>
-      Number(Boolean(cardEffects[combat.cards[b]?.key]?.endsTurn)) -
-      Number(Boolean(cardEffects[combat.cards[a]?.key]?.endsTurn)),
-  );
   let turnEnded = false;
-  for (const player of afterOrder) {
+  for (const player of players) {
     const card = combat.cards[player];
     if (turnEnded || !card || combat.canceled[player]) continue;
     if (game.phase !== "play") continue;
