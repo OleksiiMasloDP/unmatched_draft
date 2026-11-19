@@ -545,8 +545,9 @@ export const cardEffects = {
   "a-warrior-s-way": {
     *after(c) {
       yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
-      const near =
-        c.combat.fighters[c.foe] === "hero" ? c.g.adjacentSpaces(c.me) : [];
+      const near = c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe])
+        ? c.g.adjacentSpaces(c.me)
+        : [];
       if (near.length) {
         const space = yield c.g.askSpace(c.me, "promptPlaceAdjacent", near);
         if (space) c.g.place(c.me, space);
@@ -580,12 +581,15 @@ export const cardEffects = {
   },
 
   "a-worthy-opponent": {
-    value: (c, value) => (c.combat.fighters[c.foe] === "hero" ? 5 : value),
+    value: (c, value) =>
+      c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe]) ? 5 : value,
   },
 
   "flash-of-steel": {
     *immediate(c) {
-      if (c.combat.fighters[c.foe] === "hero") cancelOpponentCard(c);
+      if (c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe])) {
+        cancelOpponentCard(c);
+      }
     },
     *after(c) {
       if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);

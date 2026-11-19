@@ -426,7 +426,7 @@ export const packDraftHeroes = [
       name: "Charlie",
       hp: 8,
       attack: "range",
-      image: "images/charlie.webp",
+      image: "images/annie_charlie.webp",
       count: 1,
     },
     cards: annieChristmasCards,

@@ -178,12 +178,15 @@ function withFighter(player, fighter, fn) {
   }
 }
 
-const allowedFor = (card, fighter) =>
+const isHeroFighter = (player, fighter) =>
+  fighter === "hero" || Boolean(hero(player)?.team);
+
+const allowedFor = (card, fighter, player) =>
   card.kind === "sidekick"
-    ? fighter !== "hero"
+    ? !isHeroFighter(player, fighter)
     : card.kind === "any"
       ? true
-      : fighter === "hero";
+      : isHeroFighter(player, fighter);
 
 function shuffle(list) {
   const result = [...list];
@@ -798,7 +801,7 @@ function attackOfOpportunity(player, fromSpaceId) {
     game.phase !== "play" ||
     !pl(tomoe) ||
     hero(tomoe).id !== "tomoe-gozen" ||
-    cur[player] !== "hero"
+    !isHeroFighter(player, cur[player])
   ) {
     return;
   }
@@ -809,7 +812,7 @@ function attackOfOpportunity(player, fromSpaceId) {
   if (wasInZone && !shared(player, tomoe)) {
     log("logOpportunity", { player });
     activeCard = hero(tomoe).passive.name;
-    damage(player, 1, "hero");
+    damage(player, 1, cur[player]);
     activeCard = null;
   }
 }
@@ -1085,7 +1088,7 @@ function* swapPlayedCard(player, combat) {
     const card = getCard(id);
     return attacking
       ? attackPlayable(player, card, fighter)
-      : canDefendWith(card) && allowedFor(card, fighter);
+      : canDefendWith(card) && allowedFor(card, fighter, player);
   });
   if (!options.length) return;
   const ok = yield askConfirm(player, "promptSleightReturn");
@@ -1454,6 +1457,7 @@ const api = {
     return !kid || kid.down || kid.hp <= 0;
   },
   cardKind: (id) => getCard(id).kind,
+  isHeroFighter,
   gadgetOf: (player) => game.gadget[player],
   setImmune: (player) => {
     if (game.combat) game.combat.immune[player] = true;
@@ -1651,7 +1655,7 @@ const isScheme = (card) => card.value === null;
 const canAttackWith = (card) => !isScheme(card) && card.type !== "defense";
 const attackPlayable = (player, card, fighter = cur[player]) =>
   canAttackWith(card) &&
-  allowedFor(card, fighter) &&
+  allowedFor(card, fighter, player) &&
   withFighter(
     player,
     fighter,
@@ -1725,7 +1729,7 @@ function* mistsReplace(me, combat) {
     const playable =
       typeOk &&
       !isScheme(card) &&
-      allowedFor(card, fighter) &&
+      allowedFor(card, fighter, foe) &&
       (attackerRole ? attackPlayable(foe, card, fighter) : canDefendWith(card));
     if (playable) {
       found = card;
@@ -2195,7 +2199,9 @@ function* scheme(me) {
   const alive = fightersOf(me);
   const options = pl(me).hand.filter((id) => {
     const card = getCard(id);
-    return isScheme(card) && alive.some((fighter) => allowedFor(card, fighter));
+    return (
+      isScheme(card) && alive.some((fighter) => allowedFor(card, fighter, me))
+    );
   });
   const carriers = tokenFighters(me, "scheme");
   if (!options.length && !carriers.length) return false;
@@ -2368,7 +2374,7 @@ function* attack(me) {
   let defenseCard = null;
   const defenseOptions = pl(foe).hand.filter((id) => {
     const card = getCard(id);
-    return canDefendWith(card) && allowedFor(card, theirs);
+    return canDefendWith(card) && allowedFor(card, theirs, foe);
   });
   const defensePrompt = askCards(foe, "promptDefenseCard", defenseOptions, {
     min: 0,
