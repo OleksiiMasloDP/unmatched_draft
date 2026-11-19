@@ -434,14 +434,6 @@
               <PackCard :card="card" clickable @select="eventPick" />
             </div>
           </div>
-          <div class="rogue-toolbar">
-            <button
-              class="btn btn-sm btn-outline-secondary"
-              @click="skipEventPick"
-            >
-              {{ t("rogueEventSkip") }}
-            </button>
-          </div>
         </template>
       </section>
 
@@ -574,7 +566,6 @@ const {
   cancelShopRemove,
   chooseEvent,
   eventPick,
-  skipEventPick,
   leave,
   abandon: endRun,
 } = useRogue();

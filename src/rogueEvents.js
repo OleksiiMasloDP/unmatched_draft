@@ -88,7 +88,6 @@ export const events = [
           ),
         ],
       },
-      leave("Some things are better left shut.", "Дещо краще не відкривати."),
     ],
   },
   {
@@ -172,10 +171,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "The well goes quiet behind you.",
-        "Криниця затихає за твоєю спиною.",
-      ),
     ],
   },
   {
@@ -248,10 +243,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "The hermit waves you off with a smile.",
-        "Відлюдник проводжає тебе усмішкою.",
-      ),
     ],
   },
   {
@@ -343,7 +334,6 @@ export const events = [
           ),
         ],
       },
-      leave("He shrugs and walks off.", "Він знизує плечима і йде."),
     ],
   },
   {
@@ -418,10 +408,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "He goes back to counting coins.",
-        "Він повертається до рахунку монет.",
-      ),
     ],
   },
   {
@@ -464,7 +450,6 @@ export const events = [
         label: both("Take the books to sell", "Забрати книги на продаж"),
         outcomes: [out(1, "A fair price.", "Чесна ціна.", { gold: 25 })],
       },
-      leave("The ash settles behind you.", "Попіл осідає за твоєю спиною."),
     ],
   },
   {
@@ -539,7 +524,6 @@ export const events = [
           }),
         ],
       },
-      leave("The candles burn on without you.", "Свічки горять далі без тебе."),
     ],
   },
   {
@@ -608,10 +592,6 @@ export const events = [
           }),
         ],
       },
-      leave(
-        "You pass by. The wheels keep spinning.",
-        "Ти проходиш повз. Колеса далі крутяться.",
-      ),
     ],
   },
   {
@@ -692,7 +672,6 @@ export const events = [
           ),
         ],
       },
-      leave("The flowers sway as you go.", "Квіти хитаються, коли ти йдеш."),
     ],
   },
   {
@@ -748,10 +727,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "Cursed gold is still cursed.",
-        "Прокляте золото лишається проклятим.",
-      ),
     ],
   },
   {
@@ -801,10 +776,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "Some crowns are not meant for you.",
-        "Деякі корони створені не для тебе.",
-      ),
     ],
   },
   {
@@ -853,7 +824,6 @@ export const events = [
           ),
         ],
       },
-      leave("You leave the jar humming.", "Ти лишаєш глек гудіти далі."),
     ],
   },
   {
@@ -903,7 +873,6 @@ export const events = [
           ),
         ],
       },
-      leave("Immortality can wait.", "Безсмертя може зачекати."),
     ],
   },
   {
@@ -966,7 +935,6 @@ export const events = [
           ),
         ],
       },
-      leave("The crowd closes in behind you.", "Натовп змикається за тобою."),
     ],
   },
   {
@@ -1022,7 +990,6 @@ export const events = [
           ),
         ],
       },
-      leave("The oaks hold their secrets.", "Дуби зберігають свої таємниці."),
     ],
   },
   {
@@ -1072,10 +1039,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "Some experiments end badly.",
-        "Деякі експерименти кінчаються погано.",
-      ),
     ],
   },
   {
@@ -1125,7 +1088,6 @@ export const events = [
           ),
         ],
       },
-      leave("You turn the carriage away.", "Ти відсилаєш карету геть."),
     ],
   },
   {
@@ -1180,7 +1142,6 @@ export const events = [
           ),
         ],
       },
-      leave("We are all mad here.", "Ми тут усі трохи божевільні."),
     ],
   },
   {
@@ -1247,7 +1208,6 @@ export const events = [
           ),
         ],
       },
-      leave("You leave the lamp in the sand.", "Ти лишаєш лампу в піску."),
     ],
   },
   {
@@ -1303,7 +1263,6 @@ export const events = [
           ),
         ],
       },
-      leave("His laughter follows you.", "Його сміх лине за тобою."),
     ],
   },
   {
@@ -1353,7 +1312,6 @@ export const events = [
           ),
         ],
       },
-      leave("You tiptoe away.", "Ти навшпиньки відходиш."),
     ],
   },
   {
@@ -1405,7 +1363,6 @@ export const events = [
           ),
         ],
       },
-      leave("You do not look back.", "Ти не озираєшся."),
     ],
   },
   {
@@ -1454,7 +1411,6 @@ export const events = [
           ),
         ],
       },
-      leave("Some treasures are not for sale.", "Деякі скарби не продаються."),
     ],
   },
   {
@@ -1507,7 +1463,6 @@ export const events = [
           ),
         ],
       },
-      leave("The street unfolds again.", "Вулиця знову розгортається."),
     ],
   },
   {
@@ -1557,7 +1512,6 @@ export const events = [
           ),
         ],
       },
-      leave("Their songs fade behind you.", "Їхні пісні стихають за тобою."),
     ],
   },
   {
@@ -1634,10 +1588,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "You feel eyes on your back all the way down the road.",
-        "Ти відчуваєш чийсь погляд у спину всю дорогу.",
-      ),
     ],
   },
   {
@@ -1719,7 +1669,6 @@ export const events = [
           ),
         ],
       },
-      leave("The rest is silence.", "Решта мовчання."),
     ],
   },
   {
@@ -1790,10 +1739,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "You back away before they return.",
-        "Ти відходиш, поки вони не повернулись.",
-      ),
     ],
   },
   {
@@ -1858,10 +1803,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "The crash is somebody else's problem.",
-        "Аварія це чужа проблема.",
-      ),
     ],
   },
   {
@@ -1913,10 +1854,6 @@ export const events = [
           out(1, "Wall-crawling beats you.", "Лазіння стінами перемагає тебе."),
         ],
       },
-      leave(
-        "With great power comes... a long walk.",
-        "З великою силою приходить... довга прогулянка.",
-      ),
     ],
   },
   {
@@ -1970,10 +1907,6 @@ export const events = [
           "Спокій перемагає там, де безсила сила. Ти відпускаєш щось зайве.",
         ),
       },
-      leave(
-        "You find another way across.",
-        "Ти знаходиш інший шлях через річку.",
-      ),
     ],
   },
   {
@@ -2028,10 +1961,6 @@ export const events = [
           "Деякі спогади краще забути. Він платить тобі за доброту.",
         ),
       },
-      leave(
-        "He watches until you vanish into the snow.",
-        "Він стежить, поки ти не зникаєш у снігу.",
-      ),
     ],
   },
   {
@@ -2086,7 +2015,6 @@ export const events = [
         label: both("Browse her notes", "Погортати її нотатки"),
         pick: 2,
       },
-      leave("You decline the pendulum.", "Ти відмовляєшся від маятника."),
     ],
   },
   {
@@ -2154,10 +2082,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "You hear shots behind you and keep walking.",
-        "Ззаду лунають постріли, а ти йдеш далі.",
-      ),
     ],
   },
   {
@@ -2222,10 +2146,6 @@ export const events = [
           ),
         ],
       },
-      leave(
-        "The whispering follows you for a mile.",
-        "Шепіт іде за тобою цілу милю.",
-      ),
     ],
   },
   {
@@ -2745,10 +2665,6 @@ export const heroEvents = [
           "Вона викреслює твою найстаршу погану звичку з протоколу. Справу закрито, а колода легша.",
         ),
       },
-      leave(
-        "You slip out through the side door while the gavel is still in the air.",
-        "Ти вислизаєш бічними дверима, поки молоток ще в повітрі.",
-      ),
     ],
   },
   {
@@ -2829,10 +2745,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "The echo of gunfire follows you for three streets.",
-        "Луна пострілів іде за тобою три вулиці.",
-      ),
     ],
   },
   {
@@ -2911,10 +2823,6 @@ export const heroEvents = [
           "Ти залишаєш за столом погану звичку, а вона мовчки віддає тобі дрібні гроші.",
         ),
       },
-      leave(
-        "The steamer's whistle sounds behind you like a farewell.",
-        "Гудок пароплава лунає за тобою, наче прощання.",
-      ),
     ],
   },
   {
@@ -2994,10 +2902,6 @@ export const heroEvents = [
           "Ти дивишся на полум'я й відпускаєш те, що вже не потрібне. Він наливає тобі другу чашку.",
         ),
       },
-      leave(
-        "You bow and back away. Nobody moves.",
-        "Ти вклоняєшся й відступаєш. Ніхто не ворушиться.",
-      ),
     ],
   },
   {
@@ -3082,10 +2986,6 @@ export const heroEvents = [
           "Ти дивишся в червоні очі й не кліпаєш. Істота кліпає першою й тікає, а разом із нею іде тягар.",
         ),
       },
-      leave(
-        "You pull your coat tight and walk away without looking back.",
-        "Ти запахуєшся в плащ і йдеш, не озираючись.",
-      ),
     ],
   },
   {
@@ -3165,10 +3065,6 @@ export const heroEvents = [
           "Він урочисто ставить штамп «анульовано» на карті, і та згоряє з колоди хмаринкою диму.",
         ),
       },
-      leave(
-        "You hear him shouting prices at your back until you turn the corner.",
-        "Ти чуєш, як він викрикує ціни тобі вслід, аж поки не завертаєш за ріг.",
-      ),
     ],
   },
   {
@@ -3237,10 +3133,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3309,10 +3201,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3382,10 +3270,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3454,10 +3338,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3526,10 +3406,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3598,10 +3474,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3673,10 +3545,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3749,10 +3617,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3821,10 +3685,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3893,10 +3753,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -3965,10 +3821,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
   {
@@ -4037,10 +3889,6 @@ export const heroEvents = [
           ),
         ],
       },
-      leave(
-        "You turn away before anything else can happen.",
-        "Ти відвертаєшся, поки нічого іншого не сталося.",
-      ),
     ],
   },
 ];
