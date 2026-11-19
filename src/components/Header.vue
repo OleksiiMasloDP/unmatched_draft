@@ -103,6 +103,7 @@
       </nav>
 
       <div class="header-right">
+        <AccountMenu :lang="lang" />
         <button type="button" class="desk-report" @click="openSupportModal">
           <svg class="desk-icon" viewBox="0 0 24 24" v-html="icons.heart"></svg>
           <span>{{
@@ -185,6 +186,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute } from "vue-router";
+import AccountMenu from "./AccountMenu.vue";
 import { useSupport } from "../composables/useSupport";
 
 const props = defineProps({

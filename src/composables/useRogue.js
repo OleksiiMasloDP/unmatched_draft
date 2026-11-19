@@ -22,6 +22,7 @@ import {
   themes,
 } from "../rogueData.js";
 import { useGame } from "./useGame.js";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 
 const STORAGE_KEY = "unmatched-rogue-run-v2";
 
@@ -106,9 +107,34 @@ const history = reactive(loadHistory());
 
 const run = reactive(load());
 
+registerSyncable({
+  name: "rogue",
+  docKey: "rogue",
+  storageKey: STORAGE_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => (value == null ? null : JSON.stringify(value)),
+  apply: () => {
+    if (run.phase === "battle" && useGame().game.phase === "play") return;
+    for (const key of Object.keys(run)) delete run[key];
+    Object.assign(run, load());
+  },
+});
+
+registerSyncable({
+  name: "rogueHistory",
+  docKey: "rogueHistory",
+  storageKey: HISTORY_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => JSON.stringify(Array.isArray(value) ? value : []),
+  apply: () => {
+    history.splice(0, history.length, ...loadHistory());
+  },
+});
+
 function save() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(run));
+    notifyChanged("rogue");
   } catch {
     return;
   }
@@ -254,6 +280,7 @@ export function useRogue() {
       history.splice(30);
       try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        notifyChanged("rogueHistory");
       } catch {
         return;
       }
