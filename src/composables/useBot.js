@@ -968,15 +968,18 @@ export function useBot(options = {}) {
         if (combat.defender === bot) {
           const comingCard = getCard(combat.cardIds?.[other(bot)]);
           const base = comingCard?.value ?? foeAverageAttack(other(bot));
-          const need = known
-            ? base + (known.size > 1 ? known.boost * 0.5 : 0)
-            : base;
-          if (value >= need) return [];
-          if (known && value + gain < need && game.players[bot].hp > need) {
+          if (value >= base) return [];
+          if (known && value + gain < base && game.players[bot].hp > base) {
             return [];
           }
-        } else if (combat.attacker === bot && known && lastTarget) {
-          if (value - known.defense >= lastTarget.hp) return [];
+        } else if (combat.attacker === bot) {
+          const foeCard = getCard(combat.cardIds?.[other(bot)]);
+          const guard =
+            (foeCard?.value ?? 0) + (combat.boostTotal?.[other(bot)] ?? 0);
+          const target = fightersOf(other(bot)).find(
+            (item) => item.id === combat.fighters?.[other(bot)],
+          );
+          if (target && value - guard >= target.hp) return [];
         }
       }
       const low = game.players[bot].hp <= 8;
@@ -1219,6 +1222,16 @@ export function useBot(options = {}) {
     const kill = lethalMove(bot, available);
     if (kill === "scheme") return engine.doScheme();
     if (kill === "attack") return engine.doAttack();
+    const desperate =
+      fatigueEdge(bot) < 0 && (game.players[bot].deck || []).length <= 4;
+    if (
+      available.attack &&
+      available.maneuver &&
+      !hand.some(fitDefense) &&
+      !desperate
+    ) {
+      available.attack = false;
+    }
     if (
       available.attack &&
       !handOf(other(bot)).some(isDefenseCard) &&

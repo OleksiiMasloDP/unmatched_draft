@@ -2367,6 +2367,7 @@ function* attack(me) {
       ? 1
       : 0,
     boost: { p1: false, p2: false },
+    boostTotal: { p1: 0, p2: 0 },
     token: { p1: null, p2: null, [me]: attackToken },
     rescue: { p1: false, p2: false },
     pending: { p1: false, p2: false },
@@ -2467,6 +2468,7 @@ function* attack(me) {
         if (!ids.length) break;
         const boostCard = spendBoostCard(player, ids[0]);
         boosts[player] += boostCard.boost;
+        game.combat.boostTotal[player] = boosts[player];
         boostCardIds[player] = boostCard.id;
         boostLists[player].push(boostCard.id);
         game.combat.boost[player] = true;
