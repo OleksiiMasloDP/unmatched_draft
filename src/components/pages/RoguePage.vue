@@ -556,6 +556,7 @@ const {
   startBattle,
   syncBattle,
   resumeBattle,
+  snapshotBattle,
   pickReward,
   pickPack,
   leavePacks,
@@ -749,12 +750,26 @@ onMounted(async () => {
   animate();
 });
 
+watch(
+  () => [
+    game.turn,
+    game.turnNo,
+    game.actions,
+    game.prompt,
+    game.combat,
+    game.phase,
+  ],
+  () => snapshotBattle(),
+  { flush: "post" },
+);
+
 onBeforeUnmount(() => {
   context?.revert();
   if (run.phase === "battle") {
+    if (game.phase === "over") syncBattle();
+    else snapshotBattle();
     engine.resetGame();
     engine.setBot(null);
-    syncBattle();
   }
 });
 </script>

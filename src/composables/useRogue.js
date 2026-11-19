@@ -71,6 +71,7 @@ const emptyRun = () => ({
   maxHp: null,
   victory: false,
   best: 0,
+  battleSave: null,
 });
 
 function load() {
@@ -352,12 +353,23 @@ export function useRogue() {
       },
     );
     run.phase = "battle";
+    run.battleSave = null;
+    snapshotBattle();
     save();
     return true;
   }
 
+  function snapshotBattle() {
+    if (run.phase !== "battle") return;
+    const saved = engine.exportBattle();
+    if (!saved) return;
+    run.battleSave = saved;
+    save();
+  }
+
   function resumeBattle() {
     if (run.phase !== "battle") return;
+    if (run.battleSave && engine.importBattle(run.battleSave)) return;
     run.phase = run.enemy ? "encounter" : "map";
     save();
   }
@@ -365,6 +377,7 @@ export function useRogue() {
   function syncBattle() {
     if (run.phase !== "battle") return;
     if (game.phase === "over" && game.winner) {
+      run.battleSave = null;
       if (game.winner === "p1") {
         run.hp = Math.max(1, game.players.p1.hp);
         const kind = run.enemy?.kind || "fight";
@@ -649,6 +662,7 @@ export function useRogue() {
     startBattle,
     syncBattle,
     resumeBattle,
+    snapshotBattle,
     pickReward,
     pickPack,
     leavePacks,

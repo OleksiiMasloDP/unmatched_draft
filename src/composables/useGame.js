@@ -3295,6 +3295,50 @@ function startRogueBattle(deckA, deckB, options) {
   syncOut();
 }
 
+function exportBattle() {
+  if (
+    simulating ||
+    flow ||
+    game.phase !== "play" ||
+    game.prompt ||
+    game.combat ||
+    !game.players.p1 ||
+    !game.players.p2
+  ) {
+    return null;
+  }
+  const snap = JSON.parse(JSON.stringify(game));
+  snap.fx = [];
+  snap.announce = null;
+  snap.announces = [];
+  snap.notice = null;
+  return JSON.stringify({
+    game: snap,
+    flags: turnFlags,
+    cur: { ...cur },
+  });
+}
+
+function importBattle(saved) {
+  try {
+    const snap = JSON.parse(saved);
+    if (!snap?.game?.players?.p1 || snap.game.phase !== "play") return false;
+    resetGame();
+    for (const key of Object.keys(snap.game)) game[key] = snap.game[key];
+    useMapId(game.mapId);
+    for (const key of Object.keys(snap.flags)) turnFlags[key] = snap.flags[key];
+    cur.p1 = snap.cur.p1;
+    cur.p2 = snap.cur.p2;
+    orderByStart = true;
+    undoPoint = null;
+    combatHit = false;
+    currentNote = null;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function setBotLevel(level) {
   game.botLevel = ["easy", "normal", "hard"].includes(level) ? level : "normal";
 }
@@ -3695,6 +3739,8 @@ export function useGame() {
     startLocalToss,
     setBot,
     setBotLevel,
+    exportBattle,
+    importBattle,
     startRogueBattle,
     chooseDeck,
     resetGame,
