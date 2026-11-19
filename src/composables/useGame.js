@@ -3625,7 +3625,12 @@ function availableActions(forBot = false) {
     scheme:
       idle &&
       regularActions() > 0 &&
-      (hand.some(isScheme) || tokenFighters(me, "scheme").length > 0),
+      (hand.some(
+        (card) =>
+          isScheme(card) &&
+          fightersOf(me).some((fighter) => allowedFor(card, fighter, me)),
+      ) ||
+        tokenFighters(me, "scheme").length > 0),
     attack: idle && game.actions > 0 && attackChoices(me).length > 0,
   };
 }

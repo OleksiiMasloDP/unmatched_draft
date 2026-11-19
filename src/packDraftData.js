@@ -790,8 +790,6 @@ const CARD_IMAGES = {
       coordinated_attack_pattern: "scheme",
       decoy: "defense",
       disengage: "attack",
-      helpful_assistant: "scheme",
-      hypnotist: "defense",
       eaten_alive: "versatile",
       eviscerate: "attack",
       feint: "versatile",
