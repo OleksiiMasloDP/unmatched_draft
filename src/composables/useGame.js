@@ -2734,11 +2734,18 @@ function* attack(me) {
   }
 
   if (game.combat) game.combat.stage = "after";
-  for (const player of players) {
+  const afterOrder = [...players].sort(
+    (a, b) =>
+      Number(Boolean(cardEffects[combat.cards[b]?.key]?.endsTurn)) -
+      Number(Boolean(cardEffects[combat.cards[a]?.key]?.endsTurn)),
+  );
+  let turnEnded = false;
+  for (const player of afterOrder) {
     const card = combat.cards[player];
-    if (card && !combat.canceled[player] && game.phase === "play") {
-      yield* runEffect(player, card, "after", combat);
-    }
+    if (turnEnded || !card || combat.canceled[player]) continue;
+    if (game.phase !== "play") continue;
+    yield* runEffect(player, card, "after", combat);
+    if (cardEffects[card.key]?.endsTurn && game.actions <= 0) turnEnded = true;
   }
 
   if (

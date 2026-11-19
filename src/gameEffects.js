@@ -1691,6 +1691,7 @@ export const cardEffects = {
   },
 
   "the-rest-is-silence": {
+    endsTurn: true,
     *after(c) {
       c.g.endTurnNow();
     },
