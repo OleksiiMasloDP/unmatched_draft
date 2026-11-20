@@ -1066,6 +1066,8 @@ export function useBot(options = {}) {
     switch (prompt.title) {
       case "promptBlindBoost":
         return !defenseBoostPointless(bot);
+      case "promptHunger":
+        return hand < 6 && (game.players[bot].deck || []).length > 1;
       case "promptSwap":
       case "promptSmokeSwap":
       case "promptSleightReturn":

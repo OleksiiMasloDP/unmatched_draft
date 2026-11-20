@@ -25,7 +25,9 @@
       "cancelCare": 9,
       "who": 10,
       "boostWill": 4,
-      "uses": ["boostAttack"]
+      "uses": [
+        "boostAttack"
+      ]
     },
     "harry-houdini:set-the-stage": {
       "importance": 10,
@@ -37,12 +39,16 @@
       "importance": 10,
       "boostWill": 10,
       "who": 10,
-      "uses": ["boostManeuver"]
+      "uses": [
+        "boostManeuver"
+      ]
     },
     "harry-houdini:and-the-beautiful-bess": {
       "importance": 2,
       "boostWill": 10,
-      "uses": ["boostManeuver"]
+      "uses": [
+        "boostManeuver"
+      ]
     },
     "harry-houdini:for-my-next-trick": {
       "importance": 4,
@@ -54,7 +60,9 @@
       "importance": 10,
       "boostWill": 10,
       "timing": 0,
-      "uses": ["boostAttack"]
+      "uses": [
+        "boostAttack"
+      ]
     },
     "doctor-strange:no-really-i-m-a-doctor": {
       "importance": 10
@@ -355,6 +363,66 @@
     "harry-houdini:all-part-of-the-show": {
       "importance": 6,
       "timing": 2
+    },
+    "chupacabra:blood-in-the-air": {
+      "importance": 8,
+      "cancelCare": 0,
+      "boostWill": 2,
+      "timing": 6
+    },
+    "chupacabra:ambush": {
+      "importance": 8,
+      "cancelCare": 8,
+      "boostWill": 1,
+      "timing": 7
+    },
+    "chupacabra:the-more-they-struggle": {
+      "importance": 7,
+      "cancelCare": 8,
+      "boostWill": 1,
+      "timing": 6
+    },
+    "chupacabra:wounded-beast": {
+      "importance": 7,
+      "lean": 8,
+      "boostWill": 1
+    },
+    "chupacabra:feeding": {
+      "importance": 7,
+      "boostWill": 1,
+      "lean": 5
+    },
+    "chupacabra:ravenous-lunge": {
+      "importance": 6,
+      "boostWill": 4
+    },
+    "chupacabra:feint": {
+      "importance": 7,
+      "lean": 2,
+      "cancelCare": 0,
+      "boostWill": 4
+    },
+    "chupacabra:tooth-and-tail": {
+      "importance": 6,
+      "boostWill": 5
+    },
+    "chupacabra:natural-toughness": {
+      "importance": 7,
+      "boostWill": 3,
+      "uses": [
+        "defense",
+        "boostDefense"
+      ]
+    },
+    "chupacabra:traveler-of-the-night": {
+      "importance": 7,
+      "timing": 4,
+      "boostWill": 2
+    },
+    "chupacabra:unsettle": {
+      "importance": 7,
+      "timing": 9,
+      "boostWill": 4
     }
   },
   "sidekicks": {
@@ -419,6 +487,13 @@
       "kidFear": 0,
       "boostHand": 4,
       "notes": "Рапторы хотят быстро забить соперника, пока их несколько. Они окружают противника насколько могут большим количеством Рапторов и начинают атаковать с дополнительными действиями. У них мало защит и жизней, поэтому лучше иметь что-то на руке, но им больше важна агрессия."
+    },
+    "chupacabra": {
+      "heroFocus": 9,
+      "aggro": 1.7,
+      "kidFear": 0.2,
+      "boostHand": 2,
+      "refill": 4
     }
   }
 }
