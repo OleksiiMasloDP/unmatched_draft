@@ -7,17 +7,17 @@ const pickType = (rng, row) => {
   if (row === ROWS - 1) return "rest";
   const progress = row / (ROWS - 1);
   const weights = {
-    fight: 0.5 - 0.15 * progress,
-    mystery: 0.24,
-    rest: row >= 2 ? 0.08 + 0.04 * progress : 0,
+    fight: 0.36 - 0.1 * progress,
+    mystery: 0.36,
+    rest: row >= 2 ? 0.14 + 0.04 * progress : 0,
     shop: row >= 2 ? 0.08 : 0,
     elite: row >= 3 ? 0.03 + 0.1 * progress : 0,
   };
   if (row === ROWS - 2) {
     weights.rest = 0;
     weights.shop = 0.04;
-    weights.mystery = 0.1;
-    weights.fight = 0.66;
+    weights.mystery = 0.2;
+    weights.fight = 0.56;
     weights.elite = 0.2;
   }
   const total = Object.values(weights).reduce((sum, value) => sum + value, 0);

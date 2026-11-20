@@ -148,11 +148,11 @@ const nodeById = (id) => run.map.flat().find((node) => node.id === id) || null;
 const kindOf = (node) => (node.type === "mystery" ? node.secret : node.type);
 
 const hpScale = (node) =>
-  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25;
+  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25 - 0.2;
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1.25 + (run.level - 1) * 0.25;
+  if (kind === "boss") return 1.05 + (run.level - 1) * 0.25;
   if (kind === "elite") return hpScale(node) * 1.5;
   return hpScale(node);
 };
@@ -446,7 +446,7 @@ export function useRogue() {
         run.hp = Math.max(1, game.players.p1.hp);
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
-        run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
+        run.gold += kind === "boss" ? 80 : kind === "elite" ? 60 : 20;
         if (kind === "boss" && run.level >= levels.length) {
           endRun(true);
         } else if (kind === "fight") {
