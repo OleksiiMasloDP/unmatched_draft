@@ -126,10 +126,7 @@
               />
               <div class="deck-tile-info">
                 <div class="deck-name">
-                  {{ deck.name }}
-                  <span v-if="deck.isTest" class="deck-test">
-                    {{ t("gameTestDeck") }}
-                  </span>
+                  {{ deck.isTest ? getHero(deck.heroId).name : deck.name }}
                 </div>
                 <div class="deck-meta">{{ deckMeta(deck) }}</div>
               </div>
