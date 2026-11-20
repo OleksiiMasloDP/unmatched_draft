@@ -484,6 +484,11 @@ export function useRogue() {
           makePacks();
           run.phase = "packs";
         }
+      } else if (game.overActive) {
+        run.hp = 1;
+        run.enemy = null;
+        run.phase = "map";
+        if (!(kindOf(nodeById(run.node) || {}) === "boss")) finishNode();
       } else {
         endRun(false);
       }

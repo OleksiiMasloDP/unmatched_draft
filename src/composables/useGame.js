@@ -72,6 +72,7 @@ const game = reactive({
   announce: null,
   announces: [],
   winner: null,
+  overActive: false,
   mulligan: null,
   toss: null,
   tokens: [],
@@ -337,6 +338,7 @@ function attackPairs(player) {
 function setOver(winner) {
   game.phase = "over";
   game.winner = winner;
+  game.overActive = other(winner) === game.turn;
   game.prompt = null;
   game.combat = null;
   flow = null;
@@ -2763,14 +2765,6 @@ function* attack(me) {
   }
 
   for (const player of players) {
-    if (game.phase === "play" && game.combat?.pending[player]) {
-      game.combat.pending[player] = false;
-      finalizeDefeat(player, combat.fighters[player]);
-    }
-  }
-  for (const player of players) fallHero(player);
-
-  for (const player of players) {
     const card = combat.cards[player];
     if (
       game.phase === "play" &&
@@ -2795,13 +2789,6 @@ function* attack(me) {
       endAnnounce();
     }
   }
-  for (const player of players) {
-    if (game.phase === "play" && game.combat?.pending[player]) {
-      game.combat.pending[player] = false;
-      finalizeDefeat(player, combat.fighters[player]);
-    }
-  }
-  for (const player of players) fallHero(player);
 
   if (
     game.phase === "play" &&
@@ -2891,6 +2878,15 @@ function* attack(me) {
       endAnnounce();
     }
   }
+
+  for (const player of players) {
+    if (game.phase === "play" && game.combat?.pending[player]) {
+      game.combat.pending[player] = false;
+      finalizeDefeat(player, combat.fighters[player]);
+    }
+  }
+  fallHero(foe);
+  fallHero(me);
 
   const finish = (player, card) => {
     if (!card || combat.kept[player]) return;
@@ -3050,6 +3046,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   game.turn = first;
   game.viewer = "p1";
   game.winner = null;
+  game.overActive = false;
   game.log = [];
   game.toss = null;
   log("logFirstPlayer", { player: first });
@@ -3196,6 +3193,7 @@ function resetGame(clearNotice = true) {
   game.players = { p1: null, p2: null };
   game.prompt = null;
   game.winner = null;
+  game.overActive = false;
   game.log = [];
   game.combat = null;
   game.announce = null;
