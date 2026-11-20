@@ -2840,7 +2840,7 @@ function* attack(me) {
     activeCard = null;
   }
 
-  if (game.phase === "play" && hero(me).id === "robin-hood") {
+  if (game.phase === "play" && !turnEnded && hero(me).id === "robin-hood") {
     const fighter = cur[me];
     const alive = fighter === "hero" || !kidOf(me, fighter)?.down;
     if (alive) {
@@ -2856,6 +2856,7 @@ function* attack(me) {
 
   if (
     game.phase === "play" &&
+    !turnEnded &&
     combat.won[me] &&
     hero(me).id === "wyatt-earp" &&
     combat.cards[me]
