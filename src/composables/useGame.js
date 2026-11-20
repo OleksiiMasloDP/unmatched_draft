@@ -834,6 +834,7 @@ function setSpace(player, fighter, spaceId) {
 
 function place(player, spaceId) {
   const from = spaceOf(player);
+  if (isPinned(player) && from !== spaceId) return;
   setSpace(player, cur[player], spaceId);
   if (cur[player] !== "hero") {
     log("logMove", { player, who: kidOf(player, cur[player]).name });
@@ -844,6 +845,7 @@ function place(player, spaceId) {
 }
 
 function swapPlaces() {
+  if (isPinned("p1") || isPinned("p2")) return;
   const a = spaceOf("p1");
   setSpace("p1", cur.p1, spaceOf("p2"));
   setSpace("p2", cur.p2, a);
@@ -851,6 +853,7 @@ function swapPlaces() {
 }
 
 function adjacentSpaces(player) {
+  if (isPinned(player)) return [];
   const blocked = occupiedBy(other(player));
   return active.spaceById
     .get(spaceOf(other(player)))
