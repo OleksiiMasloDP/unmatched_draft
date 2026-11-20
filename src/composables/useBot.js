@@ -970,7 +970,7 @@ export function useBot(options = {}) {
         if (combat.defender === bot) {
           const comingCard = getCard(combat.cardIds?.[other(bot)]);
           const base = comingCard?.value ?? foeAverageAttack(other(bot));
-          if (value >= base) return [];
+          if (value >= base || defenseBoostPointless(bot)) return [];
           if (known && value + gain < base && game.players[bot].hp > base) {
             return [];
           }
@@ -1044,9 +1044,28 @@ export function useBot(options = {}) {
   const foeLead = (bot) =>
     fightersOf(other(bot)).find((fighter) => fighter.isHero);
 
+  const defenseBoostPointless = (bot) => {
+    const combat = game.combat;
+    if (!combat || combat.defender !== bot) return false;
+    const played = combat.cardIds?.[bot] && getCard(combat.cardIds[bot]);
+    if (!played) return false;
+    const value = Math.max(played.value ?? 0, combat.values?.[bot] ?? 0);
+    const comingCard = getCard(combat.cardIds?.[other(bot)]);
+    const base = comingCard?.value ?? foeAverageAttack(other(bot));
+    if (value >= base) return true;
+    const mine = fightersOf(bot).find(
+      (item) => item.id === combat.fighters?.[bot],
+    );
+    const hp = mine?.hp ?? myHp(bot);
+    const hit = base - value;
+    return hit <= 2 && hp - hit >= 6;
+  };
+
   const answerConfirm = (prompt, bot) => {
     const hand = handOf(bot).length;
     switch (prompt.title) {
+      case "promptBlindBoost":
+        return !defenseBoostPointless(bot);
       case "promptSwap":
       case "promptSmokeSwap":
       case "promptSleightReturn":
