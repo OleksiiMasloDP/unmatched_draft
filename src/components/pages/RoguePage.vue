@@ -106,31 +106,8 @@
         </div>
       </section>
 
-      <section
-        v-else-if="run.phase === 'level'"
-        class="rogue-level rogue-anim"
-        :class="'is-level-' + run.level"
-      >
-        <span class="rogue-level-num">
-          {{ t("rogueLevel").replace("{n}", run.level) }}
-        </span>
-        <h2 class="rogue-level-name">{{ level.name[lang] }}</h2>
-        <p class="rogue-level-text">{{ level.text[lang] }}</p>
-        <img
-          v-if="levelBoss"
-          class="rogue-level-boss"
-          :src="assetUrl(levelBoss.image)"
-          alt=""
-        />
-        <span class="rogue-level-hint">{{ t("rogueLevelBoss") }}</span>
-        <button class="btn btn-success" @click="startLevel">
-          {{ t("rogueLevelGo") }}
-        </button>
-      </section>
-
       <section v-else-if="run.phase === 'map'">
         <span class="rogue-level-chip">
-          {{ t("rogueLevel").replace("{n}", run.level) }} ·
           {{ level.name[lang] }}
         </span>
         <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
@@ -156,7 +133,7 @@
           :reachable="reachable()"
           :labels="nodeLabels"
           :hero-image="myHero ? assetUrl(myHero.image) : ''"
-          :theme="run.level === 1 ? 'city' : 'air'"
+          :theme="level.boss === 'agent-venom' ? 'venom' : 'danny'"
           @enter="enterNode"
         />
       </section>
@@ -626,7 +603,7 @@ const step = computed(() =>
 );
 const heroOptions = computed(() => run.heroOptions.map(heroOf).filter(Boolean));
 const myHero = computed(() => heroOf(run.heroId));
-const level = computed(() => levels[Math.min(run.level, levels.length) - 1]);
+const level = computed(() => levels[run.bossIdx || 0]);
 const levelBoss = computed(() => getHero(level.value.boss));
 const enemyHero = computed(() => heroOf(run.enemy?.heroId));
 const deckPool = computed(() => (run.heroId ? heroCards(run.heroId) : []));

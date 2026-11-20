@@ -53,6 +53,7 @@ const pickMany = (list, count) => {
 const emptyRun = () => ({
   phase: "idle",
   level: 1,
+  bossIdx: 0,
   heroOptions: [],
   heroId: null,
   deck: [],
@@ -89,6 +90,11 @@ function load() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved && saved.phase) {
       const loaded = { ...emptyRun(), ...saved };
+      if (saved.bossIdx === undefined) {
+        loaded.bossIdx = Math.max(0, (saved.level || 1) - 1);
+        loaded.level = 1;
+      }
+      if (loaded.phase === "level") loaded.phase = "map";
       if (loaded.heroId && loaded.deck.length && loaded.hp == null) {
         loaded.maxHp = maxHpOf(loaded.heroId);
         loaded.hp = loaded.maxHp;
@@ -165,11 +171,11 @@ const nodeById = (id) => run.map.flat().find((node) => node.id === id) || null;
 const kindOf = (node) => (node.type === "mystery" ? node.secret : node.type);
 
 const hpScale = (node) =>
-  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25 - 0.2;
+  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25 - 0.1;
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1.05 + (run.level - 1) * 0.25;
+  if (kind === "boss") return 1.15 + (run.level - 1) * 0.25;
   if (kind === "elite") return hpScale(node) * 1.5;
   return hpScale(node);
 };
@@ -232,7 +238,7 @@ function makePacks() {
 function makeEnemy(node) {
   const kind = kindOf(node);
   const heroes = packDraftHeroes.filter((item) => item.id !== run.heroId);
-  const bossId = levels[run.level - 1].boss;
+  const bossId = levels[run.bossIdx || 0].boss;
   const hero =
     kind === "boss"
       ? getHero(bossId)
@@ -336,6 +342,7 @@ export function useRogue() {
     run.visited = [];
     run.wins = 0;
     run.level = 1;
+    run.bossIdx = Math.floor(Math.random() * levels.length);
     run.seenEvents = [];
     run.phase = "map";
     save();
@@ -347,34 +354,7 @@ export function useRogue() {
     save();
   }
 
-  function advanceLevel() {
-    run.level += 1;
-    run.hp = Math.min(run.maxHp, run.hp + Math.ceil(run.maxHp * 0.5));
-    run.map = generateMap(mulberry32(Math.floor(Math.random() * 2 ** 31)));
-    run.node = null;
-    run.pos = null;
-    run.visited = [];
-    run.enemy = null;
-    run.rewards = [];
-    run.packs = [];
-    run.packChosen = null;
-    run.shop = null;
-    run.event = null;
-    run.rest = null;
-    run.phase = "map";
-    save();
-  }
-
   function finishNode() {
-    if (
-      run.node &&
-      run.level < levels.length &&
-      nodeById(run.node) &&
-      kindOf(nodeById(run.node)) === "boss"
-    ) {
-      advanceLevel();
-      return;
-    }
     if (run.node && !run.visited.includes(run.node)) {
       run.visited.push(run.node);
     }
@@ -474,8 +454,8 @@ export function useRogue() {
         );
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
-        run.gold += kind === "boss" ? 80 : kind === "elite" ? 60 : 20;
-        if (kind === "boss" && run.level >= levels.length) {
+        run.gold += kind === "boss" ? 80 : kind === "elite" ? 50 : 10;
+        if (kind === "boss") {
           endRun(true);
         } else if (kind === "fight") {
           makeRewards();
@@ -521,7 +501,7 @@ export function useRogue() {
     if (run.phase === "packs") finishNode();
   }
 
-  const healAmount = () => Math.ceil((run.maxHp || 0) * 0.35);
+  const healAmount = () => Math.ceil((run.maxHp || 0) * 0.25);
 
   function canRestHeal() {
     return run.phase === "rest" && run.hp < run.maxHp;

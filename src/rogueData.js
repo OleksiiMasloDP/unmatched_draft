@@ -13,10 +13,10 @@ export const levels = [
     boss: "agent-venom",
     accent: "#ff4d8d",
     glow: "rgba(255, 77, 141, 0.22)",
-    name: { en: "City Rampage", ua: "Міський розгром" },
+    name: { en: "Road to the Lab", ua: "Шлях до лабораторії" },
     text: {
-      en: "Neon signs flicker over a street gone wild. Overturned cars, shattered windows and something black and hungry watching from the rooftops. Fight your way to the end of the block.",
-      ua: "Неонові вивіски мерехтять над вулицею, що збожеволіла. Перекинуті авто, розбиті вітрини й щось чорне та голодне, що стежить із дахів. Пробийся до кінця кварталу.",
+      en: "Streets, then a skyscraper roof, then the lab doors. All of it already covered in black.",
+      ua: "Вулиці, потім дах хмарочоса, потім двері лабораторії. Усе вже вкрите чорним.",
     },
   },
   {
@@ -24,10 +24,10 @@ export const levels = [
     boss: "deadman-danny",
     accent: "#ff9a2e",
     glow: "rgba(255, 154, 46, 0.22)",
-    name: { en: "Air Raid", ua: "Повітряний наліт" },
+    name: { en: "Burning Airbase", ua: "Палаюча авіабаза" },
     text: {
-      en: "Above the clouds the war is louder. Rocket trails, burning wings and a grinning pilot made of bones who sells fire by the pound. Burn faster, fly higher.",
-      ua: "Над хмарами війна гучніша. Сліди ракет, палаючі крила й усміхнений пілот із кісток, що торгує вогнем на вагу. Гори швидше, лети вище.",
+      en: "The gate, the hangars, and finally the base itself, burning.",
+      ua: "Вхід, ангари і нарешті сама база, що палає.",
     },
   },
 ];

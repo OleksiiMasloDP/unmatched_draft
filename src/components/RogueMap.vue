@@ -42,8 +42,24 @@
               <stop offset="0" stop-color="#fff6d8" stop-opacity="0.9" />
               <stop offset="1" stop-color="#fff6d8" stop-opacity="0" />
             </linearGradient>
-            <g v-if="tile" id="rmap-tile">
-              <SceneNode v-for="(item, i) in tile" :key="i" :item="item" />
+            <radialGradient id="rmap-purple" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#b44bff" stop-opacity="0.8" />
+              <stop offset="1" stop-color="#b44bff" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="rmap-lamp" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#ffe9a6" stop-opacity="0.7" />
+              <stop offset="1" stop-color="#ffe9a6" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="rmap-burn" cx="0.5" cy="0.5" r="0.7">
+              <stop offset="0" stop-color="#ff5a1f" stop-opacity="0.25" />
+              <stop offset="1" stop-color="#ff5a1f" stop-opacity="0.6" />
+            </radialGradient>
+            <g
+              v-for="(zoneItems, z) in tile || []"
+              :id="'rmap-tile-' + z"
+              :key="z"
+            >
+              <SceneNode v-for="(item, i) in zoneItems" :key="i" :item="item" />
             </g>
             <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
               <stop offset="0.6" stop-color="#000" stop-opacity="0" />
@@ -81,7 +97,7 @@
             <use
               v-for="t in tiles"
               :key="t.key"
-              href="#rmap-tile"
+              :href="'#rmap-tile-' + t.zone"
               :transform="t.transform"
             />
           </g>
@@ -226,7 +242,7 @@ import gsap from "gsap";
 import { nodeTypes } from "../rogueData";
 import RogueIcon from "./RogueIcon.vue";
 import SceneNode from "./SceneNode.js";
-import { sceneTile, TILE } from "../rogueScenes.js";
+import { sceneTiles, TILE } from "../rogueScenes.js";
 
 const props = defineProps({
   map: { type: Array, required: true },
@@ -250,7 +266,15 @@ const total = computed(() => props.map.length);
 const WIDE = { step: 112, pad: 86, across: 560 };
 const TALL = { step: 86, pad: 86, across: 640 };
 
-const size = computed(() => (wide.value ? WIDE : TALL));
+const size = computed(() => {
+  const base = wide.value ? WIDE : TALL;
+  if (!props.theme) return base;
+  const span = wide.value ? TILE.w * 3 : TILE.h * 3;
+  return {
+    ...base,
+    step: (span - base.pad * 2) / Math.max(1, total.value - 1),
+  };
+});
 const W = computed(() =>
   wide.value
     ? size.value.pad * 2 + (total.value - 1) * size.value.step
@@ -388,23 +412,17 @@ const zones = computed(() => {
 
 const skyColors = ["#0d1f14", "#16301f", "#1d2433", "#2b1a2e", "#2a0d18"];
 
-const tile = computed(() => sceneTile(props.theme));
+const tile = computed(() => sceneTiles(props.theme));
 
-const tiles = computed(() => {
-  const length = wide.value ? W.value : H.value;
-  const step = wide.value ? TILE.w : TILE.h;
-  return Array.from({ length: Math.ceil(length / step) }, (_, k) => {
-    const flip = k % 2 === 1;
-    const transform = wide.value
-      ? flip
-        ? `translate(${(k + 1) * TILE.w},0) scale(-1,1)`
-        : `translate(${k * TILE.w},0)`
-      : flip
-        ? `translate(${TILE.w},${k * TILE.h}) scale(-1,1)`
-        : `translate(0,${k * TILE.h})`;
-    return { key: k, transform };
-  });
-});
+const tiles = computed(() =>
+  [0, 1, 2].map((zone) => ({
+    key: zone,
+    zone,
+    transform: wide.value
+      ? `translate(${zone * TILE.w},0)`
+      : `translate(0,${zone * TILE.h})`,
+  })),
+);
 
 const scenery = computed(() => {
   let seed = 7;
