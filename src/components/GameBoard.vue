@@ -142,6 +142,27 @@
           },
         ]"
       >
+        <g
+          v-if="active && active.player === player && active.fighter === 'hero'"
+          class="active-marker"
+        >
+          <circle
+            class="active-halo"
+            :cx="byId.get(players[player].space).x"
+            :cy="byId.get(players[player].space).y"
+            r="44"
+          />
+          <circle
+            class="active-halo is-late"
+            :cx="byId.get(players[player].space).x"
+            :cy="byId.get(players[player].space).y"
+            r="44"
+          />
+          <polygon
+            class="active-arrow"
+            :points="`${byId.get(players[player].space).x - 16},${byId.get(players[player].space).y - 80} ${byId.get(players[player].space).x + 16},${byId.get(players[player].space).y - 80} ${byId.get(players[player].space).x},${byId.get(players[player].space).y - 58}`"
+          />
+        </g>
         <circle
           :cx="byId.get(players[player].space).x"
           :cy="byId.get(players[player].space).y"
@@ -191,6 +212,27 @@
           },
         ]"
       >
+        <g
+          v-if="active && active.player === player && active.fighter === kid.id"
+          class="active-marker"
+        >
+          <circle
+            class="active-halo"
+            :cx="byId.get(kid.space).x"
+            :cy="byId.get(kid.space).y"
+            r="36"
+          />
+          <circle
+            class="active-halo is-late"
+            :cx="byId.get(kid.space).x"
+            :cy="byId.get(kid.space).y"
+            r="36"
+          />
+          <polygon
+            class="active-arrow"
+            :points="`${byId.get(kid.space).x - 14},${byId.get(kid.space).y - 70} ${byId.get(kid.space).x + 14},${byId.get(kid.space).y - 70} ${byId.get(kid.space).x},${byId.get(kid.space).y - 50}`"
+          />
+        </g>
         <circle
           :cx="byId.get(kid.space).x"
           :cy="byId.get(kid.space).y"
@@ -640,9 +682,53 @@ const initials = (heroId) =>
 }
 
 .board-hero.is-active > circle {
-  stroke: var(--color-warning);
-  stroke-width: 11;
-  animation: board-active 1s ease-in-out infinite;
+  stroke: #ffe14d;
+  stroke-width: 12;
+  filter: drop-shadow(0 0 10px #ffd400);
+  animation: board-active 0.9s ease-in-out infinite;
+}
+
+.active-halo {
+  fill: none;
+  stroke: #ffe14d;
+  stroke-width: 6;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: active-ring 1.5s ease-out infinite;
+}
+
+.active-halo.is-late {
+  animation-delay: 0.75s;
+}
+
+.active-arrow {
+  fill: #ffe14d;
+  stroke: #1a1400;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px #ffd400);
+  animation: active-bounce 0.9s ease-in-out infinite;
+}
+
+@keyframes active-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes active-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
 }
 
 @keyframes board-active {
