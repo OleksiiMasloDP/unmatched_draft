@@ -24,7 +24,10 @@
           {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
         </button>
         <button
-          v-if="inRun && run.phase !== 'battle'"
+          v-if="
+            inRun &&
+            !['battle', 'hero', 'deck', 'idle', 'over'].includes(run.phase)
+          "
           class="btn btn-sm btn-outline-danger rogue-abandon"
           @click="abandon"
         >
