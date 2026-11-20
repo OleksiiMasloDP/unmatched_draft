@@ -452,7 +452,7 @@ function damage(player, amount, fighter = cur[player]) {
 function heal(player, amount, fighter = cur[player]) {
   if (fighter !== "hero") {
     const kid = kidOf(player, fighter);
-    if (!kid) return;
+    if (!kid || kid.down || kid.hp <= 0) return;
     const healed = Math.min(amount, kid.maxHp - kid.hp);
     kid.hp += healed;
     log("logHealSk", { who: kid.name, n: healed });
@@ -460,6 +460,7 @@ function heal(player, amount, fighter = cur[player]) {
     return;
   }
   const target = pl(player);
+  if (target.hp <= 0) return;
   const healed = Math.min(amount, target.maxHp - target.hp);
   target.hp += healed;
   log("logHeal", { player, who: hero(player).name, n: healed });
