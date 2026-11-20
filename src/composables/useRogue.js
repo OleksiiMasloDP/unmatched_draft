@@ -319,7 +319,7 @@ export function useRogue() {
     run.visited = [];
     run.wins = 0;
     run.level = 1;
-    run.phase = "level";
+    run.phase = "map";
     save();
   }
 
@@ -343,7 +343,7 @@ export function useRogue() {
     run.shop = null;
     run.event = null;
     run.rest = null;
-    run.phase = "level";
+    run.phase = "map";
     save();
   }
 

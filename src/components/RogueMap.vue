@@ -15,11 +15,12 @@
               :x2="wide ? 1 : 0"
               :y2="0"
             >
-              <stop offset="0" stop-color="#0d1f14" />
-              <stop offset="0.3" stop-color="#16301f" />
-              <stop offset="0.55" stop-color="#1d2433" />
-              <stop offset="0.8" stop-color="#2b1a2e" />
-              <stop offset="1" stop-color="#2a0d18" />
+              <stop
+                v-for="(color, i) in skyColors"
+                :key="i"
+                :offset="[0, 0.3, 0.55, 0.8, 1][i]"
+                :stop-color="color"
+              />
             </linearGradient>
             <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
               <stop offset="0.6" stop-color="#000" stop-opacity="0" />
@@ -64,6 +65,51 @@
             <g v-if="item.kind === 'mountain'">
               <polygon :points="item.points" :fill="item.fill" />
               <polygon :points="item.cap" fill="#c9d3e0" opacity="0.55" />
+            </g>
+            <g v-else-if="item.kind === 'building'" :fill="item.fill">
+              <polygon :points="item.points" />
+              <rect
+                v-for="(win, i) in item.windows"
+                :key="i"
+                :x="win.x"
+                :y="win.y"
+                width="4"
+                height="5"
+                :fill="win.fill"
+                :opacity="win.lit ? 0.85 : 0.25"
+              />
+              <ellipse
+                v-if="item.fire"
+                :cx="item.fire.x"
+                :cy="item.fire.y"
+                rx="7"
+                ry="11"
+                fill="#ff7a1a"
+                opacity="0.75"
+                class="rmap-fire"
+              />
+              <ellipse
+                v-if="item.fire"
+                :cx="item.fire.x"
+                :cy="item.fire.y + 3"
+                rx="3.5"
+                ry="6"
+                fill="#ffd166"
+                opacity="0.9"
+                class="rmap-fire"
+              />
+            </g>
+            <g v-else-if="item.kind === 'car'" :fill="item.fill">
+              <rect :x="item.x" :y="item.y" width="26" height="8" rx="3" />
+              <rect
+                :x="item.x + 5"
+                :y="item.y - 6"
+                width="14"
+                height="7"
+                rx="2"
+              />
+              <circle :cx="item.x + 6" :cy="item.y + 9" r="3" fill="#050505" />
+              <circle :cx="item.x + 20" :cy="item.y + 9" r="3" fill="#050505" />
             </g>
             <g v-else-if="item.kind === 'pine'" :fill="item.fill">
               <polygon :points="item.points" />
@@ -197,6 +243,7 @@ const props = defineProps({
   reachable: { type: Array, default: () => [] },
   labels: { type: Object, default: () => ({}) },
   heroImage: { type: String, default: "" },
+  theme: { type: String, default: "" },
 });
 
 const emit = defineEmits(["enter"]);
@@ -347,6 +394,12 @@ const zones = computed(() => {
   });
 });
 
+const skyColors = computed(() =>
+  props.theme === "city"
+    ? ["#1a0d0d", "#2a1410", "#3a1c12", "#4a2312", "#2b0f0f"]
+    : ["#0d1f14", "#16301f", "#1d2433", "#2b1a2e", "#2a0d18"],
+);
+
 const scenery = computed(() => {
   let seed = 7;
   const rng = () => {
@@ -369,7 +422,46 @@ const scenery = computed(() => {
       const { x, y } = at;
       const scale = 0.7 + rng() * 0.9;
       key += 1;
-      if (zone.id === "forest") {
+      if (props.theme === "city") {
+        if (rng() < 0.18) {
+          list.push({
+            key,
+            kind: "car",
+            x,
+            y,
+            fill: `hsl(${rng() < 0.5 ? 0 : 210}, 15%, ${12 + rng() * 8}%)`,
+            opacity: 0.95,
+          });
+        } else {
+          const w = 20 + rng() * 22;
+          const h = 36 + rng() * 74;
+          const top = y - h;
+          const slant = 4 + rng() * 14;
+          const lean = rng() < 0.5;
+          const windows = [];
+          for (let wx = x + 4; wx < x + w - 6; wx += 8) {
+            for (let wy = top + slant + 8; wy < y - 8; wy += 11) {
+              windows.push({
+                x: wx,
+                y: wy,
+                lit: rng() < 0.22,
+                fill: "#ffb84d",
+              });
+            }
+          }
+          list.push({
+            key,
+            kind: "building",
+            fill: `hsl(${10 + rng() * 20}, 14%, ${7 + rng() * 7}%)`,
+            opacity: 0.95,
+            points: lean
+              ? `${x},${y} ${x},${top + slant} ${x + w * 0.45},${top} ${x + w},${top + slant * 2.2} ${x + w},${y}`
+              : `${x},${y} ${x},${top + slant * 2.2} ${x + w * 0.55},${top} ${x + w},${top + slant} ${x + w},${y}`,
+            windows,
+            fire: rng() < 0.3 ? { x: x + w * 0.5, y: top - 2 } : null,
+          });
+        }
+      } else if (zone.id === "forest") {
         const w = 18 * scale;
         const h = 30 * scale;
         list.push({
@@ -534,6 +626,23 @@ onBeforeUnmount(() => {
   max-width: 100%;
   padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
+}
+
+.rmap-fire {
+  animation: rmap-flicker 1.4s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+@keyframes rmap-flicker {
+  from {
+    transform: scale(1, 0.85);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.1, 1.15);
+    opacity: 1;
+  }
 }
 
 .rmap-frame {

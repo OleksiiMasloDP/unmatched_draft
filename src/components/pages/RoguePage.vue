@@ -156,6 +156,7 @@
           :reachable="reachable()"
           :labels="nodeLabels"
           :hero-image="myHero ? assetUrl(myHero.image) : ''"
+          :theme="run.level === 1 ? 'city' : ''"
           @enter="enterNode"
         />
       </section>
