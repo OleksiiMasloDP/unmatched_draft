@@ -26,9 +26,8 @@
           <tr>
             <th>#</th>
             <th>{{ t("rogueHistoryHero") }}</th>
-            <th>{{ t("rogueHistoryResult") }}</th>
+            <th></th>
             <th>{{ t("rogueHistoryWins") }}</th>
-            <th>{{ t("rogueHistoryDate") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -45,13 +44,11 @@
                   :metal="row.victory ? 'gold' : 'ruby'"
                   size="1.1em"
                 />
-                {{ row.victory ? t("rogueVictory") : t("rogueDefeat") }}
               </span>
             </td>
             <td>
               <b>{{ row.wins }}</b>
             </td>
-            <td class="rhist-date">{{ formatDate(row.date) }}</td>
           </tr>
         </tbody>
       </table>
@@ -253,50 +250,24 @@ const rows = computed(() => {
   }
 
   .rhist-table th:nth-child(2) {
-    width: 40%;
+    width: auto;
   }
 
-  .rhist-table th:nth-child(3) {
-    width: 20%;
+  .rhist-table th:nth-child(3),
+  .rhist-table td:nth-child(3) {
+    width: 14%;
+    text-align: center;
   }
 
-  .rhist-table th:nth-child(4) {
+  .rhist-table th:nth-child(4),
+  .rhist-table td:nth-child(4) {
     width: 16%;
-  }
-
-  .rhist-hero {
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .rhist-hero img {
-    flex: none;
-    width: 26px;
-    height: 26px;
+    text-align: right;
   }
 
   .rhist-hero span {
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .rhist-badge {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0;
-  }
-
-  .rhist-badge :deep(svg),
-  .rhist-badge :deep(img) {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .rhist-table th {
-    letter-spacing: 0;
-    white-space: normal;
   }
 }
 </style>
