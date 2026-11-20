@@ -9,6 +9,7 @@
       v-else
       class="rogue-page container"
       :class="{ 'is-map': run.phase === 'map' }"
+      :style="{ '--lvl': level.accent, '--lvl-glow': level.glow }"
       ref="root"
     >
       <div class="rogue-title-row">
@@ -105,7 +106,33 @@
         </div>
       </section>
 
+      <section
+        v-else-if="run.phase === 'level'"
+        class="rogue-level rogue-anim"
+        :class="'is-level-' + run.level"
+      >
+        <span class="rogue-level-num">
+          {{ t("rogueLevel").replace("{n}", run.level) }}
+        </span>
+        <h2 class="rogue-level-name">{{ level.name[lang] }}</h2>
+        <p class="rogue-level-text">{{ level.text[lang] }}</p>
+        <img
+          v-if="levelBoss"
+          class="rogue-level-boss"
+          :src="assetUrl(levelBoss.image)"
+          alt=""
+        />
+        <span class="rogue-level-hint">{{ t("rogueLevelBoss") }}</span>
+        <button class="btn btn-success" @click="startLevel">
+          {{ t("rogueLevelGo") }}
+        </button>
+      </section>
+
       <section v-else-if="run.phase === 'map'">
+        <span class="rogue-level-chip">
+          {{ t("rogueLevel").replace("{n}", run.level) }} ·
+          {{ level.name[lang] }}
+        </span>
         <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
         <div class="rogue-toolbar">
           <button class="rogue-deckbtn" @click="deckOpen = true">
@@ -525,6 +552,7 @@ import RogueIcon from "../RogueIcon.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
 import { eventArts } from "../../rogueEvents.js";
+import { levels } from "../../rogueData.js";
 
 const { t, lang } = useDraftState();
 const engine = useGame();
@@ -550,6 +578,7 @@ const {
   syncBattle,
   resumeBattle,
   snapshotBattle,
+  startLevel,
   pickReward,
   pickPack,
   leavePacks,
@@ -596,6 +625,8 @@ const step = computed(() =>
 );
 const heroOptions = computed(() => run.heroOptions.map(heroOf).filter(Boolean));
 const myHero = computed(() => heroOf(run.heroId));
+const level = computed(() => levels[Math.min(run.level, levels.length) - 1]);
+const levelBoss = computed(() => getHero(level.value.boss));
 const enemyHero = computed(() => heroOf(run.enemy?.heroId));
 const deckPool = computed(() => (run.heroId ? heroCards(run.heroId) : []));
 const myDeck = computed(() => cardsOf(run.deck));
@@ -781,6 +812,74 @@ onBeforeUnmount(() => {
 <style scoped>
 .rogue-page {
   padding: 2rem 1rem;
+}
+
+.rogue-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 28px 20px;
+  border: 2px solid var(--lvl);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 0%, var(--lvl-glow), transparent 70%), #151a22;
+  text-align: center;
+}
+
+.rogue-level-num {
+  color: var(--lvl);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.rogue-level-name {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px var(--lvl);
+}
+
+.rogue-level-text {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.rogue-level-boss {
+  width: 120px;
+  height: 120px;
+  border: 3px solid var(--lvl);
+  border-radius: 50%;
+  box-shadow: 0 0 28px var(--lvl-glow);
+  object-fit: cover;
+  object-position: top;
+  filter: brightness(0.55) contrast(1.1);
+}
+
+.rogue-level-hint {
+  color: var(--lvl);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.rogue-level-chip {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 12px;
+  border: 1px solid var(--lvl);
+  border-radius: 999px;
+  background: var(--lvl-glow);
+  color: var(--lvl);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .rogue-title-row {

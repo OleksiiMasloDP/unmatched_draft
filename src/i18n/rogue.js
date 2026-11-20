@@ -52,12 +52,15 @@ export const rogueText = {
     rogueNodeShop: "Shop",
     rogueNodeBoss: "Boss",
     rogueMapHint: "Choose where to go next. You cannot go back.",
+    rogueLevel: "Level {n}",
+    rogueLevelGo: "Onward",
+    rogueLevelBoss: "A boss waits at the end of the road",
     rogueStepNumber: "Step {n}",
     rogueHealthNote: "Both fighters start with {p}% health.",
     rogueFoeNote: "Enemy health: {p}%",
     rogueEncounterFight: "A fight",
     rogueEncounterElite: "Elite fight",
-    rogueEncounterBoss: "Final boss",
+    rogueEncounterBoss: "Boss",
     rogueEliteHint:
       "A tough opponent with a bigger deck and much more health. Win to choose one of three card packs.",
     rogueBossHint:
@@ -171,12 +174,15 @@ export const rogueText = {
     rogueNodeShop: "Магазин",
     rogueNodeBoss: "Бос",
     rogueMapHint: "Оберіть, куди йти далі. Повернутися не можна.",
+    rogueLevel: "Рівень {n}",
+    rogueLevelGo: "Вперед",
+    rogueLevelBoss: "Наприкінці шляху на вас чекає бос",
     rogueStepNumber: "Крок {n}",
     rogueHealthNote: "Обидва бійці починають із {p}% здоров'я.",
     rogueFoeNote: "Здоров'я ворога: {p}%",
     rogueEncounterFight: "Бій",
     rogueEncounterElite: "Елітний бій",
-    rogueEncounterBoss: "Фінальний бос",
+    rogueEncounterBoss: "Бос",
     rogueEliteHint:
       "Сильний суперник із більшою колодою та значно більшим здоров'ям. Переможіть, щоб обрати один із трьох паків карт.",
     rogueBossHint:

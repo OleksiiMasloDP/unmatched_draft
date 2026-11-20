@@ -18,6 +18,7 @@ import {
   cardPrice,
   events,
   heroEvents,
+  levels,
   removePrice,
   themes,
 } from "../rogueData.js";
@@ -28,7 +29,6 @@ const STORAGE_KEY = "unmatched-rogue-run-v2";
 
 const allCards = buildAllCards();
 const bossCards = buildCustomCards();
-const FINAL_BOSS = "deadman-danny";
 
 const mulberry32 = (seed) => {
   let state = seed >>> 0;
@@ -52,6 +52,7 @@ const pickMany = (list, count) => {
 
 const emptyRun = () => ({
   phase: "idle",
+  level: 1,
   heroOptions: [],
   heroId: null,
   deck: [],
@@ -146,11 +147,12 @@ const nodeById = (id) => run.map.flat().find((node) => node.id === id) || null;
 
 const kindOf = (node) => (node.type === "mystery" ? node.secret : node.type);
 
-const hpScale = (node) => Math.min(1, 0.5 + 0.05 * node.row);
+const hpScale = (node) =>
+  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25;
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1.25;
+  if (kind === "boss") return 1.25 + (run.level - 1) * 0.25;
   if (kind === "elite") return hpScale(node) * 1.5;
   return hpScale(node);
 };
@@ -159,7 +161,7 @@ const botLevelFor = (node) => {
   const kind = kindOf(node);
   if (kind === "boss") return "hard";
   const order = ["easy", "normal", "hard"];
-  const base = node.row <= 2 ? 0 : node.row <= 6 ? 1 : 2;
+  const base = (node.row <= 2 ? 0 : node.row <= 6 ? 1 : 2) + run.level - 1;
   return order[Math.min(2, base + (kind === "elite" ? 1 : 0))];
 };
 
@@ -213,16 +215,16 @@ function makePacks() {
 function makeEnemy(node) {
   const kind = kindOf(node);
   const heroes = packDraftHeroes.filter((item) => item.id !== run.heroId);
-  const bosses = [FINAL_BOSS, "agent-venom"].filter((id) => id !== run.heroId);
+  const bossId = levels[run.level - 1].boss;
   const hero =
     kind === "boss"
-      ? getHero(bosses[Math.floor(Math.random() * bosses.length)])
+      ? getHero(bossId)
       : heroes[Math.floor(Math.random() * heroes.length)];
   const pool = [...allCards, ...bossCards]
     .filter((card) => card.heroId === hero.id)
     .map((card) => card.id);
   const wanted = Math.max(
-    BASE_DECK + 4 + node.row + (kind === "elite" ? 2 : 0),
+    BASE_DECK + 4 + node.row + (run.level - 1) * 2 + (kind === "elite" ? 2 : 0),
     run.deck.length + 2,
   );
   const size = Math.min(pool.length, kind === "boss" ? pool.length : wanted);
@@ -316,11 +318,45 @@ export function useRogue() {
     run.pos = null;
     run.visited = [];
     run.wins = 0;
+    run.level = 1;
+    run.phase = "level";
+    save();
+  }
+
+  function startLevel() {
+    if (run.phase !== "level") return;
     run.phase = "map";
     save();
   }
 
+  function advanceLevel() {
+    run.level += 1;
+    run.hp = Math.min(run.maxHp, run.hp + Math.ceil(run.maxHp * 0.5));
+    run.map = generateMap(mulberry32(Math.floor(Math.random() * 2 ** 31)));
+    run.node = null;
+    run.pos = null;
+    run.visited = [];
+    run.enemy = null;
+    run.rewards = [];
+    run.packs = [];
+    run.packChosen = null;
+    run.shop = null;
+    run.event = null;
+    run.rest = null;
+    run.phase = "level";
+    save();
+  }
+
   function finishNode() {
+    if (
+      run.node &&
+      run.level < levels.length &&
+      nodeById(run.node) &&
+      kindOf(nodeById(run.node)) === "boss"
+    ) {
+      advanceLevel();
+      return;
+    }
     if (run.node && !run.visited.includes(run.node)) {
       run.visited.push(run.node);
     }
@@ -411,7 +447,7 @@ export function useRogue() {
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
         run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
-        if (kind === "boss") {
+        if (kind === "boss" && run.level >= levels.length) {
           endRun(true);
         } else if (kind === "fight") {
           makeRewards();
@@ -691,6 +727,7 @@ export function useRogue() {
     syncBattle,
     resumeBattle,
     snapshotBattle,
+    startLevel,
     pickReward,
     pickPack,
     leavePacks,

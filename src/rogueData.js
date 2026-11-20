@@ -7,6 +7,31 @@ export const PACK_COUNT = 3;
 export const PACK_SIZE = 3;
 export const START_GOLD = 40;
 
+export const levels = [
+  {
+    id: 1,
+    boss: "agent-venom",
+    accent: "#ff4d8d",
+    glow: "rgba(255, 77, 141, 0.22)",
+    name: { en: "City Rampage", ua: "Міський розгром" },
+    text: {
+      en: "Neon signs flicker over a street gone wild. Overturned cars, shattered windows and something black and hungry watching from the rooftops. Fight your way to the end of the block.",
+      ua: "Неонові вивіски мерехтять над вулицею, що збожеволіла. Перекинуті авто, розбиті вітрини й щось чорне та голодне, що стежить із дахів. Пробийся до кінця кварталу.",
+    },
+  },
+  {
+    id: 2,
+    boss: "deadman-danny",
+    accent: "#ff9a2e",
+    glow: "rgba(255, 154, 46, 0.22)",
+    name: { en: "Air Raid", ua: "Повітряний наліт" },
+    text: {
+      en: "Above the clouds the war is louder. Rocket trails, burning wings and a grinning pilot made of bones who sells fire by the pound. Burn faster, fly higher.",
+      ua: "Над хмарами війна гучніша. Сліди ракет, палаючі крила й усміхнений пілот із кісток, що торгує вогнем на вагу. Гори швидше, лети вище.",
+    },
+  },
+];
+
 export const nodeTypes = {
   fight: { icon: "crossedSwords", metal: "bronze", color: "#d9843f" },
   elite: { icon: "hornedSkull", metal: "ruby", color: "#ff5252" },
