@@ -486,12 +486,17 @@ function sidekickAdjacent(player) {
   );
 }
 
+const actorGone = (player) =>
+  cur[player] !== "hero" && Boolean(kidOf(player, cur[player])?.down);
+
 function adjacentToFoe(player) {
+  if (actorGone(player)) return false;
   const links = active.spaceById.get(spaceOf(player)).links;
   return occupiedBy(other(player)).some((id) => links.includes(id));
 }
 
 function foeFightersInZone(player) {
+  if (actorGone(player)) return [];
   const zones = active.spaceById.get(spaceOf(player)).zones;
   const foe = other(player);
   return fightersOf(foe).filter((fighter) =>
@@ -515,6 +520,7 @@ function raptorPack(me, combat) {
 }
 
 function adjacentFightersOf(player) {
+  if (actorGone(player)) return [];
   const links = active.spaceById.get(spaceOf(player)).links;
   const found = [];
   for (const owner of ["p1", "p2"]) {
@@ -529,6 +535,7 @@ function adjacentFightersOf(player) {
 }
 
 function otherFriendAdjacentToFoe(player) {
+  if (actorGone(player)) return false;
   const foeLinks = active.spaceById.get(spaceOf(other(player))).links;
   return fightersOf(player).some(
     (fighter) =>
@@ -971,6 +978,7 @@ function* walk(
   { through = false, fighter, trail } = {},
 ) {
   let left = steps;
+  if (actorGone(player) && (!fighter || fighter === cur[player])) return;
   while (left > 0 && game.phase === "play") {
     const hops = stepOptions(player, through, left);
     if (!hops.size) break;
