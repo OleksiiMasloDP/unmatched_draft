@@ -22,6 +22,29 @@
                 :stop-color="color"
               />
             </linearGradient>
+            <linearGradient id="rmap-sky-city" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#14070a" />
+              <stop offset="0.45" stop-color="#3a140e" />
+              <stop offset="0.8" stop-color="#7a2a10" />
+              <stop offset="1" stop-color="#2a0d08" />
+            </linearGradient>
+            <linearGradient id="rmap-sky-air" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#03050c" />
+              <stop offset="0.5" stop-color="#0d1630" />
+              <stop offset="0.8" stop-color="#2a2342" />
+              <stop offset="1" stop-color="#4a2220" />
+            </linearGradient>
+            <radialGradient id="rmap-fireglow" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#ff8a2a" stop-opacity="0.8" />
+              <stop offset="1" stop-color="#ff5a1f" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="rmap-beam" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#fff6d8" stop-opacity="0.9" />
+              <stop offset="1" stop-color="#fff6d8" stop-opacity="0" />
+            </linearGradient>
+            <g v-if="tile" id="rmap-tile">
+              <SceneNode v-for="(item, i) in tile" :key="i" :item="item" />
+            </g>
             <radialGradient id="rmap-vig" cx="0.5" cy="0.5" r="0.75">
               <stop offset="0.6" stop-color="#000" stop-opacity="0" />
               <stop offset="1" stop-color="#000" stop-opacity="0.75" />
@@ -54,6 +77,14 @@
             </filter>
           </defs>
           <rect :width="W" :height="H" fill="url(#rmap-sky)" />
+          <g v-if="tile">
+            <use
+              v-for="t in tiles"
+              :key="t.key"
+              href="#rmap-tile"
+              :transform="t.transform"
+            />
+          </g>
           <circle
             :cx="bossSpot.x"
             :cy="bossSpot.y"
@@ -61,55 +92,14 @@
             fill="url(#rmap-glow)"
             class="rmap-bossglow"
           />
-          <g v-for="item in scenery" :key="item.key" :opacity="item.opacity">
+          <g
+            v-for="item in tile ? [] : scenery"
+            :key="item.key"
+            :opacity="item.opacity"
+          >
             <g v-if="item.kind === 'mountain'">
               <polygon :points="item.points" :fill="item.fill" />
               <polygon :points="item.cap" fill="#c9d3e0" opacity="0.55" />
-            </g>
-            <g v-else-if="item.kind === 'building'" :fill="item.fill">
-              <polygon :points="item.points" />
-              <rect
-                v-for="(win, i) in item.windows"
-                :key="i"
-                :x="win.x"
-                :y="win.y"
-                width="4"
-                height="5"
-                :fill="win.fill"
-                :opacity="win.lit ? 0.85 : 0.25"
-              />
-              <ellipse
-                v-if="item.fire"
-                :cx="item.fire.x"
-                :cy="item.fire.y"
-                rx="7"
-                ry="11"
-                fill="#ff7a1a"
-                opacity="0.75"
-                class="rmap-fire"
-              />
-              <ellipse
-                v-if="item.fire"
-                :cx="item.fire.x"
-                :cy="item.fire.y + 3"
-                rx="3.5"
-                ry="6"
-                fill="#ffd166"
-                opacity="0.9"
-                class="rmap-fire"
-              />
-            </g>
-            <g v-else-if="item.kind === 'car'" :fill="item.fill">
-              <rect :x="item.x" :y="item.y" width="26" height="8" rx="3" />
-              <rect
-                :x="item.x + 5"
-                :y="item.y - 6"
-                width="14"
-                height="7"
-                rx="2"
-              />
-              <circle :cx="item.x + 6" :cy="item.y + 9" r="3" fill="#050505" />
-              <circle :cx="item.x + 20" :cy="item.y + 9" r="3" fill="#050505" />
             </g>
             <g v-else-if="item.kind === 'pine'" :fill="item.fill">
               <polygon :points="item.points" />
@@ -138,7 +128,7 @@
               />
             </g>
           </g>
-          <g v-for="zone in zones" :key="zone.id">
+          <g v-for="zone in tile ? [] : zones" :key="zone.id">
             <rect
               :x="zone.x"
               :y="zone.y"
@@ -235,6 +225,8 @@ import {
 import gsap from "gsap";
 import { nodeTypes } from "../rogueData";
 import RogueIcon from "./RogueIcon.vue";
+import SceneNode from "./SceneNode.js";
+import { sceneTile, TILE } from "../rogueScenes.js";
 
 const props = defineProps({
   map: { type: Array, required: true },
@@ -394,11 +386,25 @@ const zones = computed(() => {
   });
 });
 
-const skyColors = computed(() =>
-  props.theme === "city"
-    ? ["#1a0d0d", "#2a1410", "#3a1c12", "#4a2312", "#2b0f0f"]
-    : ["#0d1f14", "#16301f", "#1d2433", "#2b1a2e", "#2a0d18"],
-);
+const skyColors = ["#0d1f14", "#16301f", "#1d2433", "#2b1a2e", "#2a0d18"];
+
+const tile = computed(() => sceneTile(props.theme));
+
+const tiles = computed(() => {
+  const length = wide.value ? W.value : H.value;
+  const step = wide.value ? TILE.w : TILE.h;
+  return Array.from({ length: Math.ceil(length / step) }, (_, k) => {
+    const flip = k % 2 === 1;
+    const transform = wide.value
+      ? flip
+        ? `translate(${(k + 1) * TILE.w},0) scale(-1,1)`
+        : `translate(${k * TILE.w},0)`
+      : flip
+        ? `translate(${TILE.w},${k * TILE.h}) scale(-1,1)`
+        : `translate(0,${k * TILE.h})`;
+    return { key: k, transform };
+  });
+});
 
 const scenery = computed(() => {
   let seed = 7;
@@ -422,46 +428,7 @@ const scenery = computed(() => {
       const { x, y } = at;
       const scale = 0.7 + rng() * 0.9;
       key += 1;
-      if (props.theme === "city") {
-        if (rng() < 0.18) {
-          list.push({
-            key,
-            kind: "car",
-            x,
-            y,
-            fill: `hsl(${rng() < 0.5 ? 0 : 210}, 15%, ${12 + rng() * 8}%)`,
-            opacity: 0.95,
-          });
-        } else {
-          const w = 20 + rng() * 22;
-          const h = 36 + rng() * 74;
-          const top = y - h;
-          const slant = 4 + rng() * 14;
-          const lean = rng() < 0.5;
-          const windows = [];
-          for (let wx = x + 4; wx < x + w - 6; wx += 8) {
-            for (let wy = top + slant + 8; wy < y - 8; wy += 11) {
-              windows.push({
-                x: wx,
-                y: wy,
-                lit: rng() < 0.22,
-                fill: "#ffb84d",
-              });
-            }
-          }
-          list.push({
-            key,
-            kind: "building",
-            fill: `hsl(${10 + rng() * 20}, 14%, ${7 + rng() * 7}%)`,
-            opacity: 0.95,
-            points: lean
-              ? `${x},${y} ${x},${top + slant} ${x + w * 0.45},${top} ${x + w},${top + slant * 2.2} ${x + w},${y}`
-              : `${x},${y} ${x},${top + slant * 2.2} ${x + w * 0.55},${top} ${x + w},${top + slant} ${x + w},${y}`,
-            windows,
-            fire: rng() < 0.3 ? { x: x + w * 0.5, y: top - 2 } : null,
-          });
-        }
-      } else if (zone.id === "forest") {
+      if (zone.id === "forest") {
         const w = 18 * scale;
         const h = 30 * scale;
         list.push({
@@ -626,23 +593,6 @@ onBeforeUnmount(() => {
   max-width: 100%;
   padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
-}
-
-.rmap-fire {
-  animation: rmap-flicker 1.4s ease-in-out infinite alternate;
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-}
-
-@keyframes rmap-flicker {
-  from {
-    transform: scale(1, 0.85);
-    opacity: 0.6;
-  }
-  to {
-    transform: scale(1.1, 1.15);
-    opacity: 1;
-  }
 }
 
 .rmap-frame {
@@ -853,6 +803,126 @@ onBeforeUnmount(() => {
   .rmap-node.is-boss .rmap-medal {
     width: 62px;
     height: 62px;
+  }
+}
+</style>
+
+<style>
+@keyframes rmap-flicker {
+  from {
+    transform: scale(1, 0.85);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.1, 1.15);
+    opacity: 1;
+  }
+}
+
+.rmap-fire {
+  animation: rmap-flicker 1.4s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.rmap-pulse {
+  animation: rmap-pulse 2.2s ease-in-out infinite alternate;
+}
+
+.rmap-drift {
+  animation: rmap-drift 9s ease-in-out infinite alternate;
+}
+
+.rmap-heli {
+  animation: rmap-heli 14s linear infinite;
+}
+
+.rmap-sweep {
+  animation: rmap-sweep 7s ease-in-out infinite alternate;
+}
+
+.rmap-sweep-b {
+  animation-duration: 9s;
+  animation-direction: alternate-reverse;
+}
+
+.rmap-fly {
+  animation: rmap-fly 22s linear infinite;
+}
+
+.rmap-flak {
+  animation: rmap-flak 1.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.rmap-blink {
+  animation: rmap-blink 1.6s steps(2, end) infinite;
+}
+
+@keyframes rmap-pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rmap-drift {
+  from {
+    transform: translateX(-12px);
+  }
+  to {
+    transform: translateX(12px);
+  }
+}
+
+@keyframes rmap-heli {
+  from {
+    transform: translate(-80px, 150px);
+  }
+  to {
+    transform: translate(720px, 110px);
+  }
+}
+
+@keyframes rmap-sweep {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes rmap-fly {
+  from {
+    transform: translate(-80px, 120px);
+  }
+  to {
+    transform: translate(720px, 90px);
+  }
+}
+
+@keyframes rmap-flak {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes rmap-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.2;
   }
 }
 </style>
