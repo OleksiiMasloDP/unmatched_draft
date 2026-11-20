@@ -264,6 +264,7 @@ const readContact = () => {
 
 const type = ref("bug");
 const section = ref("other");
+import { botDiag } from "../composables/useBot.js";
 const message = ref("");
 const steps = ref("");
 const contact = ref(readContact());
@@ -317,6 +318,8 @@ function buildText() {
       `Lang: ${lang.value}`,
       `Time: ${new Date().toISOString()}`,
     );
+    if (botDiag.stall) lines.push("", "Bot stall:", botDiag.stall);
+    if (botDiag.error) lines.push("", "Bot error:", botDiag.error);
   }
   return lines.join("\n");
 }

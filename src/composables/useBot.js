@@ -55,6 +55,8 @@ const LEVEL_WEIGHTS = {
   hard: { budget: 1600, samples: 5 },
 };
 
+export const botDiag = { error: "", stall: "" };
+
 export function useBot(options = {}) {
   const engine = useGame();
   const { game } = engine;
@@ -1512,12 +1514,53 @@ export function useBot(options = {}) {
 
   onMounted(() => {
     if (options.manual) return;
+    let lastSig = "";
+    let same = 0;
+    const watch = () => {
+      const bot = game.bot;
+      if (!bot || game.phase !== "play") {
+        same = 0;
+        return;
+      }
+      const mine = game.prompt ? game.prompt.player === bot : game.turn === bot;
+      const sig = JSON.stringify([
+        game.turnNo,
+        game.turn,
+        game.actions,
+        game.prompt?.title,
+        game.log.length,
+      ]);
+      same = mine && sig === lastSig ? same + 1 : 0;
+      lastSig = sig;
+      if (same < 12) return;
+      same = 0;
+      let actions = "";
+      try {
+        actions = JSON.stringify(engine.availableActions(true));
+      } catch (error) {
+        actions = `error: ${error?.message}`;
+      }
+      botDiag.stall = [
+        `turn ${game.turn} no ${game.turnNo} actions ${game.actions}`,
+        `prompt ${game.prompt ? JSON.stringify(game.prompt).slice(0, 600) : "none"}`,
+        `free ${JSON.stringify(game.freeAttacks)}`,
+        `hand ${JSON.stringify(game.players[bot]?.hand?.map((c) => c.key || c.id))}`,
+        `available ${actions.slice(0, 800)}`,
+        `log ${game.log
+          .slice(-25)
+          .map((e) => e.key)
+          .join(", ")}`,
+      ].join("\n");
+      if (!game.prompt) engine.forceEndTurn();
+    };
     timer = setInterval(() => {
       try {
         step();
       } catch (error) {
+        botDiag.error = `${error?.message}\n${String(error?.stack).slice(0, 600)}`;
         console.error(error);
       }
+      watch();
     }, TICK);
   });
 
