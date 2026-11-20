@@ -2795,6 +2795,13 @@ function* attack(me) {
       endAnnounce();
     }
   }
+  for (const player of players) {
+    if (game.phase === "play" && game.combat?.pending[player]) {
+      game.combat.pending[player] = false;
+      finalizeDefeat(player, combat.fighters[player]);
+    }
+  }
+  for (const player of players) fallHero(player);
 
   if (
     game.phase === "play" &&
