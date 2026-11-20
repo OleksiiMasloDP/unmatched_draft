@@ -74,6 +74,7 @@ const emptyRun = () => ({
   victory: false,
   best: 0,
   battleSave: null,
+  seenEvents: [],
 });
 
 function load() {
@@ -319,6 +320,7 @@ export function useRogue() {
     run.visited = [];
     run.wins = 0;
     run.level = 1;
+    run.seenEvents = [];
     run.phase = "map";
     save();
   }
@@ -569,13 +571,17 @@ export function useRogue() {
   };
 
   function startEvent() {
-    const list = [
+    const all = [
       ...events,
       ...heroEvents.filter((item) => item.hero !== run.heroId),
     ];
+    const seen = run.seenEvents || [];
+    const fresh = all.filter((item) => !seen.includes(item.id));
+    const list = fresh.length ? fresh : all;
     const total = list.reduce((sum, item) => sum + (item.weight || 1), 0);
     let roll = Math.random() * total;
     const pick = list.find((item) => (roll -= item.weight || 1) < 0) || list[0];
+    run.seenEvents = [...seen, pick.id];
     run.event = {
       id: pick.id,
       hero: pick.hero || null,
