@@ -2798,6 +2798,7 @@ function* attack(me) {
 
   if (
     game.phase === "play" &&
+    !turnEnded &&
     hero(me).id === "chupacabra" &&
     combat.fighters[me] === "hero"
   ) {
