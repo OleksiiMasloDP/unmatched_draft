@@ -77,14 +77,30 @@ const emptyRun = () => ({
   seenEvents: [],
 });
 
+const teamSize = (heroId) => {
+  const found = getHero(heroId);
+  return found?.team ? 1 + (found.sidekick?.count || 0) : 1;
+};
+
+const maxHpOf = (heroId) => getHero(heroId).hp * teamSize(heroId);
+
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved && saved.phase) {
       const loaded = { ...emptyRun(), ...saved };
       if (loaded.heroId && loaded.deck.length && loaded.hp == null) {
-        loaded.maxHp = getHero(loaded.heroId).hp;
+        loaded.maxHp = maxHpOf(loaded.heroId);
         loaded.hp = loaded.maxHp;
+      } else if (
+        loaded.heroId &&
+        loaded.deck.length &&
+        loaded.maxHp === getHero(loaded.heroId).hp &&
+        teamSize(loaded.heroId) > 1
+      ) {
+        const size = teamSize(loaded.heroId);
+        loaded.maxHp *= size;
+        loaded.hp *= size;
       }
       return loaded;
     }
@@ -313,7 +329,7 @@ export function useRogue() {
     if (run.phase !== "deck" || cardIds.length !== BASE_DECK) return;
     run.deck = [...cardIds];
     run.gold = START_GOLD;
-    run.maxHp = getHero(run.heroId).hp;
+    run.maxHp = maxHpOf(run.heroId);
     run.hp = run.maxHp;
     run.map = generateMap(mulberry32(Math.floor(Math.random() * 2 ** 31)));
     run.pos = null;
@@ -445,7 +461,17 @@ export function useRogue() {
     if (game.phase === "over" && game.winner) {
       run.battleSave = null;
       if (game.winner === "p1") {
-        run.hp = Math.max(1, game.players.p1.hp);
+        const mine = game.players.p1;
+        const members = getHero(run.heroId)?.team
+          ? [mine, ...mine.sidekicks.filter((kid) => !kid.down)]
+          : [mine];
+        run.hp = Math.max(
+          1,
+          Math.min(
+            run.maxHp,
+            members.reduce((sum, item) => sum + Math.max(0, item.hp), 0),
+          ),
+        );
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
         run.gold += kind === "boss" ? 80 : kind === "elite" ? 60 : 20;

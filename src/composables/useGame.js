@@ -3287,12 +3287,21 @@ function startRogueBattle(deckA, deckB, options) {
     const cut = (value) => Math.max(1, Math.ceil(value * factor));
     state.hp = cut(state.hp);
     state.maxHp = state.hp;
-    if (seat === "p1" && options.heroHp) {
-      state.hp = Math.max(1, Math.min(state.maxHp, options.heroHp));
-    }
     for (const kid of state.sidekicks) {
       kid.hp = cut(kid.hp);
       kid.maxHp = kid.hp;
+    }
+    if (seat === "p1" && options.heroHp) {
+      if (hero(seat)?.team) {
+        const members = [state, ...state.sidekicks];
+        const each = Math.max(
+          1,
+          Math.min(state.maxHp, Math.ceil(options.heroHp / members.length)),
+        );
+        for (const member of members) member.hp = each;
+      } else {
+        state.hp = Math.max(1, Math.min(state.maxHp, options.heroHp));
+      }
     }
   }
   setBot("p2");
