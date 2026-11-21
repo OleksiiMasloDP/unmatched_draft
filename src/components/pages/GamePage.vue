@@ -1404,9 +1404,8 @@ function chooseLocal() {
   localChosen.value = true;
 }
 
-function chooseBot(oracle = false) {
+function chooseBot() {
   setBot("p2");
-  game.oracle = { p1: false, p2: oracle === true };
   localChosen.value = true;
 }
 

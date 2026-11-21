@@ -31,16 +31,6 @@
       <button
         type="button"
         class="mode-option"
-        :class="{ 'is-selected': mode === 'oracle' }"
-        @click="chooseMode('oracle')"
-      >
-        <span class="mode-icon">👁</span>
-        <span class="mode-name">{{ t("modeOracleTitle") }}</span>
-        <span class="mode-desc">{{ t("modeOracleDesc") }}</span>
-      </button>
-      <button
-        type="button"
-        class="mode-option"
         :class="{ 'is-selected': mode === 'online' }"
         @click="chooseMode('online')"
       >
@@ -137,8 +127,7 @@ function chooseMode(next) {
   if (next !== "online" && net.role !== null) leave();
   setMode(next);
   if (next === "local") emit("local");
-  if (next === "bot") emit("bot", false);
-  if (next === "oracle") emit("bot", true);
+  if (next === "bot") emit("bot");
 }
 
 function hostRoom() {
