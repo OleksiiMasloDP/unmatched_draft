@@ -174,6 +174,56 @@ export const themes = [
     colors: ["#fc4a1a", "#f7b733"],
     name: { en: "Clash tricks", ua: "Бойові трюки" },
   },
+  {
+    id: "victors",
+    test: (card) => /if you (already )?(won|win)\b/i.test(card.text.en),
+    icon: "trophy",
+    colors: ["#f7971e", "#ffd200"],
+    name: { en: "Winners", ua: "Переможці" },
+  },
+  {
+    id: "losers",
+    test: (card) => /if you (lost|lose)\b/i.test(card.text.en),
+    icon: "skullCrossedBones",
+    colors: ["#434343", "#8e0e00"],
+    name: { en: "Sore losers", ua: "Погані програвші" },
+  },
+  {
+    id: "cancel",
+    test: (card) => /cancel/i.test(card.text.en),
+    icon: "padlock",
+    colors: ["#4b6cb7", "#182848"],
+    name: { en: "Cancel", ua: "Скасування" },
+  },
+  {
+    id: "shove",
+    test: (card) =>
+      /(move|push|place|swap)[^.]{0,50}(opposing|opponent|enemy)/i.test(
+        card.text.en,
+      ),
+    icon: "punch",
+    colors: ["#ff512f", "#dd2476"],
+    name: { en: "Shove", ua: "Відштовхування" },
+  },
+  {
+    id: "cheap",
+    test: (card) =>
+      card.type !== "scheme" &&
+      card.value !== undefined &&
+      card.value !== null &&
+      card.value <= 2,
+    icon: "twoCoins",
+    colors: ["#56ab2f", "#a8e063"],
+    name: { en: "Cheap tricks", ua: "Дешеві трюки" },
+  },
+  {
+    id: "freeActions",
+    test: (card) =>
+      /gain (1|an|\d) (free )?actions?|free attack/i.test(card.text.en),
+    icon: "hourglass",
+    colors: ["#00c6ff", "#0072ff"],
+    name: { en: "Extra actions", ua: "Додаткові дії" },
+  },
 ];
 
 export const cardPrice = (card) =>
