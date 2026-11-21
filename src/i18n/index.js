@@ -14,6 +14,7 @@ import { hamletText } from "./heroes/hamlet.js";
 import { lukeCageText } from "./heroes/lukeCage.js";
 import { sheHulkText } from "./heroes/sheHulk.js";
 import { annieChristmasText } from "./heroes/annieChristmas.js";
+import { kingArthurText } from "./heroes/kingArthur.js";
 import { deadmanDannyText } from "./heroes/deadmanDanny.js";
 import { odaNobunagaText } from "./heroes/odaNobunaga.js";
 import { invisibleManText } from "./heroes/invisibleMan.js";
@@ -43,6 +44,7 @@ const parts = [
   lukeCageText,
   sheHulkText,
   annieChristmasText,
+  kingArthurText,
   deadmanDannyText,
   odaNobunagaText,
   houdiniText,

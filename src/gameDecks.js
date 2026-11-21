@@ -190,6 +190,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-21",
+      name: "King Arthur Deck",
+      heroId: "king-arthur",
+      cardIds: allCards
+        .filter((card) => card.heroId === "king-arthur")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

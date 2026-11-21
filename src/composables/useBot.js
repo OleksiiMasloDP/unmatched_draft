@@ -879,7 +879,7 @@ export function useBot(options = {}) {
     if (title === "promptAttackCard") return "attack";
     if (title === "promptDefenseCard") return "defense";
     if (title === "promptSchemeCard") return "scheme";
-    if (title === "promptBoost") {
+    if (title === "promptBoost" || title === "promptArthurBoost") {
       return game.combat?.attacker === bot ? "boostAttack" : "boostDefense";
     }
     return null;
@@ -987,7 +987,7 @@ export function useBot(options = {}) {
       const enough = sorted.filter((card) => (card.value ?? 0) >= expected);
       return [(enough.length ? cheapest(enough) : sorted[0]).id];
     }
-    if (title === "promptBoost") {
+    if (title === "promptBoost" || title === "promptArthurBoost") {
       const hand = handOf(bot).length;
       const combat = game.combat;
       const played = combat?.cardIds?.[bot] && getCard(combat.cardIds[bot]);

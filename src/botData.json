@@ -455,6 +455,89 @@
         "boostDefense",
         "boostManeuver"
       ]
+    },
+    "king-arthur:excalibur": {
+      "importance": 10,
+      "lean": 9,
+      "boostWill": 0,
+      "timing": 3,
+      "who": 10,
+      "uses": ["attack", "boostAttack"]
+    },
+    "king-arthur:the-aid-of-morgana": {
+      "importance": 7,
+      "lean": 6,
+      "boostWill": 2,
+      "uses": ["attack", "boostAttack", "boostDefense"]
+    },
+    "king-arthur:aid-the-chosen-one": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 3
+    },
+    "king-arthur:swift-strike": {
+      "importance": 6,
+      "lean": 4,
+      "boostWill": 3,
+      "timing": 1
+    },
+    "king-arthur:noble-sacrifice": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2
+    },
+    "king-arthur:skirmish": {
+      "importance": 6,
+      "boostWill": 3
+    },
+    "king-arthur:momentous-shift": {
+      "importance": 6,
+      "boostWill": 2,
+      "timing": 2
+    },
+    "king-arthur:divine-intervention": {
+      "importance": 6,
+      "boostWill": 4
+    },
+    "king-arthur:feint": {
+      "importance": 7,
+      "cancelCare": 2,
+      "boostWill": 3,
+      "uses": ["defense", "attack", "boostAttack", "boostDefense"]
+    },
+    "king-arthur:regroup": {
+      "importance": 5,
+      "boostWill": 5
+    },
+    "king-arthur:the-holy-grail": {
+      "importance": 8,
+      "boostWill": 1,
+      "uses": ["defense", "boostDefense"]
+    },
+    "king-arthur:bewilderment": {
+      "importance": 7,
+      "boostWill": 2,
+      "uses": ["defense", "boostDefense"]
+    },
+    "king-arthur:the-lady-of-the-lake": {
+      "importance": 7,
+      "timing": 4,
+      "boostWill": 2
+    },
+    "king-arthur:prophecy": {
+      "importance": 6,
+      "timing": 1,
+      "boostWill": 3
+    },
+    "king-arthur:command-the-storms": {
+      "importance": 6,
+      "timing": 5,
+      "boostWill": 3
+    },
+    "king-arthur:restless-spirits": {
+      "importance": 7,
+      "timing": 6,
+      "boostWill": 2
     }
   },
   "sidekicks": {
@@ -525,6 +608,13 @@
       "aggro": 1.7,
       "kidFear": 0.2,
       "boostHand": 2,
+      "refill": 4
+    },
+    "king-arthur": {
+      "heroFocus": 8,
+      "aggro": 1.5,
+      "kidFear": 0.3,
+      "boostHand": 3,
       "refill": 4
     }
   }

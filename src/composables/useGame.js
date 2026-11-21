@@ -1490,7 +1490,36 @@ const api = {
     noteReveal(player, id);
     log("logRevealOwn", { player, card: getCard(id).name, cardId: id });
   },
+  takeFromDiscard: (player, id) => {
+    const target = pl(player);
+    const index = target.discard.indexOf(id);
+    if (index === -1) return;
+    target.discard.splice(index, 1);
+    target.hand.push(id);
+    log("logAddToHand", { player, card: getCard(id).name, cardId: id });
+  },
   foeFighterIds: (player) => fightersOf(other(player)),
+  zoneSpaceIds: (player, fighter) => {
+    const zones = active.spaceById.get(fighterSpace(player, fighter)).zones;
+    return active.map.spaces
+      .filter((space) => space.zones.some((zone) => zones.includes(zone)))
+      .map((space) => space.id);
+  },
+  spaceLinks: (spaceId) => [...active.spaceById.get(spaceId).links],
+  foeFightersIn: (player, spaceIds) =>
+    fightersOf(other(player)).filter((fighter) =>
+      spaceIds.includes(fighterSpace(other(player), fighter)),
+    ),
+  prophecyTake: (player, takeIds, restOrder) => {
+    const deck = pl(player).deck;
+    const count = Math.min(4, deck.length);
+    deck.splice(0, count);
+    deck.unshift(...restOrder);
+    for (const id of takeIds) {
+      pl(player).hand.push(id);
+      log("logAddToHand", { player, card: getCard(id).name, cardId: id });
+    }
+  },
   peekTop: (player) => pl(player).deck[0] || null,
   topToBottom: (player) => {
     const deck = pl(player).deck;
@@ -2443,6 +2472,20 @@ function* attack(me) {
     boostLists: { p1: [], p2: [] },
   };
 
+  let arthurBoost = null;
+  if (
+    hero(me).id === "king-arthur" &&
+    mine === "hero" &&
+    boostPool(me).length
+  ) {
+    const ids = yield askCards(me, "promptArthurBoost", boostPool(me), {
+      min: 0,
+      max: 1,
+      skip: "gameSkipBoost",
+    });
+    if (ids.length) arthurBoost = spendBoostCard(me, ids[0]);
+  }
+
   const players = [foe, me];
   for (const player of players) {
     const card = combat.cards[player];
@@ -2464,6 +2507,23 @@ function* attack(me) {
   const boostCardIds = combat.boostCardIds;
   const boostLists = combat.boostLists;
   const baseValues = { p1: 0, p2: 0 };
+  if (arthurBoost) {
+    if (combat.canceled[me]) {
+      log("logArthurBoostLost", {
+        player: me,
+        card: arthurBoost.name,
+        cardId: arthurBoost.id,
+      });
+    } else {
+      boosts[me] += arthurBoost.boost;
+      game.combat.boostTotal[me] = boosts[me];
+      boostCardIds[me] = arthurBoost.id;
+      boostLists[me].push(arthurBoost.id);
+      game.combat.boost[me] = true;
+      afterBoost(me);
+      yield* boostedWith(me, arthurBoost, combat);
+    }
+  }
   for (const player of players) {
     const card = combat.cards[player];
     const effect = card && cardEffects[card.key];

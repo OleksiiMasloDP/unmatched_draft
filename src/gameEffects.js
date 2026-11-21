@@ -2613,4 +2613,145 @@ export const cardEffects = {
       }
     },
   },
+
+  "the-aid-of-morgana": {
+    *after(c) {
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "aid-the-chosen-one": {
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.draw(c.me, 2);
+    },
+  },
+
+  "swift-strike": {
+    *after(c) {
+      const fighter = c.combat.fighters[c.me];
+      if (!c.g.fightersOf(c.me).includes(fighter)) return;
+      const saved = c.g.fighterOf(c.me);
+      c.g.setFighter(c.me, fighter);
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        4,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { fighter },
+      );
+      c.g.setFighter(c.me, saved);
+    },
+  },
+
+  "noble-sacrifice": {
+    canBoost: () => true,
+  },
+
+  "divine-intervention": {
+    *after(c) {
+      if (!c.g.fightersOf(c.me).includes("hero")) return;
+      const saved = c.g.fighterOf(c.me);
+      c.g.setFighter(c.me, "hero");
+      yield* c.g.walk(c.me, c.me, 5, "promptMoveSpace", { fighter: "hero" });
+      c.g.setFighter(c.me, saved);
+    },
+  },
+
+  "the-holy-grail": {
+    *after(c) {
+      const hp = c.g.heroHp(c.me);
+      if (hp > 0 && hp <= 4) c.g.heal(c.me, 8 - hp, "hero");
+    },
+  },
+
+  bewilderment: {
+    *immediate(c) {
+      c.g.setImmune(c.me);
+    },
+    *after(c) {
+      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      if (!kid) return;
+      const options = c.g.anySpaces();
+      if (!options.length) return;
+      const ok = yield c.g.askConfirm(c.me, "promptBewilderment");
+      if (!ok) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+      if (space) c.g.placeFighter(c.me, kid, space);
+    },
+  },
+
+  "the-lady-of-the-lake": {
+    *scheme(c) {
+      const inDeck = c.g
+        .deckOf(c.me)
+        .find((id) => c.g.cardKey(id) === "excalibur");
+      if (inDeck) {
+        c.g.searchDeck(c.me, inDeck);
+        return;
+      }
+      const inDiscard = c.g
+        .discardOf(c.me)
+        .find((id) => c.g.cardKey(id) === "excalibur");
+      if (inDiscard) c.g.takeFromDiscard(c.me, inDiscard);
+    },
+  },
+
+  prophecy: {
+    *scheme(c) {
+      const top = c.g.topCards(c.me, 4);
+      if (!top.length) return;
+      for (const id of top) c.g.logRevealOwn(c.me, id);
+      const take = Math.min(2, top.length);
+      const picked = yield c.g.askCards(c.me, "promptProphecyTake", top, {
+        min: take,
+        max: take,
+      });
+      const rest = top.filter((id) => !picked.includes(id));
+      const order = [];
+      while (rest.length > 1) {
+        const [first] = yield c.g.askCards(c.me, "promptProphecyOrder", rest, {
+          min: 1,
+          max: 1,
+        });
+        order.push(first);
+        rest.splice(rest.indexOf(first), 1);
+      }
+      order.push(...rest);
+      c.g.prophecyTake(c.me, picked, order);
+    },
+  },
+
+  "command-the-storms": {
+    *scheme(c) {
+      yield* c.g.moveAll(c.me, 3, false);
+      const saved = c.g.fighterOf(c.foe);
+      for (const fighter of c.g.fightersOf(c.foe)) {
+        c.g.setFighter(c.foe, fighter);
+        yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe", { fighter });
+      }
+      c.g.setFighter(c.foe, saved);
+    },
+  },
+
+  "restless-spirits": {
+    *scheme(c) {
+      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      if (!kid) return;
+      const zone = c.g.zoneSpaceIds(c.me, kid);
+      const first = yield c.g.askSpace(c.me, "promptSpiritsSpace", zone);
+      if (!first) return;
+      const near = c.g.spaceLinks(first);
+      let second = null;
+      if (near.length) {
+        second = yield c.g.askSpace(c.me, "promptSpiritsAdjacent", near);
+      }
+      const targets = c.g.foeFightersIn(c.me, [first, second].filter(Boolean));
+      let defeated = false;
+      for (const fighter of targets) {
+        c.g.damage(c.foe, 2, fighter);
+        if (c.g.fighterDefeated(c.foe, fighter)) defeated = true;
+      }
+      if (defeated) c.g.draw(c.me, 1);
+    },
+  },
 };

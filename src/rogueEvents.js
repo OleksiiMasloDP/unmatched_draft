@@ -3891,6 +3891,269 @@ export const heroEvents = [
       },
     ],
   },
+  {
+    id: "arthur_stone",
+    hero: "king-arthur",
+    icon: "key",
+    tint: "#c2412d",
+    weight: 1,
+    title: both("The sword in the stone", "Меч у камені"),
+    text: both(
+      "A mossy stone stands in a clearing, a bright blade driven deep into it. An old man in a crimson hood, with far too many eyes, sits on the stone, polishing a pebble and watching you the way a cat watches a door.",
+      "На галявині стоїть замшілий камінь, у ньому глибоко застряг сяйний клинок. На камені сидить старий у багряному каптурі з надто великою кількістю очей, шліфує камінчик і дивиться на тебе так, як кіт дивиться на двері.",
+    ),
+    choices: [
+      {
+        icon: "muscleUp",
+        label: both("Pull the sword", "Висмикнути меч"),
+        outcomes: [
+          out(
+            2,
+            "The blade slides out as if it had been waiting. A heavy, true card is yours.",
+            "Клинок виходить так, ніби чекав саме тебе. Важка, чесна карта тепер твоя.",
+            { card: "own" },
+          ),
+          out(
+            3,
+            "It does not move. The old man applauds your effort and charges a small fee for the show.",
+            "Він не рухається. Старий аплодує твоїм зусиллям і бере невелику плату за виставу.",
+            { gold: -15, health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "crystalBall",
+        label: both("Ask what the stone wants", "Спитати, чого хоче камінь"),
+        outcomes: [
+          out(
+            3,
+            "He answers with three riddles. You answer two, and he rewards you with a trick that comes from somewhere older than any court.",
+            "Він відповідає трьома загадками. Ти розгадуєш дві, і він винагороджує тебе прийомом, старшим за будь-який двір.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "He tells you the stone wants nothing. Then he laughs for a very long time.",
+            "Він каже, що камінь нічого не хоче. Потім дуже довго сміється.",
+          ),
+        ],
+      },
+      {
+        icon: "twoCoins",
+        label: both("Leave a coin at the stone", "Залишити монету біля каменя"),
+        cost: 20,
+        outcomes: [
+          out(
+            2,
+            "The coin vanishes and something bigger rolls out of the moss.",
+            "Монета зникає, а з моху викочується щось більше.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "A card slips out from under the stone, as though the offering had been noticed.",
+            "З-під каменя висковзує карта, ніби подарунок помітили.",
+            { card: "any" },
+          ),
+        ],
+      },
+      {
+        icon: "firstAidKit",
+        label: both(
+          "Rest in the shade of the blade",
+          "Відпочити в тіні клинка",
+        ),
+        outcomes: [
+          out(
+            3,
+            "The light off the steel is oddly warm. You wake stronger than you lay down.",
+            "Світло від сталі дивно тепле. Ти прокидаєшся міцнішим, ніж ліг.",
+            { health: 4 },
+          ),
+        ],
+      },
+      leave(
+        "The old man waves you off. 'Wrong season,' he says.",
+        "Старий відмахується від тебе. «Не той сезон», — каже він.",
+      ),
+    ],
+  },
+  {
+    id: "arthur_round_table",
+    hero: "king-arthur",
+    icon: "castle",
+    tint: "#b5382f",
+    weight: 1,
+    title: both("The round table", "Круглий стіл"),
+    text: both(
+      "A great hall with a round oak table and no head seat. A bearded king in a red cloak and a plain iron helm stands behind an empty chair, hand on his sword, and the knights around him are staring at you.",
+      "Велика зала з круглим дубовим столом, за яким немає почесного місця. За порожнім стільцем стоїть бородатий король у червоному плащі й простому залізному шоломі, поклавши руку на меч, а лицарі довкола дивляться на тебе.",
+    ),
+    choices: [
+      {
+        icon: "shakingHands",
+        label: both("Take the empty seat", "Сісти на вільне місце"),
+        outcomes: [
+          out(
+            3,
+            "No seat is higher than another here. A knight leans over and shares the strategy of a hard campaign.",
+            "Тут жодне місце не вище за інше. Лицар нахиляється й ділиться стратегією важкого походу.",
+            { card: "ally" },
+          ),
+          out(
+            1,
+            "You sit in the wrong chair. The table goes quiet, then someone slides a plate your way.",
+            "Ти сідаєш не на те місце. Стіл замовкає, потім хтось підсуває тобі тарілку.",
+            { health: 2 },
+          ),
+        ],
+      },
+      {
+        icon: "swordman",
+        label: both("Spar a knight", "Позмагатися з лицарем"),
+        outcomes: [
+          out(
+            2,
+            "You win the bout and a round of cheers. The loser hands over his coin purse with a bow.",
+            "Ти виграєш поєдинок і чуєш оплески. Переможений із поклоном віддає свій гаманець.",
+            { gold: 55 },
+          ),
+          out(
+            2,
+            "The bout is brutal. You lose the match, but a lesson sticks to the ribs.",
+            "Поєдинок жорстокий. Ти програєш, але урок залишається в ребрах.",
+            { health: -4, card: "own" },
+          ),
+        ],
+      },
+      {
+        icon: "laurels",
+        label: both("Swear an oath", "Скласти присягу"),
+        remove: true,
+        gold: 20,
+        text: both(
+          "You swear to leave an old, unworthy habit behind. The king nods and has the treasurer pay you for it.",
+          "Ти присягаєшся залишити старий негідний звичай. Король киває й велить скарбнику заплатити тобі.",
+        ),
+      },
+      {
+        icon: "robberMask",
+        label: both("Slip into the kitchens", "Прослизнути на кухню"),
+        outcomes: [
+          out(
+            2,
+            "A cook feeds you stew and asks no questions.",
+            "Кухар годує тебе юшкою й не ставить запитань.",
+            { health: 3 },
+          ),
+          out(
+            2,
+            "You find a silver goblet and a quiet back door.",
+            "Ти знаходиш срібний келих і тихі задні двері.",
+            { gold: 35 },
+          ),
+        ],
+      },
+      leave(
+        "You bow and back out of the hall. The empty chair does not move.",
+        "Ти вклоняєшся й задкуєш із зали. Порожній стілець не рухається.",
+      ),
+    ],
+  },
+  {
+    id: "merlin_cave",
+    hero: "king-arthur",
+    icon: "pointyHat",
+    tint: "#a83a35",
+    weight: 1,
+    title: both("The crystal cave", "Кришталева печера"),
+    text: both(
+      "Under a hill, a cave of glass and red light. An old man in a hood with a long beard stirs a pot that has no fire under it, mumbling to the stars on the ceiling. He does not look up. 'Sit,' he says. 'You are early.'",
+      "Під пагорбом лежить печера зі скла й червоного світла. Старий у каптурі з довгою бородою помішує казанок, під яким немає вогню, і бурмоче щось зіркам на стелі. Він не підводить очей. «Сідай, — каже він. — Ти зарано».",
+    ),
+    choices: [
+      {
+        icon: "crystalBall",
+        label: both("Look into the crystal", "Зазирнути в кришталь"),
+        outcomes: [
+          out(
+            3,
+            "You see a battle that has not happened yet, and you leave knowing exactly how to dodge it.",
+            "Ти бачиш битву, якої ще не було, і йдеш, знаючи, як її уникнути.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "The crystal shows you too many futures at once. You come out with a headache and fewer coins.",
+            "Кришталь показує забагато майбутніх одразу. Ти виходиш із головним болем і меншим гаманцем.",
+            { health: -3, gold: -10 },
+          ),
+        ],
+      },
+      {
+        icon: "bookPile",
+        label: both("Borrow a spellbook", "Позичити книгу заклять"),
+        cost: 25,
+        outcomes: [
+          out(
+            3,
+            "A page falls open exactly where you need it.",
+            "Сторінка розкривається саме там, де потрібно.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "The book bites. You learn nothing, but you do learn to respect old books.",
+            "Книга кусається. Ти нічого не вчишся, але вчишся поважати старі книги.",
+            { health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "waterDrop",
+        label: both("Drink from the pot", "Випити з казанка"),
+        outcomes: [
+          out(
+            3,
+            "It tastes of rain and iron. You feel mended.",
+            "Смак як у дощу із залізом. Ти почуваєшся зціленим.",
+            { health: 5 },
+          ),
+          out(
+            1,
+            "It tastes of nothing. A little later, your purse feels lighter.",
+            "Смаку немає. Трохи згодом гаманець стає легшим.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "ghost",
+        label: both(
+          "Follow the owl out the back",
+          "Піти за совою через задній хід",
+        ),
+        outcomes: [
+          out(
+            2,
+            "The owl leads you to a hollow in the roots, and a coin hoard older than the hill.",
+            "Сова веде тебе до дупла серед коренів і до скарбу, старшого за пагорб.",
+            { gold: 70 },
+          ),
+          out(
+            2,
+            "The owl leads you in circles. At dawn a card is lying where you started.",
+            "Сова водить тебе колами. На світанку на місці, звідки ти починав, лежить карта.",
+            { card: "ally" },
+          ),
+        ],
+      },
+      leave(
+        "'Come back when it matters,' says the old man, and the cave goes dark.",
+        "«Повертайся, коли це матиме значення», — каже старий, і печера темніє.",
+      ),
+    ],
+  },
 ];
 
 export const eventArts = {
@@ -3951,4 +4214,7 @@ export const eventArts = {
   lukecage_barber: "Luke Cage/trash_talk",
   lukecage_bounty: "Luke Cage/hero_for_hire",
   chupacabra_pen: "Chupacabra/feeding",
+  arthur_stone: "King Arthur/excalibur",
+  arthur_round_table: "King Arthur/divine_intervention",
+  merlin_cave: "King Arthur/prophecy",
 };

@@ -19,6 +19,7 @@ import {
   lukeCageCards,
   sheHulkCards,
   annieChristmasCards,
+  kingArthurCards,
 } from "./packDraftCards.js";
 
 import { customHeroes } from "./customHeroes.js";
@@ -432,6 +433,29 @@ export const packDraftHeroes = [
     cards: annieChristmasCards,
   },
   {
+    id: "king-arthur",
+    name: "King Arthur",
+    hp: 18,
+    move: 2,
+    attack: "melee",
+    image: "images/arthur.webp",
+    passive: {
+      name: "Sword of Kings",
+      text: {
+        en: "When King Arthur attacks, you may BOOST that attack. Play the BOOST card face down along with your attack card. If your opponent cancels the effects on your attack card, the BOOST is discarded without effect.",
+        ua: "Коли King Arthur атакує, ви можете зробити БУСТ цієї атаки. Зіграйте карту БУСТУ сорочкою догори разом із картою атаки. Якщо суперник скасовує ефекти вашої карти атаки, БУСТ скидається без ефекту.",
+      },
+    },
+    sidekick: {
+      name: "Merlin",
+      hp: 7,
+      attack: "range",
+      image: "images/merlin.webp",
+      count: 1,
+    },
+    cards: kingArthurCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -675,6 +699,28 @@ const CARD_IMAGES = {
       mississippi_queen: "defense",
       captains_orders: "scheme",
       a_few_more_pearls: "scheme",
+    },
+  },
+  "king-arthur": {
+    dir: "King Arthur",
+    cover: false,
+    files: {
+      excalibur: "attack",
+      the_aid_of_morgana: "attack",
+      aid_the_chosen_one: "attack",
+      swift_strike: "attack",
+      noble_sacrifice: "attack",
+      skirmish: "versatile",
+      momentous_shift: "versatile",
+      divine_intervention: "versatile",
+      feint: "versatile",
+      regroup: "versatile",
+      the_holy_grail: "defense",
+      bewilderment: "defense",
+      the_lady_of_the_lake: "scheme",
+      prophecy: "scheme",
+      command_the_storms: "scheme",
+      restless_spirits: "scheme",
     },
   },
   "she-hulk": {

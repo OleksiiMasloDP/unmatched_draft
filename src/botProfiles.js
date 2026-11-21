@@ -74,6 +74,11 @@ export const botProfiles = {
     keep: ["fairfax-guarantee", "feint"],
     boostHand: 3,
   },
+  "king-arthur": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["excalibur", "the-holy-grail"],
+    boostHand: 3,
+  },
   "winter-soldier": { style: BOT_STYLES.PASS },
   "doctor-strange": { style: BOT_STYLES.PASS },
   "dr-jill-trent": { style: BOT_STYLES.PASS },
