@@ -21,14 +21,6 @@
         </select>
       </label>
       <label class="bot-watch-field">
-        <input v-model="oracleA" type="checkbox" />
-        <span>{{ t("botWatchOracleA") }}</span>
-      </label>
-      <label class="bot-watch-field">
-        <input v-model="oracleB" type="checkbox" />
-        <span>{{ t("botWatchOracleB") }}</span>
-      </label>
-      <label class="bot-watch-field">
         <span>{{ t("botWatchMap") }}</span>
         <select v-model="mapId">
           <option v-for="item in gameMaps" :key="item.id" :value="item.id">
@@ -362,8 +354,6 @@ const bots = {
 const STORE = "unmatched-bot-watch-remarks";
 const heroA = ref(everyHero[0].id);
 const heroB = ref(everyHero[1].id);
-const oracleA = ref(false);
-const oracleB = ref(false);
 const mapId = ref(gameMaps[0].id);
 const running = ref(false);
 const pauseOn = ref("every");
@@ -618,7 +608,6 @@ const start = () => {
   const mk = (id, name) => ({ id: name, name, heroId: id, cardIds: deck(id) });
   engine.setMap(mapId.value);
   engine.startGame(mk(heroA.value, "a"), mk(heroB.value, "b"));
-  game.oracle = { p1: oracleA.value, p2: oracleB.value };
   for (const p of ["p1", "p2"]) engine.chooseMulligan(false, p);
   engine.continueMulligan();
   proposal.value = null;
