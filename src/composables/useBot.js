@@ -945,6 +945,22 @@ export function useBot(options = {}) {
       );
       const me = game.players[bot];
       const known = knowledge(bot);
+      if (game.oracle?.[bot]) {
+        const coming = getCard(game.combat?.cardIds?.[other(bot)]);
+        const effectful = /immediately|during combat|after combat/i.test(
+          textOf(coming),
+        );
+        const cancel = pool.filter((card) => /cancel/i.test(textOf(card)));
+        if (effectful && cancel.length) return [cheapest(cancel).id];
+        if ((coming?.value ?? 0) > 3) {
+          const three = pool.filter((card) => (card.value ?? 0) === 3);
+          const back = three.filter((card) =>
+            /return|into your hand|to your hand/i.test(textOf(card)),
+          );
+          if (back.length) return [back[0].id];
+          if (three.length) return [cheapest(three).id];
+        }
+      }
       if (known) {
         const comingCard = getCard(game.combat?.cardIds?.[other(bot)]);
         const incoming =
