@@ -1404,29 +1404,6 @@ export function useBot(options = {}) {
     return engine.doManeuver();
   };
 
-  engine.setOracleChoose((seat, defenseId, ids) => {
-    const cards = ids.map(getCard).filter(Boolean).filter(fitAttack);
-    if (!cards.length) return null;
-    const defense = getCard(defenseId);
-    const canceled = defense && /cancel/i.test(textOf(defense));
-    const score = (card) => {
-      const value = card.value ?? 0;
-      const tie = -(rate(card).importance ?? 5) * 0.01;
-      if (!defense) return value + effectBonus(card, seat) * 0.5 + tie;
-      if (canceled) return value + tie;
-      const guard = defense.value ?? 0;
-      return (
-        Math.max(0, value - guard) +
-        effectBonus(card, seat) * 0.5 +
-        value * 0.05 +
-        tie
-      );
-    };
-    return cards.reduce((best, card) =>
-      score(card) > score(best) ? card : best,
-    ).id;
-  });
-
   const search = createSearch({
     engine,
     game,

@@ -2303,12 +2303,6 @@ function* offerBoostToken(player, fighter) {
   return token.id;
 }
 
-let oracleChoose = null;
-
-function setOracleChoose(fn) {
-  oracleChoose = fn;
-}
-
 function* attack(me) {
   const foe = other(me);
   const choices = attackChoices(me);
@@ -2343,7 +2337,7 @@ function* attack(me) {
   spendAction();
   useFreeAttack(theirs);
   turnFlags.anyRange[me] = false;
-  let attackCard = getCard(attackIds[0]);
+  const attackCard = getCard(attackIds[0]);
   pl(me).hand.splice(pl(me).hand.indexOf(attackCard.id), 1);
   log("logAttack", { player: me, act: 1 });
   const attackToken = yield* offerBoostToken(me, mine);
@@ -2421,23 +2415,6 @@ function* attack(me) {
   if (defenseIds.length) {
     defenseCard = getCard(defenseIds[0]);
     pl(foe).hand.splice(pl(foe).hand.indexOf(defenseCard.id), 1);
-  }
-  if (game.oracle?.[me] && oracleChoose) {
-    const pool = [attackCard.id, ...attackCardsFor(me, mine)];
-    const pickId = oracleChoose(me, defenseCard ? defenseCard.id : null, pool);
-    if (pickId && pickId !== attackCard.id && pool.includes(pickId)) {
-      pl(me).hand.push(attackCard.id);
-      pl(me).hand.splice(pl(me).hand.indexOf(pickId), 1);
-      attackCard = getCard(pickId);
-      game.combat.cardIds[me] = attackCard.id;
-      game.combat.covers[me] = attackCard.heroId;
-      game.combat.revealed[me] = cardEffects[attackCard.key]?.faceUp
-        ? attackCard.id
-        : null;
-      if (hero(foe).id === "spider-man") {
-        game.combat.announcedValue = attackCard.value;
-      }
-    }
   }
   const defenseToken = defenseCard ? yield* offerBoostToken(foe, theirs) : null;
   game.combat.token[foe] = defenseToken;
@@ -3800,7 +3777,6 @@ export function useGame() {
     startOnlineGame,
     startLocalToss,
     setBot,
-    setOracleChoose,
     setBotLevel,
     exportBattle,
     forceEndTurn,
