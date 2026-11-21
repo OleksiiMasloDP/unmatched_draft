@@ -8,6 +8,15 @@ import { gameLogText } from "./gameLog.js";
 import { botText } from "./bot.js";
 import { blackPantherText } from "./heroes/blackPanther.js";
 import { houdiniText } from "./heroes/houdini.js";
+import { chupacabraText } from "./heroes/chupacabra.js";
+import { draculaText } from "./heroes/dracula.js";
+import { hamletText } from "./heroes/hamlet.js";
+import { lukeCageText } from "./heroes/lukeCage.js";
+import { sheHulkText } from "./heroes/sheHulk.js";
+import { annieChristmasText } from "./heroes/annieChristmas.js";
+import { deadmanDannyText } from "./heroes/deadmanDanny.js";
+import { odaNobunagaText } from "./heroes/odaNobunaga.js";
+import { invisibleManText } from "./heroes/invisibleMan.js";
 import { jillText } from "./heroes/jill.js";
 import { raptorsText } from "./heroes/raptors.js";
 import { robinHoodText } from "./heroes/robinHood.js";
@@ -28,7 +37,16 @@ const parts = [
   gameLogText,
   botText,
   blackPantherText,
+  chupacabraText,
+  draculaText,
+  hamletText,
+  lukeCageText,
+  sheHulkText,
+  annieChristmasText,
+  deadmanDannyText,
+  odaNobunagaText,
   houdiniText,
+  invisibleManText,
   jillText,
   raptorsText,
   robinHoodText,

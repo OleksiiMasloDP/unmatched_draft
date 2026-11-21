@@ -7,6 +7,31 @@ export const PACK_COUNT = 3;
 export const PACK_SIZE = 3;
 export const START_GOLD = 40;
 
+export const levels = [
+  {
+    id: 1,
+    boss: "agent-venom",
+    accent: "#ff4d8d",
+    glow: "rgba(255, 77, 141, 0.22)",
+    name: { en: "Road to the Lab", ua: "Шлях до лабораторії" },
+    text: {
+      en: "Streets, then a skyscraper roof, then the lab doors. All of it already covered in black.",
+      ua: "Вулиці, потім дах хмарочоса, потім двері лабораторії. Усе вже вкрите чорним.",
+    },
+  },
+  {
+    id: 2,
+    boss: "deadman-danny",
+    accent: "#ff9a2e",
+    glow: "rgba(255, 154, 46, 0.22)",
+    name: { en: "Burning Airbase", ua: "Палаюча авіабаза" },
+    text: {
+      en: "The gate, the hangars, and finally the base itself, burning.",
+      ua: "Вхід, ангари і нарешті сама база, що палає.",
+    },
+  },
+];
+
 export const nodeTypes = {
   fight: { icon: "crossedSwords", metal: "bronze", color: "#d9843f" },
   elite: { icon: "hornedSkull", metal: "ruby", color: "#ff5252" },
@@ -23,7 +48,7 @@ export const themes = [
       /deal[s]? \d+ damage|lose[s]? \d+ health/i.test(card.text.en),
     icon: "swordWound",
     colors: ["#ff5f6d", "#ffc371"],
-    name: { en: "Direct damage", ua: "Прямий урон" },
+    name: { en: "Pings", ua: "Пінг" },
   },
   {
     id: "draw",
@@ -80,6 +105,74 @@ export const themes = [
     icon: "castle",
     colors: ["#606c88", "#3f4c6b"],
     name: { en: "Fortress", ua: "Фортеця" },
+  },
+  {
+    id: "strikes",
+    test: (card) =>
+      (card.type === "attack" || card.type === "versatile") &&
+      (card.value ?? 0) >= 4,
+    icon: "muscleUp",
+    colors: ["#e52d27", "#b31217"],
+    name: { en: "Heavy strikes", ua: "Сильні удари" },
+  },
+  {
+    id: "bulwark",
+    test: (card) => card.type === "defense",
+    icon: "rock",
+    colors: ["#2b5876", "#4e4376"],
+    name: { en: "Full defense", ua: "Повна оборона" },
+  },
+  {
+    id: "schemes",
+    test: (card) => card.type === "scheme",
+    icon: "scrollUnfurled",
+    colors: ["#8e2de2", "#4a00e0"],
+    name: { en: "Schemes", ua: "Схеми" },
+  },
+  {
+    id: "attackers",
+    test: (card) => card.type === "attack",
+    icon: "crossedSwords",
+    colors: ["#f857a6", "#ff5858"],
+    name: { en: "Pure attacks", ua: "Чисті атаки" },
+  },
+  {
+    id: "flex",
+    test: (card) => card.type === "versatile",
+    icon: "scales",
+    colors: ["#b993d6", "#8ca6db"],
+    name: { en: "Versatile", ua: "Універсали" },
+  },
+  {
+    id: "sidekicks",
+    test: (card) => card.kind === "sidekick",
+    icon: "shakingHands",
+    colors: ["#11998e", "#38ef7d"],
+    name: { en: "Sidekick cards", ua: "Карти помічників" },
+  },
+  {
+    id: "sabotage",
+    test: (card) =>
+      /(opponent|opposing player).{0,40}discard|discard.{0,30}(opponent|opposing)/i.test(
+        card.text.en,
+      ),
+    icon: "robberHand",
+    colors: ["#cb2d3e", "#ef473a"],
+    name: { en: "Sabotage", ua: "Диверсії" },
+  },
+  {
+    id: "rush",
+    test: (card) => /^immediately/i.test(card.text.en),
+    icon: "ninjaMask",
+    colors: ["#373b44", "#4286f4"],
+    name: { en: "Ambush", ua: "Засідка" },
+  },
+  {
+    id: "clash",
+    test: (card) => /during combat/i.test(card.text.en),
+    icon: "rollingDices",
+    colors: ["#fc4a1a", "#f7b733"],
+    name: { en: "Clash tricks", ua: "Бойові трюки" },
   },
 ];
 

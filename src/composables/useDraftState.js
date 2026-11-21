@@ -1,11 +1,13 @@
 import { ref, computed, watch, reactive } from "vue";
 import { translations } from "../i18n/index.js";
 import { trackProceedToMaps } from "../utils/gaAnalytics";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 import {
   formats,
   MODE_TURNS,
   MODE_SIMULTANEOUS,
   CUSTOM_FORMAT_PREFIX,
+  CUSTOM_FORMATS_STORAGE_KEY,
   buildCustomFormat,
   loadCustomFormats,
   persistCustomFormats,
@@ -20,6 +22,25 @@ const DEFAULT_FORMAT = "all_heroes";
 
 // Власні формати користувача (localStorage, окремий ключ — "Рестарт" їх не чіпає)
 const customFormats = ref(loadCustomFormats());
+
+registerSyncable({
+  name: "formats",
+  docKey: "formats",
+  storageKey: CUSTOM_FORMATS_STORAGE_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => JSON.stringify(Array.isArray(value) ? value : []),
+  apply: () => {
+    customFormats.value = loadCustomFormats();
+  },
+  merge: (local, remote) => {
+    const byId = new Map();
+    for (const item of Array.isArray(local) ? local : [])
+      byId.set(item.id, item);
+    for (const item of Array.isArray(remote) ? remote : [])
+      byId.set(item.id, item);
+    return [...byId.values()];
+  },
+});
 
 // Вбудовані + власні формати в одному об'єкті { ключ: конфіг }
 const availableFormats = computed(() => {
@@ -618,6 +639,7 @@ watch([lang, sortMode, currentStep, selectedMapId], () => {
     selectedMapId: selectedMapId.value,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  notifyChanged("draft");
 });
 
 export function useDraftState() {
@@ -661,6 +683,7 @@ export function useDraftState() {
       selectedMapId: selectedMapId.value,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    notifyChanged("draft");
   }
 
   function loadFromStorage() {
@@ -709,6 +732,7 @@ export function useDraftState() {
     currentStep.value = "characters";
     selectedMapId.value = null;
     localStorage.removeItem(STORAGE_KEY);
+    notifyChanged("draft");
   }
 
   function proceedToMaps() {
@@ -785,6 +809,7 @@ export function useDraftState() {
     else customFormats.value[idx] = format;
 
     persistCustomFormats(customFormats.value);
+    notifyChanged("formats");
     return id;
   }
 
@@ -795,6 +820,7 @@ export function useDraftState() {
   function deleteCustomFormat(id) {
     customFormats.value = customFormats.value.filter((f) => f.id !== id);
     persistCustomFormats(customFormats.value);
+    notifyChanged("formats");
 
     // Якщо видалили формат, у якому зараз іде драфт — його пул героїв і схема
     // зникли, тому повертаємось до формату за замовчуванням з чистим драфтом.

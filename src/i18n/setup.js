@@ -14,6 +14,9 @@ export const setupText = {
     diceOrderChooser: "{player} chooses who goes first:",
     modeBotTitle: "Vs bot",
     modeBotDesc: "Play alone against a computer opponent.",
+    modeOracleTitle: "Vs bot (sees attacks)",
+    modeOracleDesc:
+      "The bot knows your hand: it picks its attack after seeing your defense and defends knowing your attack.",
     gameBotLabel: "Bot",
   },
   ua: {
@@ -31,6 +34,9 @@ export const setupText = {
     diceOrderChooser: "{player} обирає, хто ходить першим:",
     modeBotTitle: "Проти бота",
     modeBotDesc: "Грайте наодинці проти комп'ютерного суперника.",
+    modeOracleTitle: "Проти бота (бачить атаку)",
+    modeOracleDesc:
+      "Бот знає вашу руку: обирає атаку вже після вашого захисту, а захищається, знаючи вашу атаку.",
     gameBotLabel: "Бот",
   },
 };

@@ -103,6 +103,7 @@
       </nav>
 
       <div class="header-right">
+        <AccountMenu :lang="lang" />
         <button type="button" class="desk-report" @click="openSupportModal">
           <svg class="desk-icon" viewBox="0 0 24 24" v-html="icons.heart"></svg>
           <span>{{
@@ -126,23 +127,32 @@
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
           <li class="menu-section-title">{{ t("navigation") }}</li>
-          <li v-for="item in flatItems" :key="item.name">
-            <router-link
-              :to="{ name: item.name }"
-              class="menu-item"
-              @click="isMenuOpen = false"
+          <template v-for="entry in nav" :key="entry.id">
+            <li v-if="entry.type === 'menu'" class="menu-group-title">
+              {{ entry.label }}
+            </li>
+            <li
+              v-for="item in entry.type === 'link' ? [entry] : entry.items"
+              :key="item.name"
             >
-              <svg
-                class="menu-icon"
-                viewBox="0 0 24 24"
-                v-html="icons[item.icon]"
-              ></svg>
-              <span>{{ item.label }}</span>
-              <span v-if="item.beta" class="menu-beta">{{
-                t("packBeta")
-              }}</span>
-            </router-link>
-          </li>
+              <router-link
+                :to="{ name: item.name }"
+                class="menu-item"
+                :class="{ 'is-nested': entry.type === 'menu' }"
+                @click="isMenuOpen = false"
+              >
+                <svg
+                  class="menu-icon"
+                  viewBox="0 0 24 24"
+                  v-html="icons[item.icon]"
+                ></svg>
+                <span>{{ item.label }}</span>
+                <span v-if="item.beta" class="menu-beta">{{
+                  t("packBeta")
+                }}</span>
+              </router-link>
+            </li>
+          </template>
           <li>
             <button
               type="button"
@@ -176,6 +186,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute } from "vue-router";
+import AccountMenu from "./AccountMenu.vue";
 import { useSupport } from "../composables/useSupport";
 
 const props = defineProps({
@@ -242,18 +253,6 @@ const nav = computed(() => {
           icon: "maps",
           label: props.t("heroMapGuide"),
         },
-        {
-          name: "heroes",
-          also: ["hero"],
-          icon: "guide",
-          label: ua ? "Усі герої" : "All heroes",
-        },
-        {
-          name: "map-list",
-          also: ["map-detail"],
-          icon: "maps",
-          label: ua ? "Усі мапи" : "All maps",
-        },
       ],
     },
     {
@@ -288,14 +287,6 @@ const nav = computed(() => {
     },
   ];
 });
-
-const flatItems = computed(() =>
-  nav.value.flatMap((entry) =>
-    entry.type === "link"
-      ? [{ name: entry.name, icon: entry.icon, label: entry.label }]
-      : entry.items,
-  ),
-);
 
 function closeAll() {
   isMenuOpen.value = false;
@@ -477,6 +468,21 @@ onBeforeUnmount(() => {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.menu-group-title {
+  padding: 14px 20px 4px;
+  margin-top: 6px;
+  border-top: 1px solid var(--border-light);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.menu-item.is-nested {
+  padding-left: 32px;
 }
 
 .menu-section-title {

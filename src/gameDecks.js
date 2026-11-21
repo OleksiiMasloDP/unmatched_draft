@@ -8,49 +8,7 @@ export const getCard = (id) => cardById.get(id);
 
 export const getHero = (id) => everyHero.find((hero) => hero.id === id);
 
-function mulberry32(seed) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = state;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function seededShuffle(list, seed) {
-  const result = [...list];
-  const random = mulberry32(seed);
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
-function dealPair(heroA, heroB, seed) {
-  const pool = allCards
-    .filter((card) => [heroA, heroB].includes(card.heroId))
-    .map((card) => card.id)
-    .sort();
-  const mixed = seededShuffle(pool, seed);
-  const half = Math.floor(mixed.length / 2);
-  return [mixed.slice(0, half), mixed.slice(half, half * 2)];
-}
-
 function buildTestDecks() {
-  const [marvelCards, soldierCards] = dealPair(
-    "ms-marvel",
-    "winter-soldier",
-    20261030,
-  );
-  const [tomoeCards, spiderCards] = dealPair(
-    "tomoe-gozen",
-    "spider-man",
-    20261031,
-  );
-
   return [
     {
       id: "tesst-deck-1",
@@ -121,6 +79,114 @@ function buildTestDecks() {
       heroId: "raptors",
       cardIds: allCards
         .filter((card) => card.heroId === "raptors")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-9",
+      name: "Ms. Marvel Deck",
+      heroId: "ms-marvel",
+      cardIds: allCards
+        .filter((card) => card.heroId === "ms-marvel")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-10",
+      name: "Spider-Man Deck",
+      heroId: "spider-man",
+      cardIds: allCards
+        .filter((card) => card.heroId === "spider-man")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-11",
+      name: "Tomoe Gozen Deck",
+      heroId: "tomoe-gozen",
+      cardIds: allCards
+        .filter((card) => card.heroId === "tomoe-gozen")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-12",
+      name: "Winter Soldier Deck",
+      heroId: "winter-soldier",
+      cardIds: allCards
+        .filter((card) => card.heroId === "winter-soldier")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-13",
+      name: "Invisible Man Deck",
+      heroId: "invisible-man",
+      cardIds: allCards
+        .filter((card) => card.heroId === "invisible-man")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-14",
+      name: "Hamlet Deck",
+      heroId: "hamlet",
+      cardIds: allCards
+        .filter((card) => card.heroId === "hamlet")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-15",
+      name: "Oda Nobunaga Deck",
+      heroId: "oda-nobunaga",
+      cardIds: allCards
+        .filter((card) => card.heroId === "oda-nobunaga")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-16",
+      name: "Dracula Deck",
+      heroId: "dracula",
+      cardIds: allCards
+        .filter((card) => card.heroId === "dracula")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-17",
+      name: "Chupacabra Deck",
+      heroId: "chupacabra",
+      cardIds: allCards
+        .filter((card) => card.heroId === "chupacabra")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-18",
+      name: "Luke Cage Deck",
+      heroId: "luke-cage",
+      cardIds: allCards
+        .filter((card) => card.heroId === "luke-cage")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-19",
+      name: "She-Hulk Deck",
+      heroId: "she-hulk",
+      cardIds: allCards
+        .filter((card) => card.heroId === "she-hulk")
+        .map((card) => card.id),
+      isTest: true,
+    },
+    {
+      id: "test-deck-20",
+      name: "Annie Christmas Deck",
+      heroId: "annie-christmas",
+      cardIds: allCards
+        .filter((card) => card.heroId === "annie-christmas")
         .map((card) => card.id),
       isTest: true,
     },

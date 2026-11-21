@@ -26,9 +26,8 @@
           <tr>
             <th>#</th>
             <th>{{ t("rogueHistoryHero") }}</th>
-            <th>{{ t("rogueHistoryResult") }}</th>
+            <th></th>
             <th>{{ t("rogueHistoryWins") }}</th>
-            <th>{{ t("rogueHistoryDate") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -45,13 +44,11 @@
                   :metal="row.victory ? 'gold' : 'ruby'"
                   size="1.1em"
                 />
-                {{ row.victory ? t("rogueVictory") : t("rogueDefeat") }}
               </span>
             </td>
             <td>
               <b>{{ row.wins }}</b>
             </td>
-            <td class="rhist-date">{{ formatDate(row.date) }}</td>
           </tr>
         </tbody>
       </table>
@@ -112,8 +109,8 @@ const rows = computed(() => {
 }
 
 .rhist-box {
-  width: min(640px, 100%);
-  max-height: 88vh;
+  width: min(1040px, 100%);
+  max-height: 94vh;
   overflow-y: auto;
   padding: 16px;
   border: 2px solid #8a6c43;
@@ -183,6 +180,11 @@ const rows = computed(() => {
   letter-spacing: 1px;
 }
 
+.rhist-table td,
+.rhist-table th {
+  white-space: nowrap;
+}
+
 .rhist-table td {
   padding: 7px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -224,11 +226,48 @@ const rows = computed(() => {
 }
 
 @media (max-width: 560px) {
+  .rhist {
+    padding: 8px;
+  }
+
+  .rhist-box {
+    padding: 12px;
+  }
+
+  .rhist-table {
+    table-layout: fixed;
+    font-size: 0.8rem;
+  }
+
+  .rhist-table th,
+  .rhist-table td {
+    padding: 6px 4px;
+  }
+
+  .rhist-table th:first-child,
+  .rhist-table td:first-child {
+    display: none;
+  }
+
+  .rhist-table th:nth-child(2) {
+    width: auto;
+  }
+
+  .rhist-table th:nth-child(3),
+  .rhist-table td:nth-child(3) {
+    width: 14%;
+    text-align: center;
+  }
+
+  .rhist-table th:nth-child(4),
+  .rhist-table td:nth-child(4) {
+    width: 16%;
+    text-align: right;
+  }
+
   .rhist-hero span {
-    max-width: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 </style>

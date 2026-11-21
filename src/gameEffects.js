@@ -545,8 +545,9 @@ export const cardEffects = {
   "a-warrior-s-way": {
     *after(c) {
       yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe");
-      const near =
-        c.combat.fighters[c.foe] === "hero" ? c.g.adjacentSpaces(c.me) : [];
+      const near = c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe])
+        ? c.g.adjacentSpaces(c.me)
+        : [];
       if (near.length) {
         const space = yield c.g.askSpace(c.me, "promptPlaceAdjacent", near);
         if (space) c.g.place(c.me, space);
@@ -580,12 +581,15 @@ export const cardEffects = {
   },
 
   "a-worthy-opponent": {
-    value: (c, value) => (c.combat.fighters[c.foe] === "hero" ? 5 : value),
+    value: (c, value) =>
+      c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe]) ? 5 : value,
   },
 
   "flash-of-steel": {
     *immediate(c) {
-      if (c.combat.fighters[c.foe] === "hero") cancelOpponentCard(c);
+      if (c.g.isHeroFighter(c.foe, c.combat.fighters[c.foe])) {
+        cancelOpponentCard(c);
+      }
     },
     *after(c) {
       if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
@@ -976,7 +980,7 @@ export const cardEffects = {
     uncancelable: true,
     rescue: true,
     *boosted(c) {
-      if (c.g.hero(c.me).id === "harry-houdini") c.g.heal(c.me, 2, "hero");
+      c.g.heal(c.me, 2, "hero");
     },
     *after(c) {
       if (!c.g.rescueFighter(c.me, 4)) return;
@@ -1424,6 +1428,1189 @@ export const cardEffects = {
         if (ids.length) c.g.shuffleIntoDeck(c.me, ids);
       }
       c.g.draw(c.me, 1);
+    },
+  },
+
+  // --------------------------------------------------------- Invisible Man
+  "surprise-attack": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    *after(c) {
+      if (!c.g.heroOnFog(c.me)) return;
+      const from = c.g.spaceOf(c.me);
+      const others = c.g.fogSpaces().filter((id) => id !== from);
+      yield* c.g.moveFog(c.me, Infinity, others);
+    },
+  },
+
+  "emerge-from-mist": {
+    value: (c, value) => (c.g.startedOnFog(c.me) ? 5 : value),
+  },
+
+  "slip-away": {
+    *after(c) {
+      const fog = c.g.fogSpaces();
+      if (!fog.length) return;
+      const free = c.g.freeSpaces().filter((id) => !fog.includes(id));
+      if (!free.length) return;
+      let from = fog[0];
+      if (fog.length > 1) {
+        from = (yield c.g.askSpace(c.me, "promptFogPick", fog)) || fog[0];
+      }
+      const to = yield c.g.askSpace(c.me, "promptFogTo", free);
+      if (!to) return;
+      const others = fog.filter((id) => id !== from);
+      yield* c.g.moveFog(c.me, Infinity, others, to);
+      c.g.place(c.me, to);
+    },
+  },
+
+  confound: {
+    *after(c) {
+      const hand = c.g.handOf(c.foe);
+      if (hand.length) {
+        const ids = yield c.g.askCards(c.foe, "promptConfound", hand, {
+          min: 0,
+          max: 1,
+          skip: "gameSkip",
+        });
+        if (ids.length) {
+          c.g.discardFromHand(c.foe, ids[0]);
+          return;
+        }
+      }
+      for (const from of [...c.g.fogSpaces()]) {
+        const free = c.g
+          .allSpaces()
+          .filter((id) => id !== from && !c.g.fogSpaces().includes(id));
+        if (!free.length) continue;
+        const to = yield c.g.askSpace(c.me, "promptFogTo", free);
+        if (to) {
+          const others = c.g.fogSpaces().filter((id) => id !== from);
+          yield* c.g.moveFog(c.me, Infinity, others, to);
+        }
+      }
+    },
+  },
+
+  "dreaming-of-revenge": {
+    *after(c) {
+      if (!c.g.heroOnFog(c.me)) return;
+      for (const fighter of c.g.foeFightersOnFog(c.me)) {
+        c.g.damage(c.foe, 1, fighter);
+      }
+    },
+  },
+
+  "impossible-to-see": {
+    ignoreFoeValue: () => true,
+  },
+
+  "covert-preparation": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+      const moved = yield* c.g.moveFog(c.me, 2);
+      yield* c.g.moveFog(c.foe, 2, moved ? [moved] : []);
+    },
+  },
+
+  "into-thin-air": {
+    *after(c) {
+      yield* c.g.walk(c.me, c.me, 1, "promptMoveSpace");
+      yield* c.g.moveFog(c.foe, 3);
+    },
+  },
+
+  "coded-notes": {
+    *after(c) {
+      c.g.draw(c.me, 3);
+      const hand = c.g.handOf(c.me);
+      if (!hand.length) return;
+      const count = Math.min(2, hand.length);
+      const ids = yield c.g.askCards(c.me, "promptCodedNotes", hand, {
+        min: count,
+        max: count,
+        skip: "gameSkip",
+      });
+      for (const id of [...ids].reverse()) c.g.putOnDeckTop(c.me, id);
+    },
+  },
+
+  lurking: {
+    *after(c) {
+      c.g.draw(c.me, 1);
+      const here = c.g.spaceOf(c.me);
+      const spaces = c.g
+        .fogSpaces()
+        .filter((id) => id !== here && c.g.freeSpaces().includes(id));
+      const choices = [];
+      if (spaces.length) {
+        choices.push({ value: "move", label: "gameLurkingMove" });
+      }
+      if (c.g.fogSpaces().length) {
+        choices.push({ value: "fog", label: "gameLurkingFog" });
+      }
+      if (!choices.length) return;
+      const pick =
+        choices.length === 1
+          ? choices[0].value
+          : yield c.g.askChoice(c.me, "promptLurking", choices);
+      if (pick === "move") {
+        const to = yield c.g.askSpace(c.me, "promptMoveSpace", spaces);
+        if (to) c.g.place(c.me, to);
+      } else {
+        yield* c.g.moveFog(c.me, 2);
+      }
+    },
+  },
+
+  "rolling-fog": {
+    *scheme(c) {
+      yield* c.g.moveFog(c.me);
+      c.g.gainAction(1);
+    },
+  },
+
+  "step-lightly": {
+    *scheme(c) {
+      const amount = c.g.heroOnFog(c.me) ? 3 : 1;
+      const targets = c.g
+        .adjacentFightersOf(c.me)
+        .filter(
+          (item) =>
+            item.owner === c.foe && !c.g.fighterDefeated(c.foe, item.fighter),
+        )
+        .map((item) => item.fighter);
+      const target = yield* pickFoeFighter(c, targets, "promptDamageOne");
+      if (target) c.g.damage(c.foe, amount, target);
+      yield* c.g.moveFog(c.foe, 2);
+    },
+  },
+
+  vanish: {
+    *scheme(c) {
+      c.g.heal(c.me, 1, "hero");
+      c.g.hideHero(c.me);
+      if (c.g.isFirstAction()) c.g.endTurnNow();
+    },
+  },
+
+  "reign-of-terror": {
+    *scheme(c) {
+      if (!c.g.heroOnFog(c.me)) return;
+      const targets = c.g
+        .foeFighterIds(c.me)
+        .filter((fighter) => !c.g.fighterDefeated(c.foe, fighter));
+      const target = yield* pickFoeFighter(c, targets, "promptDamageOne");
+      if (target) c.g.damage(c.foe, 2, target);
+    },
+  },
+
+  // ------------------------------------------------------------------ Hamlet
+  "to-sleep-perchance-to-dream": {
+    *after(c) {
+      if (c.combat.won[c.me]) {
+        const dealt = c.combat.taken[c.foe];
+        if (dealt > 0) yield* c.g.walk(c.me, c.foe, dealt, "promptMoveFoe");
+      } else if (c.combat.won[c.foe]) {
+        c.g.heal(c.me, 1, "hero");
+      }
+    },
+  },
+
+  "uncertain-doom": {
+    ignoreFoeValue: (c) => c.combat.cards[c.foe]?.type === "versatile",
+  },
+
+  "cruel-to-be-kind": {
+    canBoost: () => true,
+  },
+
+  "the-play-s-the-thing": {
+    *after(c) {
+      c.g.discardRandom(c.foe, 1);
+      if (c.combat.won[c.me]) c.g.heal(c.me, c.card.boost, "hero");
+    },
+  },
+
+  "the-readiness-is-all": {
+    *after(c) {
+      const options = [c.me, c.foe].filter(
+        (player) => !c.g.fighterDefeated(player, c.combat.fighters[player]),
+      );
+      if (!options.length) return;
+      let target = options[0];
+      if (options.length > 1) {
+        const pick = yield c.g.askChoice(c.me, "promptReadiness", [
+          { value: c.me, label: "gameReadinessMine" },
+          { value: c.foe, label: "gameReadinessFoe" },
+        ]);
+        target = pick === c.foe ? c.foe : c.me;
+      }
+      const free = c.g.freeSpaces();
+      if (!free.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceAny", free);
+      if (!space) return;
+      const saved = c.g.fighterOf(target);
+      c.g.setFighter(target, c.combat.fighters[target]);
+      c.g.place(target, space);
+      c.g.setFighter(target, saved);
+      c.g.pin(target, c.combat.fighters[target]);
+    },
+  },
+
+  "blood-will-have-blood": {
+    *after(c) {
+      if (!c.g.hurtThisTurn(c.me)) return;
+      c.g.damage(c.foe, 1, c.combat.fighters[c.foe]);
+    },
+  },
+
+  "outrageous-fortune": {
+    *immediate(c) {
+      const id = c.g.discardTopId(c.me);
+      c.combat.fortune ??= {};
+      c.combat.fortune[c.me] = id;
+    },
+    value: (c, value) => {
+      const id = c.combat.fortune?.[c.me];
+      return id ? value + c.g.cardBoost(id) : value;
+    },
+    *after(c) {
+      const id = c.combat.fortune?.[c.me];
+      if (id && c.combat.won[c.foe]) c.g.returnFromDiscard(c.me, id);
+    },
+  },
+
+  "nothing-either-good-or-bad": {
+    *after(c) {
+      if (c.combat.cards[c.foe]?.type !== "versatile") return;
+      c.g.damage(c.foe, 2, c.combat.fighters[c.foe]);
+    },
+  },
+
+  "the-rest-is-silence": {
+    endsTurn: true,
+    *after(c) {
+      c.g.endTurnNow();
+    },
+  },
+
+  "maddening-insight": {
+    value: (c) => c.g.handSize(c.me),
+    *after(c) {
+      if (!c.combat.won[c.me] || !c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.foe,
+        "promptDiscardOne",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "the-ghost": {
+    *scheme(c) {
+      const choice = yield c.g.askChoice(c.me, "promptGhost", [
+        { value: "heal", label: "gameGhostHeal" },
+        { value: "place", label: "gameGhostPlace" },
+      ]);
+      if (choice === "heal") {
+        c.g.heal(c.me, 2, "hero");
+        return;
+      }
+      c.g.setFighter(c.me, "hero");
+      yield* placeInZone(c);
+      c.g.gainAction(1);
+    },
+  },
+
+  "method-in-the-madness": {
+    *scheme(c) {
+      const hand = c.g.handOf(c.me);
+      if (hand.length) {
+        const ids = yield c.g.askCards(c.me, "promptMethod", hand, {
+          min: 0,
+          max: hand.length,
+          skip: "gameSkip",
+        });
+        for (const id of ids) c.g.putOnDeckBottom(c.me, id);
+        if (ids.length) c.g.draw(c.me, ids.length);
+      }
+      c.g.gainAction(1);
+    },
+  },
+
+  "student-of-war": {
+    *after(c) {
+      const dealt = c.combat.taken[c.foe];
+      if (dealt > 0) c.g.draw(c.me, dealt);
+    },
+  },
+
+  "lightning-and-thunder": {
+    *immediate(c) {
+      if (c.g.isFlanked(c.foe, c.combat.fighters[c.foe])) {
+        cancelOpponentCard(c);
+      }
+    },
+    *after(c) {
+      const fighter = c.g.fighterOf(c.me);
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        2,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { fighter },
+      );
+    },
+  },
+
+  "fire-and-flames": {
+    value: (c, value) =>
+      c.g.isFlanked(c.foe, c.combat.fighters[c.foe]) ? 5 : value,
+  },
+
+  "sun-and-moon": {
+    ignoreFoeValue: (c) => c.g.isFlanked(c.foe, c.combat.fighters[c.foe]),
+  },
+
+  "battle-maneuvers": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+      const saved = c.g.fighterOf(c.me);
+      for (const fighter of c.g.fightersOf(c.me)) {
+        c.g.setFighter(c.me, fighter);
+        yield* c.g.walk(
+          c.me,
+          c.me,
+          2,
+          fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+          { fighter },
+        );
+      }
+      c.g.setFighter(c.me, saved);
+    },
+  },
+
+  "patience-and-strategy": {
+    *after(c) {
+      if (c.g.isFlanked(c.foe, c.combat.fighters[c.foe])) {
+        c.g.heal(c.me, 2, c.combat.fighters[c.me]);
+      }
+    },
+  },
+
+  pragmatism: {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+  },
+
+  "spring-the-trap": {
+    *immediate(c) {
+      yield* c.g.swapWithAdjacentFriend(c.me, c.combat);
+    },
+    *after(c) {
+      c.g.damage(c.foe, 1, c.combat.fighters[c.foe]);
+    },
+  },
+
+  reinforce: {
+    *scheme(c) {
+      const all = [
+        { value: "heal", label: "gameReinforceHeal" },
+        { value: "draw", label: "gameReinforceDraw" },
+        { value: "action", label: "gameReinforceAction" },
+      ];
+      const first = yield c.g.askChoice(c.me, "promptReinforce", all);
+      const second = yield c.g.askChoice(
+        c.me,
+        "promptReinforce",
+        all.filter((item) => item.value !== first),
+      );
+      for (const pick of [first, second]) {
+        if (pick === "heal") {
+          for (const fighter of c.g.fightersOf(c.me)) {
+            c.g.heal(c.me, 1, fighter);
+          }
+        } else if (pick === "draw") {
+          c.g.draw(c.me, 2);
+        } else if (pick === "action") {
+          c.g.gainAction(1);
+        }
+      }
+    },
+  },
+
+  "demon-king-of-the-sixth-heaven": {
+    *scheme(c) {
+      for (const fighter of c.g.fightersOf(c.foe)) {
+        if (c.g.isFlanked(c.foe, fighter)) c.g.damage(c.foe, 2, fighter);
+      }
+    },
+  },
+
+  beastform: {
+    *immediate(c) {
+      const hand = c.g.handOf(c.me);
+      if (!hand.length) return;
+      const ids = yield c.g.askCards(c.me, "promptBeastform", hand, {
+        min: 0,
+        max: hand.length,
+        skip: "gameSkip",
+      });
+      for (const id of ids) {
+        c.g.discardFromHand(c.me, id);
+        c.g.noteDiscard(c.me, id);
+      }
+      c.combat.beast = c.combat.beast || {};
+      c.combat.beast[c.me] = ids.length;
+    },
+    value: (c, value) => value + (c.combat.beast?.[c.me] || 0),
+  },
+
+  "thirst-for-sustenance": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const foeFighter = c.combat.fighters[c.foe];
+      if (c.g.fighterDefeated(c.foe, foeFighter)) return;
+      const options = c.g.freeSpacesAdjacentTo(c.foe, foeFighter);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+      if (space) c.g.placeFighter(c.me, "hero", space);
+    },
+  },
+
+  "feeding-frenzy": {
+    value: (c, value) =>
+      value + c.g.sidekicksNearFighter(c.me, c.foe, c.combat.fighters[c.foe]),
+  },
+
+  exploit: {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  dash: {
+    *after(c) {
+      const fighter = c.g.fighterOf(c.me);
+      yield* c.g.walk(
+        c.me,
+        c.me,
+        3,
+        fighter === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+        { fighter },
+      );
+    },
+  },
+
+  "do-my-bidding": {
+    *immediate(c) {
+      yield* c.g.forceFoeCard(c.me, c.combat);
+    },
+  },
+
+  "look-into-my-eyes": {
+    value: (c, value) => value + (c.combat.cards[c.foe]?.boost || 0),
+  },
+
+  "prey-upon": {
+    *scheme(c) {
+      for (const target of c.g.adjacentFightersTo(c.me)) {
+        if (target.owner !== c.foe) continue;
+        c.g.damage(c.foe, 1, target.fighter);
+        c.g.heal(c.me, 1, "hero");
+      }
+    },
+  },
+
+  mistform: {
+    *scheme(c) {
+      const options = c.g.freeSpaces();
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+        if (space) c.g.placeFighter(c.me, "hero", space);
+      }
+      c.g.gainAction(1);
+    },
+  },
+
+  "baptism-of-blood": {
+    *scheme(c) {
+      c.g.heal(c.me, 2, "hero");
+      if (!c.g.hasDefeatedKid(c.me)) return;
+      const options = c.g.reviveSpaces(c.me);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptReviveKid", options);
+      c.g.reviveKid(c.me, space || options[0]);
+    },
+  },
+
+  "ravening-seduction": {
+    *scheme(c) {
+      const all = [];
+      for (const owner of [c.me, c.foe]) {
+        for (const fighter of c.g.fightersOf(owner)) {
+          all.push({ owner, fighter });
+        }
+      }
+      let target = all[0];
+      if (all.length > 1) {
+        const space = yield c.g.askSpace(
+          c.me,
+          "promptMoveAnyFighter",
+          all.map((item) => c.g.fighterSpace(item.owner, item.fighter)),
+        );
+        target =
+          all.find(
+            (item) => c.g.fighterSpace(item.owner, item.fighter) === space,
+          ) || target;
+      }
+      const saved = c.g.fighterOf(target.owner);
+      c.g.setFighter(target.owner, target.fighter);
+      yield* c.g.walk(
+        c.me,
+        target.owner,
+        2,
+        target.owner === c.me
+          ? target.fighter === "hero"
+            ? "promptMoveSpace"
+            : "promptMoveSidekick"
+          : "promptMoveFoe",
+        { fighter: target.fighter },
+      );
+      c.g.setFighter(target.owner, saved);
+      const links = c.g.linksOf(target.owner, target.fighter);
+      const sisters = c.g
+        .fightersOf(c.me)
+        .filter(
+          (fighter) =>
+            fighter !== "hero" &&
+            !(target.owner === c.me && fighter === target.fighter) &&
+            links.includes(c.g.fighterSpace(c.me, fighter)),
+        ).length;
+      if (sisters) c.g.damage(target.owner, sisters, target.fighter);
+    },
+  },
+
+  "blood-in-the-air": {
+    canBoost: (c) => c.g.wonCombatThisTurn(c.me),
+  },
+
+  feeding: {
+    *after(c) {
+      if (c.g.heroHp(c.me) > 7) return;
+      c.g.gainAction(1);
+      c.g.heal(c.me, 1, "hero");
+    },
+  },
+
+  "the-more-they-struggle": {
+    value: (c) => (c.combat.cards[c.foe]?.value || 0) * 2,
+  },
+
+  "wounded-beast": {
+    value: (c, value) => (c.g.heroHp(c.me) <= 7 ? 5 : value),
+  },
+
+  "ravenous-lunge": {
+    *after(c) {
+      c.g.heal(c.me, c.combat.won[c.me] ? 2 : 1, "hero");
+    },
+  },
+
+  "tooth-and-tail": {
+    *after(c) {
+      const targets = c.g
+        .adjacentFightersTo(c.me)
+        .filter((item) => !c.g.fighterDefeated(item.owner, item.fighter));
+      const chosen = [];
+      const pool = [...targets];
+      while (chosen.length < 2 && pool.length) {
+        let pick = pool[0];
+        if (pool.length > 1 && targets.length > 2) {
+          const space = yield c.g.askSpace(
+            c.me,
+            "promptTooth",
+            pool.map((item) => c.g.fighterSpace(item.owner, item.fighter)),
+          );
+          pick =
+            pool.find(
+              (item) => c.g.fighterSpace(item.owner, item.fighter) === space,
+            ) || pick;
+        }
+        pool.splice(pool.indexOf(pick), 1);
+        chosen.push(pick);
+      }
+      let healed = 0;
+      for (const item of chosen) {
+        c.g.damage(item.owner, 1, item.fighter);
+        healed += 1;
+      }
+      if (healed) c.g.heal(c.me, healed, "hero");
+    },
+  },
+
+  "natural-toughness": {
+    *after(c) {
+      if (c.combat.won[c.foe]) c.combat.returnToHand[c.me] = true;
+    },
+  },
+
+  "traveler-of-the-night": {
+    *scheme(c) {
+      yield* c.g.walk(c.me, c.me, 4, "promptMoveSpace", { through: true });
+      c.g.gainAction(1);
+    },
+  },
+
+  unsettle: {
+    *scheme(c) {
+      if (!c.g.foeInHeroZone(c.me)) return;
+      let count = 1;
+      if (c.g.heroHp(c.me) > 2 && c.g.handSize(c.foe) > 1) {
+        const ok = yield c.g.askConfirm(c.me, "promptUnsettle");
+        if (ok) {
+          c.g.damage(c.me, 2, "hero");
+          count = 2;
+        }
+      }
+      for (let i = 0; i < count && c.g.handSize(c.foe); i++) {
+        const ids = yield c.g.askCards(
+          c.foe,
+          "promptDiscardOne",
+          c.g.handOf(c.foe),
+          { min: 1, max: 1 },
+        );
+        c.g.discardFromHand(c.foe, ids[0]);
+      }
+    },
+  },
+
+  "sweet-christmas": {},
+
+  "commanding-impact": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "get-paid": {
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.draw(c.me, 2);
+    },
+  },
+
+  "still-standing": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const pile = c.g.discardOf(c.me);
+      if (!pile.length) return;
+      const count = Math.min(2, pile.length);
+      const ids = yield c.g.askCards(c.me, "promptStillStanding", pile, {
+        min: count,
+        max: count,
+      });
+      c.g.shuffleIntoDeck(c.me, ids);
+    },
+  },
+
+  "hero-for-hire": {
+    canBoost: () => true,
+  },
+
+  pushback: {
+    *after(c) {
+      const fighter = c.combat.fighters[c.foe];
+      if (c.g.fighterDefeated(c.foe, fighter)) return;
+      yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe", { fighter });
+    },
+  },
+
+  "daughter-of-the-dragon": {
+    value: (c, value) => {
+      const mine = c.combat.fighters[c.me];
+      const near = c.g
+        .linksOf(c.foe, c.combat.fighters[c.foe])
+        .includes(c.g.fighterSpace(c.me, mine));
+      return near ? 6 : value;
+    },
+  },
+
+  regroup: {
+    *after(c) {
+      c.g.draw(c.me, c.combat.won[c.me] ? 2 : 1);
+    },
+  },
+
+  "trash-talk": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    *after(c) {
+      if (c.combat.won[c.me]) c.g.endTurnNow();
+    },
+  },
+
+  "power-man": {
+    *after(c) {
+      const fighter = c.combat.fighters[c.foe];
+      if (c.g.fighterDefeated(c.foe, fighter)) return;
+      const trail = [];
+      yield* c.g.walk(c.me, c.foe, 3, "promptMoveFoe", {
+        through: true,
+        fighter,
+        trail,
+      });
+      const hit = c.g
+        .fightersOf(c.foe)
+        .filter(
+          (other) =>
+            other !== fighter && trail.includes(c.g.fighterSpace(c.foe, other)),
+        );
+      for (const other of [fighter, ...hit]) c.g.damage(c.foe, 1, other);
+    },
+  },
+
+  "got-my-back": {
+    *immediate(c) {
+      yield* c.g.swapWithHeroFighter(c.me, c.combat);
+    },
+  },
+
+  "skin-like-titanium": {
+    *after(c) {
+      if (!c.combat.won[c.foe]) return;
+      const taken = c.combat.taken[c.me];
+      if (taken > 0) c.g.damage(c.foe, taken, c.combat.fighters[c.foe]);
+    },
+  },
+
+  "where-s-my-money": {
+    *scheme(c) {
+      const options = c.g.nearestFoeAdjacentSpaces(c.me);
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptPlaceAny", options);
+        if (space) c.g.placeFighter(c.me, "hero", space);
+      }
+      c.g.gainAction(1);
+    },
+  },
+
+  "omega-level-threat": {
+    *after(c) {
+      if (c.combat.taken[c.foe] >= 2) c.g.discardRandom(c.foe, 2);
+    },
+  },
+
+  sensational: {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const pile = c.g.discardOf(c.me);
+      if (!pile.length) return;
+      const ids = yield c.g.askCards(c.me, "promptSensational", pile, {
+        min: 0,
+        max: 1,
+        skip: "gameSkip",
+      });
+      if (ids.length) c.g.shuffleIntoDeck(c.me, ids);
+    },
+  },
+
+  "the-savage-she-hulk": {
+    *immediate(c) {
+      if (!c.g.hasRegularAction()) return;
+      const ok = yield c.g.askConfirm(c.me, "promptSavage");
+      if (!ok || !c.g.spendRegularAction()) return;
+      c.combat.savage = c.combat.savage || {};
+      c.combat.savage[c.me] = true;
+    },
+    value: (c, value) => (c.combat.savage?.[c.me] ? 9 : value),
+  },
+
+  "green-energy": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      for (const target of c.g.adjacentFightersTo(c.me)) {
+        c.g.damage(target.owner, 1, target.fighter);
+      }
+    },
+  },
+
+  "nerve-cluster-strike": {
+    *immediate(c) {
+      const foeFighter = c.combat.fighters[c.foe];
+      const near = c.g
+        .adjacentFightersTo(c.me)
+        .some((item) => item.owner === c.foe && item.fighter === foeFighter);
+      if (near) c.g.pin(c.foe, foeFighter);
+    },
+  },
+
+  legalese: {
+    *after(c) {
+      const chooser = c.combat.won[c.me] ? c.foe : c.me;
+      const pick = yield c.g.askChoice(chooser, "promptLegalese", [
+        { value: "draw", label: "gameLegaleseDraw" },
+        { value: "discard", label: "gameLegaleseDiscard" },
+      ]);
+      if (pick === "discard") {
+        for (const player of [c.me, c.foe]) {
+          if (!c.g.handSize(player)) continue;
+          const ids = yield c.g.askCards(
+            player,
+            "promptDiscardOne",
+            c.g.handOf(player),
+            { min: 1, max: 1 },
+          );
+          c.g.discardFromHand(player, ids[0]);
+        }
+      } else {
+        c.g.draw(c.me, 1);
+        c.g.draw(c.foe, 1);
+      }
+    },
+  },
+
+  "cease-and-desist": {
+    *immediate(c) {
+      cancelOpponentCard(c);
+    },
+    value: (c, value) => (c.combat.attacker === c.me ? 4 : value),
+  },
+
+  "the-defense-rests": {
+    *after(c) {
+      const taken = c.combat.taken[c.me];
+      if (taken > 0) c.g.draw(c.me, taken);
+    },
+  },
+
+  "lady-justice": {
+    *immediate(c) {
+      const id = c.g.discardTopId(c.foe);
+      c.combat.justice = c.combat.justice || {};
+      c.combat.justice[c.me] = id ? c.g.cardBoost(id) * 2 : 0;
+    },
+    value: (c, value) => value + (c.combat.justice?.[c.me] || 0),
+  },
+
+  "jennifer-walters-esq": {
+    *scheme(c) {
+      const mine = c.g.spaceOf(c.me);
+      const busy = c.g.occupiedSpaces();
+      const options = c.g
+        .startSpaces()
+        .filter((id) => id === mine || !busy.includes(id));
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptPlaceStart", options);
+        if (space) c.g.placeFighter(c.me, "hero", space);
+      }
+      c.g.draw(c.me, 1);
+      c.g.gainAction(1);
+    },
+  },
+
+  "leap-toward": {
+    *scheme(c) {
+      yield* c.g.walk(c.me, c.me, 4, "promptMoveSpace", { through: true });
+      const near = c.g
+        .adjacentFightersTo(c.me)
+        .some((item) => item.owner === c.foe);
+      if (near) c.g.gainAction(1);
+    },
+  },
+
+  "double-jeopardy": {
+    *scheme(c) {
+      c.g.draw(c.me, 2);
+      c.g.heal(c.me, 2, "hero");
+    },
+  },
+
+  lagniappe: {
+    *immediate(c) {
+      const max = Math.min(2, c.g.heroHp(c.me) - 1);
+      if (max < 1) return;
+      const choices = [{ value: "0", label: "gameLagniappe0" }];
+      for (let n = 1; n <= max; n++) {
+        choices.push({ value: String(n), label: "gameLagniappe" + n });
+      }
+      const pick = Number(
+        yield c.g.askChoice(c.me, "promptLagniappe", choices),
+      );
+      if (!pick) return;
+      c.g.damage(c.me, pick, "hero");
+      c.g.draw(c.me, pick);
+    },
+  },
+
+  "bottom-dealing": {
+    *immediate(c) {
+      const id = c.g.peekBottom(c.me);
+      if (!id) return;
+      c.g.logRevealBottom(c.me, id);
+      c.combat.dealBonus = {
+        ...(c.combat.dealBonus || {}),
+        [c.me]: c.g.cardBoost(id),
+      };
+      const pick = yield c.g.askChoice(c.me, "promptBottomDealing", [
+        { value: "top", label: "gameDealTop" },
+        { value: "bottom", label: "gameDealBottom" },
+      ]);
+      if (pick === "top") c.g.bottomToTop(c.me);
+    },
+    value: (c, value) => value + (c.combat.dealBonus?.[c.me] || 0),
+  },
+
+  "better-together": {
+    *after(c) {
+      const fighter = c.combat.fighters[c.me];
+      const all = c.g.fightersOf(c.me);
+      if (!all.includes(fighter)) return;
+      const links = c.g.linksOf(c.me, fighter);
+      const mates = all.filter(
+        (item) =>
+          item !== fighter && links.includes(c.g.fighterSpace(c.me, item)),
+      );
+      if (!mates.length) return;
+      c.g.heal(c.me, 1, fighter);
+      for (const mate of mates) c.g.heal(c.me, 1, mate);
+    },
+  },
+
+  "long-shot": {
+    value: (c, value) => (c.g.adjacent(c.me, c.foe) ? value : 5),
+  },
+
+  "quite-a-pair": {
+    *immediate(c) {
+      const hand = c.g.handOf(c.me);
+      const counts = {};
+      for (const id of hand) {
+        const key = c.g.cardKey(id);
+        counts[key] = (counts[key] || 0) + 1;
+      }
+      const options = hand.filter((id) => counts[c.g.cardKey(id)] > 1);
+      if (!options.length) return;
+      const ids = yield c.g.askCards(c.me, "promptQuitePair", options, {
+        min: 0,
+        max: 2,
+      });
+      if (ids.length !== 2 || c.g.cardKey(ids[0]) !== c.g.cardKey(ids[1])) {
+        return;
+      }
+      c.g.log("logQuitePair", {
+        player: c.me,
+        card: c.g.cardName(ids[0]),
+        cardId: ids[0],
+      });
+      cancelOpponentCard(c);
+    },
+  },
+
+  "keep-your-hands-to-yourself": {
+    *after(c) {
+      const mine = c.combat.fighters[c.me];
+      const theirs = c.combat.fighters[c.foe];
+      const savedMine = c.g.fighterOf(c.me);
+      const savedTheirs = c.g.fighterOf(c.foe);
+      if (c.g.fightersOf(c.me).includes(mine)) {
+        c.g.setFighter(c.me, mine);
+        yield* c.g.walk(
+          c.me,
+          c.me,
+          2,
+          mine === "hero" ? "promptMoveSpace" : "promptMoveSidekick",
+          { fighter: mine },
+        );
+      }
+      if (c.g.fightersOf(c.foe).includes(theirs)) {
+        c.g.setFighter(c.foe, theirs);
+        yield* c.g.walk(c.me, c.foe, 2, "promptMoveFoe", {
+          fighter: theirs,
+        });
+      }
+      c.g.setFighter(c.me, savedMine);
+      c.g.setFighter(c.foe, savedTheirs);
+    },
+  },
+
+  "the-turn-and-the-river": {
+    *after(c) {
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "striking-beauty": {
+    *after(c) {
+      const fighter = c.combat.fighters[c.foe];
+      if (!c.g.fightersOf(c.foe).includes(fighter)) return;
+      c.g.damage(c.foe, c.combat.won[c.me] ? 2 : 1, fighter);
+    },
+  },
+
+  "slick-talker": {
+    *immediate(c) {
+      const all = c.g.fightersOf(c.me);
+      const kid = all.find((item) => item !== "hero");
+      if (!all.includes("hero") || !kid) return;
+      const ok = yield c.g.askConfirm(c.me, "promptSlickTalker");
+      if (!ok) return;
+      c.g.swapFighterSpaces(c.me, "hero", kid);
+      const next = c.combat.fighters[c.me] === "hero" ? kid : "hero";
+      c.combat.fighters[c.me] = next;
+      c.g.setCombatFighter(c.me, next);
+    },
+  },
+
+  "mississippi-queen": {
+    *immediate(c) {
+      c.g.setLastStand(c.me);
+    },
+  },
+
+  "captain-s-orders": {
+    *scheme(c) {
+      c.g.setFighter(c.me, "hero");
+      yield* placeInZone(c);
+      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      if (kid) {
+        const options = c.g.zoneSpaces(c.me);
+        if (options.length) {
+          const space = yield c.g.askSpace(c.me, "promptPlaceFriend", options);
+          if (space) c.g.placeFighter(c.me, kid, space);
+        }
+      }
+      c.g.gainAction(1);
+    },
+  },
+
+  "a-few-more-pearls": {
+    *scheme(c) {
+      c.g.setFighter(c.me, "hero");
+      for (const item of c.g.adjacentFightersTo(c.me)) {
+        if (item.owner === c.foe) c.g.damage(c.foe, 2, item.fighter);
+      }
+    },
+  },
+
+  "crash-landing": {
+    *after(c) {
+      if (c.combat.free) c.g.drawUntil(c.me, 4);
+    },
+  },
+
+  "strix-salvo": {
+    *after(c) {
+      c.g.gainHeat(c.me, 1);
+    },
+    ongoing: true,
+    ongoingEnd: "turnStart",
+  },
+
+  "hard-sell": {
+    value: (c, value) => (c.g.heatOf(c.me) === 0 ? 5 : value),
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      c.g.heal(c.me, 1, "hero");
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "walking-hazard": {
+    *after(c) {
+      c.g.setFighter(c.me, "hero");
+      const amount = c.combat.free ? 2 : 1;
+      const near = c.g
+        .adjacentFightersTo(c.me)
+        .filter((item) => item.owner === c.foe);
+      c.g.damage(c.me, 1, "hero");
+      for (const item of near) c.g.damage(c.foe, amount, item.fighter);
+    },
+  },
+
+  "jettison-fuel": {
+    value: (c, value) => value + c.g.heatOf(c.me),
+    *after(c) {
+      c.combat.noHeat = true;
+      const steps = c.g.heatOf(c.me);
+      if (!steps) return;
+      c.g.setFighter(c.me, "hero");
+      yield* c.g.walk(c.me, c.me, steps, "promptMoveSpace", {
+        fighter: "hero",
+      });
+    },
+  },
+
+  "rocket-jump": {
+    *after(c) {
+      if (c.g.heroHp(c.me) < 2) return;
+      const ok = yield c.g.askConfirm(c.me, "promptRocketJump");
+      if (!ok) return;
+      c.g.damage(c.me, 1, "hero");
+      c.g.setFighter(c.me, "hero");
+      yield* c.g.walk(c.me, c.me, 4, "promptMoveSpace", { fighter: "hero" });
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "close-the-deal": {
+    *after(c) {
+      const target = c.combat.fighters[c.foe];
+      if (!c.g.fightersOf(c.foe).includes(target)) return;
+      const options = c.g.freeSpacesAdjacentTo(c.me, "hero");
+      if (options.length) {
+        const space = yield c.g.askSpace(c.me, "promptPlaceFoe", options);
+        if (space) c.g.placeFighter(c.foe, target, space);
+      }
+      const attackCard = c.combat.cards[c.combat.attacker];
+      const printed = attackCard?.value || 0;
+      if (printed) c.g.damage(c.foe, printed, target);
+    },
+  },
+
+  "the-most-painful-death-yet": {
+    value: (c, value) => value - c.g.heatOf(c.me),
+    *after(c) {
+      if (c.combat.won[c.me]) return;
+      c.g.damage(c.me, c.combat.taken[c.me] || 0, "hero");
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "fairfax-guarantee": {
+    damageCap: () => 2,
+    deemedWon: true,
+  },
+
+  "warranty-void": {
+    *scheme(c) {
+      c.g.setFighter(c.me, "hero");
+      const near = c.g.adjacentFightersTo(c.me);
+      for (const item of near) c.g.damage(item.owner, 2, item.fighter);
+      c.g.damage(c.me, 4, "hero");
+    },
+  },
+
+  "killer-deal": {
+    *scheme(c) {
+      const pick = yield c.g.askChoice(c.foe, "promptKillerDeal", [
+        { value: "draw", label: "gameKillerDraw" },
+        { value: "heat", label: "gameKillerHeat" },
+      ]);
+      if (pick === "draw") {
+        c.g.draw(c.me, 1);
+        c.g.draw(c.foe, 1);
+        c.g.heal(c.me, 2, "hero");
+      } else {
+        c.g.draw(c.me, 1);
+        c.g.gainHeat(c.me, 3);
+      }
     },
   },
 };

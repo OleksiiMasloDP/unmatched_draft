@@ -30,6 +30,10 @@
           <RogueIcon name="coins" metal="gold" size="1.1em" />
           {{ gold > 0 ? "+" : "" }}{{ gold }}
         </span>
+        <span v-if="hp" class="rev-gold" :class="hp > 0 ? 'is-up' : 'is-down'">
+          <RogueIcon name="heartPlus" metal="gold" size="1.1em" />
+          {{ hp > 0 ? "+" : "" }}{{ hp }}
+        </span>
       </div>
       <ul v-if="choices.length" class="rev-choices">
         <li v-for="(choice, i) in choices" :key="i">
@@ -67,6 +71,7 @@ const props = defineProps({
   result: { type: String, default: "" },
   resultLabel: { type: String, default: "" },
   gold: { type: Number, default: 0 },
+  hp: { type: Number, default: 0 },
 });
 
 const artFailed = ref(false);
@@ -211,6 +216,7 @@ const emit = defineEmits(["choose"]);
 
 .rev-gold {
   display: inline-block;
+  margin-right: 8px;
   padding: 2px 12px;
   margin-top: 8px;
   font-weight: 800;

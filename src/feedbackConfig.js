@@ -1,16 +1,16 @@
 // Куди приходить фідбек.
 export const FEEDBACK = {
   // Пошта автора: сюди приходять повідомлення (або відкривається лист у поштовій програмі)
-  email: "aleksej.maslodp@gmail.com",
+  email: "aleksej.maslo95@gmail.com",
 
   // Щоб повідомлення надсилались одним кліком БЕЗ поштової програми:
   // 1) зайдіть на https://web3forms.com, введіть пошту вище, натисніть Create Access Key
   // 2) ключ прийде на пошту - вставте його сюди. Він публічний, це нормально.
   // Поки порожньо - кнопка "Надіслати" відкриває поштову програму з готовим листом.
-  web3formsKey: "",
+  web3formsKey: "88d3b2fa-6980-4e83-a2da-83db777e4dc3",
 
   // Нік у Telegram без @ (наприклад "my_nick"), або "" щоб сховати кнопку
-  telegram: "",
+  telegram: "OleksiiDP",
 
   // Лише для посилання "GitHub" у футері
   githubRepo: "https://github.com/OleksiiMasloDP/unmatched_draft",

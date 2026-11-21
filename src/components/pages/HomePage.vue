@@ -86,49 +86,55 @@
       </p>
       <ul class="home-proof" data-reveal>
         <li v-for="(item, i) in L.proof" :key="i">
-          <span>{{ proofIcons[i] }}</span>
+          <RogueIcon
+            :name="proofIcons[i].name"
+            :metal="proofIcons[i].metal"
+            size="1.3em"
+          />
           {{ item }}
         </li>
       </ul>
 
       <div v-if="muHero" class="mu-show" data-reveal="zoom">
-        <Transition name="mu-swap" mode="out-in">
-          <div :key="muHero.id" class="mu-hero">
-            <img :src="muHero.image" :alt="muHero.name" class="mu-hero-img" />
-            <div class="mu-hero-body">
-              <div class="mu-hero-name">{{ muHero.name }}</div>
-              <div class="mu-hero-meta">
-                <span>
-                  {{ L.mu.elo }} <b>{{ muHero.elo }}</b>
+        <Transition name="mu-swap">
+          <div :key="muHero.id" class="mu-slide">
+            <div class="mu-hero">
+              <img :src="muHero.image" :alt="muHero.name" class="mu-hero-img" />
+              <div class="mu-hero-body">
+                <div class="mu-hero-name">{{ muHero.name }}</div>
+                <div class="mu-hero-meta">
+                  <span>
+                    {{ L.mu.elo }} <b>{{ muHero.elo }}</b>
+                  </span>
+                  <span>
+                    {{ L.mu.avg }} <b>{{ muAvg }}%</b>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mu-vs">
+              <span>VS</span>
+            </div>
+
+            <div class="mu-foes">
+              <div
+                v-for="(foe, i) in muFoes"
+                :key="foe.id"
+                class="mu-foe"
+                :class="foe.cls"
+                :style="{ '--i': i }"
+              >
+                <img :src="foe.image" :alt="foe.name" />
+                <span class="mu-foe-name">{{ foe.name }}</span>
+                <span class="mu-foe-bar">
+                  <i :style="{ width: foe.wr + '%' }"></i>
                 </span>
-                <span>
-                  {{ L.mu.avg }} <b>{{ muAvg }}%</b>
-                </span>
+                <b class="mu-foe-wr">{{ foe.wr }}%</b>
               </div>
             </div>
           </div>
         </Transition>
-
-        <div class="mu-vs">
-          <span>VS</span>
-        </div>
-
-        <TransitionGroup name="mu-foe" tag="div" class="mu-foes">
-          <div
-            v-for="(foe, i) in muFoes"
-            :key="muHero.id + '-' + foe.id"
-            class="mu-foe"
-            :class="foe.cls"
-            :style="{ '--i': i }"
-          >
-            <img :src="foe.image" :alt="foe.name" />
-            <span class="mu-foe-name">{{ foe.name }}</span>
-            <span class="mu-foe-bar">
-              <i :style="{ width: foe.wr + '%' }"></i>
-            </span>
-            <b class="mu-foe-wr">{{ foe.wr }}%</b>
-          </div>
-        </TransitionGroup>
       </div>
       <p v-if="muHero" class="home-caption" data-reveal>{{ L.mu.note }}</p>
     </section>
@@ -139,52 +145,188 @@
       </div>
     </div>
 
-    <section v-if="csHero" class="home-band home-cards">
+    <section class="home-band home-tools">
       <div class="home-band-glow" data-parallax aria-hidden="true"></div>
       <div class="home-wrap">
-        <span class="home-tag" data-reveal>{{ L.cards.tag }}</span>
-        <h2 class="home-h2" data-reveal>{{ L.cards.title }}</h2>
-        <p class="home-lead" data-reveal>{{ L.cards.text }}</p>
+        <span class="home-tag" data-reveal>{{ L.tools.tag }}</span>
+        <h2 class="home-h2" data-reveal>{{ L.tools.title }}</h2>
 
-        <div class="cs-stage">
-          <div class="cs-fan" data-reveal="zoom" data-parallax>
-            <div
-              v-for="(card, i) in csHero.cards"
-              :key="csHero.name + card.file"
-              class="cs-card"
-              :class="{ 'is-active': i === csActive }"
-              :style="fanStyle(i, csHero.cards.length)"
-              @click="csActive = i"
-            >
-              <img :src="card.url" :alt="card.title" loading="lazy" />
-            </div>
-          </div>
+        <div
+          class="tl-grid"
+          data-reveal
+          @pointerenter="toolPause = true"
+          @pointerleave="toolPause = false"
+        >
+          <ul class="tl-list">
+            <li v-for="(item, i) in toolItems" :key="item.key">
+              <button
+                type="button"
+                class="tl-item"
+                :class="{ 'is-active': i === toolIndex }"
+                @click="selectTool(i)"
+              >
+                <span class="tl-icon">
+                  <RogueIcon
+                    :name="item.icon"
+                    :metal="item.metal"
+                    size="30px"
+                  />
+                </span>
+                <span class="tl-text">
+                  <b>{{ item.title }}</b>
+                  <small>{{ item.text }}</small>
+                </span>
+              </button>
+            </li>
+          </ul>
 
-          <div class="cs-panel" data-reveal="right">
-            <span class="cs-example">{{ L.cards.example }}</span>
-            <div class="cs-title">
-              <Transition name="mu-swap" mode="out-in">
-                <h3 :key="csHero.name + csActive">{{ csCard.title }}</h3>
-              </Transition>
-              <small>{{ csHero.name }} · {{ csStyle }}</small>
-            </div>
-            <div class="cs-cols">
-              <div v-for="col in csCols" :key="col.key" class="cs-col">
-                <h4 :class="col.key">{{ col.label }}</h4>
-                <TransitionGroup name="mu-foe" tag="ul">
-                  <li
-                    v-for="(row, i) in col.rows"
-                    :key="csHero.name + csActive + col.key + row.id"
-                    :class="col.key"
-                    :style="{ '--i': i }"
-                  >
-                    <img :src="row.image" :alt="row.name" />
-                    <span>{{ row.name }}</span>
-                    <b>{{ row.fit }}%</b>
-                  </li>
-                </TransitionGroup>
+          <div class="tl-stage">
+            <Transition name="tl-swap">
+              <div :key="toolIndex + '-' + toolRound" class="tl-slide">
+                <template v-if="toolItems[toolIndex].key === 'stats'">
+                  <div v-if="tlStats" class="tl-stats">
+                    <div class="tl-banner tl-pop" :style="{ '--i': 0 }">
+                      <img :src="tlStats.hero.image" :alt="tlStats.hero.name" />
+                      <div class="tl-banner-body">
+                        <b>{{ tlStats.hero.name }}</b>
+                        <span>
+                          {{ L.tools.ui.elo }} <i>{{ tlStats.hero.elo }}</i>
+                        </span>
+                        <span>
+                          {{ L.tools.ui.avg }} <i>{{ tlStats.avg }}%</i>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="tl-cards">
+                      <div
+                        v-for="(foe, i) in tlStats.foes"
+                        :key="foe.id"
+                        class="tl-card tl-pop"
+                        :class="foe.cls"
+                        :style="{ '--i': i + 1 }"
+                      >
+                        <img :src="foe.image" :alt="foe.name" />
+                        <span class="tl-badge">{{ foe.wr }}%</span>
+                        <em>{{ foe.name }}</em>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <template v-else-if="toolItems[toolIndex].key === 'guides'">
+                  <div v-if="tlGuide" class="tl-guide">
+                    <div class="tl-banner tl-pop" :style="{ '--i': 0 }">
+                      <img :src="tlGuide.image" :alt="tlGuide.name" />
+                      <div class="tl-banner-body">
+                        <b>{{ tlGuide.name }}</b>
+                        <span>{{ tlGuide.style }}</span>
+                        <span>
+                          {{ L.tools.ui.complexity }}
+                          <i>{{ tlGuide.complexity }}</i>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="tl-keycards">
+                      <img
+                        v-for="(card, i) in tlGuide.cards"
+                        :key="card"
+                        class="tl-pop"
+                        :style="{ '--i': i + 1 }"
+                        :src="card"
+                        alt=""
+                      />
+                    </div>
+                    <ul class="tl-points is-good tl-pop" :style="{ '--i': 5 }">
+                      <li v-for="line in tlGuide.good" :key="line">
+                        {{ line }}
+                      </li>
+                    </ul>
+                    <ul class="tl-points is-bad tl-pop" :style="{ '--i': 6 }">
+                      <li v-for="line in tlGuide.bad" :key="line">
+                        {{ line }}
+                      </li>
+                    </ul>
+                  </div>
+                </template>
+
+                <template v-else-if="toolItems[toolIndex].key === 'maps'">
+                  <div v-if="tlMap" class="tl-map">
+                    <div class="tl-map-img tl-pop" :style="{ '--i': 0 }">
+                      <img :src="tlMap.image" :alt="tlMap.name" />
+                      <b>{{ tlMap.name }}</b>
+                    </div>
+                    <div class="tl-rows">
+                      <div
+                        v-for="(row, i) in tlMap.rows"
+                        :key="row.id"
+                        class="tl-row tl-pop"
+                        :class="row.cls"
+                        :style="{ '--i': i + 1 }"
+                      >
+                        <img :src="row.image" :alt="row.name" />
+                        <span>{{ row.name }}</span>
+                        <b>{{ row.label }}</b>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <template v-else-if="toolItems[toolIndex].key === 'matchups'">
+                  <div v-if="tlDuel" class="tl-duel">
+                    <div class="tl-duel-top">
+                      <div class="tl-fighter tl-pop" :style="{ '--i': 0 }">
+                        <img :src="tlDuel.a.image" :alt="tlDuel.a.name" />
+                        <b>{{ tlDuel.a.name }}</b>
+                      </div>
+                      <div class="tl-vs tl-pop" :style="{ '--i': 1 }">VS</div>
+                      <div class="tl-fighter tl-pop" :style="{ '--i': 2 }">
+                        <img :src="tlDuel.b.image" :alt="tlDuel.b.name" />
+                        <b>{{ tlDuel.b.name }}</b>
+                      </div>
+                    </div>
+                    <div class="tl-meter tl-pop" :style="{ '--i': 3 }">
+                      <span class="is-a" :style="{ width: tlDuel.wr + '%' }">
+                        {{ tlDuel.wr }}%
+                      </span>
+                      <span class="is-b">{{ 100 - tlDuel.wr }}%</span>
+                    </div>
+                    <div
+                      v-if="tlDuel.map"
+                      class="tl-bestmap tl-pop"
+                      :style="{ '--i': 4 }"
+                    >
+                      <img :src="tlDuel.map.image" :alt="tlDuel.map.name" />
+                      <span>{{ L.tools.ui.bestMap }}</span>
+                      <b>{{ tlDuel.map.name }}</b>
+                    </div>
+                  </div>
+                </template>
+
+                <template v-else>
+                  <div class="tl-gen">
+                    <div class="tl-chips tl-pop" :style="{ '--i': 0 }">
+                      <span class="tl-chip">{{ L.tools.ui.balanced }}</span>
+                      <span class="tl-chip is-on">
+                        <RogueIcon name="laurels" metal="gold" size="16px" />
+                        {{ L.tools.ui.collection }}
+                      </span>
+                    </div>
+                    <div
+                      v-for="(pair, i) in tlPairs"
+                      :key="pair.a.id + pair.b.id"
+                      class="tl-pair tl-pop"
+                      :style="{ '--i': i + 1 }"
+                    >
+                      <img :src="pair.a.image" :alt="pair.a.name" />
+                      <span>{{ pair.a.name }}</span>
+                      <b>{{ pair.wr }}%</b>
+                      <span class="is-end">{{ pair.b.name }}</span>
+                      <img :src="pair.b.image" :alt="pair.b.name" />
+                    </div>
+                  </div>
+                </template>
               </div>
-            </div>
+            </Transition>
           </div>
         </div>
       </div>
@@ -351,55 +493,60 @@
       </div>
     </div>
 
-    <section v-if="rogueMapData.length" class="home-band home-rogue">
+    <section class="home-band home-rogue">
       <div
         class="home-band-glow is-gold"
         data-parallax
         aria-hidden="true"
       ></div>
-      <div class="home-wrap">
-        <span class="home-tag" data-reveal>{{ L.rogue.tag }}</span>
-        <h2 class="home-h2" data-reveal>{{ L.rogue.title }}</h2>
-        <p class="home-lead" data-reveal>{{ L.rogue.text }}</p>
-
-        <div class="rg-board" data-reveal="zoom">
-          <div class="rg-top">
-            <span class="rg-stat">
-              <RogueIcon name="coins" metal="gold" size="1.4em" />
-              {{ rogueGold }}
-            </span>
-            <span class="rg-stat">
-              <RogueIcon name="heartPlus" metal="ruby" size="1.4em" />
-              {{ rogueHp }}
-            </span>
-            <span class="rg-stat">
-              <RogueIcon name="cardDraw" metal="silver" size="1.4em" />
-              {{ rogueCards }}
-            </span>
-          </div>
-          <RogueMap
-            :map="rogueMapData"
-            :pos="roguePos"
-            :visited="rogueVisited"
-            :reachable="rogueReach"
-            :labels="rogueLabels"
-            :hero-image="rogueHeroImage"
-          />
-          <ul class="rg-legend">
+      <div class="home-wrap rg-grid">
+        <div class="rg-text">
+          <span class="home-tag is-left" data-reveal>{{ L.rogue.tag }}</span>
+          <h2 class="home-h2 is-left" data-reveal>{{ L.rogue.title }}</h2>
+          <p class="home-lead is-left" data-reveal>{{ L.rogue.text }}</p>
+          <ul class="rg-legend" data-reveal>
             <li v-for="item in rogueLegend" :key="item.type">
               <RogueIcon :name="item.icon" :metal="item.metal" size="1.3em" />
               {{ item.label }}
             </li>
           </ul>
-        </div>
-
-        <div class="home-show-cta" data-reveal>
           <router-link
             :to="{ name: 'rogue' }"
             class="home-btn home-btn-primary"
+            data-reveal
           >
             {{ L.rogue.cta }}
           </router-link>
+        </div>
+
+        <div class="rg-map" data-reveal="right">
+          <svg
+            class="rg-lines"
+            viewBox="0 0 100 120"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <line
+              v-for="edge in rogueEdges"
+              :key="edge.key"
+              :x1="edge.x1"
+              :y1="edge.y1"
+              :x2="edge.x2"
+              :y2="edge.y2"
+            />
+          </svg>
+          <div
+            v-for="node in rogueNodes"
+            :key="node.id"
+            class="rg-node"
+            :style="{
+              left: node.x + '%',
+              top: (node.y / 120) * 100 + '%',
+              '--c': node.color,
+            }"
+          >
+            <RogueIcon :name="node.icon" :metal="node.metal" size="60%" />
+          </div>
         </div>
       </div>
     </section>
@@ -426,7 +573,9 @@
             :class="{ 'is-map': f.art === 'map' }"
           />
           <div class="home-card-body">
-            <span class="home-card-icon">{{ f.icon }}</span>
+            <span class="home-card-icon">
+              <RogueIcon :name="f.icon" :metal="f.metal" size="1.6em" />
+            </span>
             <h3>{{ L.features[f.key].title }}</h3>
             <p>{{ L.features[f.key].text }}</p>
             <span v-if="f.isNew" class="home-card-new">{{ L.newLabel }}</span>
@@ -453,10 +602,8 @@ import {
 import { useDraftState } from "../../composables/useDraftState";
 import { banPresets } from "../../draftFormats.js";
 import { buildAllCards } from "../../packDraftData.js";
-import { generateMap } from "../../rogueMap.js";
-import { ROWS, nodeTypes } from "../../rogueData.js";
+import { nodeTypes } from "../../rogueData.js";
 import PackCard from "../PackCard.vue";
-import RogueMap from "../RogueMap.vue";
 import RogueIcon from "../RogueIcon.vue";
 import SiteFooter from "../SiteFooter.vue";
 
@@ -483,21 +630,49 @@ const dict = {
     aboutText:
       "Unmatched Draftsim is a fan-made toolbox for players who like to draft. Run a ban/pick with your opponent, check which maps suit every hero, build your own draft formats and take the result straight into a game against a friend or a bot.",
     aboutMark:
-      "Hero ratings, matchups and card statistics are all built from the results of professional players.",
-    proof: ["Elo ratings", "Matchup win rates", "Card statistics"],
+      "Hero ratings, matchups and map statistics are all built from the results of professional players.",
+    proof: ["Elo ratings", "Matchup win rates", "Map statistics"],
     mu: {
       elo: "Elo",
       avg: "avg. win rate",
       note: "Win rates of one hero against the rest of the roster — the same numbers you see while drafting.",
     },
-    ribbon: ["MATCHUPS · RATINGS · CARDS · ", "ONLINE · DRAFT · ROGUELIKE · "],
-    cards: {
-      tag: "Card statistics",
-      title: "Know which cards work",
-      text: "Statistics also cover cards: which ones shine in which matchups and which stay in the binder. Build the right deck before the game starts.",
-      example: "Example",
-      good: "Fits against",
-      bad: "Weak against",
+    ribbon: ["MATCHUPS · RATINGS · MAPS · ", "ONLINE · DRAFT · ROGUELIKE · "],
+    tools: {
+      tag: "Toolbox",
+      title: "What is inside",
+      items: {
+        stats: {
+          title: "Player statistics",
+          text: "Elo and win rates of every hero against the rest of the roster.",
+        },
+        guides: {
+          title: "Hero guides",
+          text: "Key cards, strengths and weaknesses — the essentials, squeezed.",
+        },
+        maps: {
+          title: "Hero map guide",
+          text: "Which heroes a map favors and which it punishes.",
+        },
+        matchups: {
+          title: "Matchups",
+          text: "Head-to-head win rates and the best map for a duel.",
+        },
+        generator: {
+          title: "Matchup generator",
+          text: "Balanced duels, or only from your own collection.",
+        },
+      },
+      ui: {
+        elo: "Elo",
+        avg: "avg. win rate",
+        complexity: "Complexity",
+        favored: "Favored",
+        disfavored: "Disfavored",
+        bestMap: "Best map",
+        balanced: "Balanced matchups",
+        collection: "My collection",
+      },
     },
     howTitle: "How it works",
     steps: [
@@ -616,21 +791,49 @@ const dict = {
     aboutText:
       "Unmatched Draftsim — фанатський набір інструментів для тих, хто любить драфт. Проведіть бан/пік із суперником, подивіться, які мапи підходять кожному герою, створіть власні формати драфту та одразу перейдіть до гри з другом або ботом.",
     aboutMark:
-      "Рейтинги героїв, матчапи та статистика карт — усе побудовано на результатах професійних гравців.",
-    proof: ["Рейтинг Elo", "Вінрейт у матчапах", "Статистика карт"],
+      "Рейтинги героїв, матчапи та статистика мап — усе побудовано на результатах професійних гравців.",
+    proof: ["Рейтинг Elo", "Вінрейт у матчапах", "Статистика мап"],
     mu: {
       elo: "Elo",
       avg: "середній вінрейт",
       note: "Вінрейт одного героя проти решти ростеру — ті самі цифри, що ви бачите під час драфту.",
     },
-    ribbon: ["МАТЧАПИ · РЕЙТИНГИ · КАРТИ · ", "ОНЛАЙН · ДРАФТ · РОГАЛИК · "],
-    cards: {
-      tag: "Статистика карт",
-      title: "Знайте, які карти працюють",
-      text: "Статистика є й по картах: які сяють у яких матчапах, а які краще залишити в колекції. Зберіть правильну колоду ще до початку гри.",
-      example: "Приклад",
-      good: "Підходить проти",
-      bad: "Слабка проти",
+    ribbon: ["МАТЧАПИ · РЕЙТИНГИ · МАПИ · ", "ОНЛАЙН · ДРАФТ · РОГАЛИК · "],
+    tools: {
+      tag: "Інструменти",
+      title: "Що всередині",
+      items: {
+        stats: {
+          title: "Статистика гравців",
+          text: "Elo та вінрейт кожного героя проти решти ростеру.",
+        },
+        guides: {
+          title: "Гайди по персонажах",
+          text: "Ключові карти, сильні й слабкі сторони — найголовніше стисло.",
+        },
+        maps: {
+          title: "Мапи героїв",
+          text: "Яким героям мапа допомагає, а яким шкодить.",
+        },
+        matchups: {
+          title: "Матчапи",
+          text: "Вінрейт у дуелях і найкраща мапа для поєдинку.",
+        },
+        generator: {
+          title: "Генератор матчапів",
+          text: "Рівні дуелі або лише з вашої колекції.",
+        },
+      },
+      ui: {
+        elo: "Elo",
+        avg: "середній вінрейт",
+        complexity: "Складність",
+        favored: "Підходить",
+        disfavored: "Не підходить",
+        bestMap: "Найкраща мапа",
+        balanced: "Збалансовані матчапи",
+        collection: "Моя колекція",
+      },
     },
     howTitle: "Як це працює",
     steps: [
@@ -733,23 +936,72 @@ const dict = {
 
 const L = computed(() => dict[lang.value] || dict.en);
 
-const proofIcons = ["📊", "⚔️", "🃏"];
+const proofIcons = [
+  { name: "trophy", metal: "gold" },
+  { name: "crossedSwords", metal: "bronze" },
+  { name: "treasureMap", metal: "silver" },
+];
 
 const features = [
-  { key: "draft", route: "main", icon: "⚔️", art: "hero" },
-  { key: "formats", route: "formats", icon: "🧩", art: "map" },
-  { key: "maps", route: "maps", icon: "🗺️", art: "map" },
-  { key: "matchups", route: "matchups", icon: "🆚", art: "hero" },
-  { key: "guide", route: "guide", icon: "📖", art: "hero" },
+  {
+    key: "draft",
+    route: "main",
+    icon: "crossedSwords",
+    metal: "bronze",
+    art: "hero",
+  },
+  {
+    key: "formats",
+    route: "formats",
+    icon: "pentacle",
+    metal: "silver",
+    art: "map",
+  },
+  {
+    key: "maps",
+    route: "maps",
+    icon: "treasureMap",
+    metal: "silver",
+    art: "map",
+  },
+  {
+    key: "matchups",
+    route: "matchups",
+    icon: "shakingHands",
+    metal: "silver",
+    art: "hero",
+  },
+  {
+    key: "guide",
+    route: "guide",
+    icon: "openBook",
+    metal: "gold",
+    art: "hero",
+  },
   {
     key: "pack-draft",
     route: "pack-draft",
-    icon: "🎴",
+    icon: "cardPlay",
+    metal: "gold",
     art: "map",
     isNew: true,
   },
-  { key: "game", route: "game", icon: "🎮", art: "hero", isNew: true },
-  { key: "rogue", route: "rogue", icon: "🗡️", art: "map", isNew: true },
+  {
+    key: "game",
+    route: "game",
+    icon: "rollingDices",
+    metal: "ruby",
+    art: "hero",
+    isNew: true,
+  },
+  {
+    key: "rogue",
+    route: "rogue",
+    icon: "swordman",
+    metal: "bronze",
+    art: "map",
+    isNew: true,
+  },
 ];
 
 const abs = (path) => new URL(path, document.baseURI).href;
@@ -832,75 +1084,137 @@ const muFoes = computed(() => {
   }));
 });
 
-const csHeroes = ref([]);
-const csIndex = ref(0);
-const csActive = ref(0);
-
-const csList = computed(() =>
-  csHeroes.value.filter((h) => {
-    const char = characters.value.find((c) => c.name === h.name);
-    return char && foesOf(char).length >= 6;
-  }),
+const toolKeys = [
+  { key: "stats", icon: "scales", metal: "gold" },
+  { key: "guides", icon: "openBook", metal: "gold" },
+  { key: "maps", icon: "treasureMap", metal: "silver" },
+  { key: "matchups", icon: "crossedSwords", metal: "bronze" },
+  { key: "generator", icon: "rollingDices", metal: "ruby" },
+];
+const toolItems = computed(() =>
+  toolKeys.map((item) => ({
+    ...item,
+    title: L.value.tools.items[item.key].title,
+    text: L.value.tools.items[item.key].text,
+  })),
 );
-const csHero = computed(() => {
-  const list = csList.value;
-  return list.length ? list[csIndex.value % list.length] : null;
-});
-const csCard = computed(() => {
-  const hero = csHero.value;
-  if (!hero) return { title: "" };
-  return hero.cards[csActive.value % hero.cards.length];
-});
-const csStyle = computed(() => {
-  const hero = csHero.value;
-  if (!hero || !hero.style) return "";
-  return hero.style[lang.value] || hero.style.en || "";
-});
-const csCols = computed(() => {
-  const hero = csHero.value;
-  if (!hero) return [];
-  const char = characters.value.find((c) => c.name === hero.name);
-  if (!char) return [];
-  const foes = foesOf(char);
-  if (foes.length < 6) return [];
-  const turn = (list, shift) => {
-    const rot = shift % list.length;
-    return [...list.slice(rot), ...list.slice(0, rot)].slice(0, 3);
-  };
-  const shift = csActive.value;
-  const fit = (f, k, sign) =>
-    Math.max(8, Math.min(94, f.wr + sign * ((shift * 5 + k * 3) % 7)));
-  const good = turn(foes.slice(0, 6), shift).map((f, k) => ({
-    ...f,
-    fit: fit(f, k, 1),
-  }));
-  const bad = turn(foes.slice(-6), shift).map((f, k) => ({
-    ...f,
-    fit: fit(f, k, -1),
-  }));
-  return [
-    { key: "is-good", label: L.value.cards.good, rows: good },
-    { key: "is-bad", label: L.value.cards.bad, rows: bad },
-  ];
-});
+const toolIndex = ref(0);
+const toolRound = ref(0);
+const toolPause = ref(false);
 
-const titleOf = (file) =>
-  file
-    .replace(/\.[a-z]+$/i, "")
-    .split("_")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-
-function fanStyle(i, total) {
-  const mid = (total - 1) / 2;
-  const d = i - mid;
-  return {
-    "--fx": `${d * 58}px`,
-    "--fr": `${d * 8}deg`,
-    "--fy": `${Math.abs(d) * 10}px`,
-    zIndex: i === csActive.value ? 10 : 5 - Math.abs(Math.round(d)),
-  };
+function selectTool(i) {
+  if (i === toolIndex.value) return;
+  toolIndex.value = i;
 }
+
+function nextTool() {
+  if (toolPause.value) return;
+  const next = (toolIndex.value + 1) % toolKeys.length;
+  if (next === 0) toolRound.value += 1;
+  toolIndex.value = next;
+}
+
+const guideHeroes = ref([]);
+const pickHero = (k) => {
+  const pool = muPool.value;
+  return pool.length ? pool[((k % pool.length) * 7 + 3) % pool.length] : null;
+};
+const classOf = (wr) =>
+  wr >= 58 ? "is-win" : wr <= 42 ? "is-lose" : "is-even";
+
+const tlStats = computed(() => {
+  const hero = pickHero(toolRound.value * 5);
+  if (!hero) return null;
+  const foes = foesOf(hero);
+  const mid = Math.floor(foes.length / 2);
+  const picked = [foes[0], foes[1], foes[mid], foes.at(-2), foes.at(-1)];
+  return {
+    hero,
+    avg: Math.round(foes.reduce((sum, f) => sum + f.wr, 0) / foes.length),
+    foes: picked.map((f) => ({ ...f, cls: classOf(f.wr) })),
+  };
+});
+
+const tlGuide = computed(() => {
+  const list = guideHeroes.value.filter((g) =>
+    characters.value.some((c) => c.name === g.name && c.image),
+  );
+  if (!list.length) return null;
+  const guide = list[(toolRound.value * 3) % list.length];
+  const char = characters.value.find((c) => c.name === guide.name);
+  const code = lang.value;
+  const pickText = (value) => (value?.[code] || value?.en || []).slice(0, 2);
+  return {
+    name: guide.name,
+    image: char.image,
+    style: guide.style?.[code] || guide.style?.en || "",
+    complexity: guide.complexity,
+    cards: guide.cards.slice(0, 4),
+    good: pickText(guide.features),
+    bad: pickText(guide.weaknesses).slice(0, 1),
+  };
+});
+
+const tlMap = computed(() => {
+  const list = maps.value.filter(
+    (m) =>
+      (m.favoredBy || []).length >= 2 && (m.disfavoredBy || []).length >= 2,
+  );
+  if (!list.length) return null;
+  const map = list[(toolRound.value * 5 + 1) % list.length];
+  const byName = (name) => characters.value.find((c) => c.name === name);
+  const rows = [
+    ...(map.favoredBy || [])
+      .map(byName)
+      .filter((c) => c && c.image)
+      .slice(0, 3)
+      .map((c) => ({ ...c, cls: "is-win", label: L.value.tools.ui.favored })),
+    ...(map.disfavoredBy || [])
+      .map(byName)
+      .filter((c) => c && c.image)
+      .slice(0, 2)
+      .map((c) => ({
+        ...c,
+        cls: "is-lose",
+        label: L.value.tools.ui.disfavored,
+      })),
+  ];
+  return { name: map.name, image: map.image, rows };
+});
+
+const tlDuel = computed(() => {
+  const a = pickHero(toolRound.value * 5 + 2);
+  if (!a) return null;
+  const foes = foesOf(a);
+  const b = foes[(toolRound.value * 3) % Math.min(8, foes.length)];
+  if (!b) return null;
+  const map = maps.value.find(
+    (m) =>
+      (m.favoredBy || []).includes(a.name) ||
+      (m.disfavoredBy || []).includes(b.name),
+  );
+  return { a, b, wr: b.wr, map: map || null };
+});
+
+const tlPairs = computed(() => {
+  const pool = heroPool.value.filter((_, i) => i % 3 !== 1);
+  const found = [];
+  for (let i = 0; i < pool.length; i += 1) {
+    for (let j = i + 1; j < pool.length; j += 1) {
+      const wr = getWinrate(pool[i].name, pool[j].name);
+      if (wr === null || wr === undefined) continue;
+      if (Math.abs(wr - 50) <= 3) {
+        found.push({ a: pool[i], b: pool[j], wr: Math.round(wr) });
+      }
+    }
+  }
+  if (!found.length) return [];
+  const offset = (toolRound.value * 4) % found.length;
+  return Array.from(
+    { length: Math.min(4, found.length) },
+    (_, k) => found[(offset + k * 3) % found.length],
+  );
+});
 
 const PACK_CARDS = 8;
 const PACK_ROUNDS = 3;
@@ -964,26 +1278,6 @@ function onlineTick() {
   onlineStep.value = (onlineStep.value + 1) % 6;
 }
 
-const mulberry = (seed) => () => {
-  seed = (seed + 0x6d2b79f5) | 0;
-  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
-
-const rogueMapData = ref([]);
-const roguePos = ref(null);
-const rogueVisited = ref([]);
-const rogueReach = ref([]);
-const rogueGold = ref(0);
-const rogueHp = ref(40);
-const rogueCards = ref(0);
-let rogueSeed = 11;
-let rogueWait = 0;
-
-const rogueHeroImage = computed(() =>
-  heroPool.value.length ? abs(heroPool.value[0].image) : "",
-);
 const rogueLabels = computed(() => {
   const r = L.value.rogue;
   return {
@@ -993,10 +1287,6 @@ const rogueLabels = computed(() => {
     rest: r.rest,
     shop: r.shop,
     boss: r.boss,
-    forest: r.forest,
-    mountains: r.mountains,
-    ruins: r.ruins,
-    citadel: r.citadel,
   };
 });
 const rogueLegend = computed(() =>
@@ -1008,51 +1298,38 @@ const rogueLegend = computed(() =>
   })),
 );
 
-function rogueReset() {
-  rogueSeed += 7;
-  const map = generateMap(mulberry(rogueSeed));
-  rogueMapData.value = map;
-  roguePos.value = null;
-  rogueVisited.value = [];
-  rogueReach.value = map[0].map((n) => n.id);
-  rogueGold.value = 0;
-  rogueHp.value = 40;
-  rogueCards.value = 0;
-  rogueWait = 0;
-}
-
-const rogueEffects = {
-  fight: { gold: 12, hp: -3, cards: 1 },
-  elite: { gold: 25, hp: -6, cards: 1 },
-  mystery: { gold: 8, hp: 0, cards: 1 },
-  rest: { gold: 0, hp: 8, cards: 0 },
-  shop: { gold: -10, hp: 0, cards: 1 },
-  boss: { gold: 50, hp: 0, cards: 1 },
-};
-
-function rogueTick() {
-  if (!rogueMapData.value.length) return;
-  const nodes = new Map(rogueMapData.value.flat().map((n) => [n.id, n]));
-  const here = roguePos.value ? nodes.get(roguePos.value) : null;
-  if (here && here.type === "boss") {
-    rogueWait += 1;
-    if (rogueWait > 3) rogueReset();
-    return;
-  }
-  const options = rogueReach.value.length ? rogueReach.value : [];
-  if (!options.length) {
-    rogueReset();
-    return;
-  }
-  const next = nodes.get(pick(options));
-  const effect = rogueEffects[next.type];
-  roguePos.value = next.id;
-  rogueVisited.value = [...rogueVisited.value, next.id];
-  rogueReach.value = next.next;
-  rogueGold.value = Math.max(0, rogueGold.value + effect.gold);
-  rogueHp.value = Math.max(8, Math.min(40, rogueHp.value + effect.hp));
-  rogueCards.value += effect.cards;
-}
+const rogueLayout = [
+  { id: "a", type: "boss", lane: 1, row: 0, next: [] },
+  { id: "b", type: "rest", lane: 1, row: 1, next: ["a"] },
+  { id: "c", type: "elite", lane: 0, row: 2, next: ["b"] },
+  { id: "d", type: "mystery", lane: 2, row: 2, next: ["b"] },
+  { id: "e", type: "fight", lane: 0, row: 3, next: ["c"] },
+  { id: "f", type: "shop", lane: 1, row: 3, next: ["c", "d"] },
+  { id: "g", type: "fight", lane: 2, row: 3, next: ["d"] },
+  { id: "h", type: "mystery", lane: 0, row: 4, next: ["e", "f"] },
+  { id: "i", type: "fight", lane: 2, row: 4, next: ["f", "g"] },
+  { id: "j", type: "fight", lane: 1, row: 5, next: ["h", "i"] },
+];
+const rogueNodes = rogueLayout.map((node) => ({
+  id: node.id,
+  x: 20 + node.lane * 30,
+  y: 10 + node.row * 20,
+  icon: nodeTypes[node.type].icon,
+  metal: nodeTypes[node.type].metal,
+  color: nodeTypes[node.type].color,
+}));
+const rogueEdges = rogueLayout.flatMap((node) =>
+  node.next.map((id) => {
+    const to = rogueLayout.find((item) => item.id === id);
+    return {
+      key: node.id + id,
+      x1: 20 + node.lane * 30,
+      y1: 10 + node.row * 20,
+      x2: 20 + to.lane * 30,
+      y2: 10 + to.row * 20,
+    };
+  }),
+);
 
 const stats = ["tools", "schemes", "guides", "langs"];
 const guidesCount = ref(15);
@@ -1105,17 +1382,16 @@ async function loadGuides() {
       return {
         name,
         style: g.style,
+        complexity: g.complexity,
+        features: g.features,
+        weaknesses: g.weaknesses,
         cards: g.keyCards
           .filter((c) => c.image)
-          .map((c) => ({
-            file: c.image,
-            title: titleOf(c.image),
-            url: abs(`images/cards/${name}/${c.image}`),
-          })),
+          .map((c) => abs(`images/cards/${name}/${c.image}`)),
       };
     }),
   );
-  csHeroes.value = loaded.filter(Boolean);
+  guideHeroes.value = loaded.filter(Boolean);
 }
 watch(guidesCount, () => countUp());
 
@@ -1160,7 +1436,6 @@ function cardLeave(e) {
 }
 
 newPack();
-rogueReset();
 
 const timers = [];
 
@@ -1171,25 +1446,14 @@ onMounted(async () => {
   if (prefersReduced()) {
     for (let i = 0; i < 6; i++) packTick();
     onlineStep.value = 5;
-    for (let i = 0; i < 6; i++) rogueTick();
     return;
   }
 
   timers.push(
     setInterval(() => (muIndex.value += 1), 4800),
-    setInterval(() => {
-      const hero = csHero.value;
-      if (!hero) return;
-      if (csActive.value + 1 >= hero.cards.length) {
-        csActive.value = 0;
-        csIndex.value += 1;
-      } else {
-        csActive.value += 1;
-      }
-    }, 3200),
-    setInterval(packTick, 1100),
+    setInterval(packTick, 2000),
     setInterval(onlineTick, 1100),
-    setInterval(rogueTick, 1200),
+    setInterval(nextTool, 6000),
   );
 
   await nextTick();
@@ -1220,7 +1484,7 @@ onMounted(async () => {
   }
 });
 
-watch([csHero, muHero], async () => {
+watch(muHero, async () => {
   await nextTick();
   if (!root.value) return;
   parallaxItems = [...root.value.querySelectorAll("[data-parallax]")];
@@ -1616,7 +1880,8 @@ onBeforeUnmount(() => {
   --rx: 0deg;
   --ry: 0deg;
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   min-height: 220px;
   color: inherit;
@@ -1681,7 +1946,7 @@ onBeforeUnmount(() => {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   padding: 22px 20px 18px;
 }
 .home-card-icon {
@@ -1882,16 +2147,20 @@ onBeforeUnmount(() => {
 /* matchups */
 .mu-show {
   display: grid;
-  grid-template-columns: 250px 52px 1fr;
-  gap: 14px;
-  align-items: center;
   max-width: 980px;
-  padding: 22px;
   margin: 34px auto 0;
   background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.85);
   border: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
   border-radius: 22px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.mu-slide {
+  display: grid;
+  grid-area: 1 / 1;
+  grid-template-columns: 250px 52px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 22px;
 }
 .mu-hero {
   position: relative;
@@ -2024,168 +2293,17 @@ onBeforeUnmount(() => {
 
 .mu-swap-enter-active,
 .mu-swap-leave-active {
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+  transition: opacity 0.6s ease;
 }
-.mu-swap-enter-from {
-  opacity: 0;
-  transform: translateX(-30px) rotate(-3deg);
-}
+.mu-swap-enter-from,
 .mu-swap-leave-to {
   opacity: 0;
-  transform: translateX(30px) rotate(3deg);
 }
-.mu-foe-enter-active,
-.mu-foe-leave-active {
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
-}
-.mu-foe-enter-from {
-  opacity: 0;
-  transform: translateX(30px);
-}
-.mu-foe-leave-to {
-  position: absolute;
-  opacity: 0;
-  transform: translateX(-20px);
+.mu-swap-enter-active .mu-foe {
+  animation: tl-rise 0.5s ease both;
+  animation-delay: calc(var(--i, 0) * 70ms);
 }
 
-/* card stats */
-.cs-stage {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-  margin-top: 40px;
-}
-.cs-fan {
-  position: relative;
-  height: 400px;
-  perspective: 900px;
-  transform: rotate(calc(var(--p, 0) * 5deg));
-}
-.cs-card {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 230px;
-  margin-left: -115px;
-  cursor: pointer;
-  border-radius: 14px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
-  transform: translate(var(--fx), var(--fy)) rotate(var(--fr));
-  transition:
-    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.4s ease;
-}
-.cs-card img {
-  display: block;
-  width: 100%;
-  border-radius: 14px;
-}
-.cs-card.is-active {
-  box-shadow:
-    0 0 0 3px var(--color-warning, #facc15),
-    0 22px 50px rgba(0, 0, 0, 0.7),
-    0 0 36px rgba(250, 204, 21, 0.35);
-  transform: translate(var(--fx), -22px) rotate(0deg) scale(1.08);
-}
-.cs-panel {
-  position: relative;
-  padding: 22px;
-  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.7);
-  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.12));
-  border-radius: 18px;
-}
-.cs-example {
-  position: absolute;
-  top: -11px;
-  right: 18px;
-  padding: 2px 12px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #1a1204;
-  background: var(--color-warning, #facc15);
-  border-radius: 999px;
-}
-.cs-title {
-  min-height: 62px;
-  margin-bottom: 14px;
-}
-.cs-title h3 {
-  margin: 0;
-  font-size: 1.45rem;
-  font-weight: 800;
-}
-.cs-title small {
-  color: var(--text-muted, #94a3b8);
-}
-.cs-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-.cs-col h4 {
-  margin: 0 0 8px;
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.cs-col h4.is-good {
-  color: var(--color-proceed, #10b981);
-}
-.cs-col h4.is-bad {
-  color: var(--color-opponent, #ff4f6d);
-}
-.cs-col ul {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-.cs-col li {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 5px 8px 5px 5px;
-  margin-bottom: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  border-radius: 10px;
-  transition-delay: calc(var(--i, 0) * 70ms);
-}
-.cs-col li.is-good {
-  background: rgba(var(--color-proceed-rgb, 16, 185, 129), 0.14);
-}
-.cs-col li.is-bad {
-  background: rgba(var(--color-opponent-rgb, 255, 79, 109), 0.14);
-}
-.cs-col li img {
-  width: 34px;
-  height: 34px;
-  object-fit: cover;
-  object-position: top;
-  border-radius: 8px;
-}
-.cs-col li span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.cs-col li.is-good b {
-  color: var(--color-proceed, #10b981);
-}
-.cs-col li.is-bad b {
-  color: var(--color-opponent, #ff4f6d);
-}
-
-/* pack draft */
 .pk-board {
   max-width: 980px;
   padding: 18px;
@@ -2220,15 +2338,15 @@ onBeforeUnmount(() => {
   color: var(--text-muted, #94a3b8);
 }
 .pk-banner {
-  padding: 8px 14px;
-  margin: 12px 0;
+  padding: 10px 14px;
+  margin: 22px 0 18px;
   font-size: 0.88rem;
   font-weight: 700;
   text-align: center;
   border-radius: 10px;
   transition:
-    background 0.4s ease,
-    border-color 0.4s ease;
+    background 0.8s ease,
+    border-color 0.8s ease;
 }
 .pk-banner.is-you {
   background: rgba(var(--color-player-rgb, 79, 124, 255), 0.18);
@@ -2249,7 +2367,8 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  min-height: 300px;
+  grid-template-rows: repeat(2, auto);
+  aspect-ratio: 4 / 3.1;
   align-content: start;
 }
 .pk-grid :deep(.pack-card) {
@@ -2274,8 +2393,9 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px;
-  min-height: 100px;
+  height: 330px;
   padding: 6px;
+  overflow: hidden;
   border: 1px dashed var(--border-medium, rgba(255, 255, 255, 0.2));
   border-radius: 10px;
   align-content: start;
@@ -2287,32 +2407,33 @@ onBeforeUnmount(() => {
 .pk-enter-active,
 .pk-leave-active {
   transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
+    opacity 0.9s ease,
+    transform 0.9s ease;
 }
 .pk-enter-from {
   opacity: 0;
-  transform: translateY(24px) scale(0.9);
+  transform: translateY(14px) scale(0.96);
 }
 .pk-leave-active {
   position: absolute;
   z-index: 2;
+  width: calc((100% - 30px) / 4);
 }
 .pk-leave-to {
   opacity: 0;
-  transform: translateY(-30px) scale(0.85);
+  transform: translateY(-12px) scale(0.96);
 }
 .pk-move {
-  transition: transform 0.5s ease;
+  transition: transform 0.9s ease;
 }
 .pk-kept-enter-active {
   transition:
-    opacity 0.5s ease,
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.3);
+    opacity 0.9s ease,
+    transform 0.9s ease;
 }
 .pk-kept-enter-from {
   opacity: 0;
-  transform: scale(0.3);
+  transform: scale(0.85);
 }
 
 /* online */
@@ -2485,26 +2606,59 @@ onBeforeUnmount(() => {
 }
 
 /* roguelike */
-.rg-board {
-  max-width: 980px;
-  margin: 36px auto 0;
-}
-.rg-top {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 14px;
-}
-.rg-stat {
-  display: inline-flex;
-  gap: 8px;
+.rg-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 56px;
   align-items: center;
-  padding: 6px 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.85);
-  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
-  border-radius: 999px;
+}
+.rg-grid .rg-legend {
+  justify-content: flex-start;
+  margin: 22px 0 26px;
+}
+.rg-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 100 / 120;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 77, 109, 0.28),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(63, 160, 90, 0.28),
+      transparent 55%
+    ),
+    rgba(var(--bg-dark-rgb, 15, 23, 42), 0.9);
+  border: 2px solid #8a6c43;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+.rg-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.rg-lines line {
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 2;
+  stroke-dasharray: 2 2;
+  vector-effect: non-scaling-stroke;
+}
+.rg-node {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 17%;
+  aspect-ratio: 1;
+  background: #1c1710;
+  border: 3px solid var(--c, #d9843f);
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
 }
 .rg-legend {
   display: flex;
@@ -2523,6 +2677,375 @@ onBeforeUnmount(() => {
   align-items: center;
 }
 
+/* tools */
+.tl-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  gap: 40px;
+  align-items: center;
+  margin-top: 36px;
+}
+.tl-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.tl-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: rgba(var(--bg-slate-rgb, 30, 41, 59), 0.5);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+.tl-item:hover {
+  border-color: rgba(var(--color-player-rgb, 79, 124, 255), 0.6);
+}
+.tl-item.is-active {
+  background: rgba(var(--color-player-rgb, 79, 124, 255), 0.16);
+  border-color: var(--color-player, #4f7cff);
+}
+.tl-icon {
+  display: grid;
+  flex: 0 0 52px;
+  place-items: center;
+  height: 52px;
+  background: #1c1710;
+  border: 2px solid #8a6c43;
+  border-radius: 50%;
+}
+.tl-text {
+  display: grid;
+  gap: 2px;
+}
+.tl-text b {
+  font-size: 1.02rem;
+}
+.tl-text small {
+  font-size: 0.82rem;
+  color: var(--text-muted, #cbd5e1);
+}
+.tl-stage {
+  position: relative;
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: rgba(var(--bg-dark-rgb, 15, 23, 42), 0.92);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.14));
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+}
+.tl-slide {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px;
+}
+.tl-swap-enter-active,
+.tl-swap-leave-active {
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+.tl-swap-enter-from {
+  opacity: 0;
+  transform: translateX(24px);
+}
+.tl-swap-leave-to {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+.tl-swap-enter-active .tl-pop {
+  animation: tl-rise 0.5s ease both;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+@keyframes tl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.tl-stats,
+.tl-guide,
+.tl-map,
+.tl-duel,
+.tl-gen {
+  display: grid;
+  gap: 14px;
+}
+.tl-banner {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--color-player, #4f7cff);
+  border-radius: 18px;
+}
+.tl-banner img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 14px;
+}
+.tl-banner-body {
+  display: grid;
+  gap: 3px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #cbd5e1);
+}
+.tl-banner-body b {
+  font-size: 1.3rem;
+  color: var(--text-white, #fff);
+}
+.tl-banner-body i {
+  font-style: normal;
+  font-weight: 800;
+  color: var(--text-white, #fff);
+}
+.tl-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.tl-card {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 12px;
+}
+.tl-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+}
+.tl-card em {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 14px 2px 4px;
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+}
+.tl-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 1px 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 6px;
+}
+.tl-card.is-win {
+  border-color: #3ddc84;
+}
+.tl-card.is-win .tl-badge {
+  color: #3ddc84;
+}
+.tl-card.is-lose {
+  border-color: #ff6b6b;
+}
+.tl-card.is-lose .tl-badge {
+  color: #ff6b6b;
+}
+.tl-keycards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.tl-keycards img {
+  width: 100%;
+  border-radius: 8px;
+}
+.tl-points {
+  padding: 8px 12px 8px 26px;
+  margin: 0;
+  font-size: 0.8rem;
+  border-radius: 12px;
+}
+.tl-points.is-good {
+  background: rgba(61, 220, 132, 0.1);
+  border: 1px solid rgba(61, 220, 132, 0.4);
+}
+.tl-points.is-bad {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+}
+.tl-map-img {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.tl-map-img img {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.tl-map-img b {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 18px 14px 8px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+}
+.tl-rows {
+  display: grid;
+  gap: 8px;
+}
+.tl-row,
+.tl-pair {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 12px 6px 6px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+}
+.tl-row img,
+.tl-pair img {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 50%;
+}
+.tl-row span {
+  flex: 1;
+}
+.tl-row b {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+.tl-row.is-win {
+  border-color: rgba(61, 220, 132, 0.5);
+}
+.tl-row.is-win b {
+  color: #3ddc84;
+}
+.tl-row.is-lose {
+  border-color: rgba(255, 107, 107, 0.5);
+}
+.tl-row.is-lose b {
+  color: #ff6b6b;
+}
+.tl-duel-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.tl-fighter {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+}
+.tl-fighter img {
+  width: 100%;
+  max-width: 150px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+  border: 2px solid var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 16px;
+}
+.tl-vs {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--color-warning, #ffc107);
+}
+.tl-meter {
+  display: flex;
+  height: 34px;
+  overflow: hidden;
+  font-weight: 800;
+  border-radius: 999px;
+}
+.tl-meter span {
+  display: grid;
+  place-items: center;
+}
+.tl-meter .is-a {
+  background: var(--color-player, #4f7cff);
+}
+.tl-meter .is-b {
+  flex: 1;
+  background: var(--color-opponent, #ff4f6d);
+}
+.tl-bestmap {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 14px 6px 6px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+.tl-bestmap img {
+  width: 64px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.tl-bestmap span {
+  color: var(--text-muted, #cbd5e1);
+}
+.tl-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tl-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.2));
+  border-radius: 999px;
+}
+.tl-chip.is-on {
+  color: #1b130a;
+  background: #f6c945;
+  border-color: #f6c945;
+}
+.tl-pair span {
+  flex: 1;
+  font-size: 0.85rem;
+}
+.tl-pair .is-end {
+  text-align: right;
+}
+.tl-pair b {
+  color: var(--color-warning, #ffc107);
+}
+
 .home-card-new {
   position: absolute;
   top: 12px;
@@ -2537,8 +3060,8 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 820px) {
-  .mu-show {
-    grid-template-columns: 1fr;
+  .mu-slide {
+    grid-template-columns: minmax(0, 1fr);
   }
   .mu-hero {
     max-width: 260px;
@@ -2548,25 +3071,25 @@ onBeforeUnmount(() => {
     margin: -6px 0;
   }
   .mu-foes {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
-  .cs-stage,
+  .tl-grid,
+  .rg-grid,
   .home-online {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
   }
-  .cs-fan {
-    height: 340px;
+  .tl-grid > *,
+  .rg-grid > *,
+  .home-online > * {
+    min-width: 0;
   }
-  .cs-card {
-    width: 180px;
-    margin-left: -90px;
-  }
-  .cs-cols {
-    grid-template-columns: 1fr;
+  .tl-stage {
+    aspect-ratio: auto;
+    min-height: 420px;
   }
   .pk-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .pk-side {
     order: 2;
@@ -2574,9 +3097,24 @@ onBeforeUnmount(() => {
   .pk-kept {
     grid-template-columns: repeat(4, 1fr);
   }
+  .pk-leave-active {
+    width: calc((100% - 10px) / 2);
+  }
   .pk-grid {
     grid-template-columns: repeat(2, 1fr);
-    min-height: 0;
+    grid-template-rows: none;
+    aspect-ratio: auto;
+  }
+  .pk-kept {
+    height: auto;
+  }
+  .rg-map {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .tl-stage {
+    max-width: 480px;
+    margin: 0 auto;
   }
   .home-band {
     padding: 64px 0;
@@ -2611,7 +3149,6 @@ onBeforeUnmount(() => {
   .home-card,
   .home-card-art,
   .home-chip,
-  .cs-card,
   .mu-foe-bar i {
     transition: none;
   }

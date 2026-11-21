@@ -1,7 +1,11 @@
 import { reactive } from "vue";
 import { getCard, getHero } from "../gameDecks.js";
 import { gameMaps } from "../gameMaps.js";
-import { buildAllCards, packDraftHeroes } from "../packDraftData.js";
+import {
+  buildAllCards,
+  buildCustomCards,
+  packDraftHeroes,
+} from "../packDraftData.js";
 import { generateMap } from "../rogueMap.js";
 import {
   BASE_DECK,
@@ -14,14 +18,17 @@ import {
   cardPrice,
   events,
   heroEvents,
+  levels,
   removePrice,
   themes,
 } from "../rogueData.js";
 import { useGame } from "./useGame.js";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 
 const STORAGE_KEY = "unmatched-rogue-run-v2";
 
 const allCards = buildAllCards();
+const bossCards = buildCustomCards();
 
 const mulberry32 = (seed) => {
   let state = seed >>> 0;
@@ -45,6 +52,8 @@ const pickMany = (list, count) => {
 
 const emptyRun = () => ({
   phase: "idle",
+  level: 1,
+  bossIdx: 0,
   heroOptions: [],
   heroId: null,
   deck: [],
@@ -65,16 +74,39 @@ const emptyRun = () => ({
   maxHp: null,
   victory: false,
   best: 0,
+  battleSave: null,
+  seenEvents: [],
 });
+
+const teamSize = (heroId) => {
+  const found = getHero(heroId);
+  return found?.team ? 1 + (found.sidekick?.count || 0) : 1;
+};
+
+const maxHpOf = (heroId) => getHero(heroId).hp * teamSize(heroId);
 
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved && saved.phase) {
       const loaded = { ...emptyRun(), ...saved };
+      if (saved.bossIdx === undefined) {
+        loaded.bossIdx = Math.max(0, (saved.level || 1) - 1);
+        loaded.level = 1;
+      }
+      if (loaded.phase === "level") loaded.phase = "map";
       if (loaded.heroId && loaded.deck.length && loaded.hp == null) {
-        loaded.maxHp = getHero(loaded.heroId).hp;
+        loaded.maxHp = maxHpOf(loaded.heroId);
         loaded.hp = loaded.maxHp;
+      } else if (
+        loaded.heroId &&
+        loaded.deck.length &&
+        loaded.maxHp === getHero(loaded.heroId).hp &&
+        teamSize(loaded.heroId) > 1
+      ) {
+        const size = teamSize(loaded.heroId);
+        loaded.maxHp *= size;
+        loaded.hp *= size;
       }
       return loaded;
     }
@@ -99,9 +131,34 @@ const history = reactive(loadHistory());
 
 const run = reactive(load());
 
+registerSyncable({
+  name: "rogue",
+  docKey: "rogue",
+  storageKey: STORAGE_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => (value == null ? null : JSON.stringify(value)),
+  apply: () => {
+    if (run.phase === "battle" && useGame().game.phase === "play") return;
+    for (const key of Object.keys(run)) delete run[key];
+    Object.assign(run, load());
+  },
+});
+
+registerSyncable({
+  name: "rogueHistory",
+  docKey: "rogueHistory",
+  storageKey: HISTORY_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => JSON.stringify(Array.isArray(value) ? value : []),
+  apply: () => {
+    history.splice(0, history.length, ...loadHistory());
+  },
+});
+
 function save() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(run));
+    notifyChanged("rogue");
   } catch {
     return;
   }
@@ -113,20 +170,21 @@ const nodeById = (id) => run.map.flat().find((node) => node.id === id) || null;
 
 const kindOf = (node) => (node.type === "mystery" ? node.secret : node.type);
 
-const hpScale = (node) => Math.min(1, 0.5 + 0.05 * node.row);
+const hpScale = (node) =>
+  Math.min(1, 0.5 + 0.05 * node.row) + (run.level - 1) * 0.25 - 0.1;
 
 const foeScale = (node) => {
   const kind = kindOf(node);
-  if (kind === "boss") return 1.5;
-  if (kind === "elite") return hpScale(node) * 2;
-  return hpScale(node) * 1.05;
+  if (kind === "boss") return 1.15 + (run.level - 1) * 0.25;
+  if (kind === "elite") return hpScale(node) * 1.5;
+  return hpScale(node);
 };
 
 const botLevelFor = (node) => {
   const kind = kindOf(node);
   if (kind === "boss") return "hard";
   const order = ["easy", "normal", "hard"];
-  const base = node.row <= 2 ? 0 : node.row <= 6 ? 1 : 2;
+  const base = (node.row <= 2 ? 0 : node.row <= 6 ? 1 : 2) + run.level - 1;
   return order[Math.min(2, base + (kind === "elite" ? 1 : 0))];
 };
 
@@ -178,14 +236,18 @@ function makePacks() {
 }
 
 function makeEnemy(node) {
-  const heroes = packDraftHeroes.filter((hero) => hero.id !== run.heroId);
-  const hero = heroes[Math.floor(Math.random() * heroes.length)];
   const kind = kindOf(node);
-  const pool = allCards
+  const heroes = packDraftHeroes.filter((item) => item.id !== run.heroId);
+  const bossId = levels[run.bossIdx || 0].boss;
+  const hero =
+    kind === "boss"
+      ? getHero(bossId)
+      : heroes[Math.floor(Math.random() * heroes.length)];
+  const pool = [...allCards, ...bossCards]
     .filter((card) => card.heroId === hero.id)
     .map((card) => card.id);
   const wanted = Math.max(
-    BASE_DECK + 4 + node.row + (kind === "elite" ? 2 : 0),
+    BASE_DECK + 4 + node.row + (run.level - 1) * 2 + (kind === "elite" ? 2 : 0),
     run.deck.length + 2,
   );
   const size = Math.min(pool.length, kind === "boss" ? pool.length : wanted);
@@ -244,6 +306,7 @@ export function useRogue() {
       history.splice(30);
       try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        notifyChanged("rogueHistory");
       } catch {
         return;
       }
@@ -272,12 +335,21 @@ export function useRogue() {
     if (run.phase !== "deck" || cardIds.length !== BASE_DECK) return;
     run.deck = [...cardIds];
     run.gold = START_GOLD;
-    run.maxHp = getHero(run.heroId).hp;
+    run.maxHp = maxHpOf(run.heroId);
     run.hp = run.maxHp;
     run.map = generateMap(mulberry32(Math.floor(Math.random() * 2 ** 31)));
     run.pos = null;
     run.visited = [];
     run.wins = 0;
+    run.level = 1;
+    run.bossIdx = Math.floor(Math.random() * levels.length);
+    run.seenEvents = [];
+    run.phase = "map";
+    save();
+  }
+
+  function startLevel() {
+    if (run.phase !== "level") return;
     run.phase = "map";
     save();
   }
@@ -343,18 +415,46 @@ export function useRogue() {
       },
     );
     run.phase = "battle";
+    run.battleSave = null;
+    snapshotBattle();
     save();
     return true;
+  }
+
+  function snapshotBattle() {
+    if (run.phase !== "battle") return;
+    const saved = engine.exportBattle();
+    if (!saved) return;
+    run.battleSave = saved;
+    save();
+  }
+
+  function resumeBattle() {
+    if (run.phase !== "battle") return;
+    if (run.battleSave && engine.importBattle(run.battleSave)) return;
+    run.phase = run.enemy ? "encounter" : "map";
+    save();
   }
 
   function syncBattle() {
     if (run.phase !== "battle") return;
     if (game.phase === "over" && game.winner) {
+      run.battleSave = null;
       if (game.winner === "p1") {
-        run.hp = Math.max(1, game.players.p1.hp);
+        const mine = game.players.p1;
+        const members = getHero(run.heroId)?.team
+          ? [mine, ...mine.sidekicks.filter((kid) => !kid.down)]
+          : [mine];
+        run.hp = Math.max(
+          1,
+          Math.min(
+            run.maxHp,
+            members.reduce((sum, item) => sum + Math.max(0, item.hp), 0),
+          ),
+        );
         const kind = run.enemy?.kind || "fight";
         run.wins += 1;
-        run.gold += kind === "boss" ? 80 : kind === "elite" ? 45 : 20;
+        run.gold += kind === "boss" ? 80 : kind === "elite" ? 50 : 10;
         if (kind === "boss") {
           endRun(true);
         } else if (kind === "fight") {
@@ -364,6 +464,11 @@ export function useRogue() {
           makePacks();
           run.phase = "packs";
         }
+      } else if (game.overActive) {
+        run.hp = 1;
+        run.enemy = null;
+        run.phase = "map";
+        if (!(kindOf(nodeById(run.node) || {}) === "boss")) finishNode();
       } else {
         endRun(false);
       }
@@ -371,7 +476,7 @@ export function useRogue() {
       return;
     }
     if (game.phase === "setup" || !game.players.p1) {
-      run.phase = "encounter";
+      endRun(false);
       save();
     }
   }
@@ -396,7 +501,7 @@ export function useRogue() {
     if (run.phase === "packs") finishNode();
   }
 
-  const healAmount = () => Math.ceil((run.maxHp || 0) * 0.35);
+  const healAmount = () => Math.ceil((run.maxHp || 0) * 0.25);
 
   function canRestHeal() {
     return run.phase === "rest" && run.hp < run.maxHp;
@@ -470,23 +575,29 @@ export function useRogue() {
 
   const eventData = () => {
     if (!run.event) return null;
-    const list = run.event.hero ? heroEvents : events;
-    return list.find((item) => item.id === run.event.id) || null;
+    return (
+      [...events, ...heroEvents].find((item) => item.id === run.event.id) ||
+      null
+    );
   };
 
   function startEvent() {
-    const heroChance = Math.random() < 0.4;
-    const list = heroChance ? heroEvents : events;
+    const all = [
+      ...events,
+      ...heroEvents.filter((item) => item.hero !== run.heroId),
+    ];
+    const seen = run.seenEvents || [];
+    const fresh = all.filter((item) => !seen.includes(item.id));
+    const list = fresh.length ? fresh : all;
     const total = list.reduce((sum, item) => sum + (item.weight || 1), 0);
     let roll = Math.random() * total;
     const pick = list.find((item) => (roll -= item.weight || 1) < 0) || list[0];
-    const others = packDraftHeroes.filter((hero) => hero.id !== run.heroId);
+    run.seenEvents = [...seen, pick.id];
     run.event = {
       id: pick.id,
-      hero: heroChance
-        ? others[Math.floor(Math.random() * others.length)].id
-        : null,
+      hero: pick.hero || null,
       step: "choose",
+      hp: 0,
       result: null,
       options: [],
       cards: [],
@@ -511,6 +622,11 @@ export function useRogue() {
     const before = run.gold;
     run.gold = Math.max(0, run.gold + (outcome.gold || 0));
     run.event.gold += run.gold - before;
+    if (outcome.health) {
+      const hpBefore = run.hp;
+      run.hp = Math.max(1, Math.min(run.maxHp, run.hp + outcome.health));
+      run.event.hp = (run.event.hp || 0) + run.hp - hpBefore;
+    }
     if (outcome.card) {
       const card = eventCardFor(outcome.card);
       if (card) {
@@ -626,6 +742,9 @@ export function useRogue() {
     enterNode,
     startBattle,
     syncBattle,
+    resumeBattle,
+    snapshotBattle,
+    startLevel,
     pickReward,
     pickPack,
     leavePacks,

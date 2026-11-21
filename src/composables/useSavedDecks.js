@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { getCard, getHero } from "../gameDecks.js";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 
 const STORAGE_KEY = "unmatched_saved_decks_v1";
 
@@ -20,9 +21,29 @@ function load() {
 
 const savedDecks = ref(load());
 
+registerSyncable({
+  name: "decks",
+  docKey: "decks",
+  storageKey: STORAGE_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => JSON.stringify(Array.isArray(value) ? value : []),
+  apply: () => {
+    savedDecks.value = load();
+  },
+  merge: (local, remote) => {
+    const byId = new Map();
+    for (const item of Array.isArray(local) ? local : [])
+      byId.set(item.id, item);
+    for (const item of Array.isArray(remote) ? remote : [])
+      byId.set(item.id, item);
+    return [...byId.values()];
+  },
+});
+
 function persist() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedDecks.value));
+    notifyChanged("decks");
   } catch {
     return;
   }
