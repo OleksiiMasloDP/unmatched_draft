@@ -364,13 +364,16 @@ export function useBot(options = {}) {
         );
         exposure += cost * weight * (retaliate ? 1 : 1.4);
       }
-      if (canHit(fighter, space, foe.space)) strike += weight;
+      const prize = foe.isHero
+        ? weight * (1 + Math.max(0, 1 - foe.hp / Math.max(foe.max || 14, 1)))
+        : weight;
+      if (canHit(fighter, space, foe.space)) strike += prize;
       else if (
         attackPositions(fighter.attack, foe.space).some((id) =>
           reachMine.has(id),
         )
       ) {
-        reachStrike = Math.max(reachStrike, weight);
+        reachStrike = Math.max(reachStrike, prize);
       }
     }
     let blocked = 0;
@@ -453,10 +456,13 @@ export function useBot(options = {}) {
     let bonus = 0;
     bonus += 0.4 * numberIn(/draw (\d+) card/, text);
     bonus +=
-      0.35 * Math.min(numberIn(/recover (\d+) health/, text), missingHp(bot));
+      0.35 *
+      Math.min(numberIn(/recover[s]? (\d+) health/, text), missingHp(bot));
     bonus += 0.6 * numberIn(/deal (\d+) damage/, text);
     if (/gain 1 action|free action/.test(text)) bonus += 1;
     if (/cancel/.test(text)) bonus += 0.6;
+    const limit = numberIn(/(\d+) or less health/, text);
+    if (limit && myHp(bot) > limit) bonus -= 2;
     return bonus;
   };
 
@@ -497,6 +503,13 @@ export function useBot(options = {}) {
     const hand = handOf(bot).length - 1;
     let value = 0;
     let known = false;
+    if (/opponent with a fighter in .* zone/.test(text)) {
+      const mine = fightersOf(bot).find((item) => item.isHero);
+      const inZone = fightersOf(other(bot)).some(
+        (foe) => mine && sharesZone(foe.space, mine.space),
+      );
+      if (!inZone) return -9;
+    }
     const drawN = numberIn(/draw (\d+) cards?/, text);
     const until = numberIn(/draw until you have (\d+) cards/, text);
     if (until) {
