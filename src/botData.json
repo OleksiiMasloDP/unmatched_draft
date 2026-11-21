@@ -25,9 +25,7 @@
       "cancelCare": 9,
       "who": 10,
       "boostWill": 4,
-      "uses": [
-        "boostAttack"
-      ]
+      "uses": ["boostAttack"]
     },
     "harry-houdini:set-the-stage": {
       "importance": 10,
@@ -39,16 +37,12 @@
       "importance": 10,
       "boostWill": 10,
       "who": 10,
-      "uses": [
-        "boostManeuver"
-      ]
+      "uses": ["boostManeuver"]
     },
     "harry-houdini:and-the-beautiful-bess": {
       "importance": 2,
       "boostWill": 10,
-      "uses": [
-        "boostManeuver"
-      ]
+      "uses": ["boostManeuver"]
     },
     "harry-houdini:for-my-next-trick": {
       "importance": 4,
@@ -60,9 +54,7 @@
       "importance": 10,
       "boostWill": 10,
       "timing": 0,
-      "uses": [
-        "boostAttack"
-      ]
+      "uses": ["boostAttack"]
     },
     "doctor-strange:no-really-i-m-a-doctor": {
       "importance": 10
@@ -368,61 +360,101 @@
       "importance": 8,
       "cancelCare": 0,
       "boostWill": 2,
-      "timing": 6
+      "timing": 6,
+      "who": 10,
+      "uses": ["defense", "scheme", "boostDefense", "boostManeuver"]
     },
     "chupacabra:ambush": {
-      "importance": 8,
-      "cancelCare": 8,
-      "boostWill": 1,
-      "timing": 7
+      "importance": 10,
+      "cancelCare": 9,
+      "boostWill": 0,
+      "timing": 10,
+      "who": 10,
+      "uses": ["defense", "scheme", "boostDefense", "boostManeuver"]
     },
     "chupacabra:the-more-they-struggle": {
-      "importance": 7,
-      "cancelCare": 8,
+      "importance": 8,
+      "cancelCare": 6,
       "boostWill": 1,
-      "timing": 6
+      "timing": 8,
+      "who": 10
     },
     "chupacabra:wounded-beast": {
-      "importance": 7,
+      "importance": 10,
       "lean": 8,
-      "boostWill": 1
+      "boostWill": 1,
+      "timing": 4,
+      "who": 10
     },
     "chupacabra:feeding": {
-      "importance": 7,
+      "importance": 9,
       "boostWill": 1,
-      "lean": 5
+      "lean": 5,
+      "timing": 0,
+      "cancelCare": 3,
+      "who": 10,
+      "uses": [
+        "defense",
+        "scheme",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
     },
     "chupacabra:ravenous-lunge": {
       "importance": 6,
-      "boostWill": 4
+      "boostWill": 4,
+      "cancelCare": 2,
+      "uses": ["scheme", "boostAttack", "boostDefense", "boostManeuver"]
     },
     "chupacabra:feint": {
-      "importance": 7,
       "lean": 2,
       "cancelCare": 0,
-      "boostWill": 4
+      "boostWill": 4,
+      "importance": 5,
+      "who": 10,
+      "uses": [
+        "attack",
+        "scheme",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
     },
     "chupacabra:tooth-and-tail": {
       "importance": 6,
-      "boostWill": 5
+      "boostWill": 5,
+      "who": 10,
+      "uses": ["scheme", "boostAttack", "boostDefense", "boostManeuver"]
     },
     "chupacabra:natural-toughness": {
       "importance": 7,
       "boostWill": 3,
-      "uses": [
-        "defense",
-        "boostDefense"
-      ]
+      "uses": ["defense", "boostDefense"]
     },
     "chupacabra:traveler-of-the-night": {
       "importance": 7,
-      "timing": 4,
-      "boostWill": 2
+      "boostWill": 2,
+      "who": 10,
+      "uses": [
+        "attack",
+        "defense",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
     },
     "chupacabra:unsettle": {
       "importance": 7,
       "timing": 9,
-      "boostWill": 4
+      "boostWill": 4,
+      "uses": [
+        "attack",
+        "defense",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
     }
   },
   "sidekicks": {
