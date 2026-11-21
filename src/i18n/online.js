@@ -34,6 +34,9 @@ export const onlineText = {
     onlineNotReady: "Not chosen yet",
     modeBotTitle: "Vs bot",
     modeBotDesc: "Play alone against a computer opponent.",
+    modeOracleTitle: "Vs bot (sees attacks)",
+    modeOracleDesc:
+      "The bot sees your attack card and answers with a cancel or a defense 3.",
   },
   ua: {
     modeLocalTitle: "Один екран",
@@ -72,5 +75,8 @@ export const onlineText = {
     onlineNotReady: "Ще не обрано",
     modeBotTitle: "Проти бота",
     modeBotDesc: "Грайте наодинці проти комп'ютерного суперника.",
+    modeOracleTitle: "Проти бота (бачить атаку)",
+    modeOracleDesc:
+      "Бот бачить вашу карту атаки й відповідає скасуванням або захистом 3.",
   },
 };
