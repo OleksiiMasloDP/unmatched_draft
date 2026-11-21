@@ -79,6 +79,11 @@ export const botProfiles = {
     keep: ["excalibur", "the-holy-grail"],
     boostHand: 3,
   },
+  medusa: {
+    style: BOT_STYLES.NEUTRAL,
+    keep: ["gaze-of-stone", "hiss-and-slither"],
+    boostHand: 3,
+  },
   "winter-soldier": { style: BOT_STYLES.PASS },
   "doctor-strange": { style: BOT_STYLES.PASS },
   "dr-jill-trent": { style: BOT_STYLES.PASS },

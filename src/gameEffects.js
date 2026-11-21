@@ -2754,4 +2754,82 @@ export const cardEffects = {
       if (defeated) c.g.draw(c.me, 1);
     },
   },
+
+  "gaze-of-stone": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const fighter = c.combat.fighters[c.foe];
+      if (!c.g.fightersOf(c.foe).includes(fighter)) return;
+      c.g.damage(c.foe, 8, fighter);
+    },
+  },
+
+  "the-hounds-of-mighty-zeus": {
+    *after(c) {
+      const saved = c.g.fighterOf(c.me);
+      for (const fighter of c.g.fightersOf(c.me)) {
+        if (fighter === "hero") continue;
+        c.g.setFighter(c.me, fighter);
+        yield* c.g.walk(c.me, c.me, 3, "promptMoveSidekick", { fighter });
+      }
+      c.g.setFighter(c.me, saved);
+    },
+  },
+
+  snipe: {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "clutching-claws": {
+    *after(c) {
+      if (!c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.foe,
+        "promptDiscardOne",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "hiss-and-slither": {
+    *after(c) {
+      if (!c.g.handSize(c.foe)) return;
+      const ids = yield c.g.askCards(
+        c.foe,
+        "promptDiscardOne",
+        c.g.handOf(c.foe),
+        { min: 1, max: 1 },
+      );
+      c.g.discardFromHand(c.foe, ids[0]);
+    },
+  },
+
+  "a-momentary-glance": {
+    *scheme(c) {
+      const targets = c.g.fightersInHeroZone(c.me);
+      if (!targets.length) return;
+      const space = yield c.g.askSpace(
+        c.me,
+        "promptGlanceTarget",
+        targets.map((item) => item.space),
+      );
+      const target = targets.find((item) => item.space === space) || targets[0];
+      c.g.damage(target.owner, 2, target.fighter);
+    },
+  },
+
+  "winged-frenzy": {
+    *scheme(c) {
+      yield* c.g.moveAll(c.me, 3, true);
+      if (!c.g.hasDefeatedKid(c.me)) return;
+      const options = c.g.reviveSpaces(c.me);
+      if (!options.length) return;
+      const space = yield c.g.askSpace(c.me, "promptReviveKid", options);
+      c.g.reviveKid(c.me, space || options[0]);
+    },
+  },
 };

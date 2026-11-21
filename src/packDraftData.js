@@ -20,6 +20,7 @@ import {
   sheHulkCards,
   annieChristmasCards,
   kingArthurCards,
+  medusaCards,
 } from "./packDraftCards.js";
 
 import { customHeroes } from "./customHeroes.js";
@@ -456,6 +457,29 @@ export const packDraftHeroes = [
     cards: kingArthurCards,
   },
   {
+    id: "medusa",
+    name: "Medusa",
+    hp: 16,
+    move: 3,
+    attack: "range",
+    image: "images/medusa.webp",
+    passive: {
+      name: "Petrifying Gaze",
+      text: {
+        en: "At the start of your turn, you may deal 1 damage to an opposing fighter in Medusa's zone.",
+        ua: "На початку вашого ходу ви можете завдати 1 шкоди ворожому бійцю в зоні Medusa.",
+      },
+    },
+    sidekick: {
+      name: "Harpies",
+      hp: 1,
+      attack: "melee",
+      image: "images/harpy.webp",
+      count: 3,
+    },
+    cards: medusaCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -701,9 +725,24 @@ const CARD_IMAGES = {
       a_few_more_pearls: "scheme",
     },
   },
+  medusa: {
+    dir: "Medusa",
+    files: {
+      second_shot: "attack",
+      gaze_of_stone: "attack",
+      the_hounds_of_mighty_zeus: "versatile",
+      snipe: "versatile",
+      clutching_claws: "versatile",
+      dash: "versatile",
+      feint: "versatile",
+      regroup: "versatile",
+      hiss_and_slither: "defense",
+      a_momentary_glance: "scheme",
+      winged_frenzy: "scheme",
+    },
+  },
   "king-arthur": {
     dir: "King Arthur",
-    cover: false,
     files: {
       excalibur: "attack",
       the_aid_of_morgana: "attack",

@@ -538,6 +538,60 @@
       "importance": 7,
       "timing": 6,
       "boostWill": 2
+    },
+    "medusa:second-shot": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "boostAttack"]
+    },
+    "medusa:gaze-of-stone": {
+      "importance": 9,
+      "lean": 7,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "medusa:the-hounds-of-mighty-zeus": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2
+    },
+    "medusa:snipe": {
+      "importance": 6,
+      "boostWill": 4
+    },
+    "medusa:clutching-claws": {
+      "importance": 6,
+      "boostWill": 3
+    },
+    "medusa:dash": {
+      "importance": 6,
+      "boostWill": 4,
+      "timing": 1
+    },
+    "medusa:feint": {
+      "importance": 7,
+      "cancelCare": 2,
+      "boostWill": 3
+    },
+    "medusa:regroup": {
+      "importance": 5,
+      "boostWill": 5
+    },
+    "medusa:hiss-and-slither": {
+      "importance": 8,
+      "boostWill": 1,
+      "uses": ["defense", "boostDefense"]
+    },
+    "medusa:a-momentary-glance": {
+      "importance": 7,
+      "timing": 5,
+      "boostWill": 1
+    },
+    "medusa:winged-frenzy": {
+      "importance": 6,
+      "timing": 6,
+      "boostWill": 3
     }
   },
   "sidekicks": {
@@ -614,6 +668,13 @@
       "heroFocus": 8,
       "aggro": 1.5,
       "kidFear": 0.3,
+      "boostHand": 3,
+      "refill": 4
+    },
+    "medusa": {
+      "heroFocus": 8,
+      "aggro": 1.2,
+      "kidFear": 0.2,
       "boostHand": 3,
       "refill": 4
     }

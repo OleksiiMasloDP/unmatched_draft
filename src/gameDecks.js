@@ -199,6 +199,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-22",
+      name: "Medusa Deck",
+      heroId: "medusa",
+      cardIds: allCards
+        .filter((card) => card.heroId === "medusa")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

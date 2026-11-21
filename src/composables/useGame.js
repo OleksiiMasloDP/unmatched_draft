@@ -1499,6 +1499,11 @@ const api = {
     log("logAddToHand", { player, card: getCard(id).name, cardId: id });
   },
   foeFighterIds: (player) => fightersOf(other(player)),
+  fightersInHeroZone: (player) =>
+    fightersInHeroZone(player).map((item) => ({
+      ...item,
+      space: fighterSpace(item.owner, item.fighter),
+    })),
   zoneSpaceIds: (player, fighter) => {
     const zones = active.spaceById.get(fighterSpace(player, fighter)).zones;
     return active.map.spaces
@@ -1893,6 +1898,28 @@ function* startTurn() {
         noteReveal(me, id, "discard");
         log("logThrow", { player: me, n: power });
         damage(target.owner, power, target.fighter);
+      }
+    }
+  }
+  if (hero(me).id === "medusa" && pl(me).hp > 0) {
+    const targets = fightersInHeroZone(me).filter((item) => item.owner !== me);
+    if (targets.length) {
+      const ok = yield askConfirm(me, "promptGaze");
+      if (ok) {
+        let target = targets[0];
+        if (targets.length > 1) {
+          const space = yield askSpace(
+            me,
+            "promptGazeTarget",
+            targets.map((item) => fighterSpace(item.owner, item.fighter)),
+          );
+          target =
+            targets.find(
+              (item) => fighterSpace(item.owner, item.fighter) === space,
+            ) || target;
+        }
+        log("logGaze", { player: me });
+        damage(target.owner, 1, target.fighter);
       }
     }
   }
