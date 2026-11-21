@@ -1409,7 +1409,24 @@ function chooseBot() {
   localChosen.value = true;
 }
 
-useBot();
+const botControl = useBot();
+let waitTimer = null;
+let waitLevel = 0;
+const stopWait = () => {
+  clearTimeout(waitTimer);
+  waitTimer = null;
+  waitLevel = 0;
+};
+const armWait = () => {
+  clearTimeout(waitTimer);
+  waitTimer = setTimeout(() => {
+    if (!game.bot || game.phase !== "play") return stopWait();
+    waitLevel += 1;
+    botControl.unstick(game.bot, waitLevel);
+    armWait();
+  }, 12000);
+};
+onBeforeUnmount(stopWait);
 
 let botTimer = null;
 watch(
@@ -1671,6 +1688,20 @@ const waitingOpponent = computed(() => {
   const owner = game.prompt ? game.prompt.player : game.turn;
   return owner !== null && owner !== meSeat.value;
 });
+
+watch(
+  () => [
+    waitingOpponent.value && Boolean(game.bot),
+    game.turnNo,
+    game.actions,
+    game.log.length,
+  ],
+  ([waiting]) => {
+    waitLevel = 0;
+    if (waiting) armWait();
+    else stopWait();
+  },
+);
 
 const startPickTurn = computed(() =>
   game.phase === "startpick" && game.startPick

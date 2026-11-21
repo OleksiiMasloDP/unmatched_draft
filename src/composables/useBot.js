@@ -1568,6 +1568,36 @@ export function useBot(options = {}) {
     pending.found = { ...pending.found, action, overrides: new Map() };
   };
 
+  const unstick = (bot, level) => {
+    let actions = "";
+    try {
+      actions = JSON.stringify(engine.availableActions(true));
+    } catch (error) {
+      actions = `error: ${error?.message}`;
+    }
+    botDiag.stall = [
+      `level ${level} turn ${game.turn} no ${game.turnNo} actions ${game.actions}`,
+      `prompt ${game.prompt ? JSON.stringify(game.prompt).slice(0, 600) : "none"}`,
+      `free ${JSON.stringify(game.freeAttacks)}`,
+      `hand ${JSON.stringify(game.players[bot]?.hand)}`,
+      `available ${actions.slice(0, 800)}`,
+      `trace ${botDiag.trace.slice(-20).join(" | ")}`,
+    ].join("\n");
+    try {
+      if (game.prompt) {
+        if (game.prompt.player === bot) {
+          engine.answerPrompt(fallback(game.prompt, level));
+        }
+        return;
+      }
+      const available = engine.availableActions(true);
+      if (level === 1 && available.maneuver) engine.doManeuver();
+      else engine.forceEndTurn();
+    } catch (error) {
+      botDiag.error = `${error?.message}`;
+    }
+  };
+
   onMounted(() => {
     if (options.manual) return;
     let lastSig = "";
@@ -1597,33 +1627,7 @@ export function useBot(options = {}) {
       if (same < 14) return;
       same = 0;
       level += 1;
-      let actions = "";
-      try {
-        actions = JSON.stringify(engine.availableActions(true));
-      } catch (error) {
-        actions = `error: ${error?.message}`;
-      }
-      botDiag.stall = [
-        `level ${level} turn ${game.turn} no ${game.turnNo} actions ${game.actions}`,
-        `prompt ${game.prompt ? JSON.stringify(game.prompt).slice(0, 600) : "none"}`,
-        `free ${JSON.stringify(game.freeAttacks)}`,
-        `hand ${JSON.stringify(game.players[bot]?.hand)}`,
-        `available ${actions.slice(0, 800)}`,
-        `trace ${botDiag.trace.slice(-20).join(" | ")}`,
-      ].join("\n");
-      try {
-        if (game.prompt) {
-          if (game.prompt.player === bot) {
-            engine.answerPrompt(fallback(game.prompt, level));
-          }
-          return;
-        }
-        const available = engine.availableActions(true);
-        if (level === 1 && available.maneuver) engine.doManeuver();
-        else engine.forceEndTurn();
-      } catch (error) {
-        botDiag.error = `${error?.message}`;
-      }
+      unstick(bot, level);
     };
     timer = setInterval(() => {
       try {
@@ -1638,5 +1642,5 @@ export function useBot(options = {}) {
 
   onBeforeUnmount(() => clearInterval(timer));
 
-  return { step, propose, choose, preview, forget };
+  return { step, propose, choose, preview, forget, unstick };
 }
