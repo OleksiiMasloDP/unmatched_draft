@@ -2418,8 +2418,27 @@ function* attack(me) {
     setSpace(me, "hero", spot);
   }
 
+  let faceDownId = null;
+  if (
+    hero(me).id === "king-arthur" &&
+    mine === "hero" &&
+    boostPool(me).length
+  ) {
+    const ids = yield askCards(me, "promptArthurBoost", boostPool(me), {
+      min: 0,
+      max: 1,
+      skip: "gameSkipBoost",
+    });
+    if (ids.length) {
+      faceDownId = ids[0];
+      pl(me).hand.splice(pl(me).hand.indexOf(faceDownId), 1);
+      log("logArthurBoostDown", { player: me });
+    }
+  }
+
   const faceUp = Boolean(cardEffects[attackCard.key]?.faceUp);
   game.combat = {
+    faceDown: { p1: null, p2: null, [me]: faceDownId },
     attacker: me,
     defender: foe,
     stage: "defense",
@@ -2464,6 +2483,7 @@ function* attack(me) {
       n: TOKENS[attackToken].value,
     };
   }
+  if (faceDownId) defensePrompt.hint = { key: "promptArthurFaceDown" };
   if (hero(foe).id === "spider-man") {
     defensePrompt.hint = { key: "promptSpideySense", n: attackCard.value };
   }
@@ -2499,20 +2519,6 @@ function* attack(me) {
     boostLists: { p1: [], p2: [] },
   };
 
-  let arthurBoost = null;
-  if (
-    hero(me).id === "king-arthur" &&
-    mine === "hero" &&
-    boostPool(me).length
-  ) {
-    const ids = yield askCards(me, "promptArthurBoost", boostPool(me), {
-      min: 0,
-      max: 1,
-      skip: "gameSkipBoost",
-    });
-    if (ids.length) arthurBoost = spendBoostCard(me, ids[0]);
-  }
-
   const players = [foe, me];
   for (const player of players) {
     const card = combat.cards[player];
@@ -2534,21 +2540,26 @@ function* attack(me) {
   const boostCardIds = combat.boostCardIds;
   const boostLists = combat.boostLists;
   const baseValues = { p1: 0, p2: 0 };
-  if (arthurBoost) {
+  if (faceDownId) {
+    const down = getCard(faceDownId);
+    pl(me).discard.push(faceDownId);
+    fx("discard", me, { cardId: faceDownId });
     if (combat.canceled[me]) {
-      log("logArthurBoostLost", {
-        player: me,
-        card: arthurBoost.name,
-        cardId: arthurBoost.id,
-      });
+      log("logArthurBoostLost", { player: me });
     } else {
-      boosts[me] += arthurBoost.boost;
+      boosts[me] += down.boost;
       game.combat.boostTotal[me] = boosts[me];
-      boostCardIds[me] = arthurBoost.id;
-      boostLists[me].push(arthurBoost.id);
+      boostCardIds[me] = faceDownId;
+      boostLists[me].push(faceDownId);
       game.combat.boost[me] = true;
       afterBoost(me);
-      yield* boostedWith(me, arthurBoost, combat);
+      log("logArthurBoostUsed", {
+        player: me,
+        card: down.name,
+        cardId: faceDownId,
+        n: down.boost,
+      });
+      yield* boostedWith(me, down, combat);
     }
   }
   for (const player of players) {

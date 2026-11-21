@@ -95,6 +95,7 @@ export const gameLogText = {
     logMoveSk: "{who} moves",
     logSidekickDown: "{who} is defeated",
     logBlindBoost: "{player} blind boosts with {card} (+{n})",
+    logArthurBoostUsed: "{player} reveals the face-down BOOST: {card} (+{n})",
     logDarkPact:
       "{player} uses Dark Pact: {card} goes to the bottom of the deck",
     logMistsDiscard: "Discarded: {card}",
@@ -286,6 +287,8 @@ export const gameLogText = {
     logMoveSk: "{who} переміщується",
     logSidekickDown: "{who} переможено",
     logBlindBoost: "{player} робить сліпий буст картою {card} (+{n})",
+    logArthurBoostUsed:
+      "{player} відкриває БУСТ сорочкою догори: {card} (+{n})",
     logDarkPact:
       "{player} використовує Темний договір: {card} іде на низ колоди",
     logMistsDiscard: "Скинуто: {card}",

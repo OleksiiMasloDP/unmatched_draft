@@ -987,7 +987,20 @@ export function useBot(options = {}) {
       const enough = sorted.filter((card) => (card.value ?? 0) >= expected);
       return [(enough.length ? cheapest(enough) : sorted[0]).id];
     }
-    if (title === "promptBoost" || title === "promptArthurBoost") {
+    if (title === "promptArthurBoost") {
+      const spare = options
+        .filter(
+          (card) =>
+            card.boost &&
+            rate(card).boostWill > 1 &&
+            !profile.keep?.includes(card.key) &&
+            rate(card).importance < 8,
+        )
+        .sort((a, b) => b.boost - a.boost);
+      if (handOf(bot).length < 4 || !spare.length) return [];
+      return [spare[0].id];
+    }
+    if (title === "promptBoost") {
       const hand = handOf(bot).length;
       const combat = game.combat;
       const played = combat?.cardIds?.[bot] && getCard(combat.cardIds[bot]);
