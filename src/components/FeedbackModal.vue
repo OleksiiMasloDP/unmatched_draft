@@ -320,6 +320,9 @@ function buildText() {
     );
     if (botDiag.stall) lines.push("", "Bot stall:", botDiag.stall);
     if (botDiag.error) lines.push("", "Bot error:", botDiag.error);
+    if (botDiag.trace.length) {
+      lines.push("", "Bot trace:", botDiag.trace.slice(-25).join("\n"));
+    }
   }
   return lines.join("\n");
 }

@@ -55,10 +55,14 @@ const LEVEL_WEIGHTS = {
   hard: { budget: 1600, samples: 5 },
 };
 
-export const botDiag = { error: "", stall: "" };
+export const botDiag = { error: "", stall: "", trace: [] };
 
 export function useBot(options = {}) {
   const engine = useGame();
+  const trace = (text) => {
+    botDiag.trace.push(`${engine.game.turnNo}:${engine.game.actions} ${text}`);
+    if (botDiag.trace.length > 40) botDiag.trace.shift();
+  };
   const { game } = engine;
   let timer = null;
   let dry = false;
@@ -1267,6 +1271,9 @@ export function useBot(options = {}) {
     const hand = handOf(bot);
     if (!hand.some(fitAttack)) available.attack = false;
     const state = plan(bot);
+    if (!inSim && !dry) {
+      trace(`act hand ${hand.length} ${JSON.stringify(available)}`);
+    }
     if (!inSim) reachCache.clear();
     if (state.finisher && available.scheme) return engine.doScheme();
     const kill = lethalMove(bot, available);
@@ -1500,6 +1507,7 @@ export function useBot(options = {}) {
             ? forced.value
             : answer(prompt, bot);
       }
+      trace(`prompt ${prompt.title} ${JSON.stringify(reply)?.slice(0, 80)}`);
       engine.answerPrompt(reply);
       return;
     }
@@ -1564,10 +1572,12 @@ export function useBot(options = {}) {
     if (options.manual) return;
     let lastSig = "";
     let same = 0;
+    let level = 0;
     const watch = () => {
       const bot = game.bot;
       if (!bot || game.phase !== "play") {
         same = 0;
+        level = 0;
         return;
       }
       const mine = game.prompt ? game.prompt.player === bot : game.turn === bot;
@@ -1575,13 +1585,18 @@ export function useBot(options = {}) {
         game.turnNo,
         game.turn,
         game.actions,
-        game.prompt?.title,
         game.log.length,
+        game.players[bot]?.hand?.length,
+        game.players[bot]?.hp,
       ]);
-      same = mine && sig === lastSig ? same + 1 : 0;
+      if (!mine || sig !== lastSig) {
+        same = 0;
+        level = 0;
+      } else same += 1;
       lastSig = sig;
-      if (same < 12) return;
+      if (same < 14) return;
       same = 0;
+      level += 1;
       let actions = "";
       try {
         actions = JSON.stringify(engine.availableActions(true));
@@ -1589,17 +1604,26 @@ export function useBot(options = {}) {
         actions = `error: ${error?.message}`;
       }
       botDiag.stall = [
-        `turn ${game.turn} no ${game.turnNo} actions ${game.actions}`,
+        `level ${level} turn ${game.turn} no ${game.turnNo} actions ${game.actions}`,
         `prompt ${game.prompt ? JSON.stringify(game.prompt).slice(0, 600) : "none"}`,
         `free ${JSON.stringify(game.freeAttacks)}`,
-        `hand ${JSON.stringify(game.players[bot]?.hand?.map((c) => c.key || c.id))}`,
+        `hand ${JSON.stringify(game.players[bot]?.hand)}`,
         `available ${actions.slice(0, 800)}`,
-        `log ${game.log
-          .slice(-25)
-          .map((e) => e.key)
-          .join(", ")}`,
+        `trace ${botDiag.trace.slice(-20).join(" | ")}`,
       ].join("\n");
-      if (!game.prompt) engine.forceEndTurn();
+      try {
+        if (game.prompt) {
+          if (game.prompt.player === bot) {
+            engine.answerPrompt(fallback(game.prompt, level));
+          }
+          return;
+        }
+        const available = engine.availableActions(true);
+        if (level === 1 && available.maneuver) engine.doManeuver();
+        else engine.forceEndTurn();
+      } catch (error) {
+        botDiag.error = `${error?.message}`;
+      }
     };
     timer = setInterval(() => {
       try {
