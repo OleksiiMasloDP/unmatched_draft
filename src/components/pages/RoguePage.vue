@@ -136,7 +136,6 @@
           :reachable="reachable()"
           :labels="nodeLabels"
           :hero-image="myHero ? assetUrl(myHero.image) : ''"
-          :theme="level.boss === 'agent-venom' ? 'venom' : 'danny'"
           @enter="enterNode"
         />
       </section>
