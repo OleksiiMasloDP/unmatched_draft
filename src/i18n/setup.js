@@ -16,7 +16,7 @@ export const setupText = {
     modeBotDesc: "Play alone against a computer opponent.",
     modeOracleTitle: "Vs bot (sees attacks)",
     modeOracleDesc:
-      "The bot sees your attack card and answers with a cancel or a defense 3.",
+      "The bot knows your hand: it picks its attack after seeing your defense and defends knowing your attack.",
     gameBotLabel: "Bot",
   },
   ua: {
@@ -36,7 +36,7 @@ export const setupText = {
     modeBotDesc: "Грайте наодинці проти комп'ютерного суперника.",
     modeOracleTitle: "Проти бота (бачить атаку)",
     modeOracleDesc:
-      "Бот бачить вашу карту атаки й відповідає скасуванням або захистом 3.",
+      "Бот знає вашу руку: обирає атаку вже після вашого захисту, а захищається, знаючи вашу атаку.",
     gameBotLabel: "Бот",
   },
 };
