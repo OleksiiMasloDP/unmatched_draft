@@ -498,6 +498,17 @@ export function useBot(options = {}) {
     );
   };
 
+  const approachReach = (bot, steps) => {
+    if (!handOf(bot).some(fitAttack)) return false;
+    const foes = fightersOf(other(bot));
+    const mine = fightersOf(bot).find((item) => item.isHero);
+    if (!mine || !foes.length) return false;
+    if (foes.some((foe) => canHit(mine, mine.space, foe.space))) return false;
+    return [...reachSet(mine.space, steps)].some((spot) =>
+      foes.some((foe) => canHit(mine, spot, foe.space)),
+    );
+  };
+
   const schemeValue = (card, bot) => {
     const text = textOf(card);
     const hand = handOf(bot).length - 1;
@@ -547,6 +558,9 @@ export function useBot(options = {}) {
     if (move) {
       value += bestMoveGain(bot, move);
       known = true;
+      if (/gain 1 (free )?action/.test(text) && approachReach(bot, move)) {
+        value += 3;
+      }
     }
     if (/excalibur/.test(text)) {
       value += handOf(bot).some((item) => /excalibur/i.test(item.name))

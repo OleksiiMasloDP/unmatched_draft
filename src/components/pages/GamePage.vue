@@ -1950,6 +1950,14 @@ const deckGroups = computed(() => {
   const state = game.players[deckView.value];
   const spent = new Map();
   for (const id of state.discard || []) spent.set(id, (spent.get(id) || 0) + 1);
+  for (const seat of ["p1", "p2"]) {
+    if (seat === deckView.value) continue;
+    for (const id of game.players[seat].suit || []) {
+      if ((state.roster || []).includes(id)) {
+        spent.set(id, (spent.get(id) || 0) + 1);
+      }
+    }
+  }
   const groups = new Map();
   for (const id of state.roster || []) {
     const card = getCard(id);
