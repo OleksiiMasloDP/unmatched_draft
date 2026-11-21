@@ -21,6 +21,7 @@ import {
   annieChristmasCards,
   kingArthurCards,
   medusaCards,
+  sinbadCards,
 } from "./packDraftCards.js";
 
 import { customHeroes } from "./customHeroes.js";
@@ -480,6 +481,29 @@ export const packDraftHeroes = [
     cards: medusaCards,
   },
   {
+    id: "sinbad",
+    name: "Sinbad",
+    hp: 15,
+    move: 2,
+    attack: "melee",
+    image: "images/sinbad.webp",
+    passive: {
+      name: "Seasoned Voyager",
+      text: {
+        en: "When you maneuver, you may move fighters +1 space for each VOYAGE card in your discard pile.",
+        ua: "Коли ви робите маневр, ви можете перемістити бійців на +1 клітинку за кожну карту VOYAGE у вашому скиді.",
+      },
+    },
+    sidekick: {
+      name: "The Porter",
+      hp: 6,
+      attack: "melee",
+      image: "images/porter.webp",
+      count: 1,
+    },
+    cards: sinbadCards,
+  },
+  {
     id: "harry-houdini",
     name: "Harry Houdini",
     hp: 14,
@@ -723,6 +747,27 @@ const CARD_IMAGES = {
       mississippi_queen: "defense",
       captains_orders: "scheme",
       a_few_more_pearls: "scheme",
+    },
+  },
+  sinbad: {
+    dir: "Sinbad",
+    files: {
+      commanding_impact: "attack",
+      by_fortune_and_fate: "attack",
+      voyage_to_the_cannibals_with_the_root_of_madness: "attack",
+      voyage_to_the_creature_with_eyes_like_coals_of_fire: "attack",
+      voyage_to_the_city_of_the_king_of_serendib: "attack",
+      voyage_to_the_valley_of_the_giant_snakes: "attack",
+      voyage_home: "attack",
+      voyage_to_the_city_of_the_man_eating_apes: "attack",
+      voyage_to_the_island_that_was_a_whale: "attack",
+      exploit: "versatile",
+      leap_away: "versatile",
+      momentous_shift: "versatile",
+      toil_and_danger: "versatile",
+      feint: "versatile",
+      regroup: "versatile",
+      riches_beyond_compare: "scheme",
     },
   },
   medusa: {

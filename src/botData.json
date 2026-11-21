@@ -592,6 +592,102 @@
       "importance": 6,
       "timing": 6,
       "boostWill": 3
+    },
+    "sinbad:commanding-impact": {
+      "importance": 8,
+      "lean": 7,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:by-fortune-and-fate": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-cannibals-with-the-root-of-madness": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-creature-with-eyes-like-coals-of-fire": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-city-of-the-king-of-serendib": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-valley-of-the-giant-snakes": {
+      "importance": 4,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-city-of-the-man-eating-apes": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-island-that-was-a-whale": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-home": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 1,
+      "uses": ["attack"]
+    },
+    "sinbad:exploit": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:leap-away": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:toil-and-danger": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:momentous-shift": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:feint": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:regroup": {
+      "importance": 3,
+      "lean": 5,
+      "boostWill": 3,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:riches-beyond-compare": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 1,
+      "uses": ["scheme"]
     }
   },
   "sidekicks": {
@@ -674,6 +770,13 @@
     "medusa": {
       "heroFocus": 8,
       "aggro": 1.2,
+      "kidFear": 0.2,
+      "boostHand": 3,
+      "refill": 4
+    },
+    "sinbad": {
+      "heroFocus": 8,
+      "aggro": 1,
       "kidFear": 0.2,
       "boostHand": 3,
       "refill": 4

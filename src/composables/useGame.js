@@ -2055,7 +2055,11 @@ function* maneuver(me) {
   if (game.phase !== "play") return true;
 
   let boosted = false;
-  let boostSteps = 0;
+  let boostSteps =
+    hero(me).id === "sinbad"
+      ? pl(me).discard.filter((id) => getCard(id).key.startsWith("voyage"))
+          .length
+      : 0;
   let started = false;
   const remaining = [...fightersOf(me)];
   while (game.phase === "play") {

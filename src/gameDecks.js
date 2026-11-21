@@ -208,6 +208,15 @@ function buildTestDecks() {
         .map((card) => card.id),
       isTest: true,
     },
+    {
+      id: "test-deck-23",
+      name: "Sinbad Deck",
+      heroId: "sinbad",
+      cardIds: allCards
+        .filter((card) => card.heroId === "sinbad")
+        .map((card) => card.id),
+      isTest: true,
+    },
   ];
 }
 

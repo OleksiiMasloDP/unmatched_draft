@@ -16,6 +16,7 @@ import { sheHulkText } from "./heroes/sheHulk.js";
 import { annieChristmasText } from "./heroes/annieChristmas.js";
 import { kingArthurText } from "./heroes/kingArthur.js";
 import { medusaText } from "./heroes/medusa.js";
+import { sinbadText } from "./heroes/sinbad.js";
 import { deadmanDannyText } from "./heroes/deadmanDanny.js";
 import { odaNobunagaText } from "./heroes/odaNobunaga.js";
 import { invisibleManText } from "./heroes/invisibleMan.js";
@@ -47,6 +48,7 @@ const parts = [
   annieChristmasText,
   kingArthurText,
   medusaText,
+  sinbadText,
   deadmanDannyText,
   odaNobunagaText,
   houdiniText,

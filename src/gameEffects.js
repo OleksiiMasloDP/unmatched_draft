@@ -21,6 +21,16 @@ function* lookAtFoeHand(c) {
   return false;
 }
 
+const voyageCount = (c) =>
+  c.g.discardOf(c.me).filter((id) => c.g.cardKey(id).startsWith("voyage"))
+    .length;
+
+const voyageValue = (c, value) => value + voyageCount(c);
+
+function* sinbadMove(c, steps) {
+  yield* c.g.walk(c.me, c.me, steps, "promptMoveSpace", { fighter: "hero" });
+}
+
 function cancelOpponentCard(c) {
   const target = c.foe;
   const targetCard = c.combat.cards[target];
@@ -593,6 +603,99 @@ export const cardEffects = {
     },
     *after(c) {
       if (c.g.adjacent(c.me, c.foe)) c.g.damage(c.foe, 1);
+    },
+  },
+
+  "commanding-impact": {
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "by-fortune-and-fate": {
+    *after(c) {
+      c.g.draw(c.me, 2);
+    },
+  },
+
+  "voyage-to-the-cannibals-with-the-root-of-madness": {
+    value: voyageValue,
+    *after(c) {
+      yield* sinbadMove(c, 2);
+    },
+  },
+
+  "voyage-to-the-creature-with-eyes-like-coals-of-fire": {
+    value: voyageValue,
+    *after(c) {
+      c.g.discardRandom(c.foe, 1);
+    },
+  },
+
+  "voyage-to-the-city-of-the-king-of-serendib": {
+    value: voyageValue,
+    *after(c) {
+      c.g.draw(c.me, 1);
+    },
+  },
+
+  "voyage-to-the-valley-of-the-giant-snakes": {
+    value: voyageValue,
+    *after(c) {
+      if (!c.g.handSize(c.foe)) return;
+      if (!(yield* lookAtFoeHand(c))) return;
+      yield c.g.askCards(c.me, "promptLookHand", c.g.handOf(c.foe), {
+        min: 0,
+        max: 0,
+        skip: "gameLookDone",
+      });
+    },
+  },
+
+  "voyage-home": {
+    value: voyageValue,
+    *after(c) {
+      for (const id of c.g.discardOf(c.me)) {
+        if (c.g.cardKey(id).startsWith("voyage")) c.g.takeFromDiscard(c.me, id);
+      }
+    },
+  },
+
+  "voyage-to-the-city-of-the-man-eating-apes": {
+    value: voyageValue,
+    *after(c) {
+      c.g.damage(c.foe, 2, c.combat.fighters[c.foe]);
+    },
+  },
+
+  "voyage-to-the-island-that-was-a-whale": {
+    value: voyageValue,
+    *after(c) {
+      c.g.heal(c.me, 2, "hero");
+    },
+  },
+
+  "leap-away": {
+    *after(c) {
+      if (!c.combat.won[c.me]) return;
+      const who = yield c.g.askChoice(c.me, "promptSkirmishWho", [
+        { value: "me", label: "gameSkirmishMe" },
+        { value: "foe", label: "gameSkirmishFoe" },
+      ]);
+      const target = who === "me" ? c.me : c.foe;
+      yield* c.g.walk(c.me, target, 4, "promptMoveFoe");
+    },
+  },
+
+  "toil-and-danger": {
+    *after(c) {
+      yield* sinbadMove(c, 3);
+    },
+  },
+
+  "riches-beyond-compare": {
+    *scheme(c) {
+      c.g.draw(c.me, 3);
     },
   },
 
