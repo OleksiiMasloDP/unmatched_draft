@@ -14,6 +14,7 @@
     <ScrollToTop />
     <FeedbackModal />
     <SupportModal />
+    <AuthModal />
   </div>
 </template>
 
@@ -26,6 +27,9 @@ import Header from "./components/Header.vue";
 import ScrollToTop from "./components/ScrollToTop.vue";
 import FeedbackModal from "./components/FeedbackModal.vue";
 import SupportModal from "./components/SupportModal.vue";
+import AuthModal from "./components/AuthModal.vue";
+import { initAuth } from "./cloud/useAuth";
+import { registerSyncable } from "./cloud/sync";
 
 const { lang, t, loadChars, loadMaps, loadFromStorage, resetAll } =
   useDraftState();
@@ -42,6 +46,25 @@ watch(
 let bsModalInstance = null;
 const isAppReady = ref(false);
 
+const DRAFT_STORAGE_KEY = "unmatched_draft_state_v4";
+registerSyncable({
+  name: "draft",
+  docKey: "draft",
+  storageKey: DRAFT_STORAGE_KEY,
+  toRemote: (raw) => {
+    if (!raw) return null;
+    const state = JSON.parse(raw);
+    delete state.lang;
+    return state;
+  },
+  fromRemote: (value) =>
+    value == null ? null : JSON.stringify({ ...value, lang: lang.value }),
+  apply: (raw) => {
+    if (raw) loadFromStorage();
+    else resetAll();
+  },
+});
+
 onMounted(async () => {
   try {
     await Promise.all([loadChars(), loadMaps()]);
@@ -53,6 +76,7 @@ onMounted(async () => {
     console.error("Помилка під час завантаження даних додатка:", error);
   } finally {
     isAppReady.value = true;
+    setTimeout(() => initAuth(), 300);
   }
 
   nextTick(() => {

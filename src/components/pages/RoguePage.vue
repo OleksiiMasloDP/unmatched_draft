@@ -1,7 +1,17 @@
 <template>
   <div class="rogue-root">
-    <GamePage v-if="run.phase === 'battle'" />
-    <div v-else class="rogue-page container" ref="root">
+    <GamePage
+      v-if="run.phase === 'battle'"
+      :result-label="t('rogueAfterBattle')"
+      @result-action="afterBattle"
+    />
+    <div
+      v-else
+      class="rogue-page container"
+      :class="{ 'is-map': run.phase === 'map' }"
+      :style="{ '--lvl': level.accent, '--lvl-glow': level.glow }"
+      ref="root"
+    >
       <div class="rogue-title-row">
         <h1 class="page-main-title">{{ t("rogueTitle") }}</h1>
         <span class="rogue-beta">{{ t("rogueBeta") }}</span>
@@ -14,7 +24,10 @@
           {{ t("rogueBest") }}: {{ bestWins }} {{ t("rogueWinsShort") }}
         </button>
         <button
-          v-if="inRun && run.phase !== 'battle'"
+          v-if="
+            inRun &&
+            !['battle', 'hero', 'deck', 'idle', 'over'].includes(run.phase)
+          "
           class="btn btn-sm btn-outline-danger rogue-abandon"
           @click="abandon"
         >
@@ -44,24 +57,20 @@
       </div>
 
       <section v-if="run.phase === 'idle'" class="rogue-intro rogue-anim">
-        <p>{{ t("rogueIntro") }}</p>
+        <p>{{ t("rogueIntro").replace("{n}", base) }}</p>
         <button class="btn btn-success" @click="startRun">
           {{ t("rogueStart") }}
         </button>
       </section>
 
       <section v-else-if="run.phase === 'hero'">
-        <h2 class="rogue-subtitle">{{ t("rogueChooseHero") }}</h2>
-        <p class="rogue-hint">{{ t("rogueChooseHeroHint") }}</p>
-        <div class="rogue-heroes">
-          <div v-for="hero in heroOptions" :key="hero.id" class="rogue-anim">
-            <RogueHeroTile :hero="hero" clickable @select="pickHero" />
-          </div>
-        </div>
+        <RogueHeroPick :heroes="heroOptions" @select="pickHero" />
       </section>
 
       <section v-else-if="run.phase === 'deck'">
-        <h2 class="rogue-subtitle">{{ t("rogueDeckTitle") }}</h2>
+        <h2 class="rogue-subtitle">
+          {{ t("rogueDeckTitle").replace("{n}", base) }}
+        </h2>
         <div class="rogue-toolbar">
           <span class="rogue-count" :class="{ ready: picked.length === base }">
             {{
@@ -71,7 +80,7 @@
             }}
           </span>
           <button class="btn btn-sm btn-outline-secondary" @click="randomDeck">
-            {{ t("rogueDeckAuto") }}
+            {{ t("rogueDeckAuto").replace("{n}", base) }}
           </button>
           <button class="btn btn-sm btn-outline-secondary" @click="picked = []">
             {{ t("rogueDeckClear") }}
@@ -101,6 +110,9 @@
       </section>
 
       <section v-else-if="run.phase === 'map'">
+        <span class="rogue-level-chip">
+          {{ level.name[lang] }}
+        </span>
         <p class="rogue-hint">{{ t("rogueMapHint") }}</p>
         <div class="rogue-toolbar">
           <button class="rogue-deckbtn" @click="deckOpen = true">
@@ -385,6 +397,7 @@
           "
           :result-label="t('rogueEventResult')"
           :gold="run.event.step === 'result' ? run.event.gold : 0"
+          :hp="run.event.step === 'result' ? run.event.hp || 0 : 0"
           @choose="chooseEvent"
         />
         <template v-if="run.event.step === 'result'">
@@ -427,14 +440,6 @@
             >
               <PackCard :card="card" clickable @select="eventPick" />
             </div>
-          </div>
-          <div class="rogue-toolbar">
-            <button
-              class="btn btn-sm btn-outline-secondary"
-              @click="skipEventPick"
-            >
-              {{ t("rogueEventSkip") }}
-            </button>
           </div>
         </template>
       </section>
@@ -515,16 +520,19 @@ import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useRogue } from "../../composables/useRogue";
 import { getHero } from "../../gameDecks";
-import { packDraftHeroes } from "../../packDraftData";
+import { everyHero, packDraftHeroes } from "../../packDraftData";
 import GamePage from "./GamePage.vue";
 import PackCard from "../PackCard.vue";
 import RogueHistoryModal from "../RogueHistoryModal.vue";
 import RogueDeckModal from "../RogueDeckModal.vue";
 import RogueHeroTile from "../RogueHeroTile.vue";
+import RogueHeroPick from "../RogueHeroPick.vue";
 import RogueEventScene from "../RogueEventScene.vue";
 import RogueIcon from "../RogueIcon.vue";
 import RogueMap from "../RogueMap.vue";
 import RoguePack from "../RoguePack.vue";
+import { eventArts } from "../../rogueEvents.js";
+import { levels } from "../../rogueData.js";
 
 const { t, lang } = useDraftState();
 const engine = useGame();
@@ -548,6 +556,9 @@ const {
   enterNode,
   startBattle,
   syncBattle,
+  resumeBattle,
+  snapshotBattle,
+  startLevel,
   pickReward,
   pickPack,
   leavePacks,
@@ -564,7 +575,6 @@ const {
   cancelShopRemove,
   chooseEvent,
   eventPick,
-  skipEventPick,
   leave,
   abandon: endRun,
 } = useRogue();
@@ -584,7 +594,7 @@ let context = null;
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 const heroName = (id) => (id ? getHero(id).name : "");
-const heroOf = (id) => packDraftHeroes.find((hero) => hero.id === id);
+const heroOf = (id) => everyHero.find((hero) => hero.id === id);
 const cardsOf = (ids) => ids.map(getCard).filter(Boolean);
 
 const inRun = computed(
@@ -595,6 +605,8 @@ const step = computed(() =>
 );
 const heroOptions = computed(() => run.heroOptions.map(heroOf).filter(Boolean));
 const myHero = computed(() => heroOf(run.heroId));
+const level = computed(() => levels[run.bossIdx || 0]);
+const levelBoss = computed(() => getHero(level.value.boss));
 const enemyHero = computed(() => heroOf(run.enemy?.heroId));
 const deckPool = computed(() => (run.heroId ? heroCards(run.heroId) : []));
 const myDeck = computed(() => cardsOf(run.deck));
@@ -617,8 +629,10 @@ const eventText = (value) =>
     run.event?.hero ? heroName(run.event.hero) : "",
   );
 const eventArt = computed(() => {
+  const id = run.event?.id;
+  if (id && eventArts[id]) return assetUrl(`images/rogue/events/${id}.webp`);
   if (eventHero.value) return assetUrl(eventHero.value.image);
-  return run.event ? assetUrl(`images/rogue/events/${run.event.id}.webp`) : "";
+  return "";
 });
 const eventChoices = computed(() =>
   (eventData.value?.choices || []).map((choice) => ({
@@ -733,17 +747,44 @@ watch(
 );
 
 onMounted(async () => {
-  if (run.phase === "battle" && game.phase !== "play") syncBattle();
+  if (run.phase === "battle" && game.phase !== "play") {
+    if (game.phase === "setup" || !game.players.p1) resumeBattle();
+    else syncBattle();
+  }
   await nextTick();
   animate();
 });
 
+watch(
+  () => [
+    game.turn,
+    game.turnNo,
+    game.actions,
+    game.prompt,
+    game.combat,
+    game.phase,
+  ],
+  () => snapshotBattle(),
+  { flush: "post" },
+);
+
+watch(
+  () => game.phase,
+  (phase) => {
+    if (phase === "setup" && run.phase === "battle") {
+      syncBattle();
+      engine.setBot(null);
+    }
+  },
+);
+
 onBeforeUnmount(() => {
   context?.revert();
   if (run.phase === "battle") {
+    if (game.phase === "over") syncBattle();
+    else snapshotBattle();
     engine.resetGame();
     engine.setBot(null);
-    syncBattle();
   }
 });
 </script>
@@ -751,6 +792,74 @@ onBeforeUnmount(() => {
 <style scoped>
 .rogue-page {
   padding: 2rem 1rem;
+}
+
+.rogue-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 28px 20px;
+  border: 2px solid var(--lvl);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 0%, var(--lvl-glow), transparent 70%), #151a22;
+  text-align: center;
+}
+
+.rogue-level-num {
+  color: var(--lvl);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.rogue-level-name {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px var(--lvl);
+}
+
+.rogue-level-text {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.rogue-level-boss {
+  width: 120px;
+  height: 120px;
+  border: 3px solid var(--lvl);
+  border-radius: 50%;
+  box-shadow: 0 0 28px var(--lvl-glow);
+  object-fit: cover;
+  object-position: top;
+  filter: brightness(0.55) contrast(1.1);
+}
+
+.rogue-level-hint {
+  color: var(--lvl);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.rogue-level-chip {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 12px;
+  border: 1px solid var(--lvl);
+  border-radius: 999px;
+  background: var(--lvl-glow);
+  color: var(--lvl);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .rogue-title-row {
@@ -862,13 +971,6 @@ onBeforeUnmount(() => {
 
 .rogue-hint {
   color: var(--text-dim);
-}
-
-.rogue-heroes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  max-width: 820px;
 }
 
 .rogue-toolbar {
@@ -1508,5 +1610,9 @@ onBeforeUnmount(() => {
 }
 .rogue-page {
   padding-bottom: 84px;
+}
+
+.rogue-page.is-map {
+  max-width: 1560px;
 }
 </style>

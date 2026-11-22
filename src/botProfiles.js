@@ -29,6 +29,66 @@ export const botProfiles = {
     boostHand: 3,
   },
   raptors: { style: BOT_STYLES.PRESSURE },
+  "invisible-man": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["vanish", "impossible-to-see"],
+    boostHand: 3,
+  },
+  hamlet: {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["the-ghost", "method-in-the-madness"],
+    boostHand: 3,
+  },
+  "oda-nobunaga": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["reinforce", "demon-king-of-the-sixth-heaven"],
+    boostHand: 3,
+  },
+  dracula: {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["mistform", "prey-upon"],
+    boostHand: 3,
+  },
+  chupacabra: {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["traveler-of-the-night", "natural-toughness"],
+    boostHand: 3,
+  },
+  "luke-cage": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["trash-talk", "skin-like-titanium"],
+    boostHand: 3,
+  },
+  "she-hulk": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["double-jeopardy", "the-defense-rests"],
+    boostHand: 3,
+  },
+  "annie-christmas": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["a-few-more-pearls", "mississippi-queen"],
+    boostHand: 3,
+  },
+  "deadman-danny": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["fairfax-guarantee", "feint"],
+    boostHand: 3,
+  },
+  "king-arthur": {
+    style: BOT_STYLES.PRESSURE,
+    keep: ["excalibur", "the-holy-grail"],
+    boostHand: 3,
+  },
+  medusa: {
+    style: BOT_STYLES.NEUTRAL,
+    keep: ["gaze-of-stone", "hiss-and-slither"],
+    boostHand: 3,
+  },
+  sinbad: {
+    style: BOT_STYLES.NEUTRAL,
+    keep: ["commanding-impact", "voyage-home"],
+    boostHand: 3,
+  },
   "winter-soldier": { style: BOT_STYLES.PASS },
   "doctor-strange": { style: BOT_STYLES.PASS },
   "dr-jill-trent": { style: BOT_STYLES.PASS },

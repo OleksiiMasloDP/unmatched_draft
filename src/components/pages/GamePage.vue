@@ -97,9 +97,15 @@
               {{ t("packDraftTitle") }}
             </router-link>
           </p>
+          <input
+            v-model="deckSearch[player]"
+            type="search"
+            class="game-search"
+            :placeholder="t('gameSearch')"
+          />
           <div class="deck-tiles">
             <div
-              v-for="deck in decksFor(player)"
+              v-for="deck in filteredDecks(player)"
               :key="deck.id"
               class="deck-tile"
               :class="{
@@ -120,10 +126,7 @@
               />
               <div class="deck-tile-info">
                 <div class="deck-name">
-                  {{ deck.name }}
-                  <span v-if="deck.isTest" class="deck-test">
-                    {{ t("gameTestDeck") }}
-                  </span>
+                  {{ deck.isTest ? getHero(deck.heroId).name : deck.name }}
                 </div>
                 <div class="deck-meta">{{ deckMeta(deck) }}</div>
               </div>
@@ -186,9 +189,15 @@
               : replacePlayer("diceChooser", game.toss.winner)
           }}
         </p>
+        <input
+          v-model="mapSearch"
+          type="search"
+          class="game-search"
+          :placeholder="t('gameSearch')"
+        />
         <div class="map-tiles">
           <button
-            v-for="item in maps"
+            v-for="item in filteredMaps"
             :key="item.id"
             type="button"
             class="map-tile"
@@ -289,7 +298,9 @@
           :class="game.phase === 'over' ? 'is-done' : 'is-' + game.turn"
         >
           <template v-if="game.phase === 'over'">
-            {{ replacePlayer("gameWinner", game.winner) }}
+            <button class="game-banner-result" @click="resultOpen = true">
+              {{ replacePlayer("gameWinner", game.winner) }}
+            </button>
           </template>
           <template v-else-if="game.phase === 'mulligan'">
             {{ t("mulliganBanner") }}
@@ -334,6 +345,13 @@
             <ActionIcon name="attack" />{{ t("gameAttack") }}
           </button>
           <button
+            v-if="canSkipFree"
+            class="btn btn-sm action-btn game-skip"
+            @click="doSkipFree"
+          >
+            <ActionIcon name="skip" />{{ t("gameEndTurn") }}
+          </button>
+          <button
             v-if="spacePrompt"
             class="btn btn-sm action-btn game-skip"
             @click="answerPrompt(null)"
@@ -345,17 +363,17 @@
         </div>
       </div>
 
-      <p v-if="game.phase === 'startpick'" class="game-prompt-line">
+      <p v-if="game.phase === 'startpick'" class="game-prompt-line is-float">
         {{
           startPickMine
             ? t("gameStartPickYou")
             : replacePlayer("gameStartPickWait", startPickTurn)
         }}
       </p>
-      <p v-else-if="waitingOpponent" class="game-prompt-line">
+      <p v-else-if="waitingOpponent" class="game-prompt-line is-float">
         {{ t("onlineWaitMove") }}
       </p>
-      <p v-else-if="placingKid" class="game-prompt-line">
+      <p v-else-if="placingKid" class="game-prompt-line is-float">
         {{ kidPending ? t("promptPlaceKidConfirm") : promptTitle(spacePrompt) }}
         <button
           v-if="kidPending"
@@ -372,7 +390,7 @@
           {{ t("gameCancel") }}
         </button>
       </p>
-      <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line">
+      <p v-else-if="spacePrompt && boostOpen" class="game-prompt-line is-float">
         {{ t("promptBoostMove") }}
         <button
           class="btn btn-sm btn-outline-light action-btn"
@@ -381,7 +399,7 @@
           {{ t("gameCancel") }}
         </button>
       </p>
-      <p v-else-if="spacePrompt" class="game-prompt-line">
+      <p v-else-if="spacePrompt" class="game-prompt-line is-float">
         {{ promptTitle(spacePrompt) }}
         <button
           v-if="spacePrompt.undo"
@@ -391,7 +409,7 @@
           ↶ {{ t("gameUndo") }}
         </button>
       </p>
-      <p v-else-if="handPrompt" class="game-prompt-line">
+      <p v-else-if="handPrompt" class="game-prompt-line is-float">
         {{ promptTitle(handPrompt) }}
         <span v-if="handPrompt.hint" class="game-hint">
           {{ t(handPrompt.hint.key).replace("{n}", handPrompt.hint.n) }}
@@ -483,7 +501,36 @@
               {{ gadgetName(game.gadget[player]) }}
             </span>
           </div>
-          <div v-if="heroOf(player).id === 'blackbeard'" class="game-sidekick">
+          <div
+            v-if="game.players[player].ongoing"
+            class="game-sidekick"
+            role="button"
+            tabindex="0"
+            @click="logCardView = getCard(game.players[player].ongoing)"
+            @keydown.enter="logCardView = getCard(game.players[player].ongoing)"
+          >
+            <span class="game-sidekick-name">
+              ♾ {{ getCard(game.players[player].ongoing).name }}
+            </span>
+            <span class="game-sidekick-hp">{{ t("gameOngoing") }}</span>
+          </div>
+          <div
+            v-if="heroOf(player).id === 'deadman-danny'"
+            class="game-sidekick"
+            role="button"
+            tabindex="0"
+            @click="abilityView = 'hero'"
+            @keydown.enter="abilityView = 'hero'"
+          >
+            <span class="game-sidekick-name">
+              🔥 {{ game.players[player].heat }} / 3
+            </span>
+            <span class="game-sidekick-hp">{{ t("gameHeat") }}</span>
+          </div>
+          <div
+            v-else-if="heroOf(player).id === 'blackbeard'"
+            class="game-sidekick"
+          >
             <span class="game-sidekick-name">
               🪙 {{ game.players[player].coins }}
             </span>
@@ -570,67 +617,22 @@
             :active="activeFighter"
             :fx="game.fx"
             :tokens="game.tokens"
+            :fog="game.fog"
             :hide-heroes="game.phase === 'startpick'"
             :ghost="kidGhost"
             :pending="kidPending"
             @select="onBoardSelect"
           />
 
-          <div class="game-log" :class="{ 'is-open': logOpen }">
-            <button
-              type="button"
-              class="game-log-toggle"
-              @click="logOpen = !logOpen"
-            >
-              <span>{{ t("gameLog") }} ({{ game.log.length }})</span>
-              <span>{{ logOpen ? "▴" : "▾" }}</span>
-            </button>
-            <div v-if="logOpen" class="game-log-body">
-              <div
-                v-for="block in logBlocks"
-                :key="block.key"
-                class="game-log-block"
-              >
-                <div
-                  v-for="(group, gi) in block.groups"
-                  :key="gi"
-                  class="game-log-group"
-                  :class="group.cls"
-                >
-                  <div v-if="group.title" class="game-log-group-title">
-                    {{ group.title }}
-                  </div>
-                  <div
-                    v-for="(entry, index) in group.entries"
-                    :key="index"
-                    class="game-log-line"
-                    :class="logClass(entry)"
-                  >
-                    <button
-                      v-if="entry.params.cardId && logCard(entry)"
-                      type="button"
-                      class="game-log-card"
-                      :title="logCard(entry).name"
-                      @click="logCardView = logCard(entry)"
-                    >
-                      <img
-                        :src="logCard(entry).image"
-                        :alt="logCard(entry).name"
-                      />
-                    </button>
-                    <span>
-                      <span
-                        v-for="(part, pi) in logParts(entry)"
-                        :key="pi"
-                        :class="part.cls"
-                        >{{ part.text }}</span
-                      >
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button
+            type="button"
+            class="game-log-btn"
+            @click="historyOpen = true"
+          >
+            <span class="game-log-btn-icon">📜</span>
+            {{ t("gameLog") }}
+            <span class="game-log-btn-count">{{ game.log.length }}</span>
+          </button>
         </div>
       </div>
 
@@ -672,6 +674,20 @@
         </div>
       </template>
 
+      <GameResult
+        v-if="game.phase === 'over' && resultOpen"
+        :mode="resultMode"
+        :title="resultTitle"
+        :kicker="resultKicker"
+        :subtitle="resultSubtitle"
+        :hero-name="heroOf(game.winner).name"
+        :image="heroOf(game.winner).image"
+        :action-label="resultActionLabel"
+        :close-label="t('gameResultBoard')"
+        @action="onResultAction"
+        @close="resultOpen = false"
+      />
+
       <div class="game-footer">
         <ReportBugButton section="game" class="game-bug" />
         <button
@@ -698,7 +714,7 @@
       </div>
 
       <div
-        v-if="modalPrompt && !needsPass && !effectBlocking"
+        v-if="modalPrompt && !needsPass && !effectBlocking && !modalHidden"
         class="game-modal"
       >
         <div
@@ -708,6 +724,24 @@
               blockingPrompt.kind === 'info' && blockingPrompt.combat,
           }"
         >
+          <button
+            v-if="blockingPrompt.kind !== 'info'"
+            type="button"
+            class="game-modal-close"
+            :title="t('combatHide')"
+            :aria-label="t('combatHide')"
+            @click="modalHidden = true"
+          >
+            ✕
+          </button>
+          <CombatPopup
+            v-if="game.combat && blockingPrompt.kind !== 'info'"
+            class="game-modal-combat"
+            :combat="game.combat"
+            :players="game.players"
+            :viewer="viewer"
+            :preview="blockPreview"
+          />
           <h3
             v-if="blockingPrompt.kind !== 'info' || blockingPrompt.mists"
             class="game-modal-title"
@@ -908,6 +942,13 @@
         </div>
       </div>
 
+      <GameHistory
+        v-if="historyOpen"
+        :entries="game.log"
+        @close="historyOpen = false"
+        @card="logCardView = $event"
+      />
+
       <div
         v-if="logCardView"
         class="game-modal"
@@ -948,6 +989,41 @@
               @click="
                 gadgetView = gadgetView === 'tonic' ? 'hypnoray' : 'tonic'
               "
+            >
+              ⇄ {{ t("gadgetFlip") }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-if="abilityView"
+        class="game-modal"
+        @click.self="abilityView = null"
+      >
+        <div class="game-modal-box is-logcard">
+          <button
+            type="button"
+            class="game-modal-close"
+            :aria-label="t('combatHide')"
+            @click="abilityView = null"
+          >
+            ✕
+          </button>
+          <img
+            class="game-gadget-full"
+            :src="
+              abilityView === 'hero'
+                ? 'images/tokens/danny_hero.webp'
+                : 'images/tokens/danny_overheat.webp'
+            "
+            alt="Deadman Danny"
+          />
+          <div class="game-modal-actions is-center">
+            <button
+              type="button"
+              class="action-btn"
+              @click="abilityView = abilityView === 'hero' ? 'rule' : 'hero'"
             >
               ⇄ {{ t("gadgetFlip") }}
             </button>
@@ -1126,7 +1202,15 @@
       </div>
 
       <button
-        v-if="effectHidden && effectEntry && !needsPass"
+        v-if="modalHidden && modalPrompt && !needsPass && !effectBlocking"
+        type="button"
+        class="modal-peek"
+        @click="modalHidden = false"
+      >
+        👁 {{ t("gameShowPopup") }}
+      </button>
+      <button
+        v-else-if="effectHidden && effectEntry && !needsPass"
         type="button"
         class="modal-peek"
         @click="effectHidden = false"
@@ -1134,7 +1218,7 @@
         👁 {{ t("gameShowPopup") }}
       </button>
       <EffectDialog
-        v-if="effectEntry && !effectHidden && !needsPass"
+        v-if="effectEntry && !effectHidden && !needsPass && !spacePrompt"
         :entry="effectEntry"
         :lines="effectLines"
         :picks="effectPicks"
@@ -1250,7 +1334,13 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
+import GameHistory from "../GameHistory.vue";
+
+const props = defineProps({
+  resultLabel: { type: String, default: "" },
+});
+const emit = defineEmits(["result-action"]);
 import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useSavedDecks } from "../../composables/useSavedDecks";
@@ -1262,6 +1352,7 @@ import { useBot } from "../../composables/useBot.js";
 import EffectDialog from "../EffectDialog.vue";
 import ReportBugButton from "../ReportBugButton.vue";
 import GameBoard from "../GameBoard.vue";
+import GameResult from "../GameResult.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
@@ -1284,6 +1375,7 @@ const {
   doManeuver,
   doScheme,
   doAttack,
+  doSkipFree,
   doUndo,
   surrender,
   availableActions,
@@ -1317,7 +1409,24 @@ function chooseBot() {
   localChosen.value = true;
 }
 
-useBot();
+const botControl = useBot();
+let waitTimer = null;
+let waitLevel = 0;
+const stopWait = () => {
+  clearTimeout(waitTimer);
+  waitTimer = null;
+  waitLevel = 0;
+};
+const armWait = () => {
+  clearTimeout(waitTimer);
+  waitTimer = setTimeout(() => {
+    if (!game.bot || game.phase !== "play") return stopWait();
+    waitLevel += 1;
+    botControl.unstick(game.bot, waitLevel);
+    armWait();
+  }, 12000);
+};
+onBeforeUnmount(stopWait);
 
 let botTimer = null;
 watch(
@@ -1379,7 +1488,7 @@ const canPickMap = computed(
     game.toss?.stage === "map" &&
     (!solo.value || game.toss.winner === meSeat.value),
 );
-const logOpen = ref(false);
+const historyOpen = ref(false);
 const logCardView = ref(null);
 const surrenderOpen = ref(false);
 
@@ -1396,10 +1505,40 @@ const decksFor = (player) =>
     : deckSource.value[player] === "custom"
       ? customDecks
       : testDecks;
+const deckSearch = reactive({ p1: "", p2: "" });
+const mapSearch = ref("");
+const matchesSearch = (query, ...names) => {
+  const needle = query.trim().toLowerCase();
+  return (
+    !needle || names.some((name) => (name || "").toLowerCase().includes(needle))
+  );
+};
+const filteredDecks = (player) =>
+  decksFor(player).filter(
+    (deck) =>
+      deck.id === selected.value[player] ||
+      matchesSearch(deckSearch[player], deck.name, getHero(deck.heroId)?.name),
+  );
+const filteredMaps = computed(() =>
+  maps.filter(
+    (item) =>
+      item.id === game.mapId || matchesSearch(mapSearch.value, item.name),
+  ),
+);
 const selected = ref({ p1: testDecks[0].id, p2: testDecks[1].id });
 const selection = ref([]);
 
 const available = computed(() => availableActions());
+
+const canSkipFree = computed(
+  () =>
+    game.phase === "play" &&
+    !game.prompt &&
+    game.freeAttacks.length > 0 &&
+    game.actions > 0 &&
+    game.actions <= game.freeAttacks.length &&
+    (!online.value || game.turn === meSeat.value),
+);
 
 const canBoost = computed(() =>
   Boolean(spacePrompt.value?.boostOptions?.length),
@@ -1550,6 +1689,20 @@ const waitingOpponent = computed(() => {
   return owner !== null && owner !== meSeat.value;
 });
 
+watch(
+  () => [
+    waitingOpponent.value && Boolean(game.bot),
+    game.turnNo,
+    game.actions,
+    game.log.length,
+  ],
+  ([waiting]) => {
+    waitLevel = 0;
+    if (waiting) armWait();
+    else stopWait();
+  },
+);
+
 const startPickTurn = computed(() =>
   game.phase === "startpick" && game.startPick
     ? game.startPick.order[game.startPick.index]
@@ -1653,82 +1806,6 @@ const promptCards = computed(() =>
     : [],
 );
 
-const ACTION_KEYS = new Set(["logManeuver", "logAttack", "logScheme"]);
-
-const logBlocks = computed(() => {
-  const blocks = [];
-  let block = null;
-  let group = null;
-  let actionNo = 0;
-  const entries = game.log.slice(-120);
-  entries.forEach((entry, index) => {
-    if (entry.key === "logTurn" || !block) {
-      actionNo = 0;
-      block = { key: index, groups: [] };
-      blocks.push(block);
-      group = null;
-      if (entry.key === "logTurn") {
-        group = {
-          cls: ["is-turn-head", "is-" + entry.params.player],
-          entries: [entry],
-        };
-        block.groups.push(group);
-        group = null;
-        return;
-      }
-    }
-    if (entry.params.act && ACTION_KEYS.has(entry.key)) {
-      actionNo += 1;
-      group = {
-        cls: ["is-action", "is-" + entry.params.player],
-        title: t("logActionNo").replace("{n}", actionNo),
-        entries: [],
-      };
-      block.groups.push(group);
-    } else if (!group) {
-      group = { cls: ["is-misc"], entries: [] };
-      block.groups.push(group);
-    }
-    group.entries.push(entry);
-  });
-  return blocks.reverse();
-});
-
-const logCard = (entry) => getCard(entry.params.cardId);
-
-const LOG_PARTS = /(\{[a-zA-Z]+\})/;
-
-function logParts(entry) {
-  const parts = [];
-  for (const piece of t(entry.key).split(LOG_PARTS)) {
-    const match = piece.match(/^\{([a-zA-Z]+)\}$/);
-    if (!match) {
-      if (piece) parts.push({ text: piece });
-      continue;
-    }
-    const name = match[1];
-    const value = entry.params[name];
-    if (["player", "attacker", "defender"].includes(name)) {
-      parts.push({ text: playerLabel(value), cls: "log-" + value });
-    } else if (name === "token") {
-      parts.push({ text: t("token_" + value), cls: "log-name" });
-    } else if (["card", "who", "hero", "src"].includes(name)) {
-      parts.push({ text: String(value), cls: "log-name" });
-    } else {
-      parts.push({ text: String(value), cls: "log-num" });
-    }
-  }
-  return parts;
-}
-
-const logClass = (entry) => ({
-  "is-move": entry.key === "logMove",
-  "is-action-start": Boolean(entry.params.act),
-  "is-turn": entry.key === "logTurn",
-  "is-damage": entry.key.startsWith("logDamage"),
-  "is-reveal": entry.key.startsWith("logReveal"),
-});
-
 const showCombat = computed(
   () =>
     Boolean(game.combat) &&
@@ -1748,6 +1825,11 @@ const EFFECT_MIN_MS = 3000;
 const EFFECT_HIDE_MS = 8000;
 const effectShown = ref(null);
 const effectHidden = ref(false);
+const modalHidden = ref(false);
+
+watch(blockingPrompt, () => {
+  modalHidden.value = false;
+});
 let effectQueue = [];
 let effectSeen = game.announces.reduce(
   (max, item) => Math.max(max, item.id),
@@ -1899,6 +1981,14 @@ const deckGroups = computed(() => {
   const state = game.players[deckView.value];
   const spent = new Map();
   for (const id of state.discard || []) spent.set(id, (spent.get(id) || 0) + 1);
+  for (const seat of ["p1", "p2"]) {
+    if (seat === deckView.value) continue;
+    for (const id of game.players[seat].suit || []) {
+      if ((state.roster || []).includes(id)) {
+        spent.set(id, (spent.get(id) || 0) + 1);
+      }
+    }
+  }
   const groups = new Map();
   for (const id of state.roster || []) {
     const card = getCard(id);
@@ -2072,6 +2162,7 @@ function formatLog(entry) {
 
 const findDeck = (id) => allDecks.value.find((deck) => deck.id === id);
 const gadgetView = ref(null);
+const abilityView = ref(null);
 const gadgetImage = (value) =>
   value === "tonic"
     ? "images/tokens/tonic.webp"
@@ -2150,11 +2241,69 @@ function onSurrender() {
 function onNewGame() {
   resetGame();
 }
+
+const resultOpen = ref(false);
+let resultTimer = null;
+
+watch(
+  () => game.phase,
+  (phase) => {
+    clearTimeout(resultTimer);
+    if (phase === "over") {
+      resultTimer = setTimeout(() => {
+        resultOpen.value = true;
+      }, 900);
+    } else {
+      resultOpen.value = false;
+    }
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(() => clearTimeout(resultTimer));
+
+const resultMode = computed(() => {
+  if (!solo.value) return "win";
+  return game.winner === meSeat.value ? "win" : "lose";
+});
+
+const resultTitle = computed(() => {
+  if (!solo.value) return t("gameVictory");
+  return t(game.winner === meSeat.value ? "gameVictory" : "gameDefeat");
+});
+
+const resultKicker = computed(() =>
+  solo.value ? "" : playerLabel(game.winner),
+);
+
+const resultSubtitle = computed(() =>
+  t("gameResultSub")
+    .replace("{hero}", heroOf(game.winner).name)
+    .replace("{n}", game.turnNo),
+);
+
+const resultActionLabel = computed(() => {
+  if (props.resultLabel) return props.resultLabel;
+  return isGuest.value ? "" : t("gameNewGame");
+});
+
+function onResultAction() {
+  resultOpen.value = false;
+  if (props.resultLabel) emit("result-action");
+  else onNewGame();
+}
 </script>
 
 <style scoped>
 .game-page {
   padding: 2rem 1rem;
+}
+
+.game-banner-result {
+  all: unset;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
 }
 
 .game-title-row {
@@ -2293,14 +2442,46 @@ function onNewGame() {
 
 .map-tiles,
 .deck-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  gap: 8px;
+  max-height: 360px;
+  padding: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(var(--bg-dark-rgb), 0.35);
+}
+
+.deck-tiles {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+
+.map-tiles {
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  max-height: 420px;
+}
+
+.game-search {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  background: rgba(var(--bg-dark-rgb), 0.6);
+  color: var(--text-white);
+  font-size: 14px;
+}
+
+.game-search:focus {
+  outline: none;
+  border-color: var(--color-info);
 }
 
 .map-tile {
-  width: 180px;
-  padding: 6px;
+  width: auto;
+  padding: 5px;
   border-radius: 10px;
   border: 2px solid var(--border-light);
   background: rgba(var(--bg-slate-rgb), 0.8);
@@ -2333,9 +2514,9 @@ function onNewGame() {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 260px;
-  padding: 8px 40px 8px 8px;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 30px 6px 6px;
   border-radius: 10px;
   border: 2px solid var(--border-light);
   background: rgba(var(--bg-slate-rgb), 0.8);
@@ -2344,8 +2525,8 @@ function onNewGame() {
 
 .deck-tile img {
   flex: 0 0 auto;
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   object-fit: cover;
   object-position: top;
@@ -2385,6 +2566,29 @@ function onNewGame() {
   color: var(--text-white);
   font-size: 14px;
   font-weight: 700;
+}
+
+.game-prompt-line.is-float {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  z-index: 1500;
+  justify-content: center;
+  width: max-content;
+  max-width: min(94vw, 760px);
+  margin: 0;
+  background: rgba(var(--bg-dark-rgb), 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  transform: translateX(-50%);
+  animation: prompt-drop 0.2s ease-out;
+}
+
+@keyframes prompt-drop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
 }
 
 .game-skip {
@@ -2671,139 +2875,37 @@ function onNewGame() {
   font-weight: 700;
 }
 
-.game-log {
-  overflow: hidden;
-  background: rgba(var(--bg-dark-rgb), 0.6);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-}
-
-.game-log-toggle {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px 14px;
-  border: 0;
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.game-log-body {
-  max-height: 380px;
-  overflow-y: auto;
-  padding: 0 14px 12px;
-}
-
-.game-log-line {
-  display: flex;
+.game-log-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 3px 0;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 7px 14px;
+  border: 1px solid var(--border-medium);
+  border-radius: 999px;
+  background: rgba(var(--bg-slate-rgb), 0.8);
   color: var(--text-muted);
-  font-size: 13px;
-}
-
-.game-log-line.is-reveal {
-  color: var(--text-light);
-  font-weight: 700;
-}
-
-.game-log-line.is-damage {
-  color: #f87171;
-  font-weight: 700;
-}
-
-.game-log-line.is-turn {
-  padding: 2px 0;
-  color: var(--color-warning);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
-.game-log-card {
-  flex: none;
-  width: 56px;
-  height: 78px;
-  padding: 0;
-  border: 1px solid var(--color-warning);
-  border-radius: 6px;
-  overflow: hidden;
-  background: transparent;
-  cursor: zoom-in;
-}
-
-.game-log-card img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.game-log-block {
-  margin-top: 14px;
-}
-
-.game-log-group {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-left: 3px solid var(--border-medium);
-  border-radius: 0 8px 8px 0;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.game-log-group.is-p1 {
-  border-left-color: var(--color-player);
-}
-
-.game-log-group.is-p2 {
-  border-left-color: var(--color-opponent);
-}
-
-.game-log-group.is-turn-head {
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.game-log-group-title {
-  color: var(--text-dim);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.game-log-line > span {
-  white-space: pre-wrap;
-}
-
-.game-log-line.is-action-start {
+.game-log-btn:hover {
+  border-color: var(--color-info);
   color: var(--text-white);
-  font-weight: 800;
 }
 
-.log-p1 {
-  color: var(--color-player);
-  font-weight: 800;
-}
-
-.log-p2 {
-  color: var(--color-opponent);
-  font-weight: 800;
-}
-
-.log-name {
-  color: var(--color-warning);
-  font-weight: 700;
-}
-
-.log-num {
-  color: var(--text-white);
-  font-weight: 800;
+.game-log-btn-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  text-align: center;
 }
 
 .game-modal-box.is-logcard {
@@ -3153,10 +3255,6 @@ function onNewGame() {
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
-}
-
-.game-center .game-log {
-  margin-top: 10px;
 }
 
 @media (max-width: 991px) {
@@ -3626,6 +3724,14 @@ function onNewGame() {
   flex: 0 0 auto;
   width: auto;
   min-width: 160px;
+}
+
+.game-modal-combat {
+  position: static;
+  width: 100%;
+  margin-bottom: 12px;
+  transform: none;
+  pointer-events: auto;
 }
 
 .modal-peek {

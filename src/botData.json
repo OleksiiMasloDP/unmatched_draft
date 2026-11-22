@@ -355,6 +355,339 @@
     "harry-houdini:all-part-of-the-show": {
       "importance": 6,
       "timing": 2
+    },
+    "chupacabra:blood-in-the-air": {
+      "importance": 8,
+      "cancelCare": 0,
+      "boostWill": 2,
+      "timing": 6,
+      "who": 10,
+      "uses": ["defense", "scheme", "boostDefense", "boostManeuver"]
+    },
+    "chupacabra:ambush": {
+      "importance": 10,
+      "cancelCare": 9,
+      "boostWill": 0,
+      "timing": 10,
+      "who": 10,
+      "uses": ["defense", "scheme", "boostDefense", "boostManeuver"]
+    },
+    "chupacabra:the-more-they-struggle": {
+      "importance": 8,
+      "cancelCare": 6,
+      "boostWill": 1,
+      "timing": 8,
+      "who": 10
+    },
+    "chupacabra:wounded-beast": {
+      "importance": 10,
+      "lean": 8,
+      "boostWill": 1,
+      "timing": 4,
+      "who": 10
+    },
+    "chupacabra:feeding": {
+      "importance": 9,
+      "boostWill": 1,
+      "lean": 5,
+      "timing": 0,
+      "cancelCare": 3,
+      "who": 10,
+      "uses": [
+        "defense",
+        "scheme",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
+    },
+    "chupacabra:ravenous-lunge": {
+      "importance": 6,
+      "boostWill": 4,
+      "cancelCare": 2,
+      "uses": ["scheme", "boostAttack", "boostDefense", "boostManeuver"]
+    },
+    "chupacabra:feint": {
+      "lean": 2,
+      "cancelCare": 0,
+      "boostWill": 4,
+      "importance": 5,
+      "who": 10,
+      "uses": [
+        "attack",
+        "scheme",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
+    },
+    "chupacabra:tooth-and-tail": {
+      "importance": 6,
+      "boostWill": 5,
+      "who": 10,
+      "uses": ["scheme", "boostAttack", "boostDefense", "boostManeuver"]
+    },
+    "chupacabra:natural-toughness": {
+      "importance": 7,
+      "boostWill": 3,
+      "uses": ["defense", "boostDefense"]
+    },
+    "chupacabra:traveler-of-the-night": {
+      "importance": 7,
+      "boostWill": 2,
+      "who": 10,
+      "uses": [
+        "attack",
+        "defense",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
+    },
+    "chupacabra:unsettle": {
+      "importance": 7,
+      "timing": 9,
+      "boostWill": 4,
+      "uses": [
+        "attack",
+        "defense",
+        "boostAttack",
+        "boostDefense",
+        "boostManeuver"
+      ]
+    },
+    "king-arthur:excalibur": {
+      "importance": 10,
+      "lean": 9,
+      "boostWill": 0,
+      "timing": 3,
+      "who": 10,
+      "uses": ["attack", "boostAttack"]
+    },
+    "king-arthur:the-aid-of-morgana": {
+      "importance": 7,
+      "lean": 6,
+      "boostWill": 2,
+      "uses": ["attack", "boostAttack", "boostDefense"]
+    },
+    "king-arthur:aid-the-chosen-one": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 3
+    },
+    "king-arthur:swift-strike": {
+      "importance": 6,
+      "lean": 4,
+      "boostWill": 3,
+      "timing": 1
+    },
+    "king-arthur:noble-sacrifice": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2
+    },
+    "king-arthur:skirmish": {
+      "importance": 6,
+      "boostWill": 3
+    },
+    "king-arthur:momentous-shift": {
+      "importance": 6,
+      "boostWill": 2,
+      "timing": 2
+    },
+    "king-arthur:divine-intervention": {
+      "importance": 6,
+      "boostWill": 4
+    },
+    "king-arthur:feint": {
+      "importance": 7,
+      "cancelCare": 2,
+      "boostWill": 3,
+      "uses": ["defense", "attack", "boostAttack", "boostDefense"]
+    },
+    "king-arthur:regroup": {
+      "importance": 5,
+      "boostWill": 5
+    },
+    "king-arthur:the-holy-grail": {
+      "importance": 8,
+      "boostWill": 1,
+      "uses": ["defense", "boostDefense"]
+    },
+    "king-arthur:bewilderment": {
+      "importance": 7,
+      "boostWill": 2,
+      "uses": ["defense", "boostDefense"]
+    },
+    "king-arthur:the-lady-of-the-lake": {
+      "importance": 7,
+      "timing": 4,
+      "boostWill": 2
+    },
+    "king-arthur:prophecy": {
+      "importance": 6,
+      "timing": 1,
+      "boostWill": 3
+    },
+    "king-arthur:command-the-storms": {
+      "importance": 6,
+      "timing": 5,
+      "boostWill": 3
+    },
+    "king-arthur:restless-spirits": {
+      "importance": 7,
+      "timing": 6,
+      "boostWill": 2
+    },
+    "medusa:second-shot": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "boostAttack"]
+    },
+    "medusa:gaze-of-stone": {
+      "importance": 9,
+      "lean": 7,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "medusa:the-hounds-of-mighty-zeus": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 2
+    },
+    "medusa:snipe": {
+      "importance": 6,
+      "boostWill": 4
+    },
+    "medusa:clutching-claws": {
+      "importance": 6,
+      "boostWill": 3
+    },
+    "medusa:dash": {
+      "importance": 6,
+      "boostWill": 4,
+      "timing": 1
+    },
+    "medusa:feint": {
+      "importance": 7,
+      "cancelCare": 2,
+      "boostWill": 3
+    },
+    "medusa:regroup": {
+      "importance": 5,
+      "boostWill": 5
+    },
+    "medusa:hiss-and-slither": {
+      "importance": 8,
+      "boostWill": 1,
+      "uses": ["defense", "boostDefense"]
+    },
+    "medusa:a-momentary-glance": {
+      "importance": 7,
+      "timing": 5,
+      "boostWill": 1
+    },
+    "medusa:winged-frenzy": {
+      "importance": 6,
+      "timing": 6,
+      "boostWill": 3
+    },
+    "sinbad:commanding-impact": {
+      "importance": 8,
+      "lean": 7,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:by-fortune-and-fate": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-cannibals-with-the-root-of-madness": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-creature-with-eyes-like-coals-of-fire": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-city-of-the-king-of-serendib": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-valley-of-the-giant-snakes": {
+      "importance": 4,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-city-of-the-man-eating-apes": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-to-the-island-that-was-a-whale": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 0,
+      "uses": ["attack"]
+    },
+    "sinbad:voyage-home": {
+      "importance": 7,
+      "lean": 5,
+      "boostWill": 1,
+      "uses": ["attack"]
+    },
+    "sinbad:exploit": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:leap-away": {
+      "importance": 6,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:toil-and-danger": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:momentous-shift": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:feint": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 2,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:regroup": {
+      "importance": 3,
+      "lean": 5,
+      "boostWill": 3,
+      "uses": ["attack", "defense"]
+    },
+    "sinbad:riches-beyond-compare": {
+      "importance": 5,
+      "lean": 5,
+      "boostWill": 1,
+      "uses": ["scheme"]
     }
   },
   "sidekicks": {
@@ -419,6 +752,34 @@
       "kidFear": 0,
       "boostHand": 4,
       "notes": "Рапторы хотят быстро забить соперника, пока их несколько. Они окружают противника насколько могут большим количеством Рапторов и начинают атаковать с дополнительными действиями. У них мало защит и жизней, поэтому лучше иметь что-то на руке, но им больше важна агрессия."
+    },
+    "chupacabra": {
+      "heroFocus": 9,
+      "aggro": 1.7,
+      "kidFear": 0.2,
+      "boostHand": 2,
+      "refill": 4
+    },
+    "king-arthur": {
+      "heroFocus": 8,
+      "aggro": 1.5,
+      "kidFear": 0.3,
+      "boostHand": 3,
+      "refill": 4
+    },
+    "medusa": {
+      "heroFocus": 8,
+      "aggro": 1.2,
+      "kidFear": 0.2,
+      "boostHand": 3,
+      "refill": 4
+    },
+    "sinbad": {
+      "heroFocus": 8,
+      "aggro": 1,
+      "kidFear": 0.2,
+      "boostHand": 3,
+      "refill": 4
     }
   }
 }

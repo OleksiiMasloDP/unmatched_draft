@@ -353,11 +353,12 @@ const stageText = computed(() => {
 
 .combat-body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
 }
 
 .combat-side {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -581,6 +582,24 @@ const stageText = computed(() => {
 }
 
 @media (max-width: 575px) {
+  .combat-body {
+    gap: 8px;
+  }
+  .combat-side {
+    padding: 6px;
+  }
+  .combat-who {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  .combat-who-text {
+    width: 100%;
+  }
+  .combat-role {
+    font-size: 9px;
+    letter-spacing: 0.4px;
+  }
   .combat-slot {
     min-height: 150px;
   }
