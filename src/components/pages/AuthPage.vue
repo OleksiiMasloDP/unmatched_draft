@@ -1,8 +1,6 @@
 <template>
   <div class="ap">
-    <div class="ap-orb ap-orb-a"></div>
-    <div class="ap-orb ap-orb-b"></div>
-    <div class="ap-orb ap-orb-c"></div>
+    <AuthBackdrop :variant="bg" />
 
     <div v-if="demo" class="ap-demo">{{ L.demo }}</div>
 
@@ -219,6 +217,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import AuthBackdrop from "../AuthBackdrop.vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { authDemo as demo } from "../../cloud/client";
 import {
@@ -357,6 +356,11 @@ const dict = {
 };
 const L = computed(() => dict[lang.value] || dict.en);
 
+const bg = computed(() => {
+  const value = Number(route.query.bg);
+  return value >= 1 && value <= 5 ? value : 1;
+});
+
 const modes = ["signin", "signup", "forgot"];
 const mode = ref(
   modes.includes(route.query.mode) ? route.query.mode : "signin",
@@ -426,7 +430,7 @@ function go(next) {
   password.value = "";
   passTouched.value = false;
   showPassword.value = false;
-  router.replace({ name: "auth", query: { mode: next } });
+  router.replace({ name: "auth", query: { ...route.query, mode: next } });
 }
 
 function finish() {
@@ -486,48 +490,6 @@ onMounted(() => {
   min-height: calc(100vh - 80px);
   padding: 32px 16px 56px;
   overflow: hidden;
-}
-
-.ap-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.45;
-  pointer-events: none;
-  animation: ap-float 14s ease-in-out infinite alternate;
-}
-
-.ap-orb-a {
-  top: -120px;
-  left: -80px;
-  width: 420px;
-  height: 420px;
-  background: #4f7cff;
-}
-
-.ap-orb-b {
-  right: -100px;
-  bottom: -140px;
-  width: 460px;
-  height: 460px;
-  background: #ef4444;
-  animation-delay: -5s;
-}
-
-.ap-orb-c {
-  top: 40%;
-  left: 45%;
-  width: 280px;
-  height: 280px;
-  background: #facc15;
-  opacity: 0.18;
-  animation-delay: -9s;
-}
-
-@keyframes ap-float {
-  to {
-    transform: translate(40px, 30px) scale(1.08);
-  }
 }
 
 .ap-demo {
@@ -1033,7 +995,6 @@ onMounted(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ap-orb,
   .ap-fan-card,
   .ap-tab-glider {
     animation: none;

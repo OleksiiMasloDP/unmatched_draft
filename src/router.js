@@ -14,6 +14,7 @@ import BotEditor from "./components/pages/BotEditor.vue";
 import BotWatch from "./components/pages/BotWatch.vue";
 import SeoEntityPage from "./components/pages/SeoEntityPage.vue";
 import AuthPage from "./components/pages/AuthPage.vue";
+import AuthStyles from "./components/pages/AuthStyles.vue";
 
 export const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -61,6 +62,7 @@ export const routes = [
     props: (route) => ({ kind: "map", slug: String(route.params.slug) }),
   },
   { path: "/login", name: "auth", component: AuthPage },
+  { path: "/login-styles", name: "auth-styles", component: AuthStyles },
   { path: "/map-editor", name: "map-editor", component: MapEditor },
   { path: "/bot-editor", name: "bot-editor", component: BotEditor },
   { path: "/bot-watch", name: "bot-watch", component: BotWatch },
