@@ -1,7 +1,7 @@
 // Стан користувача та дії входу/реєстрації (Supabase Auth).
 // Без ключів у .env (cloudEnabled = false) нічого не робить, а кнопки входу не показуються.
 import { reactive, ref } from "vue";
-import { cloudEnabled, getClient, redirectUrl } from "./client.js";
+import { authDemo, cloudEnabled, getClient, redirectUrl } from "./client.js";
 import { startSync, stopSync, clearLocalData } from "./sync.js";
 
 export const user = ref(null);
@@ -16,8 +16,8 @@ function setUser(next) {
   user.value = next;
   if (next && next.id !== previousId) {
     // не викликаємо Supabase прямо всередині колбека зміни стану
-    setTimeout(() => startSync(next.id), 0);
-  } else if (!next && previousId) {
+    if (!authDemo) setTimeout(() => startSync(next.id), 0);
+  } else if (!next && previousId && !authDemo) {
     stopSync();
   }
 }
@@ -42,8 +42,14 @@ export async function initAuth() {
 }
 
 export function openAuth(mode = "signin") {
-  authModal.mode = mode;
-  authModal.open = true;
+  if (mode === "recovery") {
+    authModal.mode = mode;
+    authModal.open = true;
+    return;
+  }
+  import("../router.js").then(({ default: router }) =>
+    router.push({ name: "auth", query: { mode } }),
+  );
 }
 
 export function closeAuth() {
@@ -130,7 +136,9 @@ export function updatePassword(password) {
 export async function signOut() {
   const client = await getClient();
   if (client) await client.auth.signOut();
-  stopSync();
-  clearLocalData(); // спільний пристрій: дані акаунта лишаються лише в хмарі
+  if (!authDemo) {
+    stopSync();
+    clearLocalData();
+  }
   user.value = null;
 }

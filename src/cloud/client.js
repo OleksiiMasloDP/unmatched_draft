@@ -4,13 +4,36 @@ const env = import.meta.env ?? {};
 const URL = env.VITE_SUPABASE_URL;
 const KEY = env.VITE_SUPABASE_ANON_KEY;
 
-export const cloudEnabled = Boolean(URL && KEY);
+const readDemoFlag = () => {
+  try {
+    const param = new URLSearchParams(window.location.search).get("authdemo");
+    if (param === "1") localStorage.setItem("authDemo", "1");
+    if (param === "0") localStorage.removeItem("authDemo");
+    return localStorage.getItem("authDemo") === "1";
+  } catch {
+    return false;
+  }
+};
+
+const hasKeys = Boolean(URL && KEY);
+
+export const authDemo = !hasKeys && readDemoFlag();
+
+export const cloudEnabled = hasKeys || authDemo;
 
 let clientPromise = null;
 let testClient = null;
 
 export function getClient() {
   if (testClient) return Promise.resolve(testClient);
+  if (authDemo) {
+    if (!clientPromise) {
+      clientPromise = import("./demoClient.js").then(({ createDemoClient }) =>
+        createDemoClient(),
+      );
+    }
+    return clientPromise;
+  }
   if (!cloudEnabled) return Promise.resolve(null);
   if (!clientPromise) {
     clientPromise = import("@supabase/supabase-js").then(({ createClient }) =>

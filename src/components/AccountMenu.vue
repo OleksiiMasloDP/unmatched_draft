@@ -7,8 +7,9 @@
       @click="openAuth('signin')"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4.500 21a7.500 7.500 0 0 1 15 0" />
+        <circle class="acc-key" cx="19" cy="5" r="2.200" />
       </svg>
       <span class="acc-signin-text">{{ L.signin }}</span>
     </button>
@@ -148,8 +149,8 @@ onBeforeUnmount(() => {
 }
 
 .acc-signin svg {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2.4;
