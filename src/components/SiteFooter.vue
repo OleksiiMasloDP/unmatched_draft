@@ -20,6 +20,9 @@
           :to="{ name: l.route }"
           >{{ l.label }}</router-link
         >
+        <button type="button" class="fc-support" @click="openSupport()">
+          ❤ {{ T.support }}
+        </button>
         <button type="button" @click="openFeedback()">{{ T.report }}</button>
       </nav>
     </div>
@@ -34,9 +37,11 @@
 import { computed } from "vue";
 import { useDraftState } from "../composables/useDraftState";
 import { useFeedback } from "../composables/useFeedback";
+import { useSupport } from "../composables/useSupport";
 
 const { lang, characters, maps } = useDraftState();
 const { openFeedback } = useFeedback();
+const { openSupport } = useSupport();
 
 const ua = computed(() => lang.value === "ua");
 const year = new Date().getFullYear();
@@ -47,12 +52,14 @@ const T = computed(() =>
         heroes: "героїв",
         mapsWord: "мап",
         report: "Повідомити про баг",
+        support: "Підтримати розробника",
         disclaimer: "Фанатський проєкт, не пов'язаний з видавцями гри",
       }
     : {
         heroes: "heroes",
         mapsWord: "maps",
         report: "Report a bug",
+        support: "Support the developer",
         disclaimer: "Fan-made, not affiliated with the game's publishers",
       },
 );
@@ -186,5 +193,9 @@ const roster = computed(() => characters.value.filter((c) => c.image));
   .fc-track {
     animation: none;
   }
+}
+.fc-support {
+  color: #facc15 !important;
+  font-weight: 800;
 }
 </style>

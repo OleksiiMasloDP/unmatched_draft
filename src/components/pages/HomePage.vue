@@ -585,6 +585,8 @@
       </div>
     </section>
 
+    <SupportBanner />
+
     <SiteFooter />
   </div>
 </template>
@@ -606,6 +608,7 @@ import { nodeTypes } from "../../rogueData.js";
 import PackCard from "../PackCard.vue";
 import RogueIcon from "../RogueIcon.vue";
 import SiteFooter from "../SiteFooter.vue";
+import SupportBanner from "../SupportBanner.vue";
 
 const { lang, characters, maps, getWinrate } = useDraftState();
 

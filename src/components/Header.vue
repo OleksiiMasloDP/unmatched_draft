@@ -652,13 +652,15 @@ onBeforeUnmount(() => {
   }
   .desk-report {
     display: inline-flex;
-    border-color: rgba(250, 204, 21, 0.45);
-    color: #facc15;
-    padding: 7px 12px;
+    border-color: #facc15;
+    background: #facc15;
+    color: #1a1204;
+    padding: 7px 14px;
     font-size: 12.5px;
+    font-weight: 800;
   }
   .desk-report:hover {
-    background: rgba(250, 204, 21, 0.1);
+    background: #fde047;
   }
   .desk-menu {
     position: relative;
