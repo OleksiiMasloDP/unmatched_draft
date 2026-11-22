@@ -11,6 +11,25 @@
       <div class="pf-bg" :class="'bn-' + profile.banner">
         <img :src="bannerSrc" alt="" />
         <span class="pf-bg-shade"></span>
+        <div class="pf-edit">
+          <label class="pf-edit-btn">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
+              />
+            </svg>
+            {{ L.changeCover }}
+            <input type="file" accept="image/*" @change="uploadBanner" />
+          </label>
+          <button
+            v-if="profile.bannerImg"
+            type="button"
+            class="pf-edit-btn"
+            @click="profile.bannerImg = ''"
+          >
+            {{ L.resetImg }}
+          </button>
+        </div>
       </div>
       <div class="pf-wrap">
         <aside class="pf-side">
@@ -18,6 +37,15 @@
             <img class="pf-head-art" :src="heroImage(profile.favHero)" alt="" />
             <div class="pf-ava" :class="'fr-' + profile.frame">
               <img :src="avatarSrc" alt="" />
+              <label class="pf-ava-edit">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
+                  />
+                </svg>
+                <span>{{ L.changeAvatar }}</span>
+                <input type="file" accept="image/*" @change="uploadAvatar" />
+              </label>
               <span class="pf-lvl">{{ lvl.level }}</span>
             </div>
             <div class="pf-id">
@@ -1363,6 +1391,117 @@ const HistoryRow = {
   }
   .pf .pf-wrap {
     padding-top: 190px;
+  }
+}
+
+.pf-bg {
+  pointer-events: auto;
+}
+
+.pf-bg-shade {
+  pointer-events: none;
+}
+
+.pf-wrap {
+  pointer-events: none;
+}
+
+.pf-wrap > * {
+  pointer-events: auto;
+}
+
+.pf-edit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 120px;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pf-bg:hover .pf-edit,
+.pf-edit:focus-within {
+  opacity: 1;
+}
+
+.pf-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(8, 11, 22, 0.75);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pf-edit-btn:hover {
+  background: #fff;
+  color: #0b0f19;
+}
+
+.pf-edit-btn svg,
+.pf-ava-edit svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.pf-edit-btn input,
+.pf-ava-edit input {
+  display: none;
+}
+
+.pf-ava-edit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.pf-ava:hover .pf-ava-edit,
+.pf-ava-edit:focus-within {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .pf-edit {
+    inset: 74px 10px auto auto;
+    padding: 0;
+    background: none;
+    opacity: 1;
+  }
+  .pf-ava-edit {
+    inset: auto 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    opacity: 1;
+  }
+  .pf-ava-edit span {
+    display: none;
   }
 }
 </style>

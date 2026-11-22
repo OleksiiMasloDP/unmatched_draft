@@ -47,21 +47,25 @@ export const titles = [
 export const cardFrames = [
   { id: "steel", lvl: 1 },
   { id: "gold", lvl: 2 },
-  { id: "holo", lvl: 4 },
-  { id: "frost", lvl: 6 },
-  { id: "flame", lvl: 8 },
-  { id: "emerald", lvl: 10 },
-  { id: "neon", lvl: 13 },
-  { id: "royal", lvl: 16 },
+  { id: "holo", lvl: 3 },
+  { id: "frost", lvl: 4 },
+  { id: "flame", lvl: 5 },
+  { id: "emerald", lvl: 6 },
+  { id: "shadow", lvl: 7 },
+  { id: "neon", lvl: 9 },
+  { id: "royal", lvl: 12 },
 ];
 
 export const cardEffects = [
   { id: "none", lvl: 1 },
   { id: "shine", lvl: 1 },
-  { id: "pulse", lvl: 3 },
-  { id: "sparkles", lvl: 5 },
+  { id: "pulse", lvl: 2 },
+  { id: "sparkles", lvl: 3 },
+  { id: "snow", lvl: 4 },
+  { id: "embers", lvl: 5 },
+  { id: "glitch", lvl: 7 },
   { id: "holo", lvl: 8 },
-  { id: "tilt", lvl: 11 },
+  { id: "tilt", lvl: 10 },
 ];
 
 export const readImage = (file, { width, height }) =>
