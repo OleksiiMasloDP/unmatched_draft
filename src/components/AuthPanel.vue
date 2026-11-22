@@ -1011,8 +1011,14 @@ small {
   .pn-11 .pn-title {
     font-size: 1.7rem;
   }
-  .pn-body {
+  .pn-logo {
     display: none;
+  }
+  .pn-body {
+    display: flex;
+  }
+  .pn-rows {
+    gap: 8px;
   }
 }
 

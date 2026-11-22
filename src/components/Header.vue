@@ -103,7 +103,7 @@
       </nav>
 
       <div class="header-right">
-        <AccountMenu :lang="lang" />
+        <div class="acc-desk"><AccountMenu :lang="lang" /></div>
         <button type="button" class="desk-report" @click="openSupportModal">
           <svg class="desk-icon" viewBox="0 0 24 24" v-html="icons.heart"></svg>
           <span>{{
@@ -126,6 +126,66 @@
     <transition name="slide">
       <nav v-if="isMenuOpen" class="burger-menu">
         <ul class="menu-list">
+          <template v-if="cloudEnabled && authReady">
+            <li class="menu-section-title">{{ accountText.title }}</li>
+            <template v-if="!user">
+              <li>
+                <button
+                  type="button"
+                  class="menu-item menu-account"
+                  @click="goAuth('signin')"
+                >
+                  <svg class="menu-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
+                  </svg>
+                  <span>{{ accountText.signin }}</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="menu-item menu-account"
+                  @click="goAuth('signup')"
+                >
+                  <svg class="menu-icon" viewBox="0 0 24 24">
+                    <circle cx="10" cy="8" r="4" />
+                    <path d="M3 21a7 7 0 0 1 14 0M19 8v6M16 11h6" />
+                  </svg>
+                  <span>{{ accountText.signup }}</span>
+                </button>
+              </li>
+            </template>
+            <template v-else>
+              <li class="menu-account-email">{{ user.email }}</li>
+              <li>
+                <button
+                  type="button"
+                  class="menu-item menu-account"
+                  @click="menuSync"
+                >
+                  <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v4h-4M6 21v-4h4"
+                    />
+                  </svg>
+                  <span>{{ accountText.sync }}</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="menu-item menu-account"
+                  @click="menuSignOut"
+                >
+                  <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10" />
+                  </svg>
+                  <span>{{ accountText.signout }}</span>
+                </button>
+              </li>
+            </template>
+          </template>
           <li class="menu-section-title">{{ t("navigation") }}</li>
           <template v-for="entry in nav" :key="entry.id">
             <li v-if="entry.type === 'menu'" class="menu-group-title">
@@ -187,6 +247,9 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute } from "vue-router";
 import AccountMenu from "./AccountMenu.vue";
+import { cloudEnabled } from "../cloud/client";
+import { authReady, openAuth, signOut, user } from "../cloud/useAuth";
+import { syncNow } from "../cloud/sync";
 import { useSupport } from "../composables/useSupport";
 
 const props = defineProps({
@@ -205,6 +268,39 @@ const route = useRoute();
 const isMenuOpen = ref(false);
 const openMenu = ref(null);
 const { openSupport } = useSupport();
+
+const accountText = computed(() =>
+  props.lang === "ua"
+    ? {
+        title: "Акаунт",
+        signin: "Увійти",
+        signup: "Реєстрація",
+        sync: "Синхронізувати",
+        signout: "Вийти",
+      }
+    : {
+        title: "Account",
+        signin: "Sign in",
+        signup: "Sign up",
+        sync: "Sync now",
+        signout: "Sign out",
+      },
+);
+
+const goAuth = (mode) => {
+  isMenuOpen.value = false;
+  openAuth(mode);
+};
+
+const menuSync = () => {
+  isMenuOpen.value = false;
+  syncNow();
+};
+
+const menuSignOut = () => {
+  isMenuOpen.value = false;
+  signOut();
+};
 
 const stroke =
   'fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
@@ -359,6 +455,7 @@ onBeforeUnmount(() => {
     opacity 0.3s ease;
 
   width: 100%;
+  box-sizing: border-box;
   padding: 12px 16px;
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(20px);
@@ -579,7 +676,26 @@ onBeforeUnmount(() => {
   opacity: 0;
 }
 
+.menu-account .menu-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu-account-email {
+  padding: 2px 16px 8px;
+  font-size: 12px;
+  color: #94a3b8;
+  word-break: break-all;
+}
+
 @media (max-width: 1023px) {
+  .acc-desk {
+    display: none;
+  }
+
   .engine-title-desktop {
     font-size: 16px;
   }
