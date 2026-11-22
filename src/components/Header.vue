@@ -159,6 +159,20 @@
             <template v-else>
               <li class="menu-account-email">{{ user.email }}</li>
               <li>
+                <router-link
+                  :to="{ name: 'profile' }"
+                  class="menu-item menu-account"
+                  @click="isMenuOpen = false"
+                >
+                  <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M12 3l2.6 5.600 6.100.700-4.500 4.200 1.200 6L12 16.600 6.600 19.500l1.200-6L3.300 9.300l6.100-.7z"
+                    />
+                  </svg>
+                  <span>{{ accountText.profile }}</span>
+                </router-link>
+              </li>
+              <li>
                 <button
                   type="button"
                   class="menu-item menu-account"
@@ -273,6 +287,7 @@ const accountText = computed(() =>
   props.lang === "ua"
     ? {
         title: "Акаунт",
+        profile: "Мій профіль",
         signin: "Увійти",
         signup: "Реєстрація",
         sync: "Синхронізувати",
@@ -280,6 +295,7 @@ const accountText = computed(() =>
       }
     : {
         title: "Account",
+        profile: "My profile",
         signin: "Sign in",
         signup: "Sign up",
         sync: "Sync now",

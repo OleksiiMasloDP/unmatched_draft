@@ -33,6 +33,9 @@
           <p class="acc-status" :class="'is-' + syncStatus">
             <span class="acc-status-dot"></span>{{ statusText }}
           </p>
+          <button type="button" class="acc-item" @click="goProfile">
+            ★ {{ L.profile }}
+          </button>
           <button type="button" class="acc-item" @click="doSync">
             ↻ {{ L.syncNow }}
           </button>
@@ -47,9 +50,16 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { cloudEnabled } from "../cloud/client";
 import { authReady, openAuth, signOut, user } from "../cloud/useAuth";
 import { lastSyncedAt, syncNow, syncStatus } from "../cloud/sync";
+
+const router = useRouter();
+const goProfile = () => {
+  open.value = false;
+  router.push({ name: "profile" });
+};
 
 const props = defineProps({
   lang: { type: String, default: "ua" },
@@ -57,6 +67,7 @@ const props = defineProps({
 
 const dict = {
   en: {
+    profile: "My profile",
     signin: "Sign in",
     account: "Account",
     syncNow: "Sync now",
@@ -68,6 +79,7 @@ const dict = {
     idle: "Waiting",
   },
   ua: {
+    profile: "Мій профіль",
     signin: "Увійти",
     account: "Акаунт",
     syncNow: "Синхронізувати",
