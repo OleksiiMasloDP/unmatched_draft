@@ -1,5 +1,5 @@
 import { BOT_STYLES } from "../botStyles";
-import { onBeforeUnmount, onMounted } from "vue";
+import { onBeforeUnmount, onMounted, toRaw } from "vue";
 import { getMap } from "../gameMaps.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { botProfiles } from "../botProfiles.js";
@@ -38,6 +38,8 @@ const KID_HEROES = ["dr-jill-trent", "black-panther"];
 
 const graphCache = new Map();
 const reachCache = new Map();
+const distCache = new Map();
+const rangeCache = new Map();
 
 function graphOf(mapId) {
   if (!graphCache.has(mapId)) {
@@ -149,14 +151,19 @@ export function useBot(options = {}) {
   let turnManeuvers = 0;
   let lastHp = -1;
 
-  const byId = () => graphOf(game.mapId).byId;
+  const mapIdNow = () => toRaw(game).mapId;
+  let graphNow = null;
+  const byId = () => graphNow || (graphNow = graphOf(mapIdNow()).byId);
   const spaceOf = (id) => byId().get(id);
 
   const distances = (from) => {
+    const cacheKey = `${mapIdNow()}|${from}`;
+    if (distCache.has(cacheKey)) return distCache.get(cacheKey);
     const dist = new Map([[from, 0]]);
     const queue = [from];
-    while (queue.length) {
-      const id = queue.shift();
+    let head = 0;
+    while (head < queue.length) {
+      const id = queue[head++];
       const node = spaceOf(id);
       for (const next of [...(node?.moves || []), ...(node?.secret || [])]) {
         if (!dist.has(next)) {
@@ -165,11 +172,12 @@ export function useBot(options = {}) {
         }
       }
     }
+    distCache.set(cacheKey, dist);
     return dist;
   };
 
   const reachSet = (from, steps) => {
-    const key = `${game.mapId}|${from}|${steps}`;
+    const key = `${mapIdNow()}|${from}|${steps}`;
     if (reachCache.has(key)) return reachCache.get(key);
     const seen = new Map([[from, 0]]);
     const queue = [from];
@@ -192,19 +200,29 @@ export function useBot(options = {}) {
   const linked = (a, b) => (spaceOf(a)?.links || []).includes(b);
 
   const sharesZone = (a, b) => {
-    const zones = spaceOf(a)?.zones || [];
-    return (spaceOf(b)?.zones || []).some((zone) => zones.includes(zone));
+    const zones = spaceOf(a)?.zones;
+    if (!zones) return false;
+    const other = spaceOf(b)?.zones;
+    if (!other) return false;
+    for (const zone of other) if (zones.includes(zone)) return true;
+    return false;
   };
 
   const attackPositions = (attack, target) => {
     if (attack === "range") {
-      return [...byId().keys()].filter((id) => sharesZone(id, target));
+      const key = `${mapIdNow()}|${target}`;
+      let list = rangeCache.get(key);
+      if (!list) {
+        list = [...byId().keys()].filter((id) => sharesZone(id, target));
+        rangeCache.set(key, list);
+      }
+      return list;
     }
     return spaceOf(target)?.links || [];
   };
 
   const fightersOf = (seat) => {
-    const state = game.players[seat];
+    const state = toRaw(game).players[seat];
     if (!state) return [];
     const data = getHero(state.heroId);
     const list = [];
@@ -255,8 +273,8 @@ export function useBot(options = {}) {
       ? sharesZone(from, targetSpace)
       : linked(from, targetSpace);
 
-  const handOf = (seat) => (game.players[seat]?.hand || []).map(getCard);
-  const deckOf = (seat) => (game.players[seat]?.deck || []).map(getCard);
+  const handOf = (seat) => (toRaw(game).players[seat]?.hand || []).map(getCard);
+  const deckOf = (seat) => (toRaw(game).players[seat]?.deck || []).map(getCard);
 
   const healsFoe = (foeSeat) => {
     const state = game.players[foeSeat];
@@ -1469,6 +1487,7 @@ export function useBot(options = {}) {
   });
 
   const step = () => {
+    graphNow = null;
     const bot = game.bot;
     if (!bot) return;
     store = loadBotData();
