@@ -140,7 +140,9 @@
       <template v-else-if="variant === 11">
         <ul class="pn-rows">
           <li v-for="row in C.rows" :key="row[1]">
-            <span class="pn-ico">{{ row[0] }}</span>
+            <span class="pn-ico"
+              ><RogueIcon :name="row[0]" metal="gold" size="26px"
+            /></span>
             <span
               ><strong>{{ row[1] }}</strong
               ><small>{{ row[2] }}</small></span
@@ -169,6 +171,7 @@
 
 <script setup>
 import { computed } from "vue";
+import RogueIcon from "./RogueIcon.vue";
 import { useDraftState } from "../composables/useDraftState";
 import { cardUrls, portraitUrls } from "./authAssets";
 
@@ -190,16 +193,16 @@ const dict = {
       lead: "Один безкоштовний акаунт зберігає прогрес і синхронізує його між телефоном і комп'ютером.",
       rows: [
         [
-          "☁️",
+          "lockedChest",
           "Хмарна синхронізація",
           "Драфти, формати, колоди й забіги Роуглайку на будь-якому пристрої",
         ],
         [
-          "📊",
+          "scrollUnfurled",
           "Статистика та історія",
           "Історія ваших партій і статистика по героях",
         ],
-        ["🏆", "Ачивки", "Нагороди за забіги, героїв і серії перемог"],
+        ["trophy", "Ачивки", "Нагороди за забіги, героїв і серії перемог"],
       ],
       quote:
         "Я пройшов сім подорожей, але свій забіг у Роуглайку з телефона вперше загубив. Не повторюйте моєї помилки: зробіть акаунт!",
@@ -340,16 +343,16 @@ const dict = {
       lead: "One free account keeps your progress safe and in sync between phone and computer.",
       rows: [
         [
-          "☁️",
+          "lockedChest",
           "Cloud sync",
           "Drafts, formats, decks and roguelike runs on any device",
         ],
         [
-          "📊",
+          "scrollUnfurled",
           "Stats and history",
           "Your match history and per-hero statistics",
         ],
-        ["🏆", "Achievements", "Rewards for runs, heroes and win streaks"],
+        ["trophy", "Achievements", "Rewards for runs, heroes and win streaks"],
       ],
       quote:
         "I survived seven voyages, yet I once lost a roguelike run on my phone. Don't repeat my mistake: make an account!",
@@ -863,6 +866,15 @@ small {
   line-height: 1.45;
 }
 
+.pn-11 .pn-title {
+  font-size: 2.7rem;
+  letter-spacing: -0.5px;
+}
+
+.pn-11 .pn-lead {
+  font-size: 0.95rem;
+}
+
 .pn-words {
   display: inline-grid;
   height: 1.15em;
@@ -995,8 +1007,9 @@ small {
     gap: 8px;
     padding: 22px 22px 18px;
   }
-  .pn-title {
-    font-size: 1.45rem;
+  .pn-title,
+  .pn-11 .pn-title {
+    font-size: 1.7rem;
   }
   .pn-body {
     display: none;
