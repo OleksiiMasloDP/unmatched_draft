@@ -122,7 +122,7 @@ export const rogueText = {
     rogueEventTipPick: "Choose 1 of {n} cards",
   },
   ua: {
-    rogueTitle: "Роугалік",
+    rogueTitle: "Роуглайк",
     rogueBeta: "бета",
     rogueStart: "Почати забіг",
     rogueContinue: "Продовжити",
@@ -158,7 +158,7 @@ export const rogueText = {
       "Три випадкові карти з будь-якої колоди. Обрана додається до вашої колоди.",
     rogueOverTitle: "Забіг завершено",
     rogueOverText: "Ви виграли {n} боїв за героя {hero}.",
-    rogueBattleLabel: "Роугалік · рівень {n}",
+    rogueBattleLabel: "Роуглайк · рівень {n}",
     rogueToRun: "До карти забігу",
     rogueVictory: "Перемога",
     rogueDefeat: "Поразка",
