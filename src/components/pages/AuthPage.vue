@@ -480,6 +480,8 @@ onMounted(() => {
 
 .ap-brand {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -826,5 +828,9 @@ onMounted(() => {
     animation: none;
     transition: none;
   }
+}
+.ap-brand :deep(.pn) {
+  flex: 1;
+  height: auto;
 }
 </style>

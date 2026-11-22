@@ -2,22 +2,7 @@
   <div class="pn" :class="'pn-' + variant">
     <div class="pn-head">
       <div class="pn-logo">
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <defs>
-            <linearGradient id="png" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#facc15" />
-              <stop offset="1" stop-color="#ef4444" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M24 3 42 10v14c0 10-7.5 17.5-18 21C13.5 41.5 6 34 6 24V10z"
-            fill="url(#png)"
-          />
-          <path
-            d="M24 12l2.6 8.4H35l-6.5 5.500 2.100 8.500L24 30.400 17.400 35l2.100-8.500L13 21l8.400-.6z"
-            fill="#1a1204"
-          />
-        </svg>
+        <img :src="logo" alt="" />
         <span>Unmatched Draft</span>
       </div>
       <h1 v-if="variant !== 9 && variant !== 11" class="pn-title">
@@ -28,7 +13,6 @@
         <span class="pn-words">
           <b v-for="word in C.words" :key="word">{{ word }}</b>
         </span>
-        {{ C.titleB }}
       </h1>
       <p class="pn-lead">{{ C.lead }}</p>
     </div>
@@ -163,10 +147,6 @@
             >
           </li>
         </ul>
-        <div class="pn5">
-          <img :src="hero" alt="" />
-          <div class="pn5-bubble">{{ C.quote }}</div>
-        </div>
       </template>
 
       <template v-else>
@@ -178,6 +158,11 @@
         </div>
         <p class="pn-caption">{{ C.caption }}</p>
       </template>
+    </div>
+
+    <div v-if="variant === 11" class="pn-foot">
+      <img :src="hero" alt="" />
+      <div class="pn-bubble">{{ C.quote }}</div>
     </div>
   </div>
 </template>
@@ -195,22 +180,26 @@ const { lang } = useDraftState();
 
 const fan = [cardUrls[10], cardUrls[11], cardUrls[12]];
 const hero = portraitUrls[2];
+const logo = `${import.meta.env.BASE_URL}favicon.png`;
 
 const dict = {
   ua: {
     11: {
       titleA: "Ваші",
-      titleB: "скрізь",
       words: ["драфти", "формати", "колоди", "забіги"],
       lead: "Один безкоштовний акаунт зберігає прогрес і синхронізує його між телефоном і комп'ютером.",
       rows: [
         [
           "☁️",
           "Хмарна синхронізація",
-          "Драфти, формати й колоди на будь-якому пристрої",
+          "Драфти, формати, колоди й забіги Роуглайку на будь-якому пристрої",
         ],
-        ["🗡", "Забіги Роуглайку", "Продовжуйте забіг з того ж місця"],
-        ["🔒", "Приватно", "Ваші дані бачите лише ви"],
+        [
+          "📊",
+          "Статистика та історія",
+          "Історія ваших партій і статистика по героях",
+        ],
+        ["🏆", "Ачивки", "Нагороди за забіги, героїв і серії перемог"],
       ],
       quote:
         "Я пройшов сім подорожей, але свій забіг у Роуглайку з телефона вперше загубив. Не повторюйте моєї помилки: зробіть акаунт!",
@@ -347,13 +336,20 @@ const dict = {
   en: {
     11: {
       titleA: "Your",
-      titleB: "everywhere",
       words: ["drafts", "formats", "decks", "runs"],
       lead: "One free account keeps your progress safe and in sync between phone and computer.",
       rows: [
-        ["☁️", "Cloud sync", "Drafts, formats and decks on any device"],
-        ["🗡", "Roguelike runs", "Continue a run where you stopped"],
-        ["🔒", "Private", "Only you can see your data"],
+        [
+          "☁️",
+          "Cloud sync",
+          "Drafts, formats, decks and roguelike runs on any device",
+        ],
+        [
+          "📊",
+          "Stats and history",
+          "Your match history and per-hero statistics",
+        ],
+        ["🏆", "Achievements", "Rewards for runs, heroes and win streaks"],
       ],
       quote:
         "I survived seven voyages, yet I once lost a roguelike run on my phone. Don't repeat my mistake: make an account!",
@@ -518,9 +514,10 @@ const C = computed(() => (dict[lang.value] || dict.en)[props.variant]);
   font-weight: 800;
 }
 
-.pn-logo svg {
-  width: 32px;
-  height: 32px;
+.pn-logo img {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
 }
 
 .pn-title {
@@ -953,7 +950,47 @@ small {
   font-size: 0.78rem;
 }
 
+.pn-foot {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.pn-foot img {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border: 2px solid #facc15;
+  border-radius: 50%;
+}
+
+.pn-bubble {
+  position: relative;
+  padding: 9px 12px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+.pn-bubble::before {
+  position: absolute;
+  bottom: 14px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  content: "";
+  border-top: 7px solid transparent;
+  border-right: 8px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 7px solid transparent;
+}
+
 @media (max-width: 820px) {
+  .pn-foot {
+    display: none;
+  }
   .pn {
     gap: 8px;
     padding: 22px 22px 18px;
