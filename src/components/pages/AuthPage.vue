@@ -806,7 +806,11 @@ onMounted(() => {
 }
 
 @media (max-width: 820px) {
+  .ap :deep(.bd) {
+    display: none;
+  }
   .ap {
+    background: var(--bg-main);
     align-items: flex-start;
     padding: 48px 12px 40px;
   }

@@ -604,7 +604,7 @@ small {
 .pn-rows li,
 .pn4 li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 
