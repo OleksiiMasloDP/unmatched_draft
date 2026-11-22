@@ -1,424 +1,280 @@
 <template>
-  <div class="bd" :class="'bd-' + variant" aria-hidden="true">
+  <div
+    class="bd"
+    :class="'bd-' + variant"
+    aria-hidden="true"
+    @pointermove="track"
+  >
     <template v-if="variant === 1">
-      <div class="au au-1"></div>
-      <div class="au au-2"></div>
-      <div class="au au-3"></div>
-      <div class="au au-4"></div>
-      <div class="au-grain"></div>
+      <img
+        v-for="item in rain"
+        :key="item.src + item.style['--x']"
+        class="v1-card"
+        :src="item.src"
+        alt=""
+        :style="item.style"
+      />
+    </template>
+
+    <template v-else-if="variant === 2">
+      <div class="v2-board">
+        <div
+          v-for="(row, index) in rows"
+          :key="index"
+          class="v2-row"
+          :class="{ 'is-rev': index % 2 }"
+          :style="{ '--s': 46 + index * 9 + 's' }"
+        >
+          <img v-for="(src, i) in row" :key="i" :src="src" alt="" />
+        </div>
+      </div>
     </template>
 
     <template v-else-if="variant === 3">
-      <img
-        v-for="card in floaters"
-        :key="card.src"
-        class="fc"
-        :src="card.src"
-        alt=""
-        :style="card.style"
-      />
-      <div class="fc-fade"></div>
+      <div class="v3-stage">
+        <div class="v3-ring">
+          <img
+            v-for="(src, index) in ring"
+            :key="index"
+            :src="src"
+            alt=""
+            :style="{ '--a': index * (360 / ring.length) + 'deg' }"
+          />
+        </div>
+      </div>
     </template>
 
-    <canvas v-else ref="canvas" class="bd-canvas"></canvas>
+    <template v-else-if="variant === 4">
+      <div class="v4-wall">
+        <img
+          v-for="(src, index) in mosaic"
+          :key="index"
+          :src="src"
+          alt=""
+          :style="{ '--i': index }"
+        />
+      </div>
+    </template>
+
+    <template v-else-if="variant === 5">
+      <img
+        v-for="item in flips"
+        :key="item.src + item.style['--x']"
+        class="v5-card"
+        :src="item.src"
+        alt=""
+        :style="item.style"
+      />
+    </template>
+
+    <template v-else-if="variant === 6">
+      <img
+        v-for="item in burst"
+        :key="item.src"
+        class="v6-card"
+        :src="item.src"
+        alt=""
+        :style="item.style"
+      />
+    </template>
+
+    <template v-else-if="variant === 7">
+      <div class="v7-layer is-back">
+        <img
+          v-for="item in depth.back"
+          :key="item.src"
+          :src="item.src"
+          alt=""
+          :style="item.style"
+        />
+      </div>
+      <div class="v7-layer is-mid">
+        <img
+          v-for="item in depth.mid"
+          :key="item.src"
+          :src="item.src"
+          alt=""
+          :style="item.style"
+        />
+      </div>
+      <div class="v7-layer is-front">
+        <img
+          v-for="item in depth.front"
+          :key="item.src"
+          :src="item.src"
+          alt=""
+          :style="item.style"
+        />
+      </div>
+    </template>
+
+    <template v-else-if="variant === 8">
+      <img
+        v-for="(src, index) in slides"
+        :key="src"
+        class="v8-slide"
+        :src="src"
+        alt=""
+        :style="{ '--i': index }"
+      />
+      <div class="v8-tint"></div>
+    </template>
+
+    <template v-else-if="variant === 9">
+      <div class="v9-stage">
+        <div class="v9-plane">
+          <div class="v9-track">
+            <img v-for="(src, index) in floor" :key="index" :src="src" alt="" />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template v-else-if="variant === 10">
+      <div
+        v-for="bubble in bubbles"
+        :key="bubble.src"
+        class="v10-bubble"
+        :style="bubble.style"
+      >
+        <img :src="bubble.src" alt="" />
+      </div>
+    </template>
+
+    <div class="bd-shade"></div>
   </div>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed } from "vue";
+import { cardUrls, pick, portraitUrls } from "./authAssets";
 
-const props = defineProps({
+defineProps({
   variant: { type: Number, default: 1 },
 });
 
-const canvas = ref(null);
-let frame = 0;
-let stop = null;
-
-const base = import.meta.env.BASE_URL;
-const files = [
-  "Medusa/gaze_of_stone",
-  "King Arthur/excalibur",
-  "Sinbad/commanding_impact",
-  "King Arthur/divine_intervention",
-  "Medusa/hiss_and_slither",
-  "Sinbad/voyage_home",
-  "King Arthur/prophecy",
-  "Medusa/winged_frenzy",
-  "Sinbad/leap_away",
-  "King Arthur/the_holy_grail",
-  "Medusa/snipe",
-  "Sinbad/exploit",
-];
-
-const floaters = computed(() =>
-  files.map((file, index) => {
-    const depth = [0.55, 0.8, 1, 0.65, 0.9, 0.5][index % 6];
-    return {
-      src: `${base}images/cards/${file}.webp`,
-      style: {
-        "--x": `${(index * 8.7 + 4) % 96}%`,
-        "--w": `${Math.round(70 + depth * 90)}px`,
-        "--d": `${Math.round(34 - depth * 16)}s`,
-        "--delay": `${-index * 3.1}s`,
-        "--r": `${(index % 2 ? 1 : -1) * (8 + (index % 5) * 5)}deg`,
-        "--b": `${(1 - depth) * 3.5}px`,
-        "--o": 0.28 + depth * 0.3,
-      },
-    };
-  }),
-);
-
-const reduced = () =>
-  typeof matchMedia === "function" &&
-  matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-function fit(el) {
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  const w = el.clientWidth;
-  const h = el.clientHeight;
-  el.width = Math.round(w * ratio);
-  el.height = Math.round(h * ratio);
-  const ctx = el.getContext("2d");
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  return { ctx, w, h };
-}
-
-function stars(el) {
-  let { ctx, w, h } = fit(el);
-  const mouse = { x: -999, y: -999 };
-  const make = () =>
-    Array.from(
-      { length: Math.min(110, Math.max(32, Math.round((w * h) / 12000))) },
-      () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        r: 1 + Math.random() * 1.6,
-      }),
-    );
-  let dots = make();
-  const move = (event) => {
-    const rect = el.getBoundingClientRect();
-    mouse.x = event.clientX - rect.left;
-    mouse.y = event.clientY - rect.top;
-  };
-  window.addEventListener("pointermove", move);
-  const resize = () => {
-    ({ ctx, w, h } = fit(el));
-    dots = make();
-  };
-  window.addEventListener("resize", resize);
-  const draw = () => {
-    const bg = ctx.createLinearGradient(0, 0, w, h);
-    bg.addColorStop(0, "#050a1c");
-    bg.addColorStop(1, "#0b1530");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
-    for (const dot of dots) {
-      dot.x += dot.vx;
-      dot.y += dot.vy;
-      if (dot.x < 0 || dot.x > w) dot.vx *= -1;
-      if (dot.y < 0 || dot.y > h) dot.vy *= -1;
-    }
-    for (let i = 0; i < dots.length; i++) {
-      const a = dots[i];
-      for (let j = i + 1; j < dots.length; j++) {
-        const b = dots[j];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (dist < 130) {
-          ctx.strokeStyle = `rgba(122,162,255,${(1 - dist / 130) * 0.5})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-      const toMouse = Math.hypot(a.x - mouse.x, a.y - mouse.y);
-      if (toMouse < 180) {
-        ctx.strokeStyle = `rgba(250,204,21,${(1 - toMouse / 180) * 0.7})`;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.stroke();
-      }
-      ctx.fillStyle = "#cfe0ff";
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  };
+const rain = pick(cardUrls, 14).map((src, index) => {
+  const depth = [0.55, 0.8, 1, 0.65, 0.9, 0.5][index % 6];
   return {
-    draw,
-    clean: () => {
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("resize", resize);
+    src,
+    style: {
+      "--x": `${(index * 7.3 + 2) % 94}%`,
+      "--w": `${Math.round(70 + depth * 90)}px`,
+      "--d": `${Math.round(38 - depth * 18)}s`,
+      "--delay": `${-index * 3}s`,
+      "--r": `${(index % 2 ? 1 : -1) * (8 + (index % 5) * 5)}deg`,
+      "--b": `${(1 - depth) * 3.5}px`,
+      "--o": 0.3 + depth * 0.3,
     },
   };
-}
-
-function grid(el) {
-  let { ctx, w, h } = fit(el);
-  const resize = () => {
-    ({ ctx, w, h } = fit(el));
-  };
-  window.addEventListener("resize", resize);
-  const draw = (time) => {
-    const horizon = h * 0.52;
-    const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, "#12052e");
-    sky.addColorStop(1, "#5b1166");
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, w, horizon);
-    const floor = ctx.createLinearGradient(0, horizon, 0, h);
-    floor.addColorStop(0, "#1a0638");
-    floor.addColorStop(1, "#07010f");
-    ctx.fillStyle = floor;
-    ctx.fillRect(0, horizon, w, h - horizon);
-
-    const radius = Math.min(w, h) * 0.2;
-    const sun = ctx.createLinearGradient(0, horizon - radius * 2, 0, horizon);
-    sun.addColorStop(0, "#ffd34d");
-    sun.addColorStop(1, "#ff2f8a");
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(w / 2, horizon - radius * 0.2, radius, Math.PI, 0);
-    ctx.lineTo(w / 2 + radius, horizon);
-    ctx.lineTo(w / 2 - radius, horizon);
-    ctx.closePath();
-    ctx.clip();
-    ctx.fillStyle = sun;
-    ctx.fillRect(0, 0, w, horizon);
-    ctx.fillStyle = "#12052e";
-    for (let i = 1; i < 6; i++) {
-      const y = horizon - radius * 0.2 - radius * (i * 0.17);
-      ctx.fillRect(0, y, w, i * 1.6);
-    }
-    ctx.restore();
-
-    ctx.strokeStyle = "rgba(255,70,170,0.85)";
-    ctx.lineWidth = 1.2;
-    const speed = (time / 1000) * 0.45;
-    for (let i = 0; i < 16; i++) {
-      const p = (i + (speed % 1)) / 16;
-      const y = horizon + Math.pow(p, 2.4) * (h - horizon);
-      ctx.globalAlpha = 0.15 + p * 0.85;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-    ctx.strokeStyle = "rgba(90,220,255,0.8)";
-    for (let i = -14; i <= 14; i++) {
-      ctx.globalAlpha = 0.65;
-      ctx.beginPath();
-      ctx.moveTo(w / 2 + i * 14, horizon);
-      ctx.lineTo(w / 2 + i * w * 0.16, h);
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-  };
-  return { draw, clean: () => window.removeEventListener("resize", resize) };
-}
-
-function embers(el) {
-  let { ctx, w, h } = fit(el);
-  const resize = () => {
-    ({ ctx, w, h } = fit(el));
-  };
-  window.addEventListener("resize", resize);
-  const spawn = (fromBottom) => ({
-    x: Math.random() * w,
-    y: fromBottom ? h + 10 : Math.random() * h,
-    vy: 0.35 + Math.random() * 1.1,
-    r: 0.8 + Math.random() * 2.4,
-    sway: Math.random() * Math.PI * 2,
-    freq: 0.5 + Math.random() * 1.2,
-    life: 0.4 + Math.random() * 0.6,
-  });
-  const sparks = Array.from({ length: Math.min(160, Math.round(w / 6)) }, () =>
-    spawn(false),
-  );
-  const draw = (time) => {
-    const bg = ctx.createLinearGradient(0, 0, 0, h);
-    bg.addColorStop(0, "#07060a");
-    bg.addColorStop(0.7, "#1a0a07");
-    bg.addColorStop(1, "#3b1204");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
-    const glow = ctx.createRadialGradient(
-      w / 2,
-      h * 1.05,
-      10,
-      w / 2,
-      h * 1.05,
-      h * 0.8,
-    );
-    glow.addColorStop(0, "rgba(255,120,30,0.45)");
-    glow.addColorStop(1, "rgba(255,120,30,0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = "lighter";
-    for (const spark of sparks) {
-      spark.y -= spark.vy;
-      spark.x += Math.sin((time / 1000) * spark.freq + spark.sway) * 0.5;
-      const rise = 1 - spark.y / h;
-      if (spark.y < -10 || rise > spark.life + 0.2)
-        Object.assign(spark, spawn(true));
-      const alpha = Math.max(0, 1 - rise / (spark.life + 0.2));
-      const halo = ctx.createRadialGradient(
-        spark.x,
-        spark.y,
-        0,
-        spark.x,
-        spark.y,
-        spark.r * 5,
-      );
-      halo.addColorStop(
-        0,
-        `rgba(255,${Math.round(150 + rise * 60)},60,${alpha})`,
-      );
-      halo.addColorStop(1, "rgba(255,80,0,0)");
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(spark.x, spark.y, spark.r * 5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalCompositeOperation = "source-over";
-  };
-  return { draw, clean: () => window.removeEventListener("resize", resize) };
-}
-
-const factories = { 2: stars, 4: grid, 5: embers };
-
-function start() {
-  cancelAnimationFrame(frame);
-  if (stop) stop();
-  stop = null;
-  const factory = factories[props.variant];
-  if (!factory || !canvas.value) return;
-  const scene = factory(canvas.value);
-  const still = reduced();
-  const loop = (time) => {
-    scene.draw(time);
-    if (!still) frame = requestAnimationFrame(loop);
-  };
-  frame = requestAnimationFrame(loop);
-  stop = scene.clean;
-}
-
-onMounted(start);
-watch(
-  () => props.variant,
-  () => setTimeout(start, 0),
-);
-onBeforeUnmount(() => {
-  cancelAnimationFrame(frame);
-  if (stop) stop();
 });
+
+const rows = [0, 1, 2, 3].map((row) => {
+  const list = pick(cardUrls, 9, row * 4);
+  return [...list, ...list];
+});
+
+const ring = pick(cardUrls, 12, 3);
+const mosaic = pick(portraitUrls, 30, 0);
+
+const flips = pick(cardUrls, 14, 5).map((src, index) => ({
+  src,
+  style: {
+    "--x": `${(index * 8.1 + 3) % 94}%`,
+    "--w": `${70 + (index % 4) * 22}px`,
+    "--d": `${12 + (index % 5) * 3}s`,
+    "--delay": `${-index * 2.2}s`,
+    "--tilt": `${(index % 2 ? 1 : -1) * (10 + (index % 3) * 8)}deg`,
+  },
+}));
+
+const burst = pick(cardUrls, 12, 2).map((src, index) => {
+  const angle = (index / 12) * Math.PI * 2;
+  const reach = 42 + (index % 3) * 6;
+  return {
+    src,
+    style: {
+      "--tx": `${Math.round(Math.cos(angle) * reach * 1.5)}vmin`,
+      "--ty": `${Math.round(Math.sin(angle) * reach)}vmin`,
+      "--r": `${Math.round((angle * 180) / Math.PI + 90)}deg`,
+      "--delay": `${-index * 0.75}s`,
+    },
+  };
+});
+
+const layer = (list, sizes, spread) =>
+  list.map((src, index) => ({
+    src,
+    style: {
+      left: `${(index * spread + 3) % 92}%`,
+      top: `${(index * 29 + 6) % 78}%`,
+      width: `${sizes[index % sizes.length]}px`,
+      "--dur": `${24 + index * 3}s`,
+    },
+  }));
+
+const depth = computed(() => ({
+  back: layer(pick(portraitUrls, 5, 0), [300, 360, 320], 21),
+  mid: layer(pick(portraitUrls, 5, 6), [190, 220], 24),
+  front: layer(pick(cardUrls, 6, 1), [90, 110, 100], 17),
+}));
+
+const slides = pick(portraitUrls, 6, 1);
+const floor = [...pick(cardUrls, 24, 0), ...pick(cardUrls, 24, 0)];
+
+const bubbles = pick(portraitUrls, 14, 4).map((src, index) => {
+  const size = [90, 140, 200, 110, 170, 120][index % 6];
+  return {
+    src,
+    style: {
+      left: `${(index * 9.1 + 2) % 92}%`,
+      width: `${size}px`,
+      height: `${size}px`,
+      "--d": `${22 + (index % 5) * 5}s`,
+      "--delay": `${-index * 3.7}s`,
+      "--o": 0.35 + (size / 200) * 0.4,
+    },
+  };
+});
+
+function track(event) {
+  const el = event.currentTarget;
+  const rect = el.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / rect.width - 0.5;
+  const y = (event.clientY - rect.top) / rect.height - 0.5;
+  el.style.setProperty("--mx", x.toFixed(3));
+  el.style.setProperty("--my", y.toFixed(3));
+}
 </script>
 
 <style scoped>
 .bd {
+  --mx: 0;
+  --my: 0;
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #070b18;
-  pointer-events: none;
-}
-
-.bd-canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.bd-1 {
-  background: #060914;
-}
-
-.au {
-  position: absolute;
-  width: 70vmax;
-  height: 70vmax;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.65;
-  mix-blend-mode: screen;
-}
-
-.au-1 {
-  top: -25%;
-  left: -15%;
-  background: radial-gradient(circle, #22d3ee, transparent 65%);
-  animation: au-a 18s ease-in-out infinite alternate;
-}
-
-.au-2 {
-  top: 10%;
-  right: -25%;
-  background: radial-gradient(circle, #8b5cf6, transparent 65%);
-  animation: au-b 22s ease-in-out infinite alternate;
-}
-
-.au-3 {
-  bottom: -35%;
-  left: 10%;
-  background: radial-gradient(circle, #ec4899, transparent 65%);
-  animation: au-c 20s ease-in-out infinite alternate;
-}
-
-.au-4 {
-  top: 30%;
-  left: 30%;
-  width: 40vmax;
-  height: 40vmax;
-  background: radial-gradient(circle, #34d399, transparent 65%);
-  opacity: 0.4;
-  animation: au-d 16s ease-in-out infinite alternate;
-}
-
-.au-grain {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    rgba(255, 255, 255, 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 3px 3px;
-}
-
-@keyframes au-a {
-  to {
-    transform: translate(30vw, 18vh) scale(1.2);
-  }
-}
-
-@keyframes au-b {
-  to {
-    transform: translate(-35vw, 12vh) scale(0.85);
-  }
-}
-
-@keyframes au-c {
-  to {
-    transform: translate(28vw, -24vh) scale(1.15);
-  }
-}
-
-@keyframes au-d {
-  to {
-    transform: translate(-18vw, -14vh) scale(1.3);
-  }
-}
-
-.bd-3 {
   background:
     radial-gradient(circle at 50% 0%, #1b2a55, transparent 60%), #070b18;
 }
 
-.fc {
+.bd img {
+  display: block;
+  user-select: none;
+}
+
+.bd-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(7, 11, 24, 0.82)
+  );
+}
+
+.v1-card {
   position: absolute;
   bottom: -40%;
   left: var(--x);
@@ -427,11 +283,11 @@ onBeforeUnmount(() => {
   opacity: var(--o);
   filter: blur(var(--b));
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-  animation: fc-rise var(--d) linear infinite;
+  animation: v1-rise var(--d) linear infinite;
   animation-delay: var(--delay);
 }
 
-@keyframes fc-rise {
+@keyframes v1-rise {
   from {
     transform: translateY(0) rotate(var(--r));
   }
@@ -440,20 +296,333 @@ onBeforeUnmount(() => {
   }
 }
 
-.fc-fade {
+.v2-board {
+  position: absolute;
+  inset: -30% -20%;
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  transform: rotate(-14deg);
+}
+
+.v2-row {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: v2-slide var(--s) linear infinite;
+}
+
+.v2-row.is-rev {
+  animation-direction: reverse;
+}
+
+.v2-row img {
+  width: 150px;
+  border-radius: 10px;
+  opacity: 0.55;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes v2-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.v3-stage {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at center,
-    transparent 35%,
-    rgba(7, 11, 24, 0.8)
+  display: grid;
+  place-items: center;
+  perspective: 1400px;
+}
+
+.v3-ring {
+  position: relative;
+  width: 150px;
+  height: 210px;
+  transform-style: preserve-3d;
+  animation: v3-spin 70s linear infinite;
+}
+
+.v3-ring img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  opacity: 0.75;
+  backface-visibility: visible;
+  transform: rotateY(var(--a)) translateZ(560px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes v3-spin {
+  from {
+    transform: rotateX(-10deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-10deg) rotateY(360deg);
+  }
+}
+
+.v4-wall {
+  position: absolute;
+  inset: -15%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  transform: rotate(-6deg);
+  animation: v4-pan 60s ease-in-out infinite alternate;
+}
+
+.v4-wall img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 14px;
+  opacity: 0.35;
+  animation: v4-glow 9s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.7s);
+}
+
+@keyframes v4-glow {
+  50% {
+    opacity: 0.75;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes v4-pan {
+  to {
+    transform: rotate(-6deg) translate(-4%, -6%) scale(1.1);
+  }
+}
+
+.v5-card {
+  position: absolute;
+  top: -30%;
+  left: var(--x);
+  width: var(--w);
+  border-radius: 8px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+  opacity: 0.8;
+  animation: v5-fall var(--d) linear infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes v5-fall {
+  from {
+    transform: translateY(0) perspective(600px) rotateY(0) rotateZ(var(--tilt));
+  }
+  to {
+    transform: translateY(150vh) perspective(600px) rotateY(720deg)
+      rotateZ(calc(var(--tilt) * -1));
+  }
+}
+
+.v6-card {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: 110px;
+  margin: -77px 0 0 -55px;
+  border-radius: 8px;
+  opacity: 0;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+  animation: v6-deal 9s ease-out infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes v6-deal {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0) scale(0.3);
+  }
+  12% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.8;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--r)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--tx) * 1.15), calc(var(--ty) * 1.15))
+      rotate(var(--r)) scale(1.05);
+  }
+}
+
+.v7-layer {
+  position: absolute;
+  inset: -8%;
+  transition: transform 0.3s ease-out;
+}
+
+.v7-layer img {
+  position: absolute;
+  border-radius: 18px;
+  animation: v7-drift var(--dur) ease-in-out infinite alternate;
+}
+
+.is-back {
+  transform: translate(calc(var(--mx) * -18px), calc(var(--my) * -14px));
+}
+
+.is-back img {
+  opacity: 0.22;
+  filter: blur(3px);
+}
+
+.is-mid {
+  transform: translate(calc(var(--mx) * -40px), calc(var(--my) * -30px));
+}
+
+.is-mid img {
+  opacity: 0.4;
+  border-radius: 50%;
+}
+
+.is-front {
+  transform: translate(calc(var(--mx) * -80px), calc(var(--my) * -60px));
+}
+
+.is-front img {
+  opacity: 0.85;
+  border-radius: 8px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes v7-drift {
+  to {
+    transform: translate(26px, -32px) rotate(4deg);
+  }
+}
+
+.v8-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: saturate(1.15) brightness(0.55);
+  animation: v8-show 36s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 6s);
+}
+
+@keyframes v8-show {
+  0% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  6% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 0;
+    transform: scale(1.28) translate(-2%, -2%);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+
+.v8-tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(79, 124, 255, 0.3),
+    rgba(239, 68, 68, 0.22)
   );
+  mix-blend-mode: soft-light;
+}
+
+.v9-stage {
+  position: absolute;
+  inset: 0;
+  perspective: 700px;
+  perspective-origin: 50% 28%;
+}
+
+.v9-plane {
+  position: absolute;
+  right: -30%;
+  bottom: -18%;
+  left: -30%;
+  height: 120%;
+  overflow: hidden;
+  transform: rotateX(64deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(transparent, #000 35%);
+  mask-image: linear-gradient(transparent, #000 35%);
+}
+
+.v9-track {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 22px;
+  padding: 0 4%;
+  animation: v9-flow 22s linear infinite;
+}
+
+.v9-track img {
+  width: 100%;
+  border-radius: 12px;
+  opacity: 0.85;
+}
+
+@keyframes v9-flow {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.v10-bubble {
+  position: absolute;
+  bottom: -240px;
+  opacity: var(--o);
+  animation:
+    v10-up var(--d) linear infinite,
+    v10-sway 7s ease-in-out infinite alternate;
+  animation-delay: var(--delay), var(--delay);
+}
+
+.v10-bubble img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 6px rgba(79, 124, 255, 0.25),
+    0 0 40px rgba(79, 124, 255, 0.55);
+}
+
+@keyframes v10-up {
+  to {
+    bottom: 112%;
+  }
+}
+
+@keyframes v10-sway {
+  to {
+    transform: translateX(46px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .au,
-  .fc {
-    animation: none;
+  .bd * {
+    animation: none !important;
   }
 }
 </style>

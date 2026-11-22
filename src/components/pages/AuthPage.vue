@@ -6,48 +6,7 @@
 
     <div class="ap-card">
       <aside class="ap-brand">
-        <div class="ap-logo">
-          <svg viewBox="0 0 48 48" aria-hidden="true">
-            <defs>
-              <linearGradient id="apg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#facc15" />
-                <stop offset="1" stop-color="#ef4444" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M24 3 42 10v14c0 10-7.5 17.5-18 21C13.5 41.500 6 34 6 24V10z"
-              fill="url(#apg)"
-            />
-            <path
-              d="M24 12 L26.600 20.400 L35 21 L28.500 26.500 L30.600 35 L24 30.400 L17.400 35 L19.500 26.500 L13 21 L21.400 20.400z"
-              fill="#1a1204"
-            />
-          </svg>
-          <span>Unmatched Draft</span>
-        </div>
-
-        <h1 class="ap-headline">{{ L.headline }}</h1>
-        <p class="ap-lead">{{ L.lead }}</p>
-
-        <div class="ap-fan" aria-hidden="true">
-          <img
-            v-for="(card, index) in cards"
-            :key="card"
-            :src="asset(card)"
-            :class="'ap-fan-card ap-fan-' + index"
-            alt=""
-          />
-        </div>
-
-        <ul class="ap-perks">
-          <li v-for="perk in L.perks" :key="perk.title">
-            <span class="ap-perk-icon">{{ perk.icon }}</span>
-            <span>
-              <strong>{{ perk.title }}</strong>
-              <small>{{ perk.text }}</small>
-            </span>
-          </li>
-        </ul>
+        <AuthPanel :variant="panel" />
       </aside>
 
       <form class="ap-form" novalidate @submit.prevent="submit">
@@ -218,6 +177,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AuthBackdrop from "../AuthBackdrop.vue";
+import AuthPanel from "../AuthPanel.vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { authDemo as demo } from "../../cloud/client";
 import {
@@ -232,13 +192,6 @@ import {
 const { lang } = useDraftState();
 const route = useRoute();
 const router = useRouter();
-
-const cards = [
-  "images/cards/Medusa/gaze_of_stone.webp",
-  "images/cards/King Arthur/excalibur.webp",
-  "images/cards/Sinbad/exploit.webp",
-];
-const asset = (path) => `${import.meta.env.BASE_URL}${path}`;
 
 const dict = {
   en: {
@@ -356,10 +309,12 @@ const dict = {
 };
 const L = computed(() => dict[lang.value] || dict.en);
 
-const bg = computed(() => {
-  const value = Number(route.query.bg);
-  return value >= 1 && value <= 5 ? value : 1;
-});
+const choice = (name) => {
+  const value = Number(route.query[name]);
+  return value >= 1 && value <= 10 ? value : 1;
+};
+const bg = computed(() => choice("bg"));
+const panel = computed(() => choice("panel"));
 
 const modes = ["signin", "signup", "forgot"];
 const mode = ref(
@@ -525,126 +480,7 @@ onMounted(() => {
 
 .ap-brand {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 38px 36px;
-  background:
-    radial-gradient(
-      circle at 20% 0%,
-      rgba(79, 124, 255, 0.35),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      rgba(239, 68, 68, 0.3),
-      transparent 55%
-    ),
-    rgba(255, 255, 255, 0.03);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.ap-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #f8fafc;
-}
-
-.ap-logo svg {
-  width: 34px;
-  height: 34px;
-  filter: drop-shadow(0 4px 12px rgba(250, 204, 21, 0.4));
-}
-
-.ap-headline {
-  margin: 10px 0 0;
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1.1;
-  color: #f8fafc;
-}
-
-.ap-lead {
-  margin: 0;
-  color: #cbd5e1;
-  line-height: 1.5;
-}
-
-.ap-fan {
-  position: relative;
-  height: 170px;
-  margin: 8px 0 26px;
-}
-
-.ap-fan-card {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 112px;
-  border-radius: 10px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
-  transform-origin: 50% 120%;
-  transition: transform 0.4s ease;
-}
-
-.ap-fan-0 {
-  transform: translateX(-50%) rotate(-14deg) translateX(-64px);
-}
-
-.ap-fan-1 {
-  z-index: 1;
-  transform: translateX(-50%) translateY(-10px);
-}
-
-.ap-fan-2 {
-  transform: translateX(-50%) rotate(14deg) translateX(64px);
-}
-
-.ap-card:hover .ap-fan-0 {
-  transform: translateX(-50%) rotate(-20deg) translateX(-78px);
-}
-
-.ap-card:hover .ap-fan-2 {
-  transform: translateX(-50%) rotate(20deg) translateX(78px);
-}
-
-.ap-perks {
-  display: grid;
-  gap: 12px;
-  padding: 0;
-  margin: auto 0 0;
-  list-style: none;
-}
-
-.ap-perks li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.ap-perk-icon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  font-size: 1.1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-}
-
-.ap-perks strong {
-  display: block;
-  font-size: 0.92rem;
-  color: #f8fafc;
-}
-
-.ap-perks small {
-  color: #94a3b8;
-  font-size: 0.8rem;
 }
 
 .ap-form {
@@ -977,17 +813,8 @@ onMounted(() => {
     border-radius: 22px;
   }
   .ap-brand {
-    gap: 8px;
-    padding: 22px 22px 18px;
     border-right: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .ap-headline {
-    font-size: 1.45rem;
-  }
-  .ap-fan,
-  .ap-perks {
-    display: none;
   }
   .ap-form {
     padding: 24px 22px 28px;
@@ -995,7 +822,6 @@ onMounted(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ap-fan-card,
   .ap-tab-glider {
     animation: none;
     transition: none;
