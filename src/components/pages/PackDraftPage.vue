@@ -74,9 +74,14 @@
         {{ t(playStage ? "packPlayHint" : "packPickCharacterHint") }}
       </p>
       <p v-if="!canAct" class="pack-hint">{{ t("onlineWaitMove") }}</p>
+      <input
+        v-model="heroSearch"
+        class="form-control form-control-sm mb-3"
+        :placeholder="t('searchPlaceholder')"
+      />
       <div class="row g-3">
         <div
-          v-for="hero in stageHeroes"
+          v-for="hero in visibleHeroes"
           :key="hero.id"
           class="col-12 col-sm-6 col-lg-3"
         >
@@ -579,6 +584,14 @@ const playStage = computed(
 const stageHeroes = computed(() =>
   playStage.value ? poolHeroes.value : heroes,
 );
+const heroSearch = ref("");
+const visibleHeroes = computed(() => {
+  const query = heroSearch.value.trim().toLowerCase();
+  if (!query) return stageHeroes.value;
+  return stageHeroes.value.filter((hero) =>
+    hero.name.toLowerCase().includes(query),
+  );
+});
 
 // Колоди зберігаються автоматично, коли драфт завершено і колоду видно.
 function autoSaveDecks() {
