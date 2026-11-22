@@ -1505,6 +1505,7 @@ const api = {
       ...item,
       space: fighterSpace(item.owner, item.fighter),
     })),
+  heroSpaceOf: (player) => fighterSpace(player, "hero"),
   zoneSpaceIds: (player, fighter) => {
     const zones = active.spaceById.get(fighterSpace(player, fighter)).zones;
     return active.map.spaces

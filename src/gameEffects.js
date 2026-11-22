@@ -2914,12 +2914,19 @@ export const cardEffects = {
   "a-momentary-glance": {
     *scheme(c) {
       const targets = c.g.fightersInHeroZone(c.me);
-      if (!targets.length) return;
-      const space = yield c.g.askSpace(
-        c.me,
-        "promptGlanceTarget",
-        targets.map((item) => item.space),
-      );
+      targets.push({
+        owner: c.me,
+        fighter: "hero",
+        space: c.g.heroSpaceOf(c.me),
+      });
+      const space =
+        targets.length > 1
+          ? yield c.g.askSpace(
+              c.me,
+              "promptGlanceTarget",
+              targets.map((item) => item.space),
+            )
+          : targets[0].space;
       const target = targets.find((item) => item.space === space) || targets[0];
       c.g.damage(target.owner, 2, target.fighter);
     },
