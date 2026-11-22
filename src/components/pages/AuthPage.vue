@@ -309,12 +309,12 @@ const dict = {
 };
 const L = computed(() => dict[lang.value] || dict.en);
 
-const choice = (name) => {
+const choice = (name, max, fallback) => {
   const value = Number(route.query[name]);
-  return value >= 1 && value <= 10 ? value : 1;
+  return value >= 1 && value <= max ? value : fallback;
 };
-const bg = computed(() => choice("bg"));
-const panel = computed(() => choice("panel"));
+const bg = computed(() => choice("bg", 10, 4));
+const panel = computed(() => choice("panel", 11, 11));
 
 const modes = ["signin", "signup", "forgot"];
 const mode = ref(

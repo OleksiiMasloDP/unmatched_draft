@@ -20,12 +20,15 @@
         </svg>
         <span>Unmatched Draft</span>
       </div>
-      <h1 v-if="variant !== 9" class="pn-title">{{ C.title }}</h1>
+      <h1 v-if="variant !== 9 && variant !== 11" class="pn-title">
+        {{ C.title }}
+      </h1>
       <h1 v-else class="pn-title">
         {{ C.titleA }}
         <span class="pn-words">
           <b v-for="word in C.words" :key="word">{{ word }}</b>
         </span>
+        {{ C.titleB }}
       </h1>
       <p class="pn-lead">{{ C.lead }}</p>
     </div>
@@ -150,6 +153,22 @@
         </ul>
       </template>
 
+      <template v-else-if="variant === 11">
+        <ul class="pn-rows">
+          <li v-for="row in C.rows" :key="row[1]">
+            <span class="pn-ico">{{ row[0] }}</span>
+            <span
+              ><strong>{{ row[1] }}</strong
+              ><small>{{ row[2] }}</small></span
+            >
+          </li>
+        </ul>
+        <div class="pn5">
+          <img :src="hero" alt="" />
+          <div class="pn5-bubble">{{ C.quote }}</div>
+        </div>
+      </template>
+
       <template v-else>
         <div class="pn10">
           <div v-for="slot in C.slots" :key="slot[1]" class="pn10-slot">
@@ -179,6 +198,23 @@ const hero = portraitUrls[2];
 
 const dict = {
   ua: {
+    11: {
+      titleA: "Ваші",
+      titleB: "скрізь",
+      words: ["драфти", "формати", "колоди", "забіги"],
+      lead: "Один безкоштовний акаунт зберігає прогрес і синхронізує його між телефоном і комп'ютером.",
+      rows: [
+        [
+          "☁️",
+          "Хмарна синхронізація",
+          "Драфти, формати й колоди на будь-якому пристрої",
+        ],
+        ["🗡", "Забіги Роуглайку", "Продовжуйте забіг з того ж місця"],
+        ["🔒", "Приватно", "Ваші дані бачите лише ви"],
+      ],
+      quote:
+        "Я пройшов сім подорожей, але свій забіг у Роуглайку з телефона вперше загубив. Не повторюйте моєї помилки: зробіть акаунт!",
+    },
     1: {
       title: "Ваші драфти скрізь",
       lead: "Один безкоштовний акаунт зберігає прогрес і синхронізує його між телефоном і комп'ютером.",
@@ -309,6 +345,19 @@ const dict = {
     },
   },
   en: {
+    11: {
+      titleA: "Your",
+      titleB: "everywhere",
+      words: ["drafts", "formats", "decks", "runs"],
+      lead: "One free account keeps your progress safe and in sync between phone and computer.",
+      rows: [
+        ["☁️", "Cloud sync", "Drafts, formats and decks on any device"],
+        ["🗡", "Roguelike runs", "Continue a run where you stopped"],
+        ["🔒", "Private", "Only you can see your data"],
+      ],
+      quote:
+        "I survived seven voyages, yet I once lost a roguelike run on my phone. Don't repeat my mistake: make an account!",
+    },
     1: {
       title: "Your drafts, everywhere",
       lead: "One free account keeps your progress safe and in sync between phone and computer.",
