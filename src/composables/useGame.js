@@ -1001,7 +1001,8 @@ function* walk(
 const suitOf = (player) =>
   hero(player).id === "black-panther" ? pl(player).suit || [] : [];
 
-const boostPool = (player) => [...pl(player).hand, ...suitOf(player)];
+const boostPool = (player) =>
+  [...pl(player).hand, ...suitOf(player)].filter((id) => getCard(id).boost > 0);
 
 function spendBoostCard(player, cardId) {
   const suit = pl(player).suit || [];

@@ -2586,6 +2586,550 @@ export const events = [
       },
     ],
   },
+  {
+    id: "sinbad_harbor",
+    hero: "sinbad",
+    icon: "knapsack",
+    tint: "#2f7f9a",
+    weight: 1,
+    title: both("The old harbor", "Старий порт"),
+    text: both(
+      "A crooked pier at dusk. A weathered sailor with a coiled rope over one shoulder sits on an upturned barrel and mends a net, humming a song about a very large fish. 'Seven voyages,' he says without looking up, 'and the sea still owes me.'",
+      "Крива пристань у сутінках. Обвітрений моряк з бухтою линви на плечі сидить на перевернутій діжці, лагодить сітку й наспівує пісню про дуже велику рибу. «Сім подорожей, — каже він, не підводячи очей, — а море досі мені винне».",
+    ),
+    choices: [
+      {
+        icon: "scrollUnfurled",
+        label: both("Listen to his story", "Вислухати його історію"),
+        outcomes: [
+          out(
+            3,
+            "The tale takes all evening, and somewhere in it is a very useful trick.",
+            "Розповідь триває весь вечір, і десь у ній ховається дуже корисний прийом.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "You nod along until you realise there was no point. You at least rested.",
+            "Ти киваєш, аж поки не розумієш, що сенсу не було. Зате відпочив.",
+            { health: 2 },
+          ),
+        ],
+      },
+      {
+        icon: "coins",
+        label: both("Buy a map from him", "Купити в нього мапу"),
+        cost: 15,
+        outcomes: [
+          out(
+            2,
+            "The map is smudged, but the X is real.",
+            "Мапа розмита, але хрестик справжній.",
+            { gold: 50 },
+          ),
+          out(
+            2,
+            "The map is a drawing of a fish. A card falls out of the fold.",
+            "Мапа виявляється малюнком риби. З-під згину випадає карта.",
+            { card: "any" },
+          ),
+          out(
+            1,
+            "The map leads to a beach, a crab and a bill.",
+            "Мапа веде до пляжу, краба й рахунку.",
+            { gold: -10 },
+          ),
+        ],
+      },
+      {
+        icon: "muscleUp",
+        label: both("Help him haul the net", "Допомогти витягти сітку"),
+        outcomes: [
+          out(
+            2,
+            "The net is full of silver and bad smells. Mostly silver.",
+            "Сітка повна срібла й поганих запахів. Здебільшого срібла.",
+            { gold: 35 },
+          ),
+          out(
+            3,
+            "The net is full of something that bites. You come out sore but with a trophy.",
+            "Сітка повна чогось, що кусається. Ти виходиш побитий, але з трофеєм.",
+            { card: "own", health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "firstAidKit",
+        label: both("Sleep in the boat", "Поспати в човні"),
+        outcomes: [
+          out(
+            3,
+            "The waves rock you better than any bed.",
+            "Хвилі колишуть краще за будь-яке ліжко.",
+            { health: 4 },
+          ),
+        ],
+      },
+      leave(
+        "The sailor shrugs and returns to his knots.",
+        "Моряк знизує плечима й повертається до своїх вузлів.",
+      ),
+    ],
+  },
+  {
+    id: "sinbad_roc",
+    hero: "sinbad",
+    icon: "laurels",
+    tint: "#c9892b",
+    weight: 1,
+    title: both("The giant egg", "Гігантське яйце"),
+    text: both(
+      "On a bare cliff lies an egg the size of a house. A broad-shouldered sailor in a patterned vest and a turban stands beside it, rope in hand, squinting at the sky. 'Do not touch it,' he says. 'Mother will notice.' The sky has already started to darken.",
+      "На голій скелі лежить яйце розміром з будинок. Поруч стоїть широкоплечий моряк у візерунчастій жилетці й тюрбані, з линвою в руці, і мружиться на небо. «Не чіпай, — каже він. — Мати помітить». Небо вже почало темніти.",
+    ),
+    choices: [
+      {
+        icon: "knapsack",
+        label: both("Tie yourself to the claws", "Прив'язатися до пазурів"),
+        outcomes: [
+          out(
+            3,
+            "The bird carries you over a sea of gold coins. You let go at the right moment.",
+            "Птах несе тебе над морем золотих монет. Ти відпускаєш у слушний момент.",
+            { gold: 80 },
+          ),
+          out(
+            2,
+            "The ride is a ride. You land hard and keep a good card.",
+            "Політ є польотом. Ти жорстко приземляєшся і залишаєш собі гарну карту.",
+            { card: "own", health: -4 },
+          ),
+        ],
+      },
+      {
+        icon: "rock",
+        label: both("Steal a feather", "Поцупити перо"),
+        outcomes: [
+          out(
+            2,
+            "A tail feather, heavy as a sword, and a card with it.",
+            "Хвостове перо, важке як меч, а з ним і карта.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "The feather comes loose, and so does your luck. You run.",
+            "Перо відривається, а разом з ним і твоя удача. Ти тікаєш.",
+            { gold: -20, health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "crystalBall",
+        label: both("Wait and watch", "Чекати й спостерігати"),
+        outcomes: [
+          out(
+            3,
+            "The shadow passes, and the sailor, grateful for company, teaches you how to land.",
+            "Тінь минає, а моряк, вдячний за компанію, вчить тебе приземлятися.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "Nothing happens for hours. Then the egg hatches.",
+            "Нічого не відбувається години. Потім яйце проклюнулося.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "twoCoins",
+        label: both("Offer a gift to the nest", "Залишити дар біля гнізда"),
+        cost: 25,
+        outcomes: [
+          out(
+            2,
+            "The gift is accepted with a screech and a shower of gold.",
+            "Дар приймають вереском і дощем золота.",
+            { gold: 70 },
+          ),
+          out(
+            2,
+            "The gift is accepted with a screech and nothing else.",
+            "Дар приймають вереском і більше нічим.",
+          ),
+        ],
+      },
+      leave(
+        "The shadow passes. You hope it did not notice you.",
+        "Тінь минає. Ти сподіваєшся, що вона тебе не помітила.",
+      ),
+    ],
+  },
+  {
+    id: "sinbad_bazaar",
+    hero: "sinbad",
+    icon: "coinsPile",
+    tint: "#d19b2e",
+    weight: 1,
+    title: both("The traveler's bazaar", "Базар мандрівників"),
+    text: both(
+      "A crowded bazaar in a port city. A merchant with a ledger and an enormous smile waves you over to a stall that sells nothing you can name: bottled wind, a salt-crusted compass, a stuffed creature with too many teeth. 'For the traveler who has everything,' he says.",
+      "Переповнений базар у портовому місті. Купець із гросбухом і величезною усмішкою махає тобі до лотка, де продається щось, чому ти не знаєш назви: вітер у пляшках, компас у соляній кірці, опудало з надто великою кількістю зубів. «Для мандрівника, який має все», — каже він.",
+    ),
+    choices: [
+      {
+        icon: "swapBag",
+        label: both("Trade an old card", "Обміняти стару карту"),
+        outcomes: [
+          out(
+            3,
+            "He takes your worn trick and gives you a fresh one.",
+            "Він бере твій потертий прийом і дає тобі свіжий.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "A fair swap, to the merchant's mild disappointment.",
+            "Чесний обмін, до легкого розчарування купця.",
+            { card: "any" },
+          ),
+        ],
+      },
+      {
+        icon: "coins",
+        label: both("Buy the compass", "Купити компас"),
+        cost: 25,
+        outcomes: [
+          out(
+            2,
+            "It points at the nearest treasure. You follow it.",
+            "Він вказує на найближчий скарб. Ти йдеш за ним.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "It points at the merchant. He sighs and refunds half.",
+            "Він вказує на купця. Той зітхає й повертає половину.",
+            { gold: 10 },
+          ),
+        ],
+      },
+      {
+        icon: "diceSixFacesFour",
+        label: both("Haggle for a bargain", "Поторгуватися"),
+        outcomes: [
+          out(
+            2,
+            "You win. He weeps, smiling.",
+            "Ти виграєш. Він плаче, усміхаючись.",
+            { gold: 40 },
+          ),
+          out(
+            2,
+            "He wins. You leave poorer and somehow flattered.",
+            "Він виграє. Ти йдеш біднішим і чомусь потішеним.",
+            { gold: -15 },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Eat at the food stalls", "Поїсти біля кіосків"),
+        outcomes: [
+          out(
+            3,
+            "Spiced, hot and enormous. You leave full of strength.",
+            "Пряне, гаряче й величезне. Ти йдеш повний сил.",
+            { health: 4 },
+          ),
+        ],
+      },
+      leave(
+        "The merchant is already shouting at someone else.",
+        "Купець уже кричить на когось іншого.",
+      ),
+    ],
+  },
+  {
+    id: "medusa_statues",
+    hero: "medusa",
+    icon: "skullStaff",
+    tint: "#4f9a6b",
+    weight: 1,
+    title: both("The garden of statues", "Сад статуй"),
+    text: both(
+      "A garden of stone figures frozen mid-stride, mouths open, hands up. A woman with a mass of living snakes for hair tends a rose bush at the far end, humming to it. She does not turn around. 'Please do not step on my visitors,' she says.",
+      "Сад кам'яних постатей, завмерлих на ходу, з розтуленими ротами й піднятими руками. У дальньому кінці жінка з копою живих змій замість волосся доглядає кущ троянд і наспівує йому. Вона не обертається. «Будь ласка, не наступай на моїх гостей», — каже вона.",
+    ),
+    choices: [
+      {
+        icon: "magnifyingGlass",
+        label: both("Search the statues", "Обшукати статуї"),
+        outcomes: [
+          out(
+            3,
+            "Stone pockets still hold what the owners carried.",
+            "Кам'яні кишені досі тримають те, що несли власники.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "One statue has a card in its fist. You pry it loose.",
+            "В одній зі статуй у кулаку затиснута карта. Ти випрошуєш її.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "One of them was not entirely stone. It was not pleased.",
+            "Одна з них була не зовсім кам'яною. Їй це не сподобалося.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "shakingHands",
+        label: both("Talk to the gardener", "Поговорити з садівницею"),
+        outcomes: [
+          out(
+            3,
+            "She is lonely and generous with advice, and one hissing snake adds a secret.",
+            "Вона самотня й щедра на поради, а одна шиплячa змія додає таємницю.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "She talks for an hour and gives you a rose. It is a very good rose.",
+            "Вона говорить годину й дарує тобі троянду. Це дуже гарна троянда.",
+            { health: 3 },
+          ),
+        ],
+      },
+      {
+        icon: "sun",
+        label: both("Look her in the eye", "Поглянути їй в очі"),
+        outcomes: [
+          out(
+            2,
+            "For one heartbeat the world is gold. Then you blink, and it is a coin purse.",
+            "На один удар серця світ стає золотим. Потім ти кліпаєш, і це гаманець.",
+            { gold: 45 },
+          ),
+          out(
+            2,
+            "You are stone for a minute and a bruise for a day.",
+            "Хвилину ти камінь, а день — синець.",
+            { health: -4, card: "own" },
+          ),
+        ],
+      },
+      {
+        icon: "twoCoins",
+        label: both("Pay for a guided tour", "Заплатити за екскурсію"),
+        cost: 20,
+        outcomes: [
+          out(
+            2,
+            "Every statue has a story, and one has a prize.",
+            "У кожної статуї своя історія, а в однієї є приз.",
+            { gold: 60 },
+          ),
+          out(
+            2,
+            "The best story is how it ends. She hands you a trick.",
+            "Найкраща історія — її кінець. Вона вручає тобі прийом.",
+            { card: "own" },
+          ),
+        ],
+      },
+      leave("The statues keep their silence.", "Статуї зберігають мовчання."),
+    ],
+  },
+  {
+    id: "medusa_harpies",
+    hero: "medusa",
+    icon: "horseHead",
+    tint: "#7c4a9a",
+    weight: 1,
+    title: both("The nesting cliffs", "Скелі з гніздами"),
+    text: both(
+      "Black cliffs crowded with nests. Small winged women with claws and pinched faces watch you from every ledge, whispering. One perches closer on a rock, tilting her head, holding something shiny in her talons. 'Trade,' she says. 'Or fall.'",
+      "Чорні скелі, густо вкриті гніздами. Дрібні крилаті жінки з пазурами й зморщеними обличчями дивляться на тебе з кожного виступу й перешіптуються. Одна присіла ближче на камені, схиливши голову, і тримає в пазурах щось блискуче. «Обмін, — каже вона. — Або падіння».",
+    ),
+    choices: [
+      {
+        icon: "swapBag",
+        label: both(
+          "Trade a card for her shiny",
+          "Обміняти карту на блискучу річ",
+        ),
+        outcomes: [
+          out(
+            3,
+            "A fine trick for a worn one. She cackles.",
+            "Чудовий прийом за потертий. Вона регоче.",
+            { card: "own" },
+          ),
+          out(
+            2,
+            "The shiny turns out to be a sack of coins.",
+            "Блискуча річ виявляється мішечком монет.",
+            { gold: 55 },
+          ),
+        ],
+      },
+      {
+        icon: "crossedSwords",
+        label: both("Fight the flock", "Битися зі зграєю"),
+        outcomes: [
+          out(
+            2,
+            "They scatter, leaving their loot behind.",
+            "Вони розлітаються, залишивши здобич.",
+            { gold: 70, health: -3 },
+          ),
+          out(
+            2,
+            "They take more than they leave. You keep a card for spite.",
+            "Вони забирають більше, ніж лишають. З прикрості ти залишаєш карту.",
+            { card: "any", health: -5 },
+          ),
+        ],
+      },
+      {
+        icon: "footsteps",
+        label: both("Climb past quietly", "Тихо пройти повз"),
+        outcomes: [
+          out(
+            3,
+            "The nests are full of treasure and none of the owners are looking.",
+            "Гнізда повні скарбів, а їхні власниці не дивляться.",
+            { gold: 45 },
+          ),
+          out(
+            2,
+            "One of them looks. The climb gets quicker.",
+            "Одна з них дивиться. Підйом стає швидшим.",
+            { health: -2 },
+          ),
+        ],
+      },
+      {
+        icon: "bread",
+        label: both("Share your rations", "Поділитися припасами"),
+        outcomes: [
+          out(
+            3,
+            "They eat and, to your surprise, they teach you a dive.",
+            "Вони їдять і, на твій подив, навчають тебе пікірувати.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "They eat and say nothing. A small chest is left on your path.",
+            "Вони їдять і нічого не кажуть. На твоєму шляху лишається маленька скриня.",
+            { gold: 30 },
+          ),
+        ],
+      },
+      leave("The flock wheels away, screeching.", "Зграя з вереском відлітає."),
+    ],
+  },
+  {
+    id: "medusa_mirror",
+    hero: "medusa",
+    icon: "magnifyingGlass",
+    tint: "#5a8f7d",
+    weight: 1,
+    title: both("The polished shield", "Відполірований щит"),
+    text: both(
+      "In a ruined temple hangs a round bronze shield polished to a mirror. A pale woman with serpents in her hair stands facing the wall, careful not to turn toward it. 'It was a gift,' she says. 'A very thoughtful, very hurtful gift.'",
+      "У зруйнованому храмі висить круглий бронзовий щит, відполірований до дзеркала. Бліда жінка зі зміями у волоссі стоїть лицем до стіни й обережно не повертається до нього. «Це був подарунок, — каже вона. — Дуже уважний і дуже болючий подарунок».",
+    ),
+    choices: [
+      {
+        icon: "crystalBall",
+        label: both("Look into the shield", "Поглянути у щит"),
+        outcomes: [
+          out(
+            3,
+            "Your reflection winks. Something useful slips out of the glass.",
+            "Твоє відображення підморгує. Зі скла висковзує щось корисне.",
+            { card: "any" },
+          ),
+          out(
+            2,
+            "Your reflection looks tired. You feel the same.",
+            "Твоє відображення виглядає втомленим. Ти почуваєшся так само.",
+            { health: -3 },
+          ),
+        ],
+      },
+      {
+        icon: "lockpicks",
+        label: both("Pry it off the wall", "Зняти зі стіни"),
+        outcomes: [
+          out(
+            2,
+            "It comes off with a clang. The bronze alone is worth a fortune.",
+            "Він падає з брязкотом. Самої бронзи вистачить на статок.",
+            { gold: 65 },
+          ),
+          out(
+            2,
+            "It falls on your foot. She flinches, then laughs for the first time in years.",
+            "Він падає тобі на ногу. Вона здригається, а потім уперше за роки сміється.",
+            { health: -2, card: "own" },
+          ),
+        ],
+      },
+      {
+        icon: "candleFlame",
+        label: both("Light a lamp for her", "Запалити для неї лампу"),
+        outcomes: [
+          out(
+            3,
+            "She turns, eyes closed, and thanks you. She leaves you a gift as old as the temple.",
+            "Вона обертається із заплющеними очима й дякує. Залишає тобі дар, давній як сам храм.",
+            { card: "ally" },
+          ),
+          out(
+            2,
+            "The lamp burns all night. You rest beside it.",
+            "Лампа горить всю ніч. Ти відпочиваєш поруч.",
+            { health: 4 },
+          ),
+        ],
+      },
+      {
+        icon: "twoCoins",
+        label: both(
+          "Pay to see it safely",
+          "Заплатити, щоб поглянути безпечно",
+        ),
+        cost: 20,
+        outcomes: [
+          out(
+            2,
+            "A guarded glance reveals a hidden compartment.",
+            "Обережний погляд відкриває потайний відсік.",
+            { gold: 70 },
+          ),
+          out(
+            2,
+            "The compartment holds a card and a note: 'Sorry.'",
+            "У відсіку карта й записка: «Вибач».",
+            { card: "own" },
+          ),
+        ],
+      },
+      leave(
+        "The mirror goes dark, and so does the room.",
+        "Дзеркало темніє, а разом з ним і кімната.",
+      ),
+    ],
+  },
 ];
 
 export const heroEvents = [
@@ -4217,4 +4761,10 @@ export const eventArts = {
   arthur_stone: "King Arthur/excalibur",
   arthur_round_table: "King Arthur/divine_intervention",
   merlin_cave: "King Arthur/prophecy",
+  sinbad_harbor: "Sinbad/voyage_to_the_island_that_was_a_whale",
+  sinbad_roc: "Sinbad/voyage_to_the_valley_of_the_giant_snakes",
+  sinbad_bazaar: "Sinbad/riches_beyond_compare",
+  medusa_statues: "Medusa/gaze_of_stone",
+  medusa_harpies: "Medusa/the_hounds_of_mighty_zeus",
+  medusa_mirror: "Medusa/a_momentary_glance",
 };
