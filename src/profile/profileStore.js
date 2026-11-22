@@ -44,6 +44,50 @@ export const titles = [
   { id: "legend", lvl: 18 },
 ];
 
+export const cardFrames = [
+  { id: "steel", lvl: 1 },
+  { id: "gold", lvl: 2 },
+  { id: "holo", lvl: 4 },
+  { id: "frost", lvl: 6 },
+  { id: "flame", lvl: 8 },
+  { id: "emerald", lvl: 10 },
+  { id: "neon", lvl: 13 },
+  { id: "royal", lvl: 16 },
+];
+
+export const cardEffects = [
+  { id: "none", lvl: 1 },
+  { id: "shine", lvl: 1 },
+  { id: "pulse", lvl: 3 },
+  { id: "sparkles", lvl: 5 },
+  { id: "holo", lvl: 8 },
+  { id: "tilt", lvl: 11 },
+];
+
+export const readImage = (file, { width, height }) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const scale = Math.max(width / img.width, height / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas
+          .getContext("2d")
+          .drawImage(img, (width - w) / 2, (height - h) / 2, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
 const defaults = (account) => ({
   nick: account && account.email ? account.email.split("@")[0] : "Player",
   avatar: "sinbad",
@@ -53,6 +97,11 @@ const defaults = (account) => ({
   bio: "",
   favHero: "sinbad",
   showcase: ["firstBlood", "voyager", "roguelike"],
+  avatarImg: "",
+  bannerImg: "",
+  cardFrame: "holo",
+  cardEffect: "shine",
+  cardArt: "hero",
   showStats: true,
   showHistory: true,
 });
