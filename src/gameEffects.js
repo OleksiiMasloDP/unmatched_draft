@@ -832,6 +832,7 @@ export const cardEffects = {
 
   "no-really-i-m-a-doctor": {
     *scheme(c) {
+      const actor = yield* c.g.actor(c);
       if (!c.g.handSize(c.me)) return;
       const ids = yield c.g.askCards(
         c.me,
@@ -841,13 +842,18 @@ export const cardEffects = {
       );
       const amount = c.g.cardBoost(ids[0]);
       c.g.putOnDeckTop(c.me, ids[0]);
-      const fighters = ["hero", ...c.g.adjacentSidekicks(c.me)];
-      let who = "hero";
+      const links = c.g.linksOf(c.me, actor);
+      const fighters = c.g
+        .fightersOf(c.me)
+        .filter(
+          (f) => f === actor || links.includes(c.g.fighterSpace(c.me, f)),
+        );
+      let who = actor;
       if (fighters.length > 1) {
         const spaces = fighters.map((f) => c.g.fighterSpace(c.me, f));
         const space = yield c.g.askSpace(c.me, "promptHealWho", spaces);
         who =
-          fighters.find((f) => c.g.fighterSpace(c.me, f) === space) || "hero";
+          fighters.find((f) => c.g.fighterSpace(c.me, f) === space) || actor;
       }
       c.g.heal(c.me, amount, who);
     },
@@ -2111,10 +2117,9 @@ export const cardEffects = {
       c.g.setFighter(target.owner, saved);
       const links = c.g.linksOf(target.owner, target.fighter);
       const sisters = c.g
-        .fightersOf(c.me)
+        .sidekicksOf(c.me)
         .filter(
           (fighter) =>
-            fighter !== "hero" &&
             !(target.owner === c.me && fighter === target.fighter) &&
             links.includes(c.g.fighterSpace(c.me, fighter)),
         ).length;
@@ -2592,7 +2597,7 @@ export const cardEffects = {
   "slick-talker": {
     *immediate(c) {
       const all = c.g.fightersOf(c.me);
-      const kid = all.find((item) => item !== "hero");
+      const kid = c.g.sidekicksOf(c.me)[0];
       if (!all.includes("hero") || !kid) return;
       const ok = yield c.g.askConfirm(c.me, "promptSlickTalker");
       if (!ok) return;
@@ -2614,7 +2619,7 @@ export const cardEffects = {
       const who = yield* c.g.actor(c);
       c.g.setFighter(c.me, who);
       yield* placeInZone(c);
-      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      const kid = c.g.sidekicksOf(c.me)[0];
       if (kid) {
         const options = c.g.zoneSpaces(c.me);
         if (options.length) {
@@ -2816,7 +2821,7 @@ export const cardEffects = {
       c.g.setImmune(c.me);
     },
     *after(c) {
-      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      const kid = c.g.sidekicksOf(c.me)[0];
       if (!kid) return;
       const options = c.g.anySpaces();
       if (!options.length) return;
@@ -2882,7 +2887,7 @@ export const cardEffects = {
 
   "restless-spirits": {
     *scheme(c) {
-      const kid = c.g.fightersOf(c.me).find((item) => item !== "hero");
+      const kid = c.g.sidekicksOf(c.me)[0];
       if (!kid) return;
       const zone = c.g.zoneSpaceIds(c.me, kid);
       const first = yield c.g.askSpace(c.me, "promptSpiritsSpace", zone);
@@ -2914,8 +2919,7 @@ export const cardEffects = {
   "the-hounds-of-mighty-zeus": {
     *after(c) {
       const saved = c.g.fighterOf(c.me);
-      for (const fighter of c.g.fightersOf(c.me)) {
-        if (fighter === "hero") continue;
+      for (const fighter of c.g.sidekicksOf(c.me)) {
         c.g.setFighter(c.me, fighter);
         yield* c.g.walk(c.me, c.me, 3, "promptMoveSidekick", { fighter });
       }
