@@ -37,6 +37,14 @@
             <img class="pf-head-art" :src="heroImage(profile.favHero)" alt="" />
             <div class="pf-ava" :class="'fr-' + profile.frame">
               <img :src="avatarSrc" alt="" />
+              <button
+                v-if="profile.avatarImg"
+                type="button"
+                class="pf-ava-reset"
+                @click="profile.avatarImg = ''"
+              >
+                ×
+              </button>
               <label class="pf-ava-edit">
                 <svg viewBox="0 0 24 24">
                   <path
@@ -203,7 +211,11 @@
                 <div class="pf-bar-main">
                   <div class="pf-bar-top">
                     <span>{{ heroName(row.hero) }}</span>
-                    <span>{{ row.wins }}/{{ row.played }}</span>
+                    <span class="pf-bar-val"
+                      ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b> ·
+                      {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
+                      {{ row.played }}</span
+                    >
                   </div>
                   <div class="pf-bar">
                     <i
@@ -223,7 +235,11 @@
                 <div class="pf-bar-main">
                   <div class="pf-bar-top">
                     <span>{{ L.modes[row.mode] }}</span>
-                    <span>{{ row.wins }}/{{ row.played }}</span>
+                    <span class="pf-bar-val"
+                      ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b> ·
+                      {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
+                      {{ row.played }}</span
+                    >
                   </div>
                   <div class="pf-bar">
                     <i
@@ -356,34 +372,44 @@
                 rows="3"
                 maxlength="120"
               ></textarea>
-              <label class="pf-label">{{ L.uploads }}</label>
-              <div class="pf-upl">
-                <label class="pf-btn pf-file">
-                  {{ L.uploadAvatar }}
-                  <input type="file" accept="image/*" @change="uploadAvatar" />
-                </label>
-                <button
-                  v-if="profile.avatarImg"
-                  type="button"
-                  class="pf-btn ghost"
-                  @click="profile.avatarImg = ''"
-                >
-                  {{ L.resetImg }}
-                </button>
-                <label class="pf-btn pf-file">
-                  {{ L.uploadBanner }}
-                  <input type="file" accept="image/*" @change="uploadBanner" />
-                </label>
-                <button
-                  v-if="profile.bannerImg"
-                  type="button"
-                  class="pf-btn ghost"
-                  @click="profile.bannerImg = ''"
-                >
-                  {{ L.resetImg }}
-                </button>
+              <div class="pf-uploads">
+                <label class="pf-label">{{ L.uploads }}</label>
+                <div class="pf-upl">
+                  <label class="pf-btn pf-file">
+                    {{ L.uploadAvatar }}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      @change="uploadAvatar"
+                    />
+                  </label>
+                  <button
+                    v-if="profile.avatarImg"
+                    type="button"
+                    class="pf-btn ghost"
+                    @click="profile.avatarImg = ''"
+                  >
+                    {{ L.resetImg }}
+                  </button>
+                  <label class="pf-btn pf-file">
+                    {{ L.uploadBanner }}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      @change="uploadBanner"
+                    />
+                  </label>
+                  <button
+                    v-if="profile.bannerImg"
+                    type="button"
+                    class="pf-btn ghost"
+                    @click="profile.bannerImg = ''"
+                  >
+                    {{ L.resetImg }}
+                  </button>
+                </div>
+                <p v-if="uploadError" class="pf-note">{{ uploadError }}</p>
               </div>
-              <p v-if="uploadError" class="pf-note">{{ uploadError }}</p>
               <label class="pf-label">{{ L.avatar }}</label>
               <div class="pf-picker">
                 <button
@@ -1486,22 +1512,39 @@ const HistoryRow = {
   opacity: 1;
 }
 
-@media (hover: none) {
-  .pf-edit {
-    inset: 74px 10px auto auto;
-    padding: 0;
-    background: none;
-    opacity: 1;
-  }
-  .pf-ava-edit {
-    inset: auto 0 0 auto;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    opacity: 1;
-  }
-  .pf-ava-edit span {
+.pf-uploads {
+  display: none;
+}
+
+.pf-ava-reset {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: #0b0f19;
+  color: #fff;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pf-ava:hover .pf-ava-reset {
+  opacity: 1;
+}
+
+@media (hover: none), (max-width: 720px) {
+  .pf-edit,
+  .pf-ava-edit,
+  .pf-ava-reset {
     display: none;
+  }
+  .pf-uploads {
+    display: block;
   }
 }
 </style>

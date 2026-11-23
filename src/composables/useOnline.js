@@ -262,8 +262,8 @@ async function start(role, code) {
   }
 }
 
-async function host() {
-  await start("host", makeCode());
+async function host(code) {
+  await start("host", code || makeCode());
 }
 
 async function retryHost() {
