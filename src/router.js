@@ -14,12 +14,14 @@ import BotEditor from "./components/pages/BotEditor.vue";
 import BotWatch from "./components/pages/BotWatch.vue";
 import SeoEntityPage from "./components/pages/SeoEntityPage.vue";
 import AuthPage from "./components/pages/AuthPage.vue";
+import LeaderboardPage from "./components/pages/LeaderboardPage.vue";
 import ProfilePage from "./components/pages/ProfilePage.vue";
 import AuthStyles from "./components/pages/AuthStyles.vue";
 
 export const routes = [
   { path: "/", name: "home", component: HomePage },
   { path: "/profile", name: "profile", component: ProfilePage },
+  { path: "/leaderboard", name: "leaderboard", component: LeaderboardPage },
   { path: "/draft", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
   { path: "/matchups", name: "matchups", component: MatchupExplorer },

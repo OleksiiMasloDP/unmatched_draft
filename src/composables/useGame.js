@@ -72,6 +72,7 @@ const game = reactive({
   announce: null,
   announces: [],
   winner: null,
+  tally: null,
   overActive: false,
   mulligan: null,
   toss: null,
@@ -335,6 +336,21 @@ function attackPairs(player) {
   return pairs;
 }
 
+const freshTally = () => ({
+  p1: { dealt: 0, healed: 0 },
+  p2: { dealt: 0, healed: 0 },
+});
+
+function tallyDamage(victim, amount) {
+  if (!game.tally || amount <= 0) return;
+  game.tally[other(victim)].dealt += amount;
+}
+
+function tallyHeal(player, amount) {
+  if (!game.tally || amount <= 0) return;
+  game.tally[player].healed += amount;
+}
+
 function setOver(winner) {
   game.phase = "over";
   game.winner = winner;
@@ -410,6 +426,7 @@ function damage(player, amount, fighter = cur[player]) {
   if (fighter !== "hero") {
     const kid = kidOf(player, fighter);
     if (!kid || kid.down) return;
+    tallyDamage(player, Math.min(amount, kid.hp));
     kid.hp = Math.max(0, kid.hp - amount);
     log(source() ? "logDamageSkSrc" : "logDamageSk", {
       who: kid.name,
@@ -433,6 +450,7 @@ function damage(player, amount, fighter = cur[player]) {
     amount = Math.min(amount, Math.max(0, target.hp - 1));
     if (amount <= 0) return;
   }
+  tallyDamage(player, Math.min(amount, target.hp));
   target.hp = Math.max(0, target.hp - amount);
   if (amount > 0) turnFlags.hurt[player] = true;
   log(source() ? "logDamageSrc" : "logDamage", {
@@ -455,6 +473,7 @@ function heal(player, amount, fighter = cur[player]) {
     if (!kid || kid.down || kid.hp <= 0) return;
     const healed = Math.min(amount, kid.maxHp - kid.hp);
     kid.hp += healed;
+    tallyHeal(player, healed);
     log("logHealSk", { who: kid.name, n: healed });
     if (healed > 0) fx("heal", player, { n: healed, fighter });
     return;
@@ -463,6 +482,7 @@ function heal(player, amount, fighter = cur[player]) {
   if (target.hp <= 0) return;
   const healed = Math.min(amount, target.maxHp - target.hp);
   target.hp += healed;
+  tallyHeal(player, healed);
   log("logHeal", { player, who: hero(player).name, n: healed });
   if (healed > 0) fx("heal", player, { n: healed, fighter: "hero" });
 }
@@ -3188,6 +3208,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   game.turn = first;
   game.viewer = "p1";
   game.winner = null;
+  game.tally = freshTally();
   game.overActive = false;
   game.log = [];
   game.toss = null;

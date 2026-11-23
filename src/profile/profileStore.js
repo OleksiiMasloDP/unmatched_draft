@@ -111,7 +111,7 @@ const defaults = (account) => ({
   title: "newcomer",
   bio: "",
   favHero: "sinbad",
-  showcase: ["firstBlood", "voyager", "roguelike"],
+  showcase: ["firstBlood", "explorer", "firstRun"],
   avatarImg: "",
   bannerImg: "",
   cardFrame: "hazard",

@@ -358,6 +358,11 @@ const nav = computed(() => {
           icon: "game",
           label: props.t("rogueTitle"),
         },
+        {
+          name: "leaderboard",
+          icon: "heart",
+          label: ua ? "Таблиці лідерів" : "Leaderboards",
+        },
       ],
     },
   ];

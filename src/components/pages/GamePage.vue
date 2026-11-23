@@ -1355,6 +1355,7 @@ import GameResult from "../GameResult.vue";
 import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
+import { recordMatch } from "../../profile/matchStats";
 
 const { t, lang } = useDraftState();
 const {
@@ -2252,11 +2253,32 @@ function onNewGame() {
 const resultOpen = ref(false);
 let resultTimer = null;
 
+function logMatch() {
+  if (!solo.value || !game.winner) return;
+  const me = meSeat.value;
+  const foe = me === "p1" ? "p2" : "p1";
+  const mine = game.players[me];
+  const theirs = game.players[foe];
+  if (!mine || !theirs) return;
+  recordMatch({
+    mode: online.value ? "online" : "bot",
+    win: game.winner === me,
+    hero: mine.heroId,
+    enemy: theirs.heroId,
+    turns: game.turnNo || 0,
+    hpLeft: mine.hp > 0 ? mine.hp : 0,
+    dealt: game.tally?.[me]?.dealt || 0,
+    healed: game.tally?.[me]?.healed || 0,
+    taken: game.tally?.[foe]?.dealt || 0,
+  });
+}
+
 watch(
   () => game.phase,
-  (phase) => {
+  (phase, prev) => {
     clearTimeout(resultTimer);
     if (phase === "over") {
+      if (prev && prev !== "over") logMatch();
       resultTimer = setTimeout(() => {
         resultOpen.value = true;
       }, 900);

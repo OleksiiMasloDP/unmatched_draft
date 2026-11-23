@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import { recordRun } from "../profile/matchStats.js";
 import { getCard, getHero } from "../gameDecks.js";
 import { gameMaps } from "../gameMaps.js";
 import {
@@ -296,6 +297,7 @@ export function useRogue() {
     run.best = Math.max(run.best, run.wins);
     run.phase = "over";
     if (run.heroId) {
+      recordRun({ hero: run.heroId, wins: run.wins, victory });
       history.unshift({
         hero: run.heroId,
         wins: run.wins,

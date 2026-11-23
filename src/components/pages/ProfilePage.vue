@@ -123,7 +123,7 @@
                     <b>{{ stats.bestStreak }}</b><span>{{ L.bestStreak }}</span>
                   </div>
                   <div class="pf-kpi">
-                    <b>{{ stats.hours }}</b><span>{{ L.hours }}</span>
+                    <b>{{ stats.healed }}</b><span>{{ L.healed }}</span>
                   </div>
                 </div>
               </div>
@@ -149,6 +149,7 @@
 
               <div class="pf-card pf-wide">
                 <h2 class="pf-h">{{ L.recent }}</h2>
+                <p v-if="!history.length" class="pf-bio">{{ L.noBattles }}</p>
                 <ul class="pf-list">
                   <li v-for="row in history.slice(0, 5)" :key="row.id">
                     <HistoryRow :row="row" :L="L" />
@@ -172,6 +173,9 @@
                 {{ item === "all" ? L.all : L.modes[item] }}
               </button>
             </div>
+            <p v-if="!filteredHistory.length" class="pf-bio">
+              {{ L.noBattles }}
+            </p>
             <ul class="pf-list">
               <li v-for="row in filteredHistory" :key="row.id">
                 <HistoryRow :row="row" :L="L" />
@@ -555,17 +559,15 @@ import {
   cardEffects,
   cardFrames,
   readImage,
-  buildAchievements,
-  buildHistory,
-  buildStats,
   frames,
   heroImage,
   heroKeys,
   heroName,
-  levelOf,
   profile,
   titles,
 } from "../../profile/profileStore";
+import { matchStats } from "../../profile/matchStats";
+import { buildAchievements, levelOf } from "../../profile/achievements";
 import { profileDict } from "../../profile/profileDict";
 
 const { lang } = useDraftState();
@@ -589,10 +591,31 @@ const tab = ref("overview");
 const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
 
-const seedId = computed(() => (user.value ? user.value.id : "guest"));
-const history = computed(() => buildHistory(seedId.value));
-const stats = computed(() => buildStats(seedId.value));
-const achievements = computed(() => buildAchievements(seedId.value));
+const history = computed(() => matchStats.history);
+const byPlayed = (map) =>
+  Object.entries(map)
+    .map(([key, row]) => ({ key, played: row.played, wins: row.wins }))
+    .sort((a, b) => b.played - a.played);
+const stats = computed(() => ({
+  games: matchStats.games,
+  wins: matchStats.wins,
+  losses: matchStats.losses,
+  bestStreak: matchStats.bestStreak,
+  curStreak: matchStats.curStreak,
+  runs: matchStats.runs,
+  runsWon: matchStats.runsWon,
+  healed: matchStats.healed,
+  damage: matchStats.dealt,
+  perHero: byPlayed(matchStats.perHero).map((row) => ({
+    ...row,
+    hero: row.key,
+  })),
+  perMode: byPlayed(matchStats.perMode).map((row) => ({
+    ...row,
+    mode: row.key,
+  })),
+}));
+const achievements = computed(() => buildAchievements(matchStats));
 const lvl = computed(() => levelOf(stats.value, achievements.value));
 const xpPct = computed(() => Math.round((lvl.value.xp / lvl.value.need) * 100));
 const winrate = computed(() =>
@@ -672,11 +695,13 @@ const HistoryRow = {
         h("div", { class: "pf-row-main" }, [
           h(
             "b",
-            `${heroName(props.row.hero)} ${props.L.vs} ${heroName(props.row.enemy)}`,
+            props.row.enemy
+              ? `${heroName(props.row.hero)} ${props.L.vs} ${heroName(props.row.enemy)}`
+              : heroName(props.row.hero),
           ),
           h(
             "span",
-            `${props.L.modes[props.row.mode]} · ${props.row.turns} ${props.L.turns} · ${new Date(props.row.at).toLocaleDateString()}`,
+            `${props.L.modes[props.row.mode]} · ${props.row.turns} ${props.row.mode === "roguelike" ? props.L.runWinsWord : props.L.turns} · ${new Date(props.row.at).toLocaleDateString()}`,
           ),
         ]),
         h("em", props.row.win ? props.L.win : props.L.loss),

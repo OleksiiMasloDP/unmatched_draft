@@ -6,6 +6,7 @@ import Header from "./components/Header.vue";
 import "./composables/usePackDraft";
 import "./composables/useGame";
 import "./lobby/lobbyStore";
+import "./profile/leaderboard";
 
 // Старий механізм запамʼятовування вкладки замінено роутингом
 localStorage.removeItem("active_screen");
