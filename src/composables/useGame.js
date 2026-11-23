@@ -480,10 +480,19 @@ function healFriendly(player, amount) {
   }
 }
 
+function sidekicksOf(player) {
+  if (hero(player)?.team) return [];
+  return fightersOf(player).filter((item) => item !== "hero");
+}
+
 function sidekickAdjacent(player) {
+  return adjacentSidekicks(player).length > 0;
+}
+
+function adjacentSidekicks(player) {
   const links = active.spaceById.get(pl(player).space).links;
-  return pl(player).sidekicks.some(
-    (kid) => !kid.down && links.includes(kid.space),
+  return sidekicksOf(player).filter((id) =>
+    links.includes(fighterSpace(player, id)),
   );
 }
 
@@ -1277,12 +1286,10 @@ function* forceFoeCard(me, combat) {
 
 function sidekicksNearFighter(player, owner, fighter) {
   const zones = active.spaceById.get(fighterSpace(owner, fighter)).zones;
-  return fightersOf(player).filter(
-    (item) =>
-      item !== "hero" &&
-      active.spaceById
-        .get(fighterSpace(player, item))
-        .zones.some((zone) => zones.includes(zone)),
+  return sidekicksOf(player).filter((item) =>
+    active.spaceById
+      .get(fighterSpace(player, item))
+      .zones.some((zone) => zones.includes(zone)),
   ).length;
 }
 
@@ -1389,14 +1396,8 @@ const api = {
   healFriendly,
   sidekickAdjacent,
   adjacentToFoe,
-  adjacentSidekicks: (player) =>
-    pl(player)
-      .sidekicks.filter(
-        (kid) =>
-          !kid.down &&
-          active.spaceById.get(pl(player).space).links.includes(kid.space),
-      )
-      .map((kid) => kid.id),
+  adjacentSidekicks,
+  sidekicksOf,
   foeFightersInZone,
   adjacentFightersOf,
   otherFriendAdjacentToFoe,
