@@ -11,6 +11,16 @@
       <button
         type="button"
         class="mode-option"
+        :class="{ 'is-selected': mode === 'online' }"
+        @click="chooseMode('online')"
+      >
+        <span class="mode-icon">🌐</span>
+        <span class="mode-name">{{ t("modeOnlineTitle") }}</span>
+        <span class="mode-desc">{{ t("modeOnlineDesc") }}</span>
+      </button>
+      <button
+        type="button"
+        class="mode-option"
         :class="{ 'is-selected': mode === 'local' }"
         @click="chooseMode('local')"
       >
@@ -27,16 +37,6 @@
         <span class="mode-icon">🤖</span>
         <span class="mode-name">{{ t("modeBotTitle") }}</span>
         <span class="mode-desc">{{ t("modeBotDesc") }}</span>
-      </button>
-      <button
-        type="button"
-        class="mode-option"
-        :class="{ 'is-selected': mode === 'online' }"
-        @click="chooseMode('online')"
-      >
-        <span class="mode-icon">🌐</span>
-        <span class="mode-name">{{ t("modeOnlineTitle") }}</span>
-        <span class="mode-desc">{{ t("modeOnlineDesc") }}</span>
       </button>
     </div>
 
