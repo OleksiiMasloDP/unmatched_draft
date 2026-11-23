@@ -527,6 +527,15 @@
                 {{ L.showHistory }}</label
               >
             </div>
+            <div class="pf-card pf-wide pf-account">
+              <div>
+                <h2 class="pf-h">{{ L.account }}</h2>
+                <p class="pf-note">{{ user.email }}</p>
+              </div>
+              <button type="button" class="pf-btn danger" @click="doSignOut">
+                {{ L.signout }}
+              </button>
+            </div>
           </section>
         </div>
       </div>
@@ -536,10 +545,11 @@
 
 <script setup>
 import { computed, h, ref } from "vue";
+import { useRouter } from "vue-router";
 import RogueIcon from "../RogueIcon.vue";
 import ProfileCard from "../ProfileCard.vue";
 import { useDraftState } from "../../composables/useDraftState";
-import { openAuth, user } from "../../cloud/useAuth";
+import { openAuth, signOut, user } from "../../cloud/useAuth";
 import {
   banners,
   cardEffects,
@@ -559,7 +569,13 @@ import {
 import { profileDict } from "../../profile/profileDict";
 
 const { lang } = useDraftState();
+const router = useRouter();
 const L = computed(() => profileDict[lang.value === "ua" ? "ua" : "en"]);
+
+const doSignOut = async () => {
+  await signOut();
+  router.push({ name: "home" });
+};
 
 const tabs = ["overview", "history", "stats", "achievements", "customize"];
 const tabIcons = {
@@ -1546,5 +1562,23 @@ const HistoryRow = {
   .pf-uploads {
     display: block;
   }
+}
+
+.pf-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pf-account .pf-h,
+.pf-account .pf-note {
+  margin: 0;
+}
+
+.pf-btn.danger {
+  background: transparent;
+  border: 1px solid rgba(248, 113, 113, 0.6);
+  color: #f87171;
 }
 </style>

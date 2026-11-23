@@ -172,32 +172,6 @@
                   <span>{{ accountText.profile }}</span>
                 </router-link>
               </li>
-              <li>
-                <button
-                  type="button"
-                  class="menu-item menu-account"
-                  @click="menuSync"
-                >
-                  <svg class="menu-icon" viewBox="0 0 24 24">
-                    <path
-                      d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v4h-4M6 21v-4h4"
-                    />
-                  </svg>
-                  <span>{{ accountText.sync }}</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  class="menu-item menu-account"
-                  @click="menuSignOut"
-                >
-                  <svg class="menu-icon" viewBox="0 0 24 24">
-                    <path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10" />
-                  </svg>
-                  <span>{{ accountText.signout }}</span>
-                </button>
-              </li>
             </template>
           </template>
           <li class="menu-section-title">{{ t("navigation") }}</li>
@@ -262,8 +236,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute } from "vue-router";
 import AccountMenu from "./AccountMenu.vue";
 import { cloudEnabled } from "../cloud/client";
-import { authReady, openAuth, signOut, user } from "../cloud/useAuth";
-import { syncNow } from "../cloud/sync";
+import { authReady, openAuth, user } from "../cloud/useAuth";
 import { useSupport } from "../composables/useSupport";
 
 const props = defineProps({
@@ -290,32 +263,18 @@ const accountText = computed(() =>
         profile: "Мій профіль",
         signin: "Увійти",
         signup: "Реєстрація",
-        sync: "Синхронізувати",
-        signout: "Вийти",
       }
     : {
         title: "Account",
         profile: "My profile",
         signin: "Sign in",
         signup: "Sign up",
-        sync: "Sync now",
-        signout: "Sign out",
       },
 );
 
 const goAuth = (mode) => {
   isMenuOpen.value = false;
   openAuth(mode);
-};
-
-const menuSync = () => {
-  isMenuOpen.value = false;
-  syncNow();
-};
-
-const menuSignOut = () => {
-  isMenuOpen.value = false;
-  signOut();
 };
 
 const stroke =
@@ -338,11 +297,22 @@ const nav = computed(() => {
   const ua = props.lang === "ua";
   return [
     {
-      type: "link",
+      type: "menu",
       id: "draft",
-      name: "main",
       icon: "draft",
       label: ua ? "Драфт" : "Draft",
+      items: [
+        {
+          name: "main",
+          icon: "draft",
+          label: ua ? "Драфт" : "Draft",
+        },
+        {
+          name: "formats",
+          icon: "formats",
+          label: props.t("formatsTitle"),
+        },
+      ],
     },
     {
       type: "menu",
@@ -366,13 +336,6 @@ const nav = computed(() => {
           label: props.t("heroMapGuide"),
         },
       ],
-    },
-    {
-      type: "link",
-      id: "formats",
-      name: "formats",
-      icon: "formats",
-      label: props.t("formatsTitle"),
     },
     {
       type: "menu",

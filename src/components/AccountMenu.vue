@@ -19,45 +19,26 @@
         type="button"
         class="acc-avatar"
         :class="'is-' + syncStatus"
-        :aria-label="L.account"
-        :aria-expanded="open"
-        @click="open = !open"
+        :aria-label="L.profile"
+        :title="user.email"
+        @click="goProfile"
       >
         {{ initial }}
         <span class="acc-dot"></span>
       </button>
-
-      <transition name="acc-pop">
-        <div v-if="open" class="acc-panel">
-          <p class="acc-email" :title="user.email">{{ user.email }}</p>
-          <p class="acc-status" :class="'is-' + syncStatus">
-            <span class="acc-status-dot"></span>{{ statusText }}
-          </p>
-          <button type="button" class="acc-item" @click="goProfile">
-            ★ {{ L.profile }}
-          </button>
-          <button type="button" class="acc-item" @click="doSync">
-            ↻ {{ L.syncNow }}
-          </button>
-          <button type="button" class="acc-item is-danger" @click="doSignOut">
-            ⎋ {{ L.signout }}
-          </button>
-        </div>
-      </transition>
     </template>
   </div>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { cloudEnabled } from "../cloud/client";
-import { authReady, openAuth, signOut, user } from "../cloud/useAuth";
-import { lastSyncedAt, syncNow, syncStatus } from "../cloud/sync";
+import { authReady, openAuth, user } from "../cloud/useAuth";
+import { syncStatus } from "../cloud/sync";
 
 const router = useRouter();
 const goProfile = () => {
-  open.value = false;
   router.push({ name: "profile" });
 };
 
@@ -70,8 +51,6 @@ const dict = {
     profile: "My profile",
     signin: "Sign in",
     account: "Account",
-    syncNow: "Sync now",
-    signout: "Sign out",
     syncing: "Syncing…",
     synced: "Synced",
     offline: "Offline: will retry",
@@ -82,8 +61,6 @@ const dict = {
     profile: "Мій профіль",
     signin: "Увійти",
     account: "Акаунт",
-    syncNow: "Синхронізувати",
-    signout: "Вийти",
     syncing: "Синхронізація…",
     synced: "Синхронізовано",
     offline: "Немає зв'язку, повторю",
@@ -93,50 +70,9 @@ const dict = {
 };
 const L = computed(() => dict[props.lang] || dict.en);
 
-const open = ref(false);
-const root = ref(null);
-
 const initial = computed(() =>
   user.value && user.value.email ? user.value.email[0].toUpperCase() : "?",
 );
-
-const statusText = computed(() => {
-  const status = syncStatus.value;
-  if (status === "synced" && lastSyncedAt.value) {
-    const time = new Date(lastSyncedAt.value).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    return `${L.value.synced} · ${time}`;
-  }
-  return L.value[status] || L.value.idle;
-});
-
-async function doSync() {
-  await syncNow();
-}
-
-async function doSignOut() {
-  open.value = false;
-  await signOut();
-}
-
-function onPointer(event) {
-  if (open.value && root.value && !root.value.contains(event.target)) {
-    open.value = false;
-  }
-}
-function onKey(event) {
-  if (event.key === "Escape") open.value = false;
-}
-onMounted(() => {
-  document.addEventListener("pointerdown", onPointer, true);
-  document.addEventListener("keydown", onKey);
-});
-onBeforeUnmount(() => {
-  document.removeEventListener("pointerdown", onPointer, true);
-  document.removeEventListener("keydown", onKey);
-});
 </script>
 
 <style scoped>
@@ -207,89 +143,6 @@ onBeforeUnmount(() => {
 .acc-avatar.is-offline .acc-dot,
 .acc-avatar.is-error .acc-dot {
   background: #ef4444;
-}
-
-.acc-panel {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 230px;
-  padding: 10px;
-  background: rgba(30, 41, 59, 0.98);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
-}
-
-.acc-email {
-  margin: 2px 6px 4px;
-  font-size: 13px;
-  font-weight: 800;
-  color: #f1f5f9;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.acc-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin: 0 6px 8px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #94a3b8;
-}
-
-.acc-status-dot {
-  width: 8px;
-  height: 8px;
-  background: #94a3b8;
-  border-radius: 50%;
-}
-.acc-status.is-synced .acc-status-dot {
-  background: #22c55e;
-}
-.acc-status.is-syncing .acc-status-dot {
-  background: #facc15;
-}
-.acc-status.is-offline .acc-status-dot,
-.acc-status.is-error .acc-status-dot {
-  background: #ef4444;
-}
-
-.acc-item {
-  display: block;
-  width: 100%;
-  padding: 8px 10px;
-  text-align: left;
-  font-size: 13px;
-  font-weight: 700;
-  color: #cbd5e1;
-  background: transparent;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.acc-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-.acc-item.is-danger:hover {
-  color: #fca5a5;
-}
-
-.acc-pop-enter-active,
-.acc-pop-leave-active {
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-}
-.acc-pop-enter-from,
-.acc-pop-leave-to {
-  opacity: 0;
-  transform: translateY(-6px);
 }
 
 @keyframes acc-pulse {
