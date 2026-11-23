@@ -1286,12 +1286,12 @@ function sidekicksNearFighter(player, owner, fighter) {
   ).length;
 }
 
-function fightersInHeroZone(player) {
-  const zones = active.spaceById.get(fighterSpace(player, "hero")).zones;
+function fightersInHeroZone(player, who = "hero") {
+  const zones = active.spaceById.get(fighterSpace(player, who)).zones;
   const found = [];
   for (const owner of ["p1", "p2"]) {
     for (const fighter of fightersOf(owner)) {
-      if (owner === player && fighter === "hero") continue;
+      if (owner === player && fighter === who) continue;
       const near = active.spaceById
         .get(fighterSpace(owner, fighter))
         .zones.some((zone) => zones.includes(zone));
@@ -1500,12 +1500,34 @@ const api = {
     log("logAddToHand", { player, card: getCard(id).name, cardId: id });
   },
   foeFighterIds: (player) => fightersOf(other(player)),
-  fightersInHeroZone: (player) =>
-    fightersInHeroZone(player).map((item) => ({
+  fightersInHeroZone: (player, who = "hero") =>
+    fightersInHeroZone(player, who).map((item) => ({
       ...item,
       space: fighterSpace(item.owner, item.fighter),
     })),
   heroSpaceOf: (player) => fighterSpace(player, "hero"),
+  actor: function* (c) {
+    if (c.who) return c.who;
+    const mine = fightersOf(c.me);
+    const native = !c.card || c.card.heroId === hero(c.me).id;
+    if (native || !mine.length || mine.includes("hero") === false) {
+      c.who = native ? "hero" : mine[0] || "hero";
+      return c.who;
+    }
+    if (c.combat) {
+      const fighter = c.combat.fighters[c.me];
+      c.who = mine.includes(fighter) ? fighter : mine[0];
+      return c.who;
+    }
+    const picked =
+      mine.length === 1
+        ? mine[0]
+        : yield* pickFighter(c.me, "promptPickActor", mine);
+    c.who = picked || mine[0];
+    c.saved = cur[c.me];
+    cur[c.me] = c.who;
+    return c.who;
+  },
   zoneSpaceIds: (player, fighter) => {
     const zones = active.spaceById.get(fighterSpace(player, fighter)).zones;
     return active.map.spaces
@@ -1761,7 +1783,9 @@ function* runEffect(player, card, phase, combat) {
   if (!handler) return;
   beginAnnounce(player, card, phase);
   activeCard = card.name;
-  yield* handler(context(player, card, combat));
+  const ctx = context(player, card, combat);
+  yield* handler(ctx);
+  if (ctx.saved) cur[player] = ctx.saved;
   activeCard = null;
   endAnnounce();
 }
