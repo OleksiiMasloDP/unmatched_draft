@@ -10,8 +10,6 @@
         {{ replacePlayer(game.notice.key, game.notice.player) }}
       </div>
 
-      <div class="game-note">{{ t("gameTestNote") }}</div>
-
       <div class="game-steps">
         <span
           class="game-step"
