@@ -101,7 +101,7 @@ import { useOnline } from "../composables/useOnline";
 import TablesBoard from "./TablesBoard.vue";
 import { mine } from "../lobby/lobbyStore";
 
-const emit = defineEmits(["local", "bot"]);
+const emit = defineEmits(["local", "bot", "online"]);
 const { t } = useDraftState();
 const { net, mode, setMode, join, leave } = useOnline();
 const route = useRoute();
@@ -132,6 +132,7 @@ function chooseMode(next) {
   setMode(next);
   if (next === "local") emit("local");
   if (next === "bot") emit("bot");
+  if (next === "online") emit("online");
 }
 
 function joinRoom() {

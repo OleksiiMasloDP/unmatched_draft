@@ -46,11 +46,12 @@
 
     <OnlinePanel
       v-if="
-        (game.phase === 'setup' && setupStep === 1) ||
+        (game.phase === 'setup' && setupStep <= 2) ||
         netState.status === 'closed'
       "
       @local="chooseLocal"
       @bot="chooseBot"
+      @online="chooseOnline"
     />
 
     <div
@@ -1391,17 +1392,25 @@ const {
   isHost,
   isGuest,
   leave: leaveRoom,
+  setMode,
 } = useOnline();
 const boostOpen = ref(false);
 const tossDone = ref(false);
 const mapsOpen = ref(false);
 const localChosen = ref(online.value || Boolean(game.bot));
+if (game.bot && !online.value) setMode("bot");
+if (localChosen.value && !game.bot && !online.value) setMode("local");
 const solo = computed(() => online.value || Boolean(game.bot));
 const meSeat = computed(() => (online.value ? mySeat.value : "p1"));
 
 function chooseLocal() {
   setBot(null);
   localChosen.value = true;
+}
+
+function chooseOnline() {
+  setBot(null);
+  localChosen.value = false;
 }
 
 function chooseBot() {

@@ -14,15 +14,7 @@ const net = reactive({
 
 const MODE_KEY = "unmatched_play_mode";
 
-function loadMode() {
-  try {
-    return localStorage.getItem(MODE_KEY) === "online" ? "online" : "local";
-  } catch {
-    return "local";
-  }
-}
-
-const mode = ref(loadMode());
+const mode = ref("online");
 
 function setMode(next) {
   mode.value = next;

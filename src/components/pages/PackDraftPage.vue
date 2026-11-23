@@ -27,6 +27,12 @@
       </span>
     </div>
 
+    <OnlinePanel
+      v-if="step <= 2"
+      @local="localChosen = true"
+      @online="localChosen = false"
+    />
+
     <template v-if="step === 1">
       <p class="engine-sub-desc engine-sub-desktop pack-intro">
         {{ t("packIntro") }}
@@ -38,8 +44,6 @@
           <li v-for="n in 5" :key="n">{{ t("packRule" + n) }}</li>
         </ol>
       </details>
-
-      <OnlinePanel @local="localChosen = true" />
 
       <SavedDecksPanel />
     </template>
@@ -500,6 +504,7 @@ const {
   mySeat,
   net: netState,
   leave: leaveRoom,
+  setMode,
 } = useOnline();
 const menuId = ref(null);
 const sideTab = ref("heroes");
@@ -559,6 +564,7 @@ const players = ["p1", "p2"];
 const localChosen = ref(
   state.phase !== "heroes" || state.pool.length > 0 || online.value,
 );
+if (localChosen.value && !online.value) setMode("local");
 const step = computed(() => {
   if (state.phase !== "heroes") return 3;
   if (state.pool.length > 0) return 2;
