@@ -41,10 +41,8 @@
     </div>
 
     <template v-if="mode === 'online'">
+      <TablesBoard v-if="net.role === null" :kind="kind" />
       <div v-if="net.role === null" class="online-actions">
-        <button class="btn btn-primary btn-sm action-btn" @click="hostRoom">
-          {{ t("onlineHost") }}
-        </button>
         <input
           v-model="code"
           class="form-control form-control-sm search-field online-code"
@@ -69,6 +67,7 @@
           {{ t("onlineJoining") }}
         </p>
         <div v-else-if="net.status === 'hosting'" class="online-line">
+          <div v-if="mine" class="online-table">{{ mine.name }}</div>
           <div>{{ t("onlineWaiting") }}</div>
           <div class="online-share">
             <span class="online-room">{{ net.code }}</span>
@@ -99,13 +98,18 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDraftState } from "../composables/useDraftState";
 import { useOnline } from "../composables/useOnline";
+import TablesBoard from "./TablesBoard.vue";
+import { mine } from "../lobby/lobbyStore";
 
 const emit = defineEmits(["local", "bot"]);
 const { t } = useDraftState();
-const { net, mode, setMode, host, join, leave } = useOnline();
+const { net, mode, setMode, join, leave } = useOnline();
 const route = useRoute();
 const router = useRouter();
 
+const kind = computed(() =>
+  route.name === "pack-draft" ? "packDraft" : "game",
+);
 const code = ref("");
 const copied = ref(false);
 
@@ -128,10 +132,6 @@ function chooseMode(next) {
   setMode(next);
   if (next === "local") emit("local");
   if (next === "bot") emit("bot");
-}
-
-function hostRoom() {
-  host();
 }
 
 function joinRoom() {
@@ -280,5 +280,10 @@ onMounted(() => {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 4px;
+}
+
+.online-table {
+  font-weight: 800;
+  margin-bottom: 2px;
 }
 </style>

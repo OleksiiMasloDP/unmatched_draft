@@ -134,7 +134,7 @@ export const playerName = computed(() =>
   user.value && profile.nick ? profile.nick : guestName(),
 );
 
-export const createTable = async ({ name, password }) => {
+export const createTable = async ({ name, password, kind }) => {
   const clean = String(name || "")
     .trim()
     .slice(0, 32);
@@ -145,6 +145,7 @@ export const createTable = async ({ name, password }) => {
     id,
     code: "",
     name: clean,
+    kind: kind || "game",
     hostName: playerName.value,
     hasPassword: Boolean(pass),
     passHash: pass ? await hash(pass, id) : "",

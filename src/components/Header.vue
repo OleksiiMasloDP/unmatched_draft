@@ -391,11 +391,6 @@ const nav = computed(() => {
           label: props.t("gameTitle"),
         },
         {
-          name: "tables",
-          icon: "game",
-          label: ua ? "Столи" : "Tables",
-        },
-        {
           name: "rogue",
           icon: "game",
           label: props.t("rogueTitle"),

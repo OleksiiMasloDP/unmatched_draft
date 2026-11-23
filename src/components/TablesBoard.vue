@@ -1,33 +1,11 @@
 <template>
   <div class="tb">
     <header class="tb-head">
-      <div>
-        <h1 class="tb-title">{{ L.title }}</h1>
-        <p class="tb-lead">{{ L.lead }}</p>
-      </div>
+      <h3 class="tb-title">{{ L.title }}</h3>
       <button type="button" class="tb-create" @click="openCreate">
         + {{ L.create }}
       </button>
     </header>
-
-    <section v-if="mine" class="tb-mine">
-      <div class="tb-mine-main">
-        <span class="tb-badge">{{ L.yours }}</span>
-        <b>{{ mine.name }}</b>
-        <span class="tb-dim">
-          {{ mine.status === "playing" ? L.playing : L.waiting }}
-          <template v-if="mine.code"> · {{ L.code }}: {{ mine.code }}</template>
-        </span>
-      </div>
-      <div class="tb-mine-actions">
-        <button type="button" class="tb-btn" @click="toGame">
-          {{ L.toGame }}
-        </button>
-        <button type="button" class="tb-btn ghost" @click="closeMine">
-          {{ L.cancel }}
-        </button>
-      </div>
-    </section>
 
     <div class="tb-bar">
       <input v-model="query" class="tb-search" :placeholder="L.search" />
@@ -126,21 +104,18 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useDraftState } from "../../composables/useDraftState";
-import { lobbyDict } from "../../lobby/lobbyDict";
+import { useDraftState } from "../composables/useDraftState";
+import { lobbyDict } from "../lobby/lobbyDict";
 import {
-  closeMine,
   createTable,
   joinTable,
   lobby,
-  mine,
   playerName,
   refresh,
-} from "../../lobby/lobbyStore";
+} from "../lobby/lobbyStore";
 
+const props = defineProps({ kind: { type: String, default: "game" } });
 const { lang } = useDraftState();
-const router = useRouter();
 const L = computed(() => lobbyDict[lang.value === "ua" ? "ua" : "en"]);
 
 const query = ref("");
@@ -154,6 +129,7 @@ const form = reactive({ name: "", password: "" });
 const shown = computed(() => {
   const text = query.value.trim().toLowerCase();
   return lobby.list.filter((item) => {
+    if (item.kind && item.kind !== props.kind) return false;
     if (filter.value === "open" && item.status !== "open") return false;
     if (filter.value === "free" && item.hasPassword) return false;
     if (filter.value === "locked" && !item.hasPassword) return false;
@@ -177,13 +153,10 @@ const openCreate = () => {
   dialog.value = "create";
 };
 
-const toGame = () => router.push({ name: "game" });
-
 const enter = async (item, password) => {
   const result = await joinTable(item, password);
   if (result.ok) {
     dialog.value = "";
-    toGame();
     return;
   }
   if (result.reason === "password") error.value = L.value.wrongPass;
@@ -211,11 +184,9 @@ const submit = async () => {
     const ok = await createTable({
       name: form.name,
       password: form.password,
+      kind: props.kind,
     });
-    if (ok) {
-      dialog.value = "";
-      toGame();
-    }
+    if (ok) dialog.value = "";
     return;
   }
   await enter(target.value, form.password);
@@ -226,24 +197,22 @@ onMounted(refresh);
 
 <style scoped>
 .tb {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 80px 14px 70px;
+  margin-top: 12px;
   color: #e2e8f0;
 }
 
 .tb-head {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .tb-title {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.1rem;
   font-weight: 900;
 }
 

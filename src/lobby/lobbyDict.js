@@ -1,6 +1,6 @@
 export const lobbyDict = {
   en: {
-    title: "Tables",
+    title: "Tables · who is looking for a game",
     lead: "Open a table, set a password if you want, and wait for an opponent. Or join someone who is already looking for a game.",
     search: "Search by table name or host",
     create: "Create table",
@@ -38,7 +38,7 @@ export const lobbyDict = {
     defaultName: "table",
   },
   ua: {
-    title: "Столи",
+    title: "Столи · хто шукає гру",
     lead: "Відкрийте стіл, за бажанням задайте пароль і чекайте суперника. Або приєднайтеся до того, хто вже шукає гру.",
     search: "Пошук за назвою столу або ведучим",
     create: "Створити стіл",
