@@ -397,6 +397,7 @@ export const translations = {
     promptMoveFoe: "Move the opposing fighter",
     promptPlaceZone: "Place your hero in a space in their zone",
     promptRedRoomMove: "Move your fighter up to 5 spaces",
+    promptPickActor: "Choose the fighter who plays this scheme",
     promptMayDraw5: "Draw until you have 5 cards?",
     promptMayDraw1: "Draw 1 card?",
     promptReprogram:
@@ -938,6 +939,7 @@ export const translations = {
     promptMoveFoe: "Перемістіть ворожого бійця",
     promptPlaceZone: "Поставте героя на клітинку в його зоні",
     promptRedRoomMove: "Перемістіть свого бійця на відстань до 5 клітинок",
+    promptPickActor: "Оберіть бійця, який грає цю схему",
     promptMayDraw5: "Брати карти, доки на руці не буде 5?",
     promptMayDraw1: "Взяти 1 карту?",
     promptReprogram: "Оберіть 3 карти у скиді, щоб перетасувати їх у колоду",
