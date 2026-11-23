@@ -623,7 +623,7 @@ function* chooseMover(player, remaining, canMove, booster = null, undo = true) {
       "promptMoveWith",
       able.map((fighter) => fighterSpace(player, fighter)),
     );
-    prompt.undo = undo;
+    prompt.undo = typeof undo === "function" ? undo() : undo;
     prompt.boostOptions = booster ? booster.pool() : [];
     const answer = yield prompt;
     if (answer && typeof answer === "object") {
@@ -2126,7 +2126,7 @@ function* maneuver(me) {
           yield* boostedWith(me, boostCard);
         },
       },
-      false,
+      () => !boosted,
     );
     if (!fighter) break;
     remaining.splice(remaining.indexOf(fighter), 1);
@@ -2148,7 +2148,7 @@ function* maneuver(me) {
       prompt.fighter = fighter;
       prompt.left = left;
       prompt.boostOptions = !boosted && !started ? boostPool(me) : [];
-      prompt.undo = false;
+      prompt.undo = !boosted;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
         const boostCard = spendBoostCard(me, answer.boost);
@@ -3587,6 +3587,7 @@ function undoAction(seat) {
   turnFlags.hurt = snap.flags.hurt;
   turnFlags.wonCombat = snap.flags.wonCombat;
   turnFlags.lastStand = snap.flags.lastStand;
+  cur[game.turn] = "hero";
   flow = null;
   game.prompt = null;
   undoPoint = null;
