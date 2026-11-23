@@ -255,7 +255,13 @@ export const cardEffects = {
     value: (c, value) => (c.g.adjacent(c.me, c.foe) ? 6 : value),
     *after(c) {
       if (!redRoomOn(c)) return;
-      yield* c.g.walk(c.foe, c.foe, 5, "promptRedRoomMove");
+      const keep = c.combat.fighters[c.foe];
+      for (const fighter of [...c.g.fightersOf(c.foe)]) {
+        if (!c.g.fightersOf(c.foe).includes(fighter)) continue;
+        c.g.setFighter(c.foe, fighter);
+        yield* c.g.walk(c.foe, c.foe, 5, "promptRedRoomMove", { fighter });
+      }
+      if (c.g.fightersOf(c.foe).includes(keep)) c.g.setFighter(c.foe, keep);
     },
   },
 
@@ -2595,7 +2601,17 @@ export const cardEffects = {
 
   "a-few-more-pearls": {
     *scheme(c) {
-      c.g.setFighter(c.me, "hero");
+      const mine = c.g.fightersOf(c.me);
+      const native = c.g.hero(c.me).id === "annie-christmas";
+      if (native && mine.includes("hero")) {
+        c.g.setFighter(c.me, "hero");
+      } else if (mine.length > 1) {
+        const spaces = mine.map((item) => c.g.fighterSpace(c.me, item));
+        const space = yield c.g.askSpace(c.me, "promptPickActor", spaces);
+        c.g.setFighter(c.me, mine[Math.max(0, spaces.indexOf(space))]);
+      } else if (mine.length) {
+        c.g.setFighter(c.me, mine[0]);
+      }
       for (const item of c.g.adjacentFightersTo(c.me)) {
         if (item.owner === c.foe) c.g.damage(c.foe, 2, item.fighter);
       }
