@@ -8,8 +8,10 @@ const readDemoFlag = () => {
   try {
     const param = new URLSearchParams(window.location.search).get("authdemo");
     if (param === "1") localStorage.setItem("authDemo", "1");
-    if (param === "0") localStorage.removeItem("authDemo");
-    return localStorage.getItem("authDemo") === "1";
+    if (param === "0") localStorage.setItem("authDemo", "0");
+    const stored = localStorage.getItem("authDemo");
+    if (stored === "1") return true;
+    return stored === null && String(env.BASE_URL || "").includes("/preview/");
   } catch {
     return false;
   }
