@@ -398,7 +398,10 @@
           {{ t("gameCancel") }}
         </button>
       </p>
-      <p v-else-if="spacePrompt" class="game-prompt-line is-float">
+      <p
+        v-else-if="spacePrompt && !floatHidden"
+        class="game-prompt-line is-float"
+      >
         {{ promptTitle(spacePrompt) }}
         <button
           v-if="spacePrompt.undo"
@@ -407,8 +410,20 @@
         >
           ↶ {{ t("gameUndo") }}
         </button>
+        <button
+          type="button"
+          class="float-eye"
+          :title="t('combatHide')"
+          :aria-label="t('combatHide')"
+          @click="floatHidden = true"
+        >
+          👁
+        </button>
       </p>
-      <p v-else-if="handPrompt" class="game-prompt-line is-float">
+      <p
+        v-else-if="handPrompt && !floatHidden"
+        class="game-prompt-line is-float"
+      >
         {{ promptTitle(handPrompt) }}
         <span v-if="handPrompt.hint" class="game-hint">
           {{ t(handPrompt.hint.key).replace("{n}", handPrompt.hint.n) }}
@@ -423,7 +438,24 @@
             ({{ selection.length }}/{{ handPrompt.max }})
           </template>
         </button>
+        <button
+          type="button"
+          class="float-eye"
+          :title="t('combatHide')"
+          :aria-label="t('combatHide')"
+          @click="floatHidden = true"
+        >
+          👁
+        </button>
       </p>
+      <button
+        v-if="floatHidden && (spacePrompt || handPrompt)"
+        type="button"
+        class="modal-peek"
+        @click="floatHidden = false"
+      >
+        👁 {{ t("gameShowPopup") }}
+      </button>
 
       <div class="game-layout">
         <div
@@ -1217,7 +1249,7 @@
         👁 {{ t("gameShowPopup") }}
       </button>
       <EffectDialog
-        v-if="effectEntry && !effectHidden && !needsPass && !spacePrompt"
+        v-if="effectVisible"
         :entry="effectEntry"
         :lines="effectLines"
         :picks="effectPicks"
@@ -1829,8 +1861,16 @@ const blockPreview = computed(() =>
     : null,
 );
 
-const EFFECT_MIN_MS = 3000;
-const EFFECT_HIDE_MS = 8000;
+const EFFECT_MIN_MS = 2200;
+const EFFECT_HIDE_MS = 4500;
+const floatHidden = ref(false);
+
+watch(
+  () => game.prompt,
+  () => {
+    floatHidden.value = false;
+  },
+);
 const effectShown = ref(null);
 const effectHidden = ref(false);
 const modalHidden = ref(false);
@@ -1870,6 +1910,15 @@ const effectBlocking = computed(
     effectEntry.value.id === game.announce?.id &&
     !(online.value === false && needsPass.value),
 );
+
+const effectVisible = computed(() => {
+  if (!effectEntry.value || effectHidden.value || needsPass.value) return false;
+  if (spacePrompt.value) return false;
+  if (effectBlocking.value) return true;
+  if (handPrompt.value || placingKid.value) return false;
+  if (modalPrompt.value && !modalHidden.value) return false;
+  return true;
+});
 
 const effectMine = computed(
   () => Boolean(effectPrompt.value) && mine(effectPrompt.value),
@@ -2595,6 +2644,19 @@ function onResultAction() {
   color: var(--text-white);
   font-size: 14px;
   font-weight: 700;
+}
+
+.float-eye {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-light);
+  font-size: 15px;
+  cursor: pointer;
 }
 
 .game-prompt-line.is-float {

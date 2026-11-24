@@ -207,6 +207,34 @@ const waitText = computed(() =>
   cursor: pointer;
 }
 
+@media (max-width: 700px) {
+  .fx-wrap:not(.is-blocking) {
+    top: 60px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  .fx-wrap:not(.is-blocking) .fx-dialog {
+    max-height: 42dvh;
+    padding: 10px 12px 12px;
+  }
+
+  .fx-wrap:not(.is-blocking) .fx-body {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .fx-wrap:not(.is-blocking) .fx-card {
+    width: 88px;
+  }
+
+  .fx-close {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 .fx-head {
   margin: 0 36px 10px 0;
   color: var(--color-warning);
