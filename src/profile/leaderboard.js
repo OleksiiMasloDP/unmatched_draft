@@ -201,22 +201,6 @@ const schedulePush = () => {
   pushTimer = setTimeout(pushNow, 2000);
 };
 
-async function restoreOwn(account) {
-  if (!account || authDemo || !cloudEnabled) return;
-  try {
-    const client = await getClient();
-    const { data } = await client
-      .from(TABLE)
-      .select("stats,heroes")
-      .eq("user_id", account.id)
-      .maybeSingle();
-    if (!data || !data.stats || data.stats.games <= matchStats.games) return;
-    Object.assign(matchStats, data.stats, { perHero: data.heroes || {} });
-  } catch {
-    return;
-  }
-}
-
 onStatsChange(schedulePush);
 watch(
   () => [profile.nick, profile.avatar, profile.title],
@@ -224,4 +208,3 @@ watch(
     if (user.value) schedulePush();
   },
 );
-watch(user, (account) => restoreOwn(account));

@@ -1,7 +1,9 @@
 import { reactive, watch } from "vue";
 import { user } from "../cloud/useAuth.js";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 
 const prefix = "matchstats:";
+const STORE_KEY = "unmatched_matchstats";
 const historyLimit = 60;
 
 const empty = () => ({
@@ -37,6 +39,8 @@ let loadedFor = null;
 
 const read = (id) => {
   try {
+    const current = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (current && current.owner === id) return current;
     return JSON.parse(localStorage.getItem(prefix + id));
   } catch {
     return null;
@@ -50,25 +54,38 @@ export const onStatsChange = (listener) => {
   return () => listeners.delete(listener);
 };
 
-watch(
-  user,
-  (account) => {
-    loadedFor = account ? account.id : null;
-    const saved = account ? read(account.id) : null;
-    Object.assign(matchStats, empty(), saved || {});
-  },
-  { immediate: true },
-);
+const loadFor = (account) => {
+  loadedFor = account ? account.id : null;
+  const saved = account ? read(account.id) : null;
+  Object.assign(matchStats, empty(), saved || {});
+  delete matchStats.owner;
+  if (account && saved && !localStorage.getItem(STORE_KEY)) save();
+};
 
-const save = () => {
+watch(user, loadFor, { immediate: true });
+
+registerSyncable({
+  name: "matchStats",
+  docKey: "matchStats",
+  storageKey: STORE_KEY,
+  toRemote: (raw) => (raw ? JSON.parse(raw) : null),
+  fromRemote: (value) => (value == null ? null : JSON.stringify(value)),
+  apply: () => loadFor(user.value),
+});
+
+function save() {
   if (!loadedFor) return;
   try {
-    localStorage.setItem(prefix + loadedFor, JSON.stringify(matchStats));
+    localStorage.setItem(
+      STORE_KEY,
+      JSON.stringify({ ...matchStats, owner: loadedFor }),
+    );
   } catch {
     return;
   }
+  notifyChanged("matchStats");
   listeners.forEach((listener) => listener());
-};
+}
 
 export const heroKeyOf = (id) => String(id || "").replace(/-/g, "_");
 

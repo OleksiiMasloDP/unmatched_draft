@@ -1,8 +1,12 @@
 import { reactive, watch } from "vue";
 import { user } from "../cloud/useAuth.js";
+import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 import { portraitUrls } from "../components/authAssets.js";
 
 const prefix = "profile:";
+const MAIN_KEY = "unmatched_profile";
+const IMG_KEY = "unmatched_profile_img";
+const imageFields = ["avatarImg", "bannerImg"];
 
 export const heroKeys = portraitUrls.map((url) =>
   url.split("/").pop().replace(".webp", ""),
@@ -96,7 +100,7 @@ export const readImage = (file, { width, height }) =>
         canvas
           .getContext("2d")
           .drawImage(img, (width - w) / 2, (height - h) / 2, w, h);
-        resolve(canvas.toDataURL("image/jpeg", 0.85));
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
       };
       img.src = reader.result;
     };
@@ -124,20 +128,48 @@ const defaults = (account) => ({
 export const profile = reactive(defaults(null));
 
 let loadedFor = null;
+let loadedStr = "";
 
-const read = (id) => {
+const readJson = (key) => {
   try {
-    return JSON.parse(localStorage.getItem(prefix + id));
+    return JSON.parse(localStorage.getItem(key));
   } catch {
     return null;
   }
 };
 
+const ownedBy = (data, id) => (data && data.owner === id ? data : null);
+
+function persist() {
+  const main = { owner: loadedFor };
+  const img = { owner: loadedFor };
+  for (const key of Object.keys(profile)) {
+    if (imageFields.includes(key)) img[key] = profile[key];
+    else main[key] = profile[key];
+  }
+  try {
+    localStorage.setItem(MAIN_KEY, JSON.stringify(main));
+    localStorage.setItem(IMG_KEY, JSON.stringify(img));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const load = (account) => {
   const base = defaults(account);
-  const saved = account ? read(account.id) : null;
   loadedFor = account ? account.id : null;
+  let saved = null;
+  if (account) {
+    const main = ownedBy(readJson(MAIN_KEY), account.id);
+    const img = ownedBy(readJson(IMG_KEY), account.id);
+    const legacy = !main ? readJson(prefix + account.id) : null;
+    saved = { ...(legacy || {}), ...(main || {}), ...(img || {}) };
+    delete saved.owner;
+  }
   Object.assign(profile, base, saved || {});
+  loadedStr = JSON.stringify(profile);
+  if (account && !localStorage.getItem(MAIN_KEY)) persist();
 };
 
 watch(
@@ -152,14 +184,36 @@ watch(
   profile,
   () => {
     if (!loadedFor) return;
-    try {
-      localStorage.setItem(prefix + loadedFor, JSON.stringify(profile));
-    } catch {
-      return;
-    }
+    const current = JSON.stringify(profile);
+    if (current === loadedStr) return;
+    loadedStr = current;
+    if (!persist()) return;
+    notifyChanged("profile");
+    notifyChanged("profileImages");
   },
   { deep: true },
 );
+
+const passRaw = (raw) => (raw ? JSON.parse(raw) : null);
+const toRaw = (value) => (value == null ? null : JSON.stringify(value));
+
+registerSyncable({
+  name: "profile",
+  docKey: "profile",
+  storageKey: MAIN_KEY,
+  toRemote: passRaw,
+  fromRemote: toRaw,
+  apply: () => load(user.value),
+});
+
+registerSyncable({
+  name: "profileImages",
+  docKey: "profileImages",
+  storageKey: IMG_KEY,
+  toRemote: passRaw,
+  fromRemote: toRaw,
+  apply: () => load(user.value),
+});
 
 const hash = (text) => {
   let value = 2166136261;

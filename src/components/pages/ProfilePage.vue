@@ -669,7 +669,7 @@ const upload = async (event, size, key) => {
 const uploadAvatar = (event) =>
   upload(event, { width: 256, height: 256 }, "avatarImg");
 const uploadBanner = (event) =>
-  upload(event, { width: 1600, height: 640 }, "bannerImg");
+  upload(event, { width: 1280, height: 512 }, "bannerImg");
 
 const metals = {
   common: "bronze",
