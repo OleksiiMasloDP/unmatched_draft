@@ -996,7 +996,7 @@ const NOVIGRAD_SPACES = [
   ["N11", 421, 69, ["stone"]],
   ["N12", 583, 114, ["stone"]],
   ["N13", 750, 109, ["stone"]],
-  ["N14", 906, 155, ["stone", "orange"]],
+  ["N14", 906, 155, ["stone", "brown"]],
   ["N15", 659, 309, ["teal"]],
   ["N16", 807, 348, ["teal"]],
   ["N17", 534, 469, ["teal", "orange"]],
@@ -1010,13 +1010,13 @@ const NOVIGRAD_SPACES = [
   ["N25", 1260, 116, ["green"]],
   ["N26", 1067, 212, ["green"]],
   ["N27", 1208, 305, ["green"]],
-  ["N28", 1019, 365, ["green", "orange"]],
+  ["N28", 1019, 365, ["green", "brown"]],
   ["N29", 1268, 457, ["green", "pink"]],
-  ["N30", 1123, 463, ["green", "orange", "pink"]],
-  ["N31", 1010, 559, ["green", "orange", "pink"]],
-  ["N32", 1155, 622, ["orange", "pink"]],
+  ["N30", 1123, 463, ["green", "pink", "brown"]],
+  ["N31", 1010, 559, ["green", "pink", "brown"]],
+  ["N32", 1155, 622, ["pink", "brown"]],
   ["N33", 1258, 725, ["pink"]],
-  ["N34", 1048, 767, ["orange", "pink"]],
+  ["N34", 1048, 767, ["pink", "brown"]],
 ];
 
 const NOVIGRAD_LINKS = [
