@@ -351,7 +351,7 @@
             <ActionIcon name="skip" />{{ t("gameEndTurn") }}
           </button>
           <button
-            v-if="spacePrompt"
+            v-if="spacePrompt && (placingKid || boostOpen)"
             class="btn btn-sm action-btn game-skip"
             @click="answerPrompt(null)"
           >
@@ -409,6 +409,13 @@
           @click="answerPrompt(null)"
         >
           {{ t("gameConfirm") }}
+        </button>
+        <button
+          v-else
+          class="btn btn-sm btn-outline-light action-btn"
+          @click="answerPrompt(null)"
+        >
+          {{ t(spacePrompt.left ? "gameStopMove" : "gameSkip") }}
         </button>
         <button
           v-if="spacePrompt.undo"
