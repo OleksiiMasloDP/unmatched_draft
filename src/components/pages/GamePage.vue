@@ -404,6 +404,13 @@
       >
         {{ promptTitle(spacePrompt) }}
         <button
+          v-if="spacePrompt.confirm"
+          class="btn btn-success btn-sm action-btn"
+          @click="answerPrompt(null)"
+        >
+          {{ t("gameConfirm") }}
+        </button>
+        <button
           v-if="spacePrompt.undo"
           class="btn btn-sm btn-outline-light action-btn"
           @click="doUndo"
@@ -421,7 +428,7 @@
         </button>
       </p>
       <p
-        v-else-if="handPrompt && !floatHidden"
+        v-else-if="handPrompt && !floatHidden && !defenseSkip"
         class="game-prompt-line is-float"
       >
         {{ promptTitle(handPrompt) }}
@@ -449,7 +456,7 @@
         </button>
       </p>
       <button
-        v-if="floatHidden && (spacePrompt || handPrompt)"
+        v-if="floatHidden && (spacePrompt || (handPrompt && !defenseSkip))"
         type="button"
         class="modal-peek"
         @click="floatHidden = false"
@@ -638,6 +645,8 @@
             :players="game.players"
             :viewer="viewer"
             :preview="blockPreview"
+            :skip="defenseSkip"
+            @skip="confirmCards"
           />
           <GameBoard
             :map="map"
@@ -1860,6 +1869,22 @@ const blockPreview = computed(() =>
     ? selection.value[0] || null
     : null,
 );
+
+const defenseSkip = computed(() => {
+  const prompt = handPrompt.value;
+  if (
+    !prompt ||
+    !game.combat ||
+    game.combat.defense !== "pending" ||
+    prompt.player !== game.combat.defender
+  ) {
+    return null;
+  }
+  return {
+    text: selection.value.length ? t("gameConfirm") : t(prompt.skip),
+    disabled: selection.value.length < prompt.min,
+  };
+});
 
 const EFFECT_MIN_MS = 2200;
 const EFFECT_HIDE_MS = 4500;

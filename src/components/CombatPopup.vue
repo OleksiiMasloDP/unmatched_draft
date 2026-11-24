@@ -9,8 +9,17 @@
       </svg>
       {{ t("combatShow") }}
     </button>
+    <button
+      v-if="!open && skip"
+      type="button"
+      class="combat-skip is-pill"
+      :disabled="skip.disabled"
+      @click="emit('skip')"
+    >
+      {{ skip.text }}
+    </button>
 
-    <div v-else class="combat">
+    <div v-if="open" class="combat">
       <div class="combat-head">
         <span class="combat-title">⚔ {{ t("gameReveal") }}</span>
         <span class="combat-stage">{{ stageText }}</span>
@@ -80,6 +89,16 @@
               <span>UNMATCHED</span>
             </div>
           </div>
+
+          <button
+            v-if="skip && side.role === 'defender' && isPending(side)"
+            type="button"
+            class="combat-skip"
+            :disabled="skip.disabled"
+            @click="emit('skip')"
+          >
+            {{ skip.text }}
+          </button>
 
           <div class="combat-tags">
             <span v-if="combat.revealed[side.player]" class="combat-tag">
@@ -153,7 +172,10 @@ const props = defineProps({
   viewer: { type: String, required: true },
   // Карта, яку гравець зараз обирає в руці (ще не підтверджена).
   preview: { type: String, default: null },
+  skip: { type: Object, default: null },
 });
+
+const emit = defineEmits(["skip"]);
 
 const { t } = useDraftState();
 const open = ref(true);
@@ -255,6 +277,35 @@ const stageText = computed(() => {
 
 .combat-wrap > * {
   pointer-events: auto;
+}
+
+.combat-skip {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px 14px;
+  border: 2px solid var(--color-proceed);
+  border-radius: 10px;
+  background: linear-gradient(
+    135deg,
+    var(--color-proceed),
+    var(--color-proceed-dark)
+  );
+  color: var(--text-white);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.combat-skip.is-pill {
+  width: auto;
+  margin: 8px auto 0;
+}
+
+.combat-skip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .combat-pill {

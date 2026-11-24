@@ -2179,6 +2179,12 @@ function* maneuver(me) {
     }
     started = true;
   }
+  if (started && game.phase === "play") {
+    const done = askSpace(me, "promptManeuverDone", []);
+    done.confirm = true;
+    done.undo = true;
+    yield done;
+  }
   cur[me] = "hero";
   return true;
 }
