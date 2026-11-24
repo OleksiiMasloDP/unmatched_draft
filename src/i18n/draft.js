@@ -90,6 +90,14 @@ export const draftText = {
     mapEditorReset: "Reset map",
     mapEditorHint:
       "Drag a circle to move it, arrow keys nudge the selected one (Shift = 5 px). Changes are saved in this browser.",
+    mapEditorZones: "Zones",
+    mapEditorModeMove: "Move spaces",
+    mapEditorModeZones: "Edit zones",
+    mapEditorHintZones:
+      "Click a space and tick the zones it belongs to. Yellow outline = changed. Click a zone chip to highlight all its spaces.",
+    mapEditorZoneUndo: "Restore original",
+    mapEditorOtherZone: "+ other zone",
+    mapEditorAllTitle: "Edited maps to send",
     mapEditorExport: "Export",
     mapEditorCopyMap: "Copy this map",
     mapEditorCopyAll: "Copy all edited maps",
@@ -185,6 +193,14 @@ export const draftText = {
     mapEditorReset: "Скинути мапу",
     mapEditorHint:
       "Перетягуйте кружок, щоб перемістити; стрілки зсувають вибраний (Shift = 5 px). Зміни зберігаються в цьому браузері.",
+    mapEditorZones: "Зони",
+    mapEditorModeMove: "Рухати клітинки",
+    mapEditorModeZones: "Правити зони",
+    mapEditorHintZones:
+      "Натисніть клітинку і відмітьте зони, до яких вона належить. Жовта обводка = змінено. Натисніть на зону зверху, щоб підсвітити всі її клітинки.",
+    mapEditorZoneUndo: "Повернути як було",
+    mapEditorOtherZone: "+ інша зона",
+    mapEditorAllTitle: "Змінені мапи для відправки",
     mapEditorExport: "Експорт",
     mapEditorCopyMap: "Копіювати цю мапу",
     mapEditorCopyAll: "Копіювати всі змінені мапи",
