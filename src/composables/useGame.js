@@ -2101,18 +2101,27 @@ function* maneuver(me) {
   draw(me, game.question[me] === "be" ? 2 : 1);
   if (game.phase !== "play") return true;
   maneuverBase = snapshotString();
+  maneuverState = null;
   yield* maneuverMoves(me);
   maneuverBase = null;
+  maneuverState = null;
+  maneuverState = null;
   return true;
 }
 
-function* maneuverMoves(me) {
-  let boosted = false;
-  let boostSteps =
-    hero(me).id === "sinbad"
+function* maneuverMoves(me, resume = null) {
+  let boosted = resume ? resume.boosted : false;
+  let boostSteps = resume
+    ? resume.boostSteps
+    : hero(me).id === "sinbad"
       ? pl(me).discard.filter((id) => getCard(id).key.startsWith("voyage"))
           .length
       : 0;
+  const commitBoost = (boostCard) => {
+    if (!cardEffects[boostCard.key]?.boosted) return;
+    maneuverBase = snapshotString();
+    maneuverState = { boosted: true, boostSteps };
+  };
   let started = false;
   const remaining = [...fightersOf(me)];
   while (game.phase === "play") {
@@ -2130,6 +2139,7 @@ function* maneuverMoves(me) {
           afterBoost(me);
           boosted = true;
           yield* boostedWith(me, boostCard);
+          commitBoost(boostCard);
         },
       },
       true,
@@ -2162,6 +2172,7 @@ function* maneuverMoves(me) {
         afterBoost(me);
         boosted = true;
         yield* boostedWith(me, boostCard);
+        commitBoost(boostCard);
         if (!fightersOf(me).includes(fighter)) break;
         continue;
       }
@@ -3103,6 +3114,7 @@ function advance(answer) {
     if (step.done) {
       flow = null;
       maneuverBase = null;
+      maneuverState = null;
       pruneFreeAttacks();
       if (game.phase === "play" && game.actions <= 0) run(endTurn());
       return;
@@ -3232,6 +3244,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   currentNote = null;
   undoPoint = null;
   maneuverBase = null;
+  maneuverState = null;
   game.redRoomIgnored = { p1: false, p2: false };
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = { decided: { p1: false, p2: false }, reveal: null };
@@ -3378,6 +3391,7 @@ function resetGame(clearNotice = true) {
   currentNote = null;
   undoPoint = null;
   maneuverBase = null;
+  maneuverState = null;
   syncOut();
 }
 
@@ -3529,6 +3543,7 @@ function importBattle(saved) {
     orderByStart = true;
     undoPoint = null;
     maneuverBase = null;
+    maneuverState = null;
     combatHit = false;
     currentNote = null;
     return true;
@@ -3567,6 +3582,7 @@ function surrender(player) {
 // (наприклад, натиснув "Маневр", але ще не обрав клітинку і не робив буст).
 let undoPoint = null;
 let maneuverBase = null;
+let maneuverState = null;
 
 function takeSnapshot() {
   undoPoint = snapshotString();
@@ -3592,7 +3608,7 @@ function undoAction(seat) {
   if (seat && seat !== game.turn) return;
   if (maneuverBase) {
     restoreSnapshot(JSON.parse(maneuverBase));
-    run(maneuverMoves(game.turn));
+    run(maneuverMoves(game.turn, maneuverState));
     return;
   }
   if (!undoPoint) return;
@@ -3602,6 +3618,7 @@ function undoAction(seat) {
   game.prompt = null;
   undoPoint = null;
   maneuverBase = null;
+  maneuverState = null;
 }
 
 function restoreSnapshot(snap) {
