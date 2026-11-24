@@ -2100,7 +2100,13 @@ function* maneuver(me) {
   log("logManeuver", { player: me, act: 1 });
   draw(me, game.question[me] === "be" ? 2 : 1);
   if (game.phase !== "play") return true;
+  maneuverBase = snapshotString();
+  yield* maneuverMoves(me);
+  maneuverBase = null;
+  return true;
+}
 
+function* maneuverMoves(me) {
   let boosted = false;
   let boostSteps =
     hero(me).id === "sinbad"
@@ -3096,6 +3102,7 @@ function advance(answer) {
     answer = undefined;
     if (step.done) {
       flow = null;
+      maneuverBase = null;
       pruneFreeAttacks();
       if (game.phase === "play" && game.actions <= 0) run(endTurn());
       return;
@@ -3224,6 +3231,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
   game.announces = [];
   currentNote = null;
   undoPoint = null;
+  maneuverBase = null;
   game.redRoomIgnored = { p1: false, p2: false };
   mulliganChoices = { p1: null, p2: null };
   game.mulligan = { decided: { p1: false, p2: false }, reveal: null };
@@ -3369,6 +3377,7 @@ function resetGame(clearNotice = true) {
   game.announces = [];
   currentNote = null;
   undoPoint = null;
+  maneuverBase = null;
   syncOut();
 }
 
@@ -3519,6 +3528,7 @@ function importBattle(saved) {
     cur.p2 = snap.cur.p2;
     orderByStart = true;
     undoPoint = null;
+    maneuverBase = null;
     combatHit = false;
     currentNote = null;
     return true;
@@ -3556,9 +3566,14 @@ function surrender(player) {
 // Скасування дії: лише поки гравець ще не обрав нічого незворотного
 // (наприклад, натиснув "Маневр", але ще не обрав клітинку і не робив буст).
 let undoPoint = null;
+let maneuverBase = null;
 
 function takeSnapshot() {
-  undoPoint = JSON.stringify({
+  undoPoint = snapshotString();
+}
+
+function snapshotString() {
+  return JSON.stringify({
     players: game.players,
     actions: game.actions,
     freeAttacks: game.freeAttacks,
@@ -3573,9 +3588,23 @@ function takeSnapshot() {
 }
 
 function undoAction(seat) {
-  if (!undoPoint || !game.prompt?.undo || game.phase !== "play") return;
+  if (!game.prompt?.undo || game.phase !== "play") return;
   if (seat && seat !== game.turn) return;
-  const snap = JSON.parse(undoPoint);
+  if (maneuverBase) {
+    restoreSnapshot(JSON.parse(maneuverBase));
+    run(maneuverMoves(game.turn));
+    return;
+  }
+  if (!undoPoint) return;
+  restoreSnapshot(JSON.parse(undoPoint));
+  cur[game.turn] = "hero";
+  flow = null;
+  game.prompt = null;
+  undoPoint = null;
+  maneuverBase = null;
+}
+
+function restoreSnapshot(snap) {
   game.players = snap.players;
   game.actions = snap.actions;
   game.freeAttacks = snap.freeAttacks;
@@ -3594,9 +3623,7 @@ function undoAction(seat) {
   turnFlags.wonCombat = snap.flags.wonCombat;
   turnFlags.lastStand = snap.flags.lastStand;
   cur[game.turn] = "hero";
-  flow = null;
   game.prompt = null;
-  undoPoint = null;
 }
 
 const SIM_SKIP = [
@@ -3668,6 +3695,7 @@ function shuffleDecks() {
 
 function applyAction(type, seat) {
   if (game.phase !== "play" || (seat && seat !== game.turn)) return;
+  if (type !== "undo") maneuverBase = null;
   if (type === "undo") undoAction(seat);
   else if (type === "maneuver" && canAct() && regularActions() > 0) {
     takeSnapshot();
