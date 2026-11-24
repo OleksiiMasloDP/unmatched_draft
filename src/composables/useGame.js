@@ -2126,7 +2126,7 @@ function* maneuver(me) {
           yield* boostedWith(me, boostCard);
         },
       },
-      () => !boosted,
+      true,
     );
     if (!fighter) break;
     remaining.splice(remaining.indexOf(fighter), 1);
@@ -2148,7 +2148,7 @@ function* maneuver(me) {
       prompt.fighter = fighter;
       prompt.left = left;
       prompt.boostOptions = !boosted && !started ? boostPool(me) : [];
-      prompt.undo = !boosted;
+      prompt.undo = true;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
         const boostCard = spendBoostCard(me, answer.boost);
