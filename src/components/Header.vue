@@ -388,6 +388,7 @@ function handleScroll() {
   const currentScrollTop =
     window.pageYOffset || document.documentElement.scrollTop;
 
+  if (isMenuOpen.value) return;
   if (currentScrollTop > 50) {
     isHeaderHidden.value = true;
   } else {
@@ -415,6 +416,10 @@ watch(
   () => closeAll(),
 );
 
+watch(isMenuOpen, (open) => {
+  document.body.style.overflow = open ? "hidden" : "";
+});
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll, { passive: true });
   document.addEventListener("pointerdown", handleOutsidePointer, true);
@@ -422,6 +427,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  document.body.style.overflow = "";
   window.removeEventListener("scroll", handleScroll);
   document.removeEventListener("pointerdown", handleOutsidePointer, true);
   document.removeEventListener("keydown", handleEscape);
@@ -543,6 +549,10 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   padding: 12px 0;
+  max-height: calc(100dvh - 90px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .menu-list {
