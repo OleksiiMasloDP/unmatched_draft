@@ -1044,6 +1044,7 @@ export function useBot(options = {}) {
             (item) => item.id === combat.fighters?.[other(bot)],
           );
           if (target && value - guard >= target.hp) return [];
+          if (foeCard && value + gain <= guard) return [];
         }
       }
       const low = game.players[bot].hp <= 8;
