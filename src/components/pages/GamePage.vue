@@ -521,7 +521,7 @@
                 :name="
                   heroOf(player).attack === 'melee'
                     ? 'crossedSwords'
-                    : 'boltSpellCast'
+                    : 'bowArrow'
                 "
                 metal="silver"
                 size="1.1em"

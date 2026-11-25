@@ -26,7 +26,7 @@
       >
       <span class="rhero-chip">
         <RogueIcon
-          :name="hero.attack === 'melee' ? 'crossedSwords' : 'boltSpellCast'"
+          :name="hero.attack === 'melee' ? 'crossedSwords' : 'bowArrow'"
           metal="silver"
           size="1.1em"
         />
