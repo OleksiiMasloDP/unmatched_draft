@@ -754,7 +754,7 @@ export const cardEffects = {
   },
 
   "cloak-of-levitation": {
-    ignoreFoeCard: (c) => c.g.adjacent(c.me, c.foe),
+    ignoreFoeValue: (c) => c.g.adjacent(c.me, c.foe),
   },
 
   "steadfast-disciple": {
