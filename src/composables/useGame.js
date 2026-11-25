@@ -2612,11 +2612,22 @@ function* attack(me) {
     boostLists: { p1: [], p2: [] },
   };
 
+  const committed = {
+    p1: { ignored: false, locked: false },
+    p2: { ignored: false, locked: false },
+  };
   const players = [foe, me];
   for (const player of players) {
     const card = combat.cards[player];
     if (card && !combat.canceled[player]) {
       yield* runEffect(player, card, "immediate", combat);
+      const effect = cardEffects[card.key];
+      if (effect?.immediateValue && !combat.canceled[player]) {
+        const ctx = context(player, card, combat);
+        if (effect.ignoreFoeValue?.(ctx))
+          committed[other(player)].ignored = true;
+        if (effect.lockFoeValue?.(ctx)) committed[other(player)].locked = true;
+      }
     }
     combat.immediateDone[player] = true;
   }
@@ -2734,8 +2745,8 @@ function* attack(me) {
     }
   }
 
-  const locked = { p1: false, p2: false };
-  const ignored = { p1: false, p2: false };
+  const locked = { p1: committed.p1.locked, p2: committed.p2.locked };
+  const ignored = { p1: committed.p1.ignored, p2: committed.p2.ignored };
   for (const player of players) {
     const card = combat.cards[player];
     const effect = card && cardEffects[card.key];

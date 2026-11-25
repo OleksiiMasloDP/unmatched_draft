@@ -1627,6 +1627,7 @@ export const cardEffects = {
   },
 
   "impossible-to-see": {
+    immediateValue: true,
     ignoreFoeValue: () => true,
   },
 
