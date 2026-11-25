@@ -508,32 +508,9 @@
               }"
             ></div>
           </div>
-          <div class="game-combat-stats">
-            <span>
-              {{
-                heroOf(player).attack === "range"
-                  ? t("gameRanged")
-                  : t("gameMelee")
-              }}
-            </span>
-            <span>
-              👣 {{ t("gameMove") }} {{ heroOf(player).move
-              }}<template v-if="moveBonus(player)"
-                >+{{ moveBonus(player) }}</template
-              >
-            </span>
-          </div>
           <div v-if="heroOf(player).sidekick" class="game-sidekick">
             <span class="game-sidekick-name">
               {{ heroOf(player).sidekick.name }}
-              <template v-if="heroOf(player).sidekick.attack">
-                ·
-                {{
-                  heroOf(player).sidekick.attack === "range"
-                    ? t("gameRanged")
-                    : t("gameMelee")
-                }}
-              </template>
             </span>
             <span
               v-for="kid in game.players[player].sidekicks"
@@ -1459,13 +1436,6 @@ const {
   pickStart,
   setBot,
 } = useGame();
-
-const moveBonus = (player) =>
-  heroOf(player).id === "sinbad"
-    ? game.players[player].discard.filter((id) =>
-        getCard(id).key.startsWith("voyage"),
-      ).length
-    : 0;
 const { savedDecks } = useSavedDecks();
 const {
   net: netState,
@@ -2891,18 +2861,6 @@ function onResultAction() {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
-}
-
-.game-combat-stats {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 10px;
-  border: 1px solid var(--border-medium);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .game-sidekick {
