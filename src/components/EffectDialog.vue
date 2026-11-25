@@ -13,7 +13,7 @@
 
       <div class="fx-head">{{ head }}</div>
 
-      <div class="fx-body">
+      <div class="fx-body" :class="{ 'no-card': !card }">
         <PackCard v-if="card" class="fx-card" :card="card" />
         <div class="fx-info">
           <div v-if="card" class="fx-name">{{ card.name }}</div>
@@ -329,11 +329,17 @@ const waitText = computed(() =>
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .fx-btn {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  max-width: 100%;
   padding: 8px 18px;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
   border: 2px solid var(--border-strong);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.06);
@@ -392,5 +398,8 @@ const waitText = computed(() =>
     left: 8px;
     width: auto;
   }
+}
+.fx-wrap .fx-body.no-card {
+  grid-template-columns: minmax(0, 1fr);
 }
 </style>

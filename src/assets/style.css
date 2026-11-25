@@ -1255,3 +1255,8 @@ input[type="checkbox"]:checked::after {
     }
   }
 }
+
+button {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
