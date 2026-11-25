@@ -140,6 +140,11 @@ export const events = [
             "Вода гнила. По дорозі доводиться платити цілителю.",
             { gold: -10 },
           ),
+          out(
+            1,
+            "It tastes of stone. Nothing more.",
+            "Смак каменю. І більше нічого.",
+          ),
         ],
       },
       {
@@ -359,6 +364,11 @@ export const events = [
             "Він бурчить, але ціна зростає.",
             { gold: 40 },
           ),
+          out(
+            2,
+            "He throws up his hands and offers nothing.",
+            "Він розводить руками й не пропонує нічого.",
+          ),
         ],
       },
       {
@@ -432,6 +442,7 @@ export const events = [
             "За фальшивою полицею лежить єдиний бездоганний том.",
             { card: "any" },
           ),
+          out(1, "Only ash and mice.", "Лише попіл і миші."),
         ],
       },
       {
@@ -690,6 +701,11 @@ export const events = [
             "Лише іржава шабля, та вона підказує прийом.",
             { card: "any" },
           ),
+          out(
+            2,
+            "The hole is already empty. Teach was here first.",
+            "Яма вже порожня. Тіч побував тут першим.",
+          ),
         ],
       },
       {
@@ -788,6 +804,11 @@ export const events = [
             "Only Hope was left inside, and it pays well.",
             "Усередині лишилася лише Надія, і вона щедро платить.",
             { gold: 40 },
+          ),
+          out(
+            1,
+            "The jar is empty. Whatever lived here is already out.",
+            "Глек порожній. Те, що тут жило, вже на волі.",
           ),
         ],
       },
@@ -1096,6 +1117,11 @@ export const events = [
             "Неправильно, але його це розважає, і він скидає кілька монет.",
             { gold: 20 },
           ),
+          out(
+            1,
+            "The cat vanishes, leaving only the smile.",
+            "Кіт зникає, лишивши тільки усмішку.",
+          ),
         ],
       },
       {
@@ -1156,6 +1182,11 @@ export const events = [
             "A technique unfolds in your mind, complete and clear.",
             "Прийом розгортається в голові повністю й чітко.",
             { card: "any" },
+          ),
+          out(
+            1,
+            "You now know everything about the lamp. Nothing else.",
+            "Тепер ти знаєш усе про лампу. І нічого більше.",
           ),
         ],
       },
@@ -1325,6 +1356,11 @@ export const events = [
             "Ти стежиш за нею в відблиску й вчишся її рухам.",
             { card: "any" },
           ),
+          out(
+            1,
+            "The shield is too dull. You back out slowly.",
+            "Щит надто тьмяний. Ти повільно відступаєш.",
+          ),
         ],
       },
     ],
@@ -1367,6 +1403,11 @@ export const events = [
             "He loves your tale and pays for it in silver.",
             "Йому подобається твоя оповідь, і він платить за неї сріблом.",
             { gold: 25 },
+          ),
+          out(
+            2,
+            "He listens politely and says nothing.",
+            "Він чемно слухає й нічого не каже.",
           ),
         ],
       },
@@ -1672,6 +1713,11 @@ export const events = [
             "Злагоджено, терпляче, нещадно. Ти вчишся в них.",
             { card: "any" },
           ),
+          out(
+            1,
+            "You find only old bones and nothing more.",
+            "Ти знаходиш лише старі кістки.",
+          ),
         ],
       },
       {
@@ -1902,6 +1948,7 @@ export const events = [
             "Старі радянські монети, що коштують на диво багато.",
             { gold: 50 },
           ),
+          out(1, "Only ice and dust.", "Лише лід і пил."),
         ],
       },
       {
@@ -2091,6 +2138,11 @@ export const events = [
             "He pays double. The symbiote loves chocolate.",
             "Він платить удвічі. Симбіот обожнює шоколад.",
             { gold: 35 },
+          ),
+          out(
+            1,
+            "He forgets to pay, and the shadow growls.",
+            "Він забуває заплатити, і тінь гарчить.",
           ),
         ],
       },
