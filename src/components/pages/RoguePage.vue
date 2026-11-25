@@ -1316,7 +1316,7 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 12px;
-  align-items: center;
+  align-items: start;
   max-width: 680px;
   margin: 0 auto;
 }
