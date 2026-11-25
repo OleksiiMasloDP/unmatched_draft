@@ -508,6 +508,33 @@
               }"
             ></div>
           </div>
+          <div class="game-hero-chips">
+            <span class="game-hero-chip">
+              <RogueIcon name="footsteps" metal="bronze" size="1.1em" />
+              {{ heroOf(player).move
+              }}<template v-if="moveBonus(player)"
+                >+{{ moveBonus(player) }}</template
+              >
+            </span>
+            <span class="game-hero-chip">
+              <RogueIcon
+                :name="
+                  heroOf(player).attack === 'melee'
+                    ? 'crossedSwords'
+                    : 'boltSpellCast'
+                "
+                metal="silver"
+                size="1.1em"
+              />
+              {{
+                t(
+                  heroOf(player).attack === "melee"
+                    ? "packAttackMelee"
+                    : "packAttackRange",
+                )
+              }}
+            </span>
+          </div>
           <div v-if="heroOf(player).sidekick" class="game-sidekick">
             <span class="game-sidekick-name">
               {{ heroOf(player).sidekick.name }}
@@ -1397,6 +1424,7 @@ import { useDraftState } from "../../composables/useDraftState";
 import { useGame } from "../../composables/useGame";
 import { useSavedDecks } from "../../composables/useSavedDecks";
 import { customDecks, getCard, getHero, testDecks } from "../../gameDecks";
+import RogueIcon from "../RogueIcon.vue";
 import ActionIcon from "../ActionIcon.vue";
 import CombatPopup from "../CombatPopup.vue";
 import DiceRoll from "../DiceRoll.vue";
@@ -1436,6 +1464,13 @@ const {
   pickStart,
   setBot,
 } = useGame();
+
+const moveBonus = (player) =>
+  heroOf(player).id === "sinbad"
+    ? game.players[player].discard.filter((id) =>
+        getCard(id).key.startsWith("voyage"),
+      ).length
+    : 0;
 const { savedDecks } = useSavedDecks();
 const {
   net: netState,
@@ -2861,6 +2896,25 @@ function onResultAction() {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
+}
+
+.game-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.game-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-medium);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .game-sidekick {
