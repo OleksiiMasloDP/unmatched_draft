@@ -3,7 +3,7 @@
 
 create table if not exists public.user_docs (
   user_id    uuid        not null references auth.users (id) on delete cascade,
-  doc_key    text        not null check (doc_key in ('draft', 'formats', 'decks', 'rogue', 'rogueHistory', 'profile', 'profileImages', 'matchStats')),
+  doc_key    text        not null check (doc_key in ('draft', 'formats', 'decks', 'rogue', 'rogueHistory', 'profile', 'profileImages', 'matchStats', 'tabletop')),
   value      jsonb       not null,
   updated_at timestamptz not null default now(),
   primary key (user_id, doc_key)
@@ -13,7 +13,7 @@ create table if not exists public.user_docs (
 -- Якщо таблицю вже створено раніше: розширити список документів.
 alter table public.user_docs drop constraint if exists user_docs_doc_key_check;
 alter table public.user_docs add constraint user_docs_doc_key_check
-  check (doc_key in ('draft', 'formats', 'decks', 'rogue', 'rogueHistory', 'profile', 'profileImages', 'matchStats'));
+  check (doc_key in ('draft', 'formats', 'decks', 'rogue', 'rogueHistory', 'profile', 'profileImages', 'matchStats', 'tabletop'));
 
 alter table public.user_docs enable row level security;
 

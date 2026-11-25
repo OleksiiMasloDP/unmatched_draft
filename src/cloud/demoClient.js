@@ -36,6 +36,34 @@ export function createDemoClient() {
   });
 
   return {
+    functions: {
+      async invoke(name, { body }) {
+        await wait();
+        if (name !== "tabletop-import") return { data: null, error: null };
+        if (String(body.username).startsWith("missing")) {
+          return {
+            data: null,
+            error: { context: { json: async () => ({ error: "not_found" }) } },
+          };
+        }
+        return {
+          data: {
+            username: body.username,
+            rating: 1545,
+            deviation: 153,
+            ratedMatches: 5,
+            fighters: [
+              { name: "Philippa", wins: 16, losses: 12, games: 28 },
+              { name: "Wyatt Earp", wins: 14, losses: 7, games: 21 },
+              { name: "Doctor Strange", wins: 14, losses: 7, games: 21 },
+              { name: "Golden Bat", wins: 14, losses: 6, games: 20 },
+              { name: "Winter Soldier", wins: 8, losses: 11, games: 19 },
+            ],
+          },
+          error: null,
+        };
+      },
+    },
     auth: {
       async getSession() {
         const user = readUser();

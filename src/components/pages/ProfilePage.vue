@@ -253,6 +253,94 @@
                 </div>
               </div>
             </div>
+            <div class="pf-card pf-wide pf-tl">
+              <h2 class="pf-h">{{ L.tl.title }}</h2>
+              <p class="pf-note">{{ L.tl.hint }}</p>
+              <form class="pf-tl-form" @submit.prevent="runImport">
+                <input
+                  v-model="tlInput"
+                  class="pf-input"
+                  type="text"
+                  :placeholder="L.tl.placeholder"
+                  :disabled="tlBusy"
+                />
+                <button type="submit" class="pf-btn" :disabled="tlBusy">
+                  {{
+                    tlBusy
+                      ? L.tl.loading
+                      : tabletop.current
+                        ? L.tl.updateBtn
+                        : L.tl.importBtn
+                  }}
+                </button>
+                <button
+                  v-if="tabletop.current"
+                  type="button"
+                  class="pf-btn ghost"
+                  :disabled="tlBusy"
+                  @click="revertTabletop"
+                >
+                  {{ L.tl.revert }}
+                </button>
+              </form>
+              <p v-if="tlError" class="pf-note pf-tl-error">
+                {{ L.tl.errors[tlError] }}
+              </p>
+              <template v-if="tabletop.current">
+                <div class="pf-tl-sum">
+                  <b>{{ tabletop.current.username }}</b>
+                  <span v-if="tabletop.current.rating"
+                    >{{ L.tl.rating }}: {{ tabletop.current.rating
+                    }}<template v-if="tabletop.current.deviation">
+                      ± {{ tabletop.current.deviation }}</template
+                    >
+                    · {{ tabletop.current.ratedMatches }} {{ L.tl.rated }}</span
+                  >
+                  <span
+                    >{{ L.tl.imported }}:
+                    {{
+                      new Date(tabletop.current.importedAt).toLocaleDateString()
+                    }}</span
+                  >
+                </div>
+                <div v-for="row in tlRows" :key="row.name" class="pf-bar-row">
+                  <img v-if="row.key" :src="heroImage(row.key)" alt="" />
+                  <div class="pf-bar-main">
+                    <div class="pf-bar-top">
+                      <span>{{ row.name }}</span>
+                      <span class="pf-bar-val"
+                        ><b
+                          >{{
+                            row.games
+                              ? Math.round((row.wins / row.games) * 100)
+                              : 0
+                          }}%</b
+                        >
+                        · {{ row.wins }}-{{ row.losses }} · {{ row.games }}
+                        {{ L.tl.games }}</span
+                      >
+                    </div>
+                    <div class="pf-bar">
+                      <i
+                        :style="{
+                          width: row.games
+                            ? (row.wins / row.games) * 100 + '%'
+                            : '0%',
+                        }"
+                      ></i>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  v-if="tabletop.current.fighters.length > 8"
+                  type="button"
+                  class="pf-btn ghost"
+                  @click="tlAll = !tlAll"
+                >
+                  {{ tlAll ? L.tl.showLess : L.tl.showAll }}
+                </button>
+              </template>
+            </div>
           </section>
 
           <section v-else-if="tab === 'achievements'" class="pf-card">
@@ -567,6 +655,11 @@ import {
   titles,
 } from "../../profile/profileStore";
 import { matchStats } from "../../profile/matchStats";
+import {
+  importTabletop,
+  revertTabletop,
+  tabletop,
+} from "../../profile/tabletop";
 import { buildAchievements, levelOf } from "../../profile/achievements";
 import { profileDict } from "../../profile/profileDict";
 
@@ -588,6 +681,24 @@ const tabIcons = {
   customize: "pentacle",
 };
 const tab = ref("overview");
+const tlInput = ref("");
+const tlBusy = ref(false);
+const tlError = ref("");
+const tlAll = ref(false);
+const tlRows = computed(() => {
+  const rows = tabletop.current ? tabletop.current.fighters : [];
+  return tlAll.value ? rows : rows.slice(0, 8);
+});
+const runImport = async () => {
+  tlBusy.value = true;
+  tlError.value = "";
+  const result = await importTabletop(
+    tlInput.value || (tabletop.current ? tabletop.current.username : ""),
+  );
+  tlBusy.value = false;
+  if (result.error) tlError.value = result.error;
+  else tlInput.value = "";
+};
 const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
 
@@ -1266,6 +1377,28 @@ const HistoryRow = {
 .pf-mini-badges {
   display: flex;
   gap: 4px;
+}
+
+.pf-tl-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.pf-tl-form .pf-input {
+  flex: 1 1 220px;
+}
+
+.pf-tl-sum {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 12px;
+}
+
+.pf-tl-error {
+  color: #ff8a8a;
 }
 
 .pf-note {
