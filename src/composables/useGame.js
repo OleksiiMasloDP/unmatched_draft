@@ -2143,8 +2143,9 @@ function* maneuverMoves(me, resume = null) {
         return canMoveNow();
       });
       if (stuck) {
-        const prompt = askSpace(me, "promptManeuverBoost", []);
+        const prompt = askSpace(me, "promptManeuverDone", []);
         prompt.boostOptions = boostPool(me);
+        prompt.confirm = true;
         prompt.undo = true;
         const answer = yield prompt;
         if (answer && typeof answer === "object") {
