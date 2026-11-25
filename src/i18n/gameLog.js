@@ -9,6 +9,7 @@ export const gameLogText = {
       "Boost this card: discard a card from your hand to add its boost value",
     promptMoveSpace: "Choose where to move",
     promptManeuverDone: "Maneuver complete. Confirm or undo",
+    promptManeuverBoost: "No fighter can move. Boost with a card or finish",
     promptStretchy: "Stretchy: you may move 1 space",
     promptDrawUp: "Spend an additional action to draw until you have 7 cards?",
     promptShrinkChoice: "Choose one effect",
@@ -202,6 +203,8 @@ export const gameLogText = {
       "Буст цієї карти: скиньте карту з руки, щоб додати її значення бусту",
     promptMoveSpace: "Оберіть, куди рухатись",
     promptManeuverDone: "Манівр завершено. Підтвердіть або скасуйте",
+    promptManeuverBoost:
+      "Ніхто не може рухатись. Бустуйте картою або завершіть",
     promptStretchy: "Stretchy: ви можете переміститись на 1 клітинку",
     promptDrawUp:
       "Витратити додаткову дію, щоб брати карти, доки на руці не буде 7?",

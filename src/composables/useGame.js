@@ -2122,9 +2122,38 @@ function* maneuverMoves(me, resume = null) {
     maneuverBase = snapshotString();
     maneuverState = { boosted: true, boostSteps };
   };
+  const applyBoost = function* (cardId) {
+    const boostCard = spendBoostCard(me, cardId);
+    boostSteps += boostCard.boost;
+    afterBoost(me);
+    boosted = true;
+    yield* boostedWith(me, boostCard);
+    commitBoost(boostCard);
+  };
+  const canMoveNow = () =>
+    escapeReady(me, boosted) ||
+    stepOptions(me, false, hero(me).move + boostSteps).size > 0;
   let started = false;
   const remaining = [...fightersOf(me)];
   while (game.phase === "play") {
+    if (!boosted && !started && boostPool(me).length) {
+      const stuck = !remaining.some((fighter) => {
+        if (!fightersOf(me).includes(fighter)) return false;
+        cur[me] = fighter;
+        return canMoveNow();
+      });
+      if (stuck) {
+        const prompt = askSpace(me, "promptManeuverBoost", []);
+        prompt.boostOptions = boostPool(me);
+        prompt.undo = true;
+        const answer = yield prompt;
+        if (answer && typeof answer === "object") {
+          yield* applyBoost(answer.boost);
+          continue;
+        }
+        break;
+      }
+    }
     const fighter = yield* chooseMover(
       me,
       remaining,
@@ -2133,14 +2162,7 @@ function* maneuverMoves(me, resume = null) {
         stepOptions(me, false, hero(me).move + boostSteps).size > 0,
       {
         pool: () => (!boosted && !started ? boostPool(me) : []),
-        *use(cardId) {
-          const boostCard = spendBoostCard(me, cardId);
-          boostSteps += boostCard.boost;
-          afterBoost(me);
-          boosted = true;
-          yield* boostedWith(me, boostCard);
-          commitBoost(boostCard);
-        },
+        use: applyBoost,
       },
       true,
     );
@@ -2167,12 +2189,7 @@ function* maneuverMoves(me, resume = null) {
       prompt.undo = true;
       const answer = yield prompt;
       if (answer && typeof answer === "object") {
-        const boostCard = spendBoostCard(me, answer.boost);
-        boostSteps += boostCard.boost;
-        afterBoost(me);
-        boosted = true;
-        yield* boostedWith(me, boostCard);
-        commitBoost(boostCard);
+        yield* applyBoost(answer.boost);
         if (!fightersOf(me).includes(fighter)) break;
         continue;
       }
