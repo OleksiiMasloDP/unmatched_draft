@@ -654,6 +654,7 @@ import {
   profile,
   titles,
 } from "../../profile/profileStore";
+import { getMap } from "../../gameMaps";
 import { matchStats } from "../../profile/matchStats";
 import {
   importTabletop,
@@ -800,6 +801,21 @@ const toggleShowcase = (id) => {
 const HistoryRow = {
   props: { row: Object, L: Object },
   setup(props) {
+    const details = () => {
+      const row = props.row;
+      const parts = [
+        row.mode === "roguelike"
+          ? `${props.L.modes[row.mode]} · ${row.turns} ${props.L.runWinsWord}`
+          : `${props.L.modes[row.mode]} · ${row.turns} ${props.L.turns}`,
+      ];
+      if (row.map) parts.push(getMap(row.map).name);
+      if (row.first !== null && row.first !== undefined)
+        parts.push(row.first ? props.L.wentFirst : props.L.wentSecond);
+      if (row.foeHpLeft !== null && row.foeHpLeft !== undefined)
+        parts.push(`${props.L.hpEnd} ${row.hpLeft} : ${row.foeHpLeft}`);
+      parts.push(new Date(row.at).toLocaleDateString());
+      return parts.join(" · ");
+    };
     return () =>
       h("div", { class: ["pf-row", props.row.win ? "win" : "loss"] }, [
         h("img", { src: heroImage(props.row.hero), alt: "" }),
@@ -810,11 +826,15 @@ const HistoryRow = {
               ? `${heroName(props.row.hero)} ${props.L.vs} ${heroName(props.row.enemy)}`
               : heroName(props.row.hero),
           ),
-          h(
-            "span",
-            `${props.L.modes[props.row.mode]} · ${props.row.turns} ${props.row.mode === "roguelike" ? props.L.runWinsWord : props.L.turns} · ${new Date(props.row.at).toLocaleDateString()}`,
-          ),
+          h("span", details()),
         ]),
+        props.row.enemy
+          ? h("img", {
+              class: "pf-row-foe",
+              src: heroImage(props.row.enemy),
+              alt: "",
+            })
+          : null,
         h("em", props.row.win ? props.L.win : props.L.loss),
       ]);
   },

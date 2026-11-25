@@ -55,6 +55,7 @@ const game = reactive({
   mapId: gameMaps[0].id,
   players: { p1: null, p2: null },
   turn: "p1",
+  first: "p1",
   turnNo: 0,
   actions: 0,
   freeAttacks: [],
@@ -3287,6 +3288,7 @@ function startGame(deckA, deckB, first = "p1", chooser = "p2") {
     : 0;
   resetFighters();
   game.turn = first;
+  game.first = first;
   game.viewer = "p1";
   game.winner = null;
   game.tally = freshTally();
