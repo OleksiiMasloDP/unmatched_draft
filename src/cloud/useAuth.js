@@ -25,11 +25,16 @@ function setUser(next) {
 export async function initAuth() {
   if (initialized || !cloudEnabled) return;
   initialized = true;
-  const client = await getClient();
-  if (!client) return;
-
-  const { data } = await client.auth.getSession();
-  setUser(data.session ? data.session.user : null);
+  let client = null;
+  try {
+    client = await getClient();
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    setUser(data.session ? data.session.user : null);
+  } catch {
+    authReady.value = true;
+    return;
+  }
 
   client.auth.onAuthStateChange((event, session) => {
     if (event === "PASSWORD_RECOVERY") {
