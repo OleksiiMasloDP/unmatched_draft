@@ -623,7 +623,8 @@ function* chooseMover(player, remaining, canMove, booster = null, undo = true) {
       "promptMoveWith",
       able.map((fighter) => fighterSpace(player, fighter)),
     );
-    prompt.undo = typeof undo === "function" ? undo() : undo;
+    prompt.undo =
+      !!maneuverBase && (typeof undo === "function" ? undo() : undo);
     prompt.boostOptions = booster ? booster.pool() : [];
     const answer = yield prompt;
     if (answer && typeof answer === "object") {
@@ -2422,7 +2423,7 @@ function* pickFighter(me, title, fighters) {
     title,
     fighters.map((fighter) => fighterSpace(me, fighter)),
   );
-  prompt.undo = true;
+  prompt.undo = false;
   const space = yield prompt;
   if (!space) return null;
   return fighters.find((fighter) => fighterSpace(me, fighter) === space);
@@ -2435,7 +2436,7 @@ function* pickTarget(me, foe, fighters) {
     "promptAttackTarget",
     fighters.map((fighter) => fighterSpace(foe, fighter)),
   );
-  prompt.undo = true;
+  prompt.undo = false;
   const space = yield prompt;
   if (!space) return null;
   return fighters.find((fighter) => fighterSpace(foe, fighter) === space);
@@ -3622,21 +3623,10 @@ function snapshotString() {
 }
 
 function undoAction(seat) {
-  if (!game.prompt?.undo || game.phase !== "play") return;
+  if (!game.prompt?.undo || game.phase !== "play" || !maneuverBase) return;
   if (seat && seat !== game.turn) return;
-  if (maneuverBase) {
-    restoreSnapshot(JSON.parse(maneuverBase));
-    run(maneuverMoves(game.turn, maneuverState));
-    return;
-  }
-  if (!undoPoint) return;
-  restoreSnapshot(JSON.parse(undoPoint));
-  cur[game.turn] = "hero";
-  flow = null;
-  game.prompt = null;
-  undoPoint = null;
-  maneuverBase = null;
-  maneuverState = null;
+  restoreSnapshot(JSON.parse(maneuverBase));
+  run(maneuverMoves(game.turn, maneuverState));
 }
 
 function restoreSnapshot(snap) {
