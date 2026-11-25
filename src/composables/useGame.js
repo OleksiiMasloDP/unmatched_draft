@@ -2644,6 +2644,9 @@ function* attack(me) {
   const boostCardIds = combat.boostCardIds;
   const boostLists = combat.boostLists;
   const baseValues = { p1: 0, p2: 0 };
+  const extras = { p1: [], p2: [] };
+  const heroPassiveName = (player) =>
+    hero(player).passive?.name || hero(player).name;
   if (faceDownId) {
     const down = getCard(faceDownId);
     pl(me).discard.push(faceDownId);
@@ -2793,9 +2796,21 @@ function* attack(me) {
     if (locked[player]) value = card.value;
     if (ignored[player]) value = 0;
     baseValues[player] = value;
+    if (value !== card.value) {
+      extras[player].push({
+        name: ignored[player]
+          ? combat.cards[other(player)]?.name || card.name
+          : card.name,
+        n: value - card.value,
+      });
+    }
     let total = value + boosts[player];
     if (effect?.finalValue && !combat.canceled[player]) {
+      const before = total;
       total = effect.finalValue(context(player, card, combat), total);
+      if (!locked[player] && total !== before) {
+        extras[player].push({ name: card.name, n: total - before });
+      }
     }
     if (locked[player]) total = ignored[player] ? 0 : card.value;
     if (
@@ -2808,6 +2823,7 @@ function* attack(me) {
       onFog(player)
     ) {
       total += 1;
+      extras[player].push({ key: "gameFogValue", n: 1 });
     }
     if (
       !locked[player] &&
@@ -2815,6 +2831,7 @@ function* attack(me) {
       masterStrategist(player, combat.fighters[player])
     ) {
       total += 1;
+      extras[player].push({ name: heroPassiveName(player), n: 1 });
     }
     combat.values[player] = total;
   }
@@ -2839,6 +2856,12 @@ function* attack(me) {
           ? 1
           : 0)
       : 0;
+  if (turnFlags.attackBonus[me]) {
+    extras[me].push({ key: "gameBonusPlain", n: turnFlags.attackBonus[me] });
+  }
+  for (const n of [pack, question, pearls, heated]) {
+    if (n) extras[me].push({ name: heroPassiveName(me), n });
+  }
   combat.values[me] +=
     turnFlags.attackBonus[me] + terrain + pack + question + pearls + heated;
   if (ignored[me]) combat.values[me] = 0;
@@ -2922,8 +2945,11 @@ function* attack(me) {
       boostCardLists: { p1: [...boostLists.p1], p2: [...boostLists.p2] },
       reveals: [...(game.combat?.reveals || [])],
       tokenBoost: { ...tokenBoost },
-      base: { ...baseValues },
-      bonus: turnFlags.attackBonus[me] + pack + question + pearls + heated,
+      base: {
+        p1: combat.cards.p1 ? combat.cards.p1.value : baseValues.p1,
+        p2: combat.cards.p2 ? combat.cards.p2.value : baseValues.p2,
+      },
+      extras: { p1: [...extras.p1], p2: [...extras.p2] },
       terrain,
       dealt,
     },

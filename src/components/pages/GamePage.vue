@@ -950,8 +950,13 @@
                   <span v-if="side.tokenName" class="is-boost">
                     {{ t("token_" + side.tokenName) }}
                   </span>
-                  <span v-if="side.bonus" class="is-boost">
-                    {{ t("gameBonusValue").replace("{n}", side.bonus) }}
+                  <span
+                    v-for="(extra, index) in side.extras"
+                    :key="index"
+                    :class="extra.n > 0 ? 'is-boost' : 'is-cut'"
+                  >
+                    {{ extra.name || t(extra.key) }}
+                    {{ extra.n > 0 ? "+" : "" }}{{ extra.n }}
                   </span>
                   <span v-if="side.terrain" class="is-boost">
                     {{ t("gameTerrainValue").replace("{n}", side.terrain) }}
@@ -2244,7 +2249,7 @@ const revealSides = computed(() => {
       base: combat.base?.[player] ?? 0,
       boost: combat.boosts?.[player] ?? 0,
       tokenName: combat.tokenBoost?.[player] ?? null,
-      bonus: combat.attacker === player ? (combat.bonus ?? 0) : 0,
+      extras: combat.extras?.[player] ?? [],
       terrain: combat.attacker === player ? (combat.terrain ?? 0) : 0,
       total: combat.values[player],
     };
@@ -3827,6 +3832,10 @@ function onResultAction() {
   color: var(--text-muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+.vs-calc .is-cut {
+  color: #ff8a8a;
 }
 
 .vs-calc .is-boost {
