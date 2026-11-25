@@ -29,7 +29,11 @@ export async function initAuth() {
   try {
     client = await getClient();
     if (!client) return;
+    const readyTimer = setTimeout(() => {
+      authReady.value = true;
+    }, 3000);
     const { data } = await client.auth.getSession();
+    clearTimeout(readyTimer);
     setUser(data.session ? data.session.user : null);
   } catch {
     authReady.value = true;
