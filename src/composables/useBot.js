@@ -422,7 +422,14 @@ export function useBot(options = {}) {
       (profile.aggro ?? 1) * (styleOf() === BOT_STYLES.PRESSURE ? 1.25 : 1);
     const early = game.turnNo <= 3;
     const cards = handOf(bot);
-    const bare = cards.length < 6 && !cards.some(fitDefense);
+    const noDefense = !cards.some(fitDefense);
+    const careful =
+      fighter.isHero &&
+      noDefense &&
+      fighter.hp <= Math.max(5, (fighter.max || 14) * 0.4) &&
+      (profile.aggro ?? 1) < 1.4 &&
+      styleOf() !== BOT_STYLES.PRESSURE;
+    const bare = (cards.length < 6 && noDefense) || careful;
     let contain = 0;
     if (profile.contain && fighter.isHero) {
       const zone = [...byId().keys()].filter((id) =>
@@ -444,13 +451,15 @@ export function useBot(options = {}) {
     return (
       (hugging ? -1.5 : 0) +
       (blocked * (fighter.block || 0) * 1.5) / 10 +
-      2 * aggro * strike +
-      0.8 * aggro * reachStrike +
+      (careful ? 1 : 2) * aggro * strike +
+      0.8 * aggro * reachStrike * (careful ? 0.5 : 1) +
       contain -
       (fear(fighter, false) *
-        Math.min(exposure, bare ? 8 : 4) *
+        Math.min(exposure, careful ? 12 : bare ? 8 : 4) *
         (bare
-          ? 1.5
+          ? careful
+            ? 2.6
+            : 1.5
           : Math.max(0, 0.5 - idle * 0.1) *
             (early ? 0.3 : 1) *
             (handOf(bot).length >= 7 ? 0.2 : 1))) /
@@ -845,6 +854,17 @@ export function useBot(options = {}) {
     return null;
   };
 
+  const tomoeCanPunish = (bot) => {
+    if (game.players[bot].heroId !== "tomoe-gozen") return false;
+    const tomoe = fightersOf(bot).find((item) => item.isHero);
+    const foe = fightersOf(other(bot)).find((item) => item.isHero);
+    if (!tomoe || !foe || !sharesZone(foe.space, tomoe.space)) return false;
+    return [...reachSet(foe.space, 2)].some(
+      (id) =>
+        !sharesZone(id, tomoe.space) && !fighterAt(id, bot) && !foeAt(id, bot),
+    );
+  };
+
   const tomoePush = (prompt, bot) => {
     const tomoe = fightersOf(bot).find((item) => item.isHero);
     const foe = fightersOf(other(bot)).find((item) => item.isHero);
@@ -1170,6 +1190,7 @@ export function useBot(options = {}) {
         return hand < 5 && has("draw") ? "draw" : "move";
       case "promptMoveWho":
       case "promptSkirmishWho":
+        if (has("foe") && tomoeCanPunish(bot)) return "foe";
         return has("mine") ? "mine" : has("me") ? "me" : values[0];
       case "promptShrinkChoice":
         return hand >= 4 && has("discard") ? "discard" : "move";
