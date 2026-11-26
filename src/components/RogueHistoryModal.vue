@@ -21,37 +21,41 @@
       <p v-if="!rows.length" class="rhist-empty">
         {{ t("rogueHistoryEmpty") }}
       </p>
-      <table v-else class="rhist-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>{{ t("rogueHistoryHero") }}</th>
-            <th></th>
-            <th>{{ t("rogueHistoryWins") }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in rows" :key="row.date">
-            <td>{{ index + 1 }}</td>
-            <td class="rhist-hero">
-              <img :src="assetUrl(row.image)" alt="" />
-              <span>{{ row.name }}</span>
-            </td>
-            <td>
-              <span class="rhist-badge" :class="{ win: row.victory }">
-                <RogueIcon
-                  :name="row.victory ? 'laurels' : 'skullCrossedBones'"
-                  :metal="row.victory ? 'gold' : 'ruby'"
-                  size="1.1em"
-                />
-              </span>
-            </td>
-            <td>
-              <b>{{ row.wins }}</b>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="rhist-scroll">
+        <table class="rhist-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{{ t("rogueHistoryHero") }}</th>
+              <th></th>
+              <th>{{ t("rogueHistoryWins") }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in rows" :key="row.date">
+              <td>{{ index + 1 }}</td>
+              <td class="rhist-hero">
+                <div class="rhist-hero-in">
+                  <img :src="assetUrl(row.image)" alt="" />
+                  <span>{{ row.name }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="rhist-badge" :class="{ win: row.victory }">
+                  <RogueIcon
+                    :name="row.victory ? 'laurels' : 'skullCrossedBones'"
+                    :metal="row.victory ? 'gold' : 'ruby'"
+                    size="1.1em"
+                  />
+                </span>
+              </td>
+              <td>
+                <b>{{ row.wins }}</b>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -195,13 +199,17 @@ const rows = computed(() => {
 }
 
 .rhist-hero {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-weight: 700;
 }
 
+.rhist-hero-in {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .rhist-hero img {
+  flex: none;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -233,41 +241,48 @@ const rows = computed(() => {
   .rhist-box {
     padding: 12px;
   }
+}
 
-  .rhist-table {
-    table-layout: fixed;
-    font-size: 0.8rem;
-  }
+.rhist-scroll {
+  overflow-x: auto;
+}
 
-  .rhist-table th,
-  .rhist-table td {
-    padding: 6px 4px;
-  }
+.rhist-table {
+  min-width: 380px;
+}
 
-  .rhist-table th:first-child,
-  .rhist-table td:first-child {
-    display: none;
-  }
+.rhist-table th:nth-child(1),
+.rhist-table td:nth-child(1),
+.rhist-table th:nth-child(2),
+.rhist-table td:nth-child(2) {
+  position: sticky;
+  z-index: 1;
+  background: #151a22;
+}
 
-  .rhist-table th:nth-child(2) {
-    width: auto;
-  }
+.rhist-table th:nth-child(1),
+.rhist-table td:nth-child(1) {
+  left: 0;
+  width: 32px;
+  min-width: 32px;
+}
 
-  .rhist-table th:nth-child(3),
-  .rhist-table td:nth-child(3) {
-    width: 14%;
-    text-align: center;
-  }
+.rhist-table th:nth-child(2),
+.rhist-table td:nth-child(2) {
+  left: 32px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+}
 
-  .rhist-table th:nth-child(4),
-  .rhist-table td:nth-child(4) {
-    width: 16%;
-    text-align: right;
-  }
+.rhist-table tbody tr:first-child td:nth-child(1),
+.rhist-table tbody tr:first-child td:nth-child(2) {
+  background: #25251f;
+}
 
-  .rhist-hero span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.rhist-hero span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
