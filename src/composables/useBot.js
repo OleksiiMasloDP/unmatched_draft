@@ -1337,6 +1337,7 @@ export function useBot(options = {}) {
     if (
       available.attack &&
       available.maneuver &&
+      hand.length < 6 &&
       !hand.some(fitDefense) &&
       !desperate
     ) {
@@ -1357,7 +1358,21 @@ export function useBot(options = {}) {
       turnManeuvers += 1;
       return engine.doManeuver();
     }
-    const scheme = available.scheme ? bestScheme(bot) : null;
+    const me = fightersOf(bot).find((item) => item.isHero);
+    const lowHp = !!me && me.hp <= Math.max(5, (me.max || 14) * 0.4);
+    const found = available.scheme ? bestScheme(bot) : null;
+    const scheme =
+      found?.card && (!available.attack || lowHp || state.finisher)
+        ? found
+        : null;
+    if (available.scheme && !scheme?.card) available.scheme = false;
+    if (
+      hand.length >= 6 &&
+      available.maneuver &&
+      (available.attack || (scheme?.card && scheme.value >= 0.8))
+    ) {
+      available.maneuver = false;
+    }
     const style = styleOf();
     const weight = profile.fatigue ?? 1;
     const edge = fatigueEdge(bot) * weight;
@@ -1430,18 +1445,18 @@ export function useBot(options = {}) {
       const prior = Object.fromEntries(options);
       const key = `${game.turnNo}:${game.actions}`;
       const reuse = pending && pending.key === key && pending.seat === bot;
-      const found = reuse
+      const result = reuse
         ? pending.found
         : search.choose(bot, available, prior);
-      if (found) {
+      if (result) {
         if (dry) {
-          pending = { seat: bot, key, found, prior };
+          pending = { seat: bot, key, found: result, prior };
           return;
         }
         pending = null;
-        planned = { index: 0, list: found.overrides, turn: game.turnNo };
-        if (found.action === "attack") return engine.doAttack();
-        if (found.action === "scheme") return engine.doScheme();
+        planned = { index: 0, list: result.overrides, turn: game.turnNo };
+        if (result.action === "attack") return engine.doAttack();
+        if (result.action === "scheme") return engine.doScheme();
         turnManeuvers += 1;
         return engine.doManeuver();
       }
