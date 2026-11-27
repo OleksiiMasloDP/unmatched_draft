@@ -2395,6 +2395,8 @@ function logMatch() {
     foeHpLeft: theirs.hp > 0 ? theirs.hp : 0,
     map: game.mapId,
     first: game.first === me,
+    foeId: online.value && netState.foe ? netState.foe.id : "",
+    foeNick: online.value && netState.foe ? netState.foe.nick : "",
     dealt: game.tally?.[me]?.dealt || 0,
     healed: game.tally?.[me]?.healed || 0,
     taken: game.tally?.[foe]?.dealt || 0,

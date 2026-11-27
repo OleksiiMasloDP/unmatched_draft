@@ -61,7 +61,11 @@
             <span class="lb-rank">{{ row.rank }}</span>
             <img class="lb-ava" :src="heroImage(row.avatar)" alt="" />
             <div class="lb-who">
-              <b>{{ row.nick }}</b>
+              <router-link
+                class="lb-nick"
+                :to="{ name: 'player', params: { id: row.id } }"
+                >{{ row.nick }}</router-link
+              >
               <span v-if="row.id === myId" class="lb-you">{{ L.you }}</span>
               <small
                 >{{ titleOf(row.title) }} · {{ L.units.level }}
@@ -390,5 +394,14 @@ watch(() => [user.value?.id, matchStats.games], loadBoard);
   color: #fff;
   font-weight: 800;
   cursor: pointer;
+}
+.lb-nick {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.lb-nick:hover {
+  text-decoration: underline;
 }
 </style>

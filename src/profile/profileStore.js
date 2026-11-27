@@ -123,7 +123,8 @@ const defaults = (account) => ({
   cardArt: "hero",
   showStats: true,
   showHistory: true,
-  statsFirst: "app",
+  leaguePrimary: false,
+  leagueMerge: false,
 });
 
 export const profile = reactive(defaults(null));

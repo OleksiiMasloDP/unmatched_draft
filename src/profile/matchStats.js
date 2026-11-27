@@ -6,7 +6,7 @@ const prefix = "matchstats:";
 const STORE_KEY = "unmatched_matchstats";
 const historyLimit = 60;
 
-const empty = () => ({
+export const empty = () => ({
   games: 0,
   wins: 0,
   losses: 0,
@@ -31,6 +31,7 @@ const empty = () => ({
   perHero: {},
   perMode: {},
   kinds: {},
+  modeHeroes: {},
   history: [],
 });
 
@@ -135,6 +136,12 @@ const bump = (map, key, win) => {
   map[key] = row;
 };
 
+const modeHeroes = (s, mode, hero, win) => {
+  if (mode !== "packDraft" && mode !== "roguelike") return;
+  if (!s.modeHeroes[mode]) s.modeHeroes[mode] = {};
+  bump(s.modeHeroes[mode], heroKeyOf(hero), win);
+};
+
 export function recordMatch(info) {
   if (!loadedFor) return false;
   const win = Boolean(info.win);
@@ -169,6 +176,7 @@ export function recordMatch(info) {
   kind.dealt += info.dealt;
   kind.healed += info.healed;
   bump(kind.perHero, heroKeyOf(info.hero), win);
+  modeHeroes(s, info.mode, info.hero, win);
   s.history.unshift({
     id: Date.now(),
     hero: heroKeyOf(info.hero),
@@ -180,6 +188,8 @@ export function recordMatch(info) {
     foeHpLeft: info.foeHpLeft ?? null,
     map: info.map || "",
     first: typeof info.first === "boolean" ? info.first : null,
+    foeId: info.foeId || "",
+    foeNick: info.foeNick || "",
     dealt: info.dealt,
     healed: info.healed,
     at: Date.now(),
@@ -201,6 +211,7 @@ export function recordRun({ hero, wins, victory }) {
   if (victory) kind.wins += 1;
   else kind.losses += 1;
   bump(kind.perHero, heroKeyOf(hero), victory);
+  modeHeroes(s, "roguelike", hero, victory);
   s.history.unshift({
     id: Date.now(),
     hero: heroKeyOf(hero),

@@ -1,6 +1,8 @@
 import { reactive, computed, ref } from "vue";
 
 import { RELAY_URL } from "../relayConfig.js";
+import { user } from "../cloud/useAuth.js";
+import { profile } from "../profile/profileStore.js";
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const JOIN_TIMEOUT = 15000;
 
@@ -10,6 +12,7 @@ const net = reactive({
   seat: null,
   code: "",
   error: "",
+  foe: null,
 });
 
 const MODE_KEY = "unmatched_play_mode";
@@ -30,6 +33,7 @@ const eventListeners = { connected: new Set(), closed: new Set() };
 
 let transport = null;
 let session = 0;
+let whoSent = false;
 
 const online = computed(
   () => net.role !== null && ["connected", "closed"].includes(net.status),
@@ -215,6 +219,8 @@ async function start(role, code) {
   net.seat = role === "host" ? "p1" : "p2";
   net.code = code;
   net.error = "";
+  net.foe = null;
+  whoSent = false;
   net.status = role === "host" ? "creating" : "joining";
 
   const handlers = {
@@ -224,6 +230,7 @@ async function start(role, code) {
     onOpen: () => {
       if (mine !== session) return;
       net.status = "connected";
+      sendWho();
       emit("connected", { role });
     },
     onMessage: (message) => {
@@ -294,6 +301,24 @@ function on(type, listener) {
   messageListeners.get(type).add(listener);
   return () => messageListeners.get(type).delete(listener);
 }
+
+function sendWho() {
+  whoSent = true;
+  send(
+    "who",
+    user.value ? { id: user.value.id, nick: profile.nick || "" } : {},
+  );
+}
+
+on("who", (info) => {
+  if (info && typeof info.id === "string" && info.id) {
+    net.foe = {
+      id: info.id.slice(0, 64),
+      nick: String(info.nick || "").slice(0, 40),
+    };
+  }
+  if (!whoSent) sendWho();
+});
 
 function onEvent(event, listener) {
   eventListeners[event].add(listener);

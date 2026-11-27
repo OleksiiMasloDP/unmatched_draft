@@ -29,3 +29,5 @@ create policy "leaderboard_update_own" on public.leaderboard
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "leaderboard_delete_own" on public.leaderboard
   for delete using (auth.uid() = user_id);
+
+alter table public.leaderboard add column if not exists card jsonb;

@@ -68,8 +68,13 @@
                   XP</span
                 >
               </div>
+              <router-link
+                class="pf-pub"
+                :to="{ name: 'player', params: { id: user.id } }"
+                >{{ L.openProfile }}</router-link
+              >
               <p class="pf-chips">
-                <span>{{ stats.games }} {{ L.games }}</span>
+                <span>{{ totals.games }} {{ L.games }}</span>
                 <span>{{ winrate }}% {{ L.winrate }}</span>
                 <span>{{ doneCount }} / {{ achievements.length }} ★</span>
               </p>
@@ -103,7 +108,7 @@
                 :effect="profile.cardEffect"
                 :avatar-frame="profile.frame"
                 :level="lvl"
-                :games="stats.games"
+                :games="totals.games"
                 :winrate="winrate"
                 :badges="cardBadges"
               />
@@ -114,16 +119,18 @@
                 <p class="pf-bio">{{ profile.bio || L.noBio }}</p>
                 <div class="pf-kpis">
                   <div class="pf-kpi">
-                    <b>{{ stats.games }}</b><span>{{ L.games }}</span>
+                    <b>{{ totals.games }}</b><span>{{ L.games }}</span>
                   </div>
                   <div class="pf-kpi">
                     <b>{{ winrate }}%</b><span>{{ L.winrate }}</span>
                   </div>
                   <div class="pf-kpi">
-                    <b>{{ stats.bestStreak }}</b><span>{{ L.bestStreak }}</span>
+                    <b>{{ matchStats.bestStreak }}</b><span>{{
+                      L.bestStreak
+                    }}</span>
                   </div>
                   <div class="pf-kpi">
-                    <b>{{ stats.healed }}</b><span>{{ L.healed }}</span>
+                    <b>{{ matchStats.healed }}</b><span>{{ L.healed }}</span>
                   </div>
                 </div>
               </div>
@@ -183,211 +190,58 @@
             </ul>
           </section>
 
-          <section v-else-if="tab === 'stats'" class="pf-grid">
-            <div class="pf-card pf-wide pf-first">
-              <span>{{ L.statsFirst }}</span>
-              <button
-                v-for="item in ['app', 'league']"
-                :key="item"
-                type="button"
-                class="pf-chip-btn"
-                :class="{ on: profile.statsFirst === item }"
-                @click="profile.statsFirst = item"
-              >
-                {{ item === "app" ? L.appStats : L.tl.title }}
-              </button>
-            </div>
-            <div
-              class="pf-wide pf-grid pf-app-stats"
-              :style="{ order: profile.statsFirst === 'league' ? 2 : 0 }"
+          <section v-else-if="tab === 'stats'" class="pf-card">
+            <StatsPanel
+              :data="statsData"
+              :L="L"
+              :prefs="profile"
+              own
+              @pref="setPref"
             >
-              <div class="pf-card pf-wide">
-                <div class="pf-first">
-                  <button
-                    v-for="item in kindTabs"
-                    :key="item"
-                    type="button"
-                    class="pf-chip-btn"
-                    :class="{ on: statKind === item }"
-                    @click="statKind = item"
-                  >
-                    {{ L.kinds[item] }}
-                  </button>
-                </div>
-                <p class="pf-note">{{ L.xpRate[statKind] }}</p>
-              </div>
-              <div class="pf-card pf-wide">
-                <div class="pf-kpis">
-                  <div class="pf-kpi">
-                    <b>{{ view.wins }}</b><span>{{ L.wins }}</span>
-                  </div>
-                  <div class="pf-kpi">
-                    <b>{{ view.losses }}</b><span>{{ L.losses }}</span>
-                  </div>
-                  <div v-if="statKind === 'all'" class="pf-kpi">
-                    <b>{{ view.curStreak }}</b><span>{{ L.curStreak }}</span>
-                  </div>
-                  <div
-                    v-if="statKind === 'all' || statKind === 'modes'"
-                    class="pf-kpi"
-                  >
-                    <b>{{ view.runsWon }}/{{ view.runs }}</b
-                    ><span>{{ L.runs }}</span>
-                  </div>
-                  <div class="pf-kpi">
-                    <b>{{ view.damage }}</b><span>{{ L.damage }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="pf-card">
-                <h2 class="pf-h">{{ L.byHero }}</h2>
-                <div
-                  v-for="row in view.perHero"
-                  :key="row.hero"
-                  class="pf-bar-row"
-                >
-                  <img :src="heroImage(row.hero)" alt="" />
-                  <div class="pf-bar-main">
-                    <div class="pf-bar-top">
-                      <span>{{ heroName(row.hero) }}</span>
-                      <span class="pf-bar-val"
-                        ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b>
-                        · {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
-                        {{ row.played }}</span
-                      >
-                    </div>
-                    <div class="pf-bar">
-                      <i
-                        :style="{ width: (row.wins / row.played) * 100 + '%' }"
-                      ></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="pf-card">
-                <h2 class="pf-h">{{ L.byMode }}</h2>
-                <div
-                  v-for="row in view.perMode"
-                  :key="row.mode"
-                  class="pf-bar-row"
-                >
-                  <div class="pf-bar-main">
-                    <div class="pf-bar-top">
-                      <span>{{ L.modes[row.mode] }}</span>
-                      <span class="pf-bar-val"
-                        ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b>
-                        · {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
-                        {{ row.played }}</span
-                      >
-                    </div>
-                    <div class="pf-bar">
-                      <i
-                        :style="{ width: (row.wins / row.played) * 100 + '%' }"
-                      ></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="pf-card pf-wide pf-tl"
-              :style="{ order: profile.statsFirst === 'league' ? 0 : 2 }"
-            >
-              <h2 class="pf-h">{{ L.tl.title }}</h2>
-              <p class="pf-note">{{ L.tl.hint }}</p>
-              <form class="pf-tl-form" @submit.prevent="runImport">
-                <input
-                  v-model="tlInput"
-                  class="pf-input"
-                  type="text"
-                  :placeholder="L.tl.placeholder"
-                  :disabled="tlBusy"
-                />
-                <button type="submit" class="pf-btn" :disabled="tlBusy">
-                  {{
-                    tlBusy
-                      ? L.tl.loading
-                      : tabletop.current
-                        ? L.tl.updateBtn
-                        : L.tl.importBtn
-                  }}
-                </button>
-                <button
-                  v-if="tabletop.current"
-                  type="button"
-                  class="pf-btn ghost"
-                  :disabled="tlBusy"
-                  @click="revertTabletop"
-                >
-                  {{ L.tl.revert }}
-                </button>
-              </form>
-              <p v-if="tlError" class="pf-note pf-tl-error">
-                {{ L.tl.errors[tlError] }}
-              </p>
-              <textarea
-                v-if="tlDebug"
-                class="pf-input pf-tl-debug"
-                rows="8"
-                readonly
-                :value="tlDebug"
-                @focus="$event.target.select()"
-              ></textarea>
-              <template v-if="tabletop.current">
-                <div class="pf-tl-sum">
-                  <b>{{ tabletop.current.username }}</b>
-                  <span v-if="tabletop.current.rating"
-                    >{{ L.tl.rating }}: {{ tabletop.current.rating
-                    }}<template v-if="tabletop.current.deviation">
-                      ± {{ tabletop.current.deviation }}</template
+              <template #league-form>
+                <div class="pf-tl">
+                  <p class="pf-note">{{ L.tl.hint }}</p>
+                  <form class="pf-tl-form" @submit.prevent="runImport">
+                    <input
+                      v-model="tlInput"
+                      class="pf-input"
+                      type="text"
+                      :placeholder="L.tl.placeholder"
+                      :disabled="tlBusy"
+                    />
+                    <button type="submit" class="pf-btn" :disabled="tlBusy">
+                      {{
+                        tlBusy
+                          ? L.tl.loading
+                          : tabletop.current
+                            ? L.tl.updateBtn
+                            : L.tl.importBtn
+                      }}
+                    </button>
+                    <button
+                      v-if="tabletop.current"
+                      type="button"
+                      class="pf-btn ghost"
+                      :disabled="tlBusy"
+                      @click="revertTabletop"
                     >
-                    · {{ tabletop.current.ratedMatches }} {{ L.tl.rated }}</span
-                  >
-                  <span
-                    >{{ L.tl.imported }}:
-                    {{
-                      new Date(tabletop.current.importedAt).toLocaleDateString()
-                    }}</span
-                  >
+                      {{ L.tl.revert }}
+                    </button>
+                  </form>
+                  <p v-if="tlError" class="pf-note pf-tl-error">
+                    {{ L.tl.errors[tlError] }}
+                  </p>
+                  <textarea
+                    v-if="tlDebug"
+                    class="pf-input pf-tl-debug"
+                    rows="8"
+                    readonly
+                    :value="tlDebug"
+                    @focus="$event.target.select()"
+                  ></textarea>
                 </div>
-                <div v-for="row in tlRows" :key="row.name" class="pf-bar-row">
-                  <img v-if="row.key" :src="heroImage(row.key)" alt="" />
-                  <div class="pf-bar-main">
-                    <div class="pf-bar-top">
-                      <span>{{ row.name }}</span>
-                      <span class="pf-bar-val"
-                        ><b
-                          >{{
-                            row.games
-                              ? Math.round((row.wins / row.games) * 100)
-                              : 0
-                          }}%</b
-                        >
-                        · {{ row.wins }}-{{ row.losses }} · {{ row.games }}
-                        {{ L.tl.games }}</span
-                      >
-                    </div>
-                    <div class="pf-bar">
-                      <i
-                        :style="{
-                          width: row.games
-                            ? (row.wins / row.games) * 100 + '%'
-                            : '0%',
-                        }"
-                      ></i>
-                    </div>
-                  </div>
-                </div>
-                <button
-                  v-if="tabletop.current.fighters.length > 8"
-                  type="button"
-                  class="pf-btn ghost"
-                  @click="tlAll = !tlAll"
-                >
-                  {{ tlAll ? L.tl.showLess : L.tl.showAll }}
-                </button>
               </template>
-            </div>
+            </StatsPanel>
           </section>
 
           <section v-else-if="tab === 'achievements'" class="pf-card">
@@ -441,7 +295,7 @@
                     :effect="profile.cardEffect"
                     :avatar-frame="profile.frame"
                     :level="lvl"
-                    :games="stats.games"
+                    :games="totals.games"
                     :winrate="winrate"
                     :badges="cardBadges"
                   />
@@ -684,9 +538,10 @@
 
 <script setup>
 import { computed, h, ref } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import RogueIcon from "../RogueIcon.vue";
 import ProfileCard from "../ProfileCard.vue";
+import StatsPanel from "../StatsPanel.vue";
 import { useDraftState } from "../../composables/useDraftState";
 import { openAuth, signOut, user } from "../../cloud/useAuth";
 import {
@@ -702,7 +557,8 @@ import {
   titles,
 } from "../../profile/profileStore";
 import { getMap } from "../../gameMaps";
-import { kindOfMode, matchStats } from "../../profile/matchStats";
+import { matchStats } from "../../profile/matchStats";
+import { buildStatsData, mainTotals } from "../../profile/publicProfile";
 import {
   importTabletop,
   revertTabletop,
@@ -732,12 +588,7 @@ const tab = ref("overview");
 const tlInput = ref("");
 const tlBusy = ref(false);
 const tlError = ref("");
-const tlAll = ref(false);
 const tlDebug = ref("");
-const tlRows = computed(() => {
-  const rows = tabletop.current ? tabletop.current.fighters : [];
-  return tlAll.value ? rows : rows.slice(0, 8);
-});
 const runImport = async () => {
   tlBusy.value = true;
   tlError.value = "";
@@ -755,52 +606,18 @@ const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
 
 const history = computed(() => matchStats.history);
-const byPlayed = (map) =>
-  Object.entries(map)
-    .map(([key, row]) => ({ key, played: row.played, wins: row.wins }))
-    .sort((a, b) => b.played - a.played);
-const stats = computed(() => ({
-  games: matchStats.games,
-  wins: matchStats.wins,
-  losses: matchStats.losses,
-  bestStreak: matchStats.bestStreak,
-  curStreak: matchStats.curStreak,
-  runs: matchStats.runs,
-  runsWon: matchStats.runsWon,
-  healed: matchStats.healed,
-  damage: matchStats.dealt,
-  perHero: byPlayed(matchStats.perHero).map((row) => ({
-    ...row,
-    hero: row.key,
-  })),
-  perMode: byPlayed(matchStats.perMode).map((row) => ({
-    ...row,
-    mode: row.key,
-  })),
-}));
-const kindTabs = ["all", "players", "bots", "modes"];
-const statKind = ref("all");
-const view = computed(() => {
-  if (statKind.value === "all") return stats.value;
-  const kind = matchStats.kinds[statKind.value];
-  return {
-    wins: kind.wins,
-    losses: kind.losses,
-    curStreak: 0,
-    runs: matchStats.runs,
-    runsWon: matchStats.runsWon,
-    damage: kind.dealt,
-    perHero: byPlayed(kind.perHero).map((row) => ({ ...row, hero: row.key })),
-    perMode: stats.value.perMode.filter(
-      (row) => kindOfMode(row.mode) === statKind.value,
-    ),
-  };
-});
+const statsData = computed(() => buildStatsData(matchStats, tabletop.current));
+const setPref = (key, value) => {
+  profile[key] = value;
+};
+const totals = computed(() =>
+  mainTotals(statsData.value, profile.leaguePrimary, profile.leagueMerge),
+);
 const achievements = computed(() => buildAchievements(matchStats));
 const lvl = computed(() => levelOf(matchStats, achievements.value));
 const xpPct = computed(() => Math.round((lvl.value.xp / lvl.value.need) * 100));
 const winrate = computed(() =>
-  Math.round((stats.value.wins / Math.max(1, stats.value.games)) * 100),
+  Math.round((totals.value.wins / Math.max(1, totals.value.games)) * 100),
 );
 const doneCount = computed(
   () => achievements.value.filter((item) => item.done).length,
@@ -896,6 +713,16 @@ const HistoryRow = {
               : heroName(props.row.hero),
           ),
           h("span", details()),
+          props.row.foeId
+            ? h(
+                RouterLink,
+                {
+                  class: "pf-foe-link",
+                  to: { name: "player", params: { id: props.row.foeId } },
+                },
+                () => `${props.row.foeNick || props.L.foeLink} →`,
+              )
+            : null,
         ]),
         props.row.enemy
           ? h("img", {
@@ -972,62 +799,19 @@ const HistoryRow = {
   min-width: 22px;
 }
 
-.fr-iron {
-  background: linear-gradient(135deg, var(--mut), #475569);
-}
-.fr-gold {
-  background: linear-gradient(135deg, #fde68a, #b45309);
-  box-shadow: 0 0 18px rgba(250, 204, 21, 0.35);
-}
-.fr-flame {
-  background: linear-gradient(135deg, #fb923c, #dc2626);
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.55);
-  animation: pf-glow 2s ease-in-out infinite;
-}
-.fr-frost {
-  background: linear-gradient(135deg, #bae6fd, #3b82f6);
-  box-shadow: 0 0 20px rgba(125, 211, 252, 0.5);
-}
-.fr-emerald {
-  background: linear-gradient(135deg, #6ee7b7, #047857);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-}
-.fr-royal {
-  background: linear-gradient(120deg, #f0abfc, #6366f1, #22d3ee, #f0abfc);
-  background-size: 300% 300%;
-  animation: pf-shift 4s linear infinite;
-  box-shadow: 0 0 24px rgba(168, 85, 247, 0.6);
+.pf-pub {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--acc);
+  font-weight: 800;
+  font-size: 13px;
 }
 
-@keyframes pf-glow {
-  50% {
-    box-shadow: 0 0 30px rgba(251, 146, 60, 0.85);
-  }
-}
-
-@keyframes pf-shift {
-  to {
-    background-position: 300% 0;
-  }
-}
-
-.bn-dusk {
-  background: linear-gradient(120deg, #1b2a55, #3b1d5e);
-}
-.bn-ember {
-  background: linear-gradient(120deg, #4a1511, #1c1033);
-}
-.bn-ocean {
-  background: linear-gradient(120deg, #0c3b5c, #12204a);
-}
-.bn-forest {
-  background: linear-gradient(120deg, #123d2b, #0f1f2e);
-}
-.bn-void {
-  background: linear-gradient(120deg, #0a0a14, #2b1245);
-}
-.bn-gold {
-  background: linear-gradient(120deg, #5a3f0a, #1f1608);
+.pf-foe-link {
+  display: block;
+  color: var(--acc);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .pf-id {
@@ -1110,29 +894,6 @@ const HistoryRow = {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-}
-
-.pf-first {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.pf-chip-btn {
-  padding: 6px 14px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 999px;
-  background: transparent;
-  color: inherit;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.pf-chip-btn.on {
-  background: #3b6bff;
-  border-color: #3b6bff;
-  color: #fff;
 }
 
 .pf-wide {
@@ -1855,5 +1616,65 @@ const HistoryRow = {
   background: transparent;
   border: 1px solid rgba(248, 113, 113, 0.6);
   color: #f87171;
+}
+</style>
+
+<style>
+.fr-iron {
+  background: linear-gradient(135deg, var(--mut), #475569);
+}
+.fr-gold {
+  background: linear-gradient(135deg, #fde68a, #b45309);
+  box-shadow: 0 0 18px rgba(250, 204, 21, 0.35);
+}
+.fr-flame {
+  background: linear-gradient(135deg, #fb923c, #dc2626);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.55);
+  animation: pf-glow 2s ease-in-out infinite;
+}
+.fr-frost {
+  background: linear-gradient(135deg, #bae6fd, #3b82f6);
+  box-shadow: 0 0 20px rgba(125, 211, 252, 0.5);
+}
+.fr-emerald {
+  background: linear-gradient(135deg, #6ee7b7, #047857);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+.fr-royal {
+  background: linear-gradient(120deg, #f0abfc, #6366f1, #22d3ee, #f0abfc);
+  background-size: 300% 300%;
+  animation: pf-shift 4s linear infinite;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.6);
+}
+
+@keyframes pf-glow {
+  50% {
+    box-shadow: 0 0 30px rgba(251, 146, 60, 0.85);
+  }
+}
+
+@keyframes pf-shift {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+.bn-dusk {
+  background: linear-gradient(120deg, #1b2a55, #3b1d5e);
+}
+.bn-ember {
+  background: linear-gradient(120deg, #4a1511, #1c1033);
+}
+.bn-ocean {
+  background: linear-gradient(120deg, #0c3b5c, #12204a);
+}
+.bn-forest {
+  background: linear-gradient(120deg, #123d2b, #0f1f2e);
+}
+.bn-void {
+  background: linear-gradient(120deg, #0a0a14, #2b1245);
+}
+.bn-gold {
+  background: linear-gradient(120deg, #5a3f0a, #1f1608);
 }
 </style>

@@ -4,8 +4,23 @@ import { user } from "../cloud/useAuth.js";
 import { matchStats, onStatsChange } from "./matchStats.js";
 import { profile, heroKeys } from "./profileStore.js";
 import { buildAchievements, levelOf } from "./achievements.js";
+import { tabletop } from "./tabletop.js";
+import { buildCard, buildStatsData } from "./publicProfile.js";
 
 const TABLE = "leaderboard";
+const COLUMNS = "user_id,nick,avatar,title,level,ach,stats,heroes";
+
+const fromRow = (row) => ({
+  id: row.user_id,
+  nick: row.nick,
+  avatar: row.avatar,
+  title: row.title,
+  level: row.level,
+  ach: row.ach,
+  stats: { ...summary(matchStats), ...row.stats },
+  heroes: row.heroes || {},
+  card: row.card || null,
+});
 
 const pct = (stats) =>
   stats.games >= 10 ? Math.round((stats.wins / stats.games) * 100) : 0;
@@ -49,7 +64,14 @@ export const ownRow = () => {
   if (!user.value) return null;
   const done = buildAchievements(matchStats);
   const lvl = levelOf(matchStats, done);
+  const card = buildCard(
+    profile,
+    lvl,
+    done.filter((item) => item.done).map((item) => item.id),
+    buildStatsData(matchStats, tabletop.current),
+  );
   return {
+    card,
     id: user.value.id,
     nick: profile.nick || "Player",
     avatar: profile.avatar,
@@ -96,6 +118,49 @@ const rngOf = (seed) => {
   };
 };
 
+const demoCard = (index, stats, heroes, level) => ({
+  bio: "",
+  frame: "gold",
+  banner: "dusk",
+  favHero: heroKeys[index % heroKeys.length],
+  cardFrame: "hazard",
+  cardEffect: "shine",
+  cardArt: "hero",
+  showcase: [],
+  leaguePrimary: false,
+  leagueMerge: false,
+  level: { level, xp: 80, need: 200 + level * 40 },
+  done: [],
+  data: {
+    players: {
+      games: stats.games,
+      wins: stats.wins,
+      losses: stats.losses,
+      dealt: stats.dealt,
+      heroes: Object.entries(heroes).map(([key, row]) => ({
+        key,
+        played: row.played,
+        wins: row.wins,
+      })),
+    },
+    bots: { games: 0, wins: 0, losses: 0, dealt: 0, heroes: [] },
+    modes: {
+      games: 0,
+      wins: 0,
+      losses: 0,
+      dealt: 0,
+      heroes: [],
+      runs: stats.runs,
+      runsWon: stats.runsWon,
+      sub: {
+        packDraft: { played: 0, wins: 0, heroes: [] },
+        roguelike: { played: 0, wins: 0, heroes: [] },
+      },
+    },
+    league: null,
+  },
+});
+
 const demoRows = () =>
   names.map((nick, index) => {
     const random = rngOf(index * 7919 + 13);
@@ -132,6 +197,7 @@ const demoRows = () =>
       ach: Math.min(30, Math.floor(wins / 5)),
       stats,
       heroes,
+      card: demoCard(index, stats, heroes, 1 + Math.floor(wins / 8)),
     };
   });
 
@@ -150,20 +216,20 @@ export async function loadBoard() {
     const client = await getClient();
     const { data, error } = await client
       .from(TABLE)
-      .select("user_id,nick,avatar,title,level,ach,stats,heroes")
+      .select(`${COLUMNS},card`)
       .order("level", { ascending: false })
       .limit(500);
-    if (error) throw error;
-    const rows = data.map((row) => ({
-      id: row.user_id,
-      nick: row.nick,
-      avatar: row.avatar,
-      title: row.title,
-      level: row.level,
-      ach: row.ach,
-      stats: { ...summary(matchStats), ...row.stats },
-      heroes: row.heroes || {},
-    }));
+    let list = data;
+    if (error) {
+      const retry = await client
+        .from(TABLE)
+        .select(COLUMNS)
+        .order("level", { ascending: false })
+        .limit(500);
+      if (retry.error) throw retry.error;
+      list = retry.data;
+    }
+    const rows = list.map(fromRow);
     const others = mine ? rows.filter((row) => row.id !== mine.id) : rows;
     board.value = mine && mine.stats.games ? [...others, mine] : others;
     boardState.value = "ready";
@@ -180,7 +246,7 @@ async function pushNow() {
   if (!row || !row.stats.games || authDemo || !cloudEnabled) return;
   try {
     const client = await getClient();
-    await client.from(TABLE).upsert({
+    const record = {
       user_id: row.id,
       nick: row.nick,
       avatar: row.avatar,
@@ -190,7 +256,11 @@ async function pushNow() {
       stats: row.stats,
       heroes: row.heroes,
       updated_at: new Date().toISOString(),
-    });
+    };
+    const { error } = await client
+      .from(TABLE)
+      .upsert({ ...record, card: row.card });
+    if (error) await client.from(TABLE).upsert(record);
   } catch {
     return;
   }
@@ -202,9 +272,34 @@ const schedulePush = () => {
 };
 
 onStatsChange(schedulePush);
+
+export async function loadPlayer(id) {
+  const mine = ownRow();
+  if (mine && mine.id === id) return mine;
+  if (authDemo || !cloudEnabled) {
+    return demoRows().find((row) => row.id === id) || null;
+  }
+  try {
+    const client = await getClient();
+    let result = await client
+      .from(TABLE)
+      .select(`${COLUMNS},card`)
+      .eq("user_id", id)
+      .maybeSingle();
+    if (result.error)
+      result = await client
+        .from(TABLE)
+        .select(COLUMNS)
+        .eq("user_id", id)
+        .maybeSingle();
+    return result.data ? fromRow(result.data) : null;
+  } catch {
+    return null;
+  }
+}
 watch(
-  () => [profile.nick, profile.avatar, profile.title],
-  () => {
-    if (user.value) schedulePush();
+  () => (user.value ? JSON.stringify(ownRow()) : ""),
+  (value) => {
+    if (value) schedulePush();
   },
 );
