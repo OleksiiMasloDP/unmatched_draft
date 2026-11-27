@@ -286,6 +286,14 @@
               <p v-if="tlError" class="pf-note pf-tl-error">
                 {{ L.tl.errors[tlError] }}
               </p>
+              <textarea
+                v-if="tlDebug"
+                class="pf-input pf-tl-debug"
+                rows="8"
+                readonly
+                :value="tlDebug"
+                @focus="$event.target.select()"
+              ></textarea>
               <template v-if="tabletop.current">
                 <div class="pf-tl-sum">
                   <b>{{ tabletop.current.username }}</b>
@@ -686,6 +694,7 @@ const tlInput = ref("");
 const tlBusy = ref(false);
 const tlError = ref("");
 const tlAll = ref(false);
+const tlDebug = ref("");
 const tlRows = computed(() => {
   const rows = tabletop.current ? tabletop.current.fighters : [];
   return tlAll.value ? rows : rows.slice(0, 8);
@@ -693,12 +702,15 @@ const tlRows = computed(() => {
 const runImport = async () => {
   tlBusy.value = true;
   tlError.value = "";
+  tlDebug.value = "";
   const result = await importTabletop(
     tlInput.value || (tabletop.current ? tabletop.current.username : ""),
   );
   tlBusy.value = false;
-  if (result.error) tlError.value = result.error;
-  else tlInput.value = "";
+  if (result.error) {
+    tlError.value = result.error;
+    if (result.debug) tlDebug.value = JSON.stringify(result.debug, null, 1);
+  } else tlInput.value = "";
 };
 const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
@@ -1415,6 +1427,11 @@ const HistoryRow = {
   flex-wrap: wrap;
   gap: 4px 14px;
   margin: 8px 0 12px;
+}
+
+.pf-tl-debug {
+  width: 100%;
+  font-size: 11px;
 }
 
 .pf-tl-error {

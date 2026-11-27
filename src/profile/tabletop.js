@@ -83,7 +83,10 @@ const viaFunction = async (username) => {
       } catch {
         return null;
       }
-      return { error: (payload && payload.error) || "network" };
+      return {
+        error: (payload && payload.error) || "network",
+        debug: payload && payload.debug,
+      };
     }
     const payload = response.data;
     if (!payload || !Array.isArray(payload.fighters)) return null;
@@ -115,7 +118,7 @@ export const importTabletop = async (input) => {
   if (!loadedFor) return { error: "signin" };
   const payload = (await viaFunction(username)) || (await viaProxy(username));
   if (!payload) return { error: "network" };
-  if (payload.error) return { error: payload.error };
+  if (payload.error) return { error: payload.error, debug: payload.debug };
   tabletop.previous = tabletop.current;
   tabletop.current = {
     username: payload.username || username,

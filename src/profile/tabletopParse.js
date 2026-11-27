@@ -64,3 +64,16 @@ export const usernameFrom = (input) => {
   const name = (fromUrl ? fromUrl[1] : raw).replace(/^@/, "");
   return /^[A-Za-z0-9_.-]{2,40}$/.test(name) ? name : "";
 };
+
+export const debugInfo = (html) => {
+  const source = String(html);
+  const text = pageText(source);
+  const at = text.search(/games?\b/i);
+  return {
+    length: source.length,
+    nextData: /__NEXT_DATA__|__next_f/.test(source),
+    winHeader: /Win\s*%/.test(text),
+    head: text.slice(0, 400),
+    around: at >= 0 ? text.slice(Math.max(0, at - 300), at + 600) : "",
+  };
+};

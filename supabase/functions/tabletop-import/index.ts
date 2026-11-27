@@ -69,6 +69,18 @@ const parseProfile = (html: string) => {
   };
 };
 
+const debugInfo = (html: string) => {
+  const text = pageText(html);
+  const at = text.search(/games?\b/i);
+  return {
+    length: html.length,
+    nextData: /__NEXT_DATA__|__next_f/.test(html),
+    winHeader: /Win\s*%/.test(text),
+    head: text.slice(0, 400),
+    around: at >= 0 ? text.slice(Math.max(0, at - 300), at + 600) : "",
+  };
+};
+
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -104,7 +116,9 @@ Deno.serve(async (req) => {
   }
   if (response.status === 404) return reply({ error: "not_found" }, 404);
   if (!response.ok) return reply({ error: "upstream" }, 502);
-  const parsed = parseProfile(await response.text());
-  if (!parsed.fighters.length) return reply({ error: "parse_failed" }, 422);
+  const html = await response.text();
+  const parsed = parseProfile(html);
+  if (!parsed.fighters.length)
+    return reply({ error: "parse_failed", debug: debugInfo(html) }, 422);
   return reply({ username, ...parsed });
 });
