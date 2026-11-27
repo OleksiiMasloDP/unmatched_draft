@@ -482,8 +482,10 @@
             {
               'is-active': game.phase !== 'over' && game.turn === player,
               'is-idle': game.phase !== 'over' && game.turn !== player,
+              'is-clickable': true,
             },
           ]"
+          @click="openSeat(player)"
         >
           <img
             v-if="heroOf(player).image"
@@ -747,6 +749,22 @@
           </div>
         </div>
       </template>
+
+      <VersusIntro
+        v-if="versus"
+        :left="versus.left"
+        :right="versus.right"
+        :left-hero="versus.leftHero"
+        :right-hero="versus.rightHero"
+        :skip="profileL.skip"
+        @close="versus = null"
+      />
+      <SeatCardModal
+        v-if="seatModal"
+        :card="seatModal"
+        :back="profileL.back"
+        @close="seatModal = null"
+      />
 
       <GameResult
         v-if="game.phase === 'over' && resultOpen"
@@ -1437,6 +1455,16 @@ import PackCard from "../PackCard.vue";
 import OnlinePanel from "../OnlinePanel.vue";
 import { useOnline } from "../../composables/useOnline";
 import { recordMatch } from "../../profile/matchStats";
+import VersusIntro from "../VersusIntro.vue";
+import SeatCardModal from "../SeatCardModal.vue";
+import { user } from "../../cloud/useAuth";
+import { loadPlayer } from "../../profile/leaderboard";
+import { profileDict } from "../../profile/profileDict";
+import {
+  ownSeatCard,
+  plainSeatCard,
+  rowSeatCard,
+} from "../../profile/seatCards";
 
 const { t, lang } = useDraftState();
 const {
@@ -1489,6 +1517,52 @@ if (game.bot && !online.value) setMode("bot");
 if (localChosen.value && !game.bot && !online.value) setMode("local");
 const solo = computed(() => online.value || Boolean(game.bot));
 const meSeat = computed(() => (online.value ? mySeat.value : "p1"));
+
+const profileL = computed(() => profileDict[lang.value === "ua" ? "ua" : "en"]);
+const versus = ref(null);
+const seatModal = ref(null);
+
+async function seatCard(seat) {
+  const hero = heroOf(seat);
+  const L = profileL.value;
+  if (solo.value && seat === meSeat.value && user.value) {
+    const own = ownSeatCard(L.titles);
+    if (own) return own;
+  }
+  if (online.value && seat !== meSeat.value && netState.foe) {
+    const row = await loadPlayer(netState.foe.id);
+    if (row && row.card) return rowSeatCard(row, L.titles);
+    return plainSeatCard(
+      netState.foe.nick || playerLabel(seat),
+      "",
+      hero.image,
+    );
+  }
+  const label = game.bot === seat ? t("gameBotLabel") : playerLabel(seat);
+  return plainSeatCard(label, "", hero.image);
+}
+
+async function openSeat(seat) {
+  seatModal.value = await seatCard(seat);
+}
+
+async function showVersus() {
+  const [left, right] = await Promise.all([seatCard("p1"), seatCard("p2")]);
+  versus.value = {
+    left,
+    right,
+    leftHero: heroOf("p1").name,
+    rightHero: heroOf("p2").name,
+  };
+}
+
+watch(
+  () => game.phase,
+  (phase, before) => {
+    if (before === "setup" && phase !== "over" && phase !== "setup")
+      showVersus();
+  },
+);
 
 function chooseLocal() {
   setBot(null);
@@ -2905,6 +2979,10 @@ function onResultAction() {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
+}
+
+.game-player.is-clickable {
+  cursor: pointer;
 }
 
 .game-hero-chips {
