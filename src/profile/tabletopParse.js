@@ -23,13 +23,16 @@ export const parseProfile = (html) => {
   const ratingMatch = text.match(
     /Current rating\s+(\d+)\s*(?:±\s*(\d+))?\s*over\s+(\d+)\s+rated/i,
   );
-  const rowPattern = /(\d+)-(\d+)\s*·\s*(\d+)\s*games?\s*(\d+)\s*%/g;
+  const statsAt = text.indexOf("Fighter Statistics");
+  const body = statsAt >= 0 ? text.slice(statsAt) : text;
+  const rowPattern =
+    /(\d+)\s*-\s*(\d+)\s*·\s*(\d+)\s*games?\s*\d+\s*games?\s*\d+\s*-\s*\d+\s*(\d+)\s*%/g;
   const fighters = [];
   const seen = new Set();
   let last = 0;
-  let match = rowPattern.exec(text);
+  let match = rowPattern.exec(body);
   while (match) {
-    let segment = text.slice(last, match.index);
+    let segment = body.slice(last, match.index);
     if (!fighters.length) {
       const header = segment.lastIndexOf("Win %");
       if (header >= 0) segment = segment.slice(header + 5);
@@ -48,7 +51,7 @@ export const parseProfile = (html) => {
       seen.add(name.toLowerCase());
       fighters.push({ name, wins, losses, games });
     }
-    match = rowPattern.exec(text);
+    match = rowPattern.exec(body);
   }
   return {
     rating: ratingMatch ? Number(ratingMatch[1]) : null,
