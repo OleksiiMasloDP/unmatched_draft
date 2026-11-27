@@ -224,11 +224,25 @@ export const buildAchievements = (stats) =>
     };
   });
 
+export const xpWeights = {
+  online: 1,
+  bot: 1 / 50,
+  packDraft: 1 / 25,
+  roguelike: 1 / 25,
+};
+
 export const levelOf = (stats, achievements) => {
-  const xp =
-    stats.wins * 40 +
-    stats.losses * 15 +
-    achievements.filter((item) => item.done).length * 120;
+  const modes = Object.entries(stats.perMode || {});
+  const played = modes.reduce(
+    (sum, [mode, row]) =>
+      sum +
+      (row.wins * 40 + (row.played - row.wins) * 15) *
+        (xpWeights[mode] ?? xpWeights.bot),
+    0,
+  );
+  const xp = Math.round(
+    played + achievements.filter((item) => item.done).length * 120,
+  );
   let level = 1;
   let need = 200;
   let left = xp;

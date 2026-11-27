@@ -2382,7 +2382,11 @@ function logMatch() {
   const theirs = game.players[foe];
   if (!mine || !theirs) return;
   recordMatch({
-    mode: online.value ? "online" : "bot",
+    mode: online.value
+      ? "online"
+      : deckSource.value[me] === "draft"
+        ? "packDraft"
+        : "bot",
     win: game.winner === me,
     hero: mine.heroId,
     enemy: theirs.heroId,

@@ -184,76 +184,115 @@
           </section>
 
           <section v-else-if="tab === 'stats'" class="pf-grid">
-            <div class="pf-card pf-wide">
-              <div class="pf-kpis">
-                <div class="pf-kpi">
-                  <b>{{ stats.wins }}</b><span>{{ L.wins }}</span>
-                </div>
-                <div class="pf-kpi">
-                  <b>{{ stats.losses }}</b><span>{{ L.losses }}</span>
-                </div>
-                <div class="pf-kpi">
-                  <b>{{ stats.curStreak }}</b><span>{{ L.curStreak }}</span>
-                </div>
-                <div class="pf-kpi">
-                  <b>{{ stats.runsWon }}/{{ stats.runs }}</b
-                  ><span>{{ L.runs }}</span>
-                </div>
-                <div class="pf-kpi">
-                  <b>{{ stats.damage }}</b><span>{{ L.damage }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="pf-card">
-              <h2 class="pf-h">{{ L.byHero }}</h2>
-              <div
-                v-for="row in stats.perHero"
-                :key="row.hero"
-                class="pf-bar-row"
+            <div class="pf-card pf-wide pf-first">
+              <span>{{ L.statsFirst }}</span>
+              <button
+                v-for="item in ['app', 'league']"
+                :key="item"
+                type="button"
+                class="pf-chip-btn"
+                :class="{ on: profile.statsFirst === item }"
+                @click="profile.statsFirst = item"
               >
-                <img :src="heroImage(row.hero)" alt="" />
-                <div class="pf-bar-main">
-                  <div class="pf-bar-top">
-                    <span>{{ heroName(row.hero) }}</span>
-                    <span class="pf-bar-val"
-                      ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b> ·
-                      {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
-                      {{ row.played }}</span
-                    >
+                {{ item === "app" ? L.appStats : L.tl.title }}
+              </button>
+            </div>
+            <div
+              class="pf-wide pf-grid pf-app-stats"
+              :style="{ order: profile.statsFirst === 'league' ? 2 : 0 }"
+            >
+              <div class="pf-card pf-wide">
+                <div class="pf-first">
+                  <button
+                    v-for="item in kindTabs"
+                    :key="item"
+                    type="button"
+                    class="pf-chip-btn"
+                    :class="{ on: statKind === item }"
+                    @click="statKind = item"
+                  >
+                    {{ L.kinds[item] }}
+                  </button>
+                </div>
+                <p class="pf-note">{{ L.xpRate[statKind] }}</p>
+              </div>
+              <div class="pf-card pf-wide">
+                <div class="pf-kpis">
+                  <div class="pf-kpi">
+                    <b>{{ view.wins }}</b><span>{{ L.wins }}</span>
                   </div>
-                  <div class="pf-bar">
-                    <i
-                      :style="{ width: (row.wins / row.played) * 100 + '%' }"
-                    ></i>
+                  <div class="pf-kpi">
+                    <b>{{ view.losses }}</b><span>{{ L.losses }}</span>
+                  </div>
+                  <div v-if="statKind === 'all'" class="pf-kpi">
+                    <b>{{ view.curStreak }}</b><span>{{ L.curStreak }}</span>
+                  </div>
+                  <div
+                    v-if="statKind === 'all' || statKind === 'modes'"
+                    class="pf-kpi"
+                  >
+                    <b>{{ view.runsWon }}/{{ view.runs }}</b
+                    ><span>{{ L.runs }}</span>
+                  </div>
+                  <div class="pf-kpi">
+                    <b>{{ view.damage }}</b><span>{{ L.damage }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pf-card">
+                <h2 class="pf-h">{{ L.byHero }}</h2>
+                <div
+                  v-for="row in view.perHero"
+                  :key="row.hero"
+                  class="pf-bar-row"
+                >
+                  <img :src="heroImage(row.hero)" alt="" />
+                  <div class="pf-bar-main">
+                    <div class="pf-bar-top">
+                      <span>{{ heroName(row.hero) }}</span>
+                      <span class="pf-bar-val"
+                        ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b>
+                        · {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
+                        {{ row.played }}</span
+                      >
+                    </div>
+                    <div class="pf-bar">
+                      <i
+                        :style="{ width: (row.wins / row.played) * 100 + '%' }"
+                      ></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pf-card">
+                <h2 class="pf-h">{{ L.byMode }}</h2>
+                <div
+                  v-for="row in view.perMode"
+                  :key="row.mode"
+                  class="pf-bar-row"
+                >
+                  <div class="pf-bar-main">
+                    <div class="pf-bar-top">
+                      <span>{{ L.modes[row.mode] }}</span>
+                      <span class="pf-bar-val"
+                        ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b>
+                        · {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
+                        {{ row.played }}</span
+                      >
+                    </div>
+                    <div class="pf-bar">
+                      <i
+                        :style="{ width: (row.wins / row.played) * 100 + '%' }"
+                      ></i>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="pf-card">
-              <h2 class="pf-h">{{ L.byMode }}</h2>
-              <div
-                v-for="row in stats.perMode"
-                :key="row.mode"
-                class="pf-bar-row"
-              >
-                <div class="pf-bar-main">
-                  <div class="pf-bar-top">
-                    <span>{{ L.modes[row.mode] }}</span>
-                    <span class="pf-bar-val"
-                      ><b>{{ Math.round((row.wins / row.played) * 100) }}%</b> ·
-                      {{ L.winsWord }}: {{ row.wins }} {{ L.of }}
-                      {{ row.played }}</span
-                    >
-                  </div>
-                  <div class="pf-bar">
-                    <i
-                      :style="{ width: (row.wins / row.played) * 100 + '%' }"
-                    ></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="pf-card pf-wide pf-tl">
+            <div
+              class="pf-card pf-wide pf-tl"
+              :style="{ order: profile.statsFirst === 'league' ? 0 : 2 }"
+            >
               <h2 class="pf-h">{{ L.tl.title }}</h2>
               <p class="pf-note">{{ L.tl.hint }}</p>
               <form class="pf-tl-form" @submit.prevent="runImport">
@@ -663,7 +702,7 @@ import {
   titles,
 } from "../../profile/profileStore";
 import { getMap } from "../../gameMaps";
-import { matchStats } from "../../profile/matchStats";
+import { kindOfMode, matchStats } from "../../profile/matchStats";
 import {
   importTabletop,
   revertTabletop,
@@ -739,8 +778,26 @@ const stats = computed(() => ({
     mode: row.key,
   })),
 }));
+const kindTabs = ["all", "players", "bots", "modes"];
+const statKind = ref("all");
+const view = computed(() => {
+  if (statKind.value === "all") return stats.value;
+  const kind = matchStats.kinds[statKind.value];
+  return {
+    wins: kind.wins,
+    losses: kind.losses,
+    curStreak: 0,
+    runs: matchStats.runs,
+    runsWon: matchStats.runsWon,
+    damage: kind.dealt,
+    perHero: byPlayed(kind.perHero).map((row) => ({ ...row, hero: row.key })),
+    perMode: stats.value.perMode.filter(
+      (row) => kindOfMode(row.mode) === statKind.value,
+    ),
+  };
+});
 const achievements = computed(() => buildAchievements(matchStats));
-const lvl = computed(() => levelOf(stats.value, achievements.value));
+const lvl = computed(() => levelOf(matchStats, achievements.value));
 const xpPct = computed(() => Math.round((lvl.value.xp / lvl.value.need) * 100));
 const winrate = computed(() =>
   Math.round((stats.value.wins / Math.max(1, stats.value.games)) * 100),
@@ -1053,6 +1110,29 @@ const HistoryRow = {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.pf-first {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pf-chip-btn {
+  padding: 6px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.pf-chip-btn.on {
+  background: #3b6bff;
+  border-color: #3b6bff;
+  color: #fff;
 }
 
 .pf-wide {

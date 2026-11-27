@@ -123,6 +123,7 @@ const defaults = (account) => ({
   cardArt: "hero",
   showStats: true,
   showHistory: true,
+  statsFirst: "app",
 });
 
 export const profile = reactive(defaults(null));

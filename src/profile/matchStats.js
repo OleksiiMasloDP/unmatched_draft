@@ -30,8 +30,46 @@ const empty = () => ({
   runWins: 0,
   perHero: {},
   perMode: {},
+  kinds: {},
   history: [],
 });
+
+export const kindOfMode = (mode) =>
+  mode === "online"
+    ? "players"
+    : mode === "packDraft" || mode === "roguelike"
+      ? "modes"
+      : "bots";
+
+const emptyKind = () => ({
+  games: 0,
+  wins: 0,
+  losses: 0,
+  dealt: 0,
+  healed: 0,
+  perHero: {},
+});
+
+const fillKinds = (target) => {
+  const kinds = target.kinds || {};
+  const fresh = !target.kinds || !Object.keys(target.kinds).length;
+  for (const key of ["players", "bots", "modes"])
+    kinds[key] = { ...emptyKind(), ...(kinds[key] || {}) };
+  if (fresh) {
+    for (const [mode, row] of Object.entries(target.perMode || {})) {
+      const kind = kinds[kindOfMode(mode)];
+      kind.games += row.played;
+      kind.wins += row.wins;
+      kind.losses += row.played - row.wins;
+    }
+    if (!target.onlineGames) {
+      kinds.bots.perHero = JSON.parse(JSON.stringify(target.perHero || {}));
+      kinds.bots.dealt = target.dealt || 0;
+      kinds.bots.healed = target.healed || 0;
+    }
+  }
+  target.kinds = kinds;
+};
 
 export const matchStats = reactive(empty());
 
@@ -59,6 +97,7 @@ const loadFor = (account) => {
   const saved = account ? read(account.id) : null;
   Object.assign(matchStats, empty(), saved || {});
   delete matchStats.owner;
+  fillKinds(matchStats);
   if (account && saved && !localStorage.getItem(STORE_KEY)) save();
 };
 
@@ -123,6 +162,13 @@ export function recordMatch(info) {
   if (hour < 5) s.night += 1;
   bump(s.perHero, heroKeyOf(info.hero), win);
   bump(s.perMode, info.mode, win);
+  const kind = s.kinds[kindOfMode(info.mode)];
+  kind.games += 1;
+  if (win) kind.wins += 1;
+  else kind.losses += 1;
+  kind.dealt += info.dealt;
+  kind.healed += info.healed;
+  bump(kind.perHero, heroKeyOf(info.hero), win);
   s.history.unshift({
     id: Date.now(),
     hero: heroKeyOf(info.hero),
@@ -150,6 +196,11 @@ export function recordRun({ hero, wins, victory }) {
   if (victory) s.runsWon += 1;
   s.runWins += wins || 0;
   bump(s.perMode, "roguelike", victory);
+  const kind = s.kinds.modes;
+  kind.games += 1;
+  if (victory) kind.wins += 1;
+  else kind.losses += 1;
+  bump(kind.perHero, heroKeyOf(hero), victory);
   s.history.unshift({
     id: Date.now(),
     hero: heroKeyOf(hero),
@@ -169,5 +220,6 @@ export function recordRun({ hero, wins, victory }) {
 
 export const resetStats = () => {
   Object.assign(matchStats, empty());
+  fillKinds(matchStats);
   save();
 };
