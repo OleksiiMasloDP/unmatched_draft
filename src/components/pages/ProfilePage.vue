@@ -302,22 +302,25 @@
                 </div>
                 <div class="pf-cardopts">
                   <label class="pf-label">{{ L.cardFrame }}</label>
-                  <div class="pf-filters">
-                    <button
-                      v-for="item in cardFrames"
-                      :key="item.id"
-                      type="button"
-                      class="pf-chip"
-                      :class="{ on: profile.cardFrame === item.id }"
-                      :disabled="lvl.level < item.lvl"
-                      @click="profile.cardFrame = item.id"
-                    >
-                      {{
-                        lvl.level < item.lvl
-                          ? L.lvl + " " + item.lvl
-                          : L.cardFrames[item.id]
-                      }}
-                    </button>
+                  <div v-for="group in frameGroups" :key="group.id">
+                    <p class="pf-sub">{{ L.frameGroups[group.id] }}</p>
+                    <div class="pf-filters">
+                      <button
+                        v-for="item in group.items"
+                        :key="item.id"
+                        type="button"
+                        class="pf-chip"
+                        :class="{ on: profile.cardFrame === item.id }"
+                        :disabled="lvl.level < item.lvl"
+                        @click="profile.cardFrame = item.id"
+                      >
+                        {{
+                          lvl.level < item.lvl
+                            ? L.lvl + " " + item.lvl
+                            : L.cardFrames[item.id]
+                        }}
+                      </button>
+                    </div>
                   </div>
                   <label class="pf-label">{{ L.cardEffect }}</label>
                   <div class="pf-filters">
@@ -606,6 +609,12 @@ const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
 
 const history = computed(() => matchStats.history);
+const frameGroups = computed(() =>
+  ["base", "uv", "mg", "ac", "gm"].map((id) => ({
+    id,
+    items: cardFrames.filter((item) => (item.group || "base") === id),
+  })),
+);
 const statsData = computed(() => buildStatsData(matchStats, tabletop.current));
 const setPref = (key, value) => {
   profile[key] = value;
@@ -797,6 +806,15 @@ const HistoryRow = {
 .pf-ava.small .pf-lvl {
   font-size: 11px;
   min-width: 22px;
+}
+
+.pf-sub {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
 }
 
 .pf-pub {

@@ -2,6 +2,8 @@ import { reactive, watch } from "vue";
 import { user } from "../cloud/useAuth.js";
 import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 import { portraitUrls } from "../components/authAssets.js";
+import "./frames.css";
+import "./cardFrames.css";
 
 const prefix = "profile:";
 const MAIN_KEY = "unmatched_profile";
@@ -48,7 +50,7 @@ export const titles = [
   { id: "legend", lvl: 18 },
 ];
 
-export const cardFrames = [
+const baseCardFrames = [
   { id: "hazard", lvl: 1 },
   { id: "punk", lvl: 2 },
   { id: "chrome", lvl: 3 },
@@ -61,6 +63,51 @@ export const cardFrames = [
   { id: "neon", lvl: 10 },
   { id: "royal", lvl: 12 },
 ];
+
+export const testCardFrames = [
+  { id: "uv-cyan", group: "uv", lvl: 1 },
+  { id: "uv-pink", group: "uv", lvl: 1 },
+  { id: "uv-rainbow", group: "uv", lvl: 1 },
+  { id: "uv-sunset", group: "uv", lvl: 1 },
+  { id: "uv-glass", group: "uv", lvl: 1 },
+  { id: "uv-dashed", group: "uv", lvl: 1 },
+  { id: "uv-double", group: "uv", lvl: 1 },
+  { id: "uv-pulse", group: "uv", lvl: 1 },
+  { id: "uv-candy", group: "uv", lvl: 1 },
+  { id: "uv-aurora", group: "uv", lvl: 1 },
+  { id: "mg-blue", group: "mg", lvl: 1 },
+  { id: "mg-purple", group: "mg", lvl: 1 },
+  { id: "mg-gold", group: "mg", lvl: 1 },
+  { id: "mg-emerald", group: "mg", lvl: 1 },
+  { id: "mg-red", group: "mg", lvl: 1 },
+  { id: "mg-cyan", group: "mg", lvl: 1 },
+  { id: "mg-pink", group: "mg", lvl: 1 },
+  { id: "mg-twin", group: "mg", lvl: 1 },
+  { id: "mg-shine", group: "mg", lvl: 1 },
+  { id: "mg-ripple", group: "mg", lvl: 1 },
+  { id: "ac-moving", group: "ac", lvl: 1 },
+  { id: "ac-spot", group: "ac", lvl: 1 },
+  { id: "ac-lamp", group: "ac", lvl: 1 },
+  { id: "ac-glow", group: "ac", lvl: 1 },
+  { id: "ac-slow", group: "ac", lvl: 1 },
+  { id: "ac-shimmer", group: "ac", lvl: 1 },
+  { id: "ac-vortex", group: "ac", lvl: 1 },
+  { id: "ac-sparkle", group: "ac", lvl: 1 },
+  { id: "ac-grid", group: "ac", lvl: 1 },
+  { id: "ac-ember", group: "ac", lvl: 1 },
+  { id: "gm-bronze", group: "gm", lvl: 1 },
+  { id: "gm-steel", group: "gm", lvl: 1 },
+  { id: "gm-ornate", group: "gm", lvl: 1 },
+  { id: "gm-obsidian", group: "gm", lvl: 1 },
+  { id: "gm-bone", group: "gm", lvl: 1 },
+  { id: "gm-rune", group: "gm", lvl: 1 },
+  { id: "gm-blood", group: "gm", lvl: 1 },
+  { id: "gm-crystal", group: "gm", lvl: 1 },
+  { id: "gm-wood", group: "gm", lvl: 1 },
+  { id: "gm-arcane", group: "gm", lvl: 1 },
+];
+
+export const cardFrames = [...baseCardFrames, ...testCardFrames];
 
 export const cardEffects = [
   { id: "none", lvl: 1 },

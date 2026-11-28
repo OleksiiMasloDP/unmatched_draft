@@ -121,6 +121,45 @@ const frameOrnaments = {
     { pos: "br", name: "boltSpellCast", metal: "silver", size: "32px" },
     { pos: "tr", name: "boltSpellCast", metal: "silver", size: "26px" },
   ],
+  "gm-bronze": [
+    { pos: "bottom", name: "crossedSwords", metal: "gold", size: "36px" },
+  ],
+  "gm-steel": [
+    { pos: "top", name: "crossedSwords", metal: "silver", size: "40px" },
+  ],
+  "gm-ornate": [
+    { pos: "top", name: "laurels", metal: "gold", size: "48px" },
+    { pos: "bl", name: "coinsPile", metal: "gold", size: "26px" },
+    { pos: "br", name: "coinsPile", metal: "gold", size: "26px" },
+  ],
+  "gm-obsidian": [
+    { pos: "top", name: "skullCrossedBones", metal: "silver", size: "40px" },
+  ],
+  "gm-bone": [
+    { pos: "top", name: "skullCrossedBones", metal: "silver", size: "36px" },
+  ],
+  "gm-rune": [{ pos: "top", name: "pentacle", metal: "silver", size: "38px" }],
+  "gm-blood": [
+    { pos: "tl", name: "candleFlame", metal: "ruby", size: "34px" },
+    { pos: "tr", name: "candleFlame", metal: "ruby", size: "34px" },
+  ],
+  "gm-crystal": [
+    { pos: "top", name: "waterDrop", metal: "silver", size: "40px" },
+  ],
+  "gm-wood": [{ pos: "bottom", name: "castle", metal: "gold", size: "38px" }],
+  "gm-arcane": [{ pos: "top", name: "pentacle", metal: "gold", size: "40px" }],
+  "uv-cyan": [
+    { pos: "tr", name: "boltSpellCast", metal: "silver", size: "30px" },
+  ],
+  "uv-pink": [
+    { pos: "br", name: "boltSpellCast", metal: "silver", size: "30px" },
+  ],
+  "mg-gold": [{ pos: "top", name: "laurels", metal: "gold", size: "44px" }],
+  "ac-ember": [
+    { pos: "tl", name: "candleFlame", metal: "ruby", size: "32px" },
+    { pos: "tr", name: "candleFlame", metal: "ruby", size: "32px" },
+  ],
+  "ac-lamp": [{ pos: "top", name: "waterDrop", metal: "silver", size: "36px" }],
   royal: [
     { pos: "top", name: "castle", metal: "gold", size: "56px" },
     { pos: "bl", name: "laurels", metal: "gold", size: "34px" },
