@@ -1,0 +1,222 @@
+.pc.pc[class*="cf-art-"] {
+  --fbg: linear-gradient(160deg, #0d1324, #05070f);
+  --ro: 16px;
+  --ri: 8px;
+  --ao: 24px;
+  --ib: 24px;
+  --clip: none;
+}
+
+.pcx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.pcx .pcx-pulse {
+  animation: pcx-pulse 2.4s ease-in-out infinite;
+}
+
+.pcx .pcx-blink {
+  animation: pcx-pulse 1.4s ease-in-out infinite;
+}
+
+.pcx .pcx-rune {
+  opacity: 0.25;
+  animation: pcx-rune 4s ease-in-out infinite;
+}
+
+.pcx .pcx-spark {
+  animation: pcx-spark 4s ease-out infinite;
+}
+
+.pcx .pcx-flow {
+  animation: pcx-flow 3s linear infinite;
+}
+
+.pcx .pcx-flow2 {
+  animation: pcx-flow2 2.6s linear infinite;
+}
+
+.pcx .pcx-scan {
+  animation: pcx-scan 3.4s ease-in-out infinite;
+}
+
+.pcx .pcx-sway {
+  animation: pcx-sway 1.6s steps(1) infinite;
+}
+
+.pcx .pcx-flame {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pcx-flame 0.9s ease-in-out infinite alternate;
+}
+
+.pcx .pcx-twinkle {
+  animation: pcx-twinkle 2.6s ease-in-out infinite;
+}
+
+.pcx .pcx-bolt {
+  animation: pcx-bolt 1.3s steps(1) infinite;
+}
+
+.pcx .pcx-gear {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pcx-rot 14s linear infinite;
+}
+
+.pcx .pcx-rev {
+  animation-direction: reverse;
+}
+
+.pcx .pcx-puff {
+  animation: pcx-puff 4s ease-out infinite;
+}
+
+@keyframes pcx-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pcx-rune {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pcx-spark {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px);
+  }
+}
+
+@keyframes pcx-flow {
+  to {
+    stroke-dashoffset: -526;
+  }
+}
+
+@keyframes pcx-flow2 {
+  to {
+    stroke-dashoffset: -614;
+  }
+}
+
+@keyframes pcx-scan {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(320px);
+    opacity: 0;
+  }
+}
+
+@keyframes pcx-sway {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+}
+
+@keyframes pcx-flame {
+  from {
+    transform: scale(1, 1) skewX(-4deg);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.08, 0.82) skewX(5deg);
+    opacity: 1;
+  }
+}
+
+@keyframes pcx-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pcx-bolt {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  22% {
+    opacity: 0.2;
+  }
+  30% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 0;
+  }
+  74% {
+    opacity: 1;
+  }
+}
+
+@keyframes pcx-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pcx-puff {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(2.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcx * {
+    animation: none !important;
+  }
+}

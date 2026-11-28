@@ -2,6 +2,8 @@ import { reactive, watch } from "vue";
 import { user } from "../cloud/useAuth.js";
 import { notifyChanged, registerSyncable } from "../cloud/sync.js";
 import { portraitUrls } from "../components/authAssets.js";
+import "./cardArt.css";
+import { artFrames } from "./cardArt.js";
 
 const prefix = "profile:";
 const MAIN_KEY = "unmatched_profile";
@@ -48,7 +50,7 @@ export const titles = [
   { id: "legend", lvl: 18 },
 ];
 
-export const cardFrames = [
+const baseCardFrames = [
   { id: "hazard", lvl: 1 },
   { id: "punk", lvl: 2 },
   { id: "chrome", lvl: 3 },
@@ -61,6 +63,8 @@ export const cardFrames = [
   { id: "neon", lvl: 10 },
   { id: "royal", lvl: 12 },
 ];
+
+export const cardFrames = [...baseCardFrames, ...artFrames];
 
 export const cardEffects = [
   { id: "none", lvl: 1 },

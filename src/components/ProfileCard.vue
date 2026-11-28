@@ -59,11 +59,19 @@
       <RogueIcon :name="item.name" :metal="item.metal" :size="item.size" />
     </span>
     <span class="pc-brk"></span>
+    <svg
+      v-if="artDef"
+      class="pcx"
+      viewBox="0 0 280 400"
+      aria-hidden="true"
+      v-html="artDef.svg"
+    ></svg>
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
+import { cardArt } from "../profile/cardArt";
 import RogueIcon from "./RogueIcon.vue";
 
 const props = defineProps({
@@ -128,6 +136,10 @@ const frameOrnaments = {
   ],
 };
 
+const artDef = computed(() =>
+  props.frame.startsWith("art-") ? cardArt[props.frame.slice(4)] : null,
+);
+
 const ornaments = computed(() => frameOrnaments[props.frame] || []);
 
 const particleKinds = [
@@ -158,6 +170,9 @@ const xpPct = computed(() =>
 
 const tilt = ref({ x: 0, y: 0, mx: 50, my: 50 });
 const tiltStyle = computed(() => ({
+  ...(artDef.value
+    ? { "--pad": artDef.value.pad + "px", "--glow": artDef.value.glow }
+    : {}),
   "--rx": `${tilt.value.x}deg`,
   "--ry": `${tilt.value.y}deg`,
   "--mx": `${tilt.value.mx}%`,
