@@ -331,6 +331,11 @@ const nav = computed(() => {
           label: props.t("matchupsTitle"),
         },
         {
+          name: "rate",
+          icon: "matchups",
+          label: ua ? "Оцінка матчапів" : "Rate matchups",
+        },
+        {
           name: "maps",
           icon: "maps",
           label: props.t("heroMapGuide"),

@@ -17,6 +17,7 @@ import AuthPage from "./components/pages/AuthPage.vue";
 import PlayerPage from "./components/pages/PlayerPage.vue";
 import LeaderboardPage from "./components/pages/LeaderboardPage.vue";
 import ProfilePage from "./components/pages/ProfilePage.vue";
+import RatePage from "./components/pages/RatePage.vue";
 import AuthStyles from "./components/pages/AuthStyles.vue";
 
 export const routes = [
@@ -27,6 +28,7 @@ export const routes = [
   { path: "/draft", name: "main", component: DraftPage },
   { path: "/maps", name: "maps", component: HeroMapGuide },
   { path: "/matchups", name: "matchups", component: MatchupExplorer },
+  { path: "/rate", name: "rate", component: RatePage },
   { path: "/guide", name: "guide", component: CharacterGuide },
   { path: "/formats", name: "formats", component: FormatsPage },
   { path: "/formats/new", name: "format-new", component: FormatEditor },
