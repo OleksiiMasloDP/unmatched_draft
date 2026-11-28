@@ -43,13 +43,12 @@
             <b>{{ pair[1].name }}</b>
           </div>
         </div>
-
-        <p class="rt-q">{{ L.q.replace("{a}", pair[0].name) }}</p>
         <div class="rt-pct">
           <button type="button" class="rt-step" @click="bump(-1)">−</button>
           <div class="rt-big">
             <b>{{ pct }}%</b>
-            <small>{{ 100 - pct }}% {{ pair[1].name }}</small>
+            <i>:</i>
+            <b>{{ 100 - pct }}%</b>
           </div>
           <button type="button" class="rt-step" @click="bump(1)">+</button>
         </div>
@@ -84,7 +83,6 @@
             {{ L.undo }}
           </button>
         </div>
-        <p class="rt-keys">{{ L.keys }}</p>
       </div>
       <p v-else class="rt-done">{{ ready ? L.done : L.loading }}</p>
 
@@ -119,11 +117,9 @@ const dict = {
     rated: "Rated",
     left: "Left",
     lock: "Lock this hero to rate him against everyone",
-    q: "{a}'s win chance in this matchup",
     ok: "Save and next",
     skip: "Skip",
     undo: "Undo",
-    keys: "Keys: 1–7 presets, ←/→ ±1%, ↑/↓ ±5%, Enter save, S skip, L lock",
     done: "No more pairs to rate.",
     loading: "Loading…",
     copy: "Copy JSON",
@@ -135,11 +131,9 @@ const dict = {
     rated: "Оцінено",
     left: "Залишилось",
     lock: "Зафіксувати героя, щоб оцінити його проти всіх",
-    q: "Шанс перемоги {a} в цьому матчапі",
     ok: "Зберегти й далі",
     skip: "Пропустити",
     undo: "Скасувати",
-    keys: "Клавіші: 1–7 пресети, ←/→ ±1%, ↑/↓ ±5%, Enter — зберегти, S — пропуск, L — замок",
     done: "Пар для оцінки більше немає.",
     loading: "Завантаження…",
     copy: "Копіювати JSON",
@@ -341,13 +335,22 @@ onUnmounted(() => window.removeEventListener("keydown", onKey));
   border-color: #fbbf24;
 }
 .rt-pct {
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
 }
 .rt-big {
-  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+.rt-big i {
+  color: #64748b;
+  font-style: normal;
+  font-size: 28px;
 }
 .rt-big b {
   display: block;
@@ -427,10 +430,6 @@ onUnmounted(() => window.removeEventListener("keydown", onKey));
   font-weight: 800;
   color: #f87171;
 }
-.rt-q {
-  margin: 18px 0 10px;
-  font-weight: 600;
-}
 .rt-btns {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -479,11 +478,6 @@ onUnmounted(() => window.removeEventListener("keydown", onKey));
   border-radius: 8px;
   padding: 7px 14px;
   cursor: pointer;
-}
-.rt-keys {
-  font-size: 12px;
-  color: #64748b;
-  margin: 10px 0 0;
 }
 .rt-done {
   padding: 40px 0;
