@@ -381,6 +381,158 @@ const baroque = () => {
   <g class="pcx-pulse"><path d="M110 6H170L158 20H122Z" fill="url(#rg)" stroke="#fdf4ff" stroke-width=".8"/><circle cx="140" cy="12" r="5" fill="url(#rgem)"/><path d="M110 394H170L158 380H122Z" fill="url(#rg)"/></g>`;
 };
 
+const celtic = () => {
+  const knot = `<circle cx="34" cy="34" r="20" fill="none" stroke="url(#clg)" stroke-width="4"/><circle cx="52" cy="34" r="14" fill="none" stroke="url(#clg)" stroke-width="3.2"/><circle cx="34" cy="52" r="14" fill="none" stroke="url(#clg)" stroke-width="3.2"/><circle cx="34" cy="34" r="6" fill="#facc15" stroke="#713f12"/><path d="M70 10H112M10 70V112" stroke="url(#clg)" stroke-width="3" stroke-linecap="round"/><path d="M80 18Q92 6 104 18M18 80Q6 92 18 104" fill="none" stroke="url(#clg)" stroke-width="2.4" stroke-linecap="round"/>`;
+  return `<defs>
+    <linearGradient id="clg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#86efac"/><stop offset=".55" stop-color="#16a34a"/><stop offset="1" stop-color="#facc15"/></linearGradient>
+    ${sweep("clsw", "#ecfccb", 3.8)}
+  </defs>
+  <rect x="3" y="3" width="274" height="394" rx="14" fill="none" stroke="url(#clg)" stroke-width="3.5"/>
+  <rect x="10" y="10" width="260" height="380" rx="9" fill="none" stroke="#14532d" stroke-width="2"/>
+  <rect x="3" y="3" width="274" height="394" rx="14" fill="none" stroke="url(#clsw)" stroke-width="4.5"/>
+  ${quad(`<g class="pcx-pulse">${knot}</g>`)}
+  <g class="pcx-pulse"><circle cx="140" cy="6" r="9" fill="none" stroke="url(#clg)" stroke-width="3"/><circle cx="140" cy="394" r="9" fill="none" stroke="url(#clg)" stroke-width="3"/></g>`;
+};
+
+const blossom = (x, y, r, cls, delay) => {
+  let p = "";
+  for (let i = 0; i < 5; i++)
+    p += `<ellipse cx="${x}" cy="${(y - r).toFixed(1)}" rx="${(r * 0.55).toFixed(1)}" ry="${r}" transform="rotate(${i * 72} ${x} ${y})" fill="#fbcfe8" stroke="#db2777" stroke-width=".8"/>`;
+  return `<g class="${cls}" style="animation-delay:${delay}s">${p}<circle cx="${x}" cy="${y}" r="${(r * 0.3).toFixed(1)}" fill="#facc15"/></g>`;
+};
+
+const sakura = () => {
+  const branch = `<path d="M6 120C10 70 30 40 70 20C90 11 110 8 130 8" fill="none" stroke="#5b2a1a" stroke-width="5" stroke-linecap="round"/><path d="M26 70C40 66 52 56 56 44M50 36C62 36 72 30 78 22" fill="none" stroke="#7a3b22" stroke-width="3" stroke-linecap="round"/>${blossom(24, 76, 8, "pcx-twinkle", 0)}${blossom(58, 40, 7, "pcx-twinkle", 0.7)}${blossom(92, 16, 7, "pcx-twinkle", 1.4)}${blossom(12, 110, 6, "pcx-twinkle", 2)}`;
+  return `<defs>${sweep("sksw", "#fff1f2", 4)}</defs>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="#f9a8d4" stroke-width="2.5"/>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="url(#sksw)" stroke-width="3.5"/>
+  ${quad(branch)}`;
+};
+
+const crypt = () => {
+  const skull = (x, y) =>
+    `<g transform="translate(${x} ${y})"><path d="M-14 4C-14-12-6-18 0-18C6-18 14-12 14 4C14 10 9 12 9 17H-9C-9 12-14 10-14 4Z" fill="#e5e7eb" stroke="#374151" stroke-width="1.4"/><circle cx="-6" cy="2" r="4" fill="#1f0a2e"/><circle cx="6" cy="2" r="4" fill="#1f0a2e"/><circle class="pcx-blink" cx="-6" cy="2" r="2" fill="#c084fc"/><circle class="pcx-blink" cx="6" cy="2" r="2" fill="#c084fc"/><path d="M-4 17V12M0 17V12M4 17V12" stroke="#374151"/></g>`;
+  const bone = `<path d="M44 8H120" stroke="#d1d5db" stroke-width="6" stroke-linecap="round"/><circle cx="44" cy="5" r="4" fill="#d1d5db"/><circle cx="44" cy="11" r="4" fill="#d1d5db"/><circle cx="120" cy="5" r="4" fill="#d1d5db"/><circle cx="120" cy="11" r="4" fill="#d1d5db"/><path d="M8 44V120" stroke="#d1d5db" stroke-width="6" stroke-linecap="round"/><circle cx="5" cy="44" r="4" fill="#d1d5db"/><circle cx="11" cy="44" r="4" fill="#d1d5db"/><circle cx="5" cy="120" r="4" fill="#d1d5db"/><circle cx="11" cy="120" r="4" fill="#d1d5db"/>`;
+  return `<rect x="3" y="3" width="274" height="394" rx="8" fill="none" stroke="#6b7280" stroke-width="3"/>
+  <rect x="9" y="9" width="262" height="382" rx="4" fill="none" stroke="#2e1065" stroke-width="2"/>
+  ${quad(bone)}
+  ${skull(26, 28)}${skull(254, 28)}${skull(26, 372)}${skull(254, 372)}
+  <g class="pcx-pulse">${skull(140, 18)}</g>`;
+};
+
+const crystal = () => {
+  const gems = `<path d="M6 80L6 30L30 6L80 6L64 22L36 22L22 36L22 64Z" fill="url(#cyg)" stroke="#ecfeff" stroke-width="1"/><path d="M30 6L36 22M6 30L22 36" stroke="#fff" stroke-opacity=".7"/><path class="pcx-twinkle" d="M44 44L52 56L44 68L36 56Z" fill="#f0abfc" stroke="#fff"/><path class="pcx-twinkle" style="animation-delay:1.2s" d="M96 14L102 22L96 30L90 22Z" fill="#67e8f9" stroke="#fff"/><path class="pcx-twinkle" style="animation-delay:.6s" d="M14 96L22 102L14 108L6 102Z" fill="#67e8f9" stroke="#fff"/>`;
+  return `<defs><linearGradient id="cyg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5f3fc"/><stop offset=".5" stop-color="#22d3ee"/><stop offset="1" stop-color="#a855f7"/></linearGradient>${sweep("cysw", "#ffffff", 3)}</defs>
+  <rect x="3" y="3" width="274" height="394" fill="none" stroke="url(#cyg)" stroke-width="3" stroke-linejoin="bevel"/>
+  <rect x="3" y="3" width="274" height="394" fill="none" stroke="url(#cysw)" stroke-width="4"/>
+  ${quad(gems)}`;
+};
+
+const ocean = () => {
+  const wave = (y, c, cls) => {
+    let d = `M0 ${y}`;
+    for (let x = 0; x < 280; x += 28)
+      d += `Q${x + 7} ${y - 8} ${x + 14} ${y}T${x + 28} ${y}`;
+    return `<path class="${cls}" d="${d}" fill="none" stroke="${c}" stroke-width="3"/>`;
+  };
+  const bubbles = Array.from(
+    { length: 9 },
+    (_, i) =>
+      `<circle class="pcx-twinkle" style="animation-delay:${(i * 0.4).toFixed(1)}s" cx="${18 + ((i * 53) % 244)}" cy="${380 + ((i * 7) % 14)}" r="${2 + (i % 3)}" fill="none" stroke="#bae6fd"/>`,
+  ).join("");
+  return `<rect x="3" y="3" width="274" height="394" rx="18" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+  <g transform="translate(0 -6)">${wave(8, "#7dd3fc", "pcx-pulse")}</g>
+  <g transform="translate(0 384)">${wave(8, "#38bdf8", "pcx-pulse")}${wave(0, "#0284c7", "pcx-blink")}</g>
+  <path d="M6 40V360" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="3 9" class="pcx-flow" pathLength="320"/>
+  <path d="M274 40V360" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="3 9" class="pcx-flow" pathLength="320"/>
+  ${bubbles}`;
+};
+
+const cosmic = () => {
+  const r = rng(77);
+  let stars = "";
+  for (let i = 0; i < 46; i++) {
+    const edge = i % 4;
+    const t = r();
+    const d = 4 + r() * 18;
+    const x =
+      edge === 0 ? t * 280 : edge === 1 ? 280 - d : edge === 2 ? t * 280 : d;
+    const y =
+      edge === 0 ? d : edge === 1 ? t * 400 : edge === 2 ? 400 - d : t * 400;
+    stars += `<circle class="pcx-twinkle" style="animation-delay:${(r() * 3).toFixed(2)}s" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(0.8 + r() * 1.8).toFixed(1)}" fill="#fff"/>`;
+  }
+  return `<defs><linearGradient id="cog" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset=".5" stop-color="#d946ef"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>${sweep("cosw", "#e0e7ff", 4)}</defs>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="url(#cog)" stroke-width="3"/>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="url(#cosw)" stroke-width="4"/>
+  <path d="M20 60L48 30L80 44L104 14" fill="none" stroke="#a5b4fc" stroke-opacity=".6"/>
+  <path d="M260 340L232 370L200 356L176 386" fill="none" stroke="#a5b4fc" stroke-opacity=".6"/>
+  <g class="pcx-gear" style="animation-duration:30s"><ellipse cx="248" cy="40" rx="22" ry="8" fill="none" stroke="#c4b5fd" transform="rotate(-25 248 40)"/><circle cx="248" cy="40" r="6" fill="#fbbf24"/></g>
+  <g class="pcx-gear pcx-rev" style="animation-duration:36s"><ellipse cx="32" cy="360" rx="22" ry="8" fill="none" stroke="#67e8f9" transform="rotate(25 32 360)"/><circle cx="32" cy="360" r="6" fill="#38bdf8"/></g>
+  ${stars}`;
+};
+
+const egypt = () => {
+  const zig = (y) => {
+    let d = `M30 ${y}`;
+    for (let x = 30; x < 250; x += 16) d += `L${x + 8} ${y + 6}L${x + 16} ${y}`;
+    return d;
+  };
+  return `<defs><linearGradient id="egg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset=".5" stop-color="#d4a017"/><stop offset="1" stop-color="#7c4a0a"/></linearGradient><linearGradient id="egb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>${sweep("egsw", "#fff7cc", 3.6)}</defs>
+  <rect x="3" y="3" width="274" height="394" rx="4" fill="none" stroke="url(#egg)" stroke-width="4"/>
+  <rect x="3" y="3" width="274" height="394" rx="4" fill="none" stroke="url(#egsw)" stroke-width="5"/>
+  <rect x="11" y="11" width="258" height="378" fill="none" stroke="url(#egb)" stroke-width="2"/>
+  <path d="${zig(14)}" fill="none" stroke="url(#egg)" stroke-width="2"/>
+  <path d="${zig(380)}" fill="none" stroke="url(#egg)" stroke-width="2"/>
+  <g class="pcx-pulse"><path d="M120 8Q140 -8 160 8Q140 20 120 8Z" fill="#0b1b2b" stroke="url(#egg)" stroke-width="2"/><circle cx="140" cy="8" r="4" fill="#22d3ee"/></g>
+  <path d="M6 6L40 6L6 40Z M274 6L240 6L274 40Z M6 394L40 394L6 360Z M274 394L240 394L274 360Z" fill="url(#egg)"/>`;
+};
+
+const thorns = () => {
+  const rose = (x, y, s, d) =>
+    `<g class="pcx-pulse" style="animation-delay:${d}s" transform="translate(${x} ${y}) scale(${s})"><circle r="11" fill="#be123c" stroke="#4c0519" stroke-width="1.2"/><path d="M-7 0C-7-7 7-7 7 0C7 5-3 6-3 1C-3-2 2-2 2 0" fill="none" stroke="#fecdd3" stroke-width="1.4"/><circle r="11" fill="none" stroke="#fb7185" stroke-opacity=".5"/></g>`;
+  const vine = `<path d="M8 130C4 80 20 40 60 14C80 4 110 6 134 8" fill="none" stroke="#14532d" stroke-width="4.5" stroke-linecap="round"/><path d="M12 100l-8-4l9-3M20 62l-9-5l10-1M44 30l-6-8l9 2M78 12l-1-9l7 5M108 9l2-9l5 7" fill="none" stroke="#bbf7d0" stroke-width="1.8" stroke-linejoin="round"/>${rose(26, 46, 1.2, 0)}${rose(58, 20, 0.8, 0.8)}${rose(10, 100, 0.7, 1.6)}`;
+  return `<rect x="3" y="3" width="274" height="394" rx="12" fill="none" stroke="#14532d" stroke-width="3"/>
+  <rect x="9" y="9" width="262" height="382" rx="8" fill="none" stroke="#7f1d1d" stroke-width="1.5" stroke-dasharray="2 6"/>
+  ${quad(vine)}`;
+};
+
+const holy = () => {
+  const wing = `<path d="M6 60C6 30 20 14 44 8C60 4 80 6 100 4C84 12 76 20 70 28C84 24 96 24 108 24C92 32 84 40 80 50C90 48 100 48 110 50C94 56 84 64 78 76C66 70 54 66 40 70C28 74 18 82 6 96Z" fill="url(#hwg)" stroke="#a16207" stroke-width="1.2"/><path d="M20 60C34 40 52 30 72 28M26 76C40 60 56 52 78 50" fill="none" stroke="#fef3c7" stroke-width="1.2" stroke-opacity=".8"/>`;
+  return `<defs><linearGradient id="hwg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#fef3c7"/><stop offset="1" stop-color="#facc15"/></linearGradient>${glow("hgl", 3)}${sweep("hsw", "#fffbeb", 3.4)}</defs>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="#fde68a" stroke-width="2.5"/>
+  <rect x="3" y="3" width="274" height="394" rx="16" fill="none" stroke="url(#hsw)" stroke-width="4"/>
+  <g filter="url(#hgl)" class="pcx-pulse">${quad(`<g transform="scale(.62)">${wing}</g>`)}</g>
+  <g filter="url(#hgl)" class="pcx-blink"><ellipse cx="140" cy="6" rx="26" ry="7" fill="none" stroke="#fde047" stroke-width="3.5"/><ellipse cx="140" cy="394" rx="26" ry="7" fill="none" stroke="#fde047" stroke-width="3.5"/></g>`;
+};
+
+const lava = () => {
+  const crack = (d, i) =>
+    `<path d="${d}" fill="none" stroke="#7c2d12" stroke-width="5" stroke-linejoin="round"/><path class="pcx-blink" style="animation-delay:${(i * 0.37).toFixed(2)}s" d="${d}" fill="none" stroke="#fb923c" stroke-width="2.4" stroke-linejoin="round"/>`;
+  const cracks = [
+    "M6 20L26 30L20 50L40 64L34 90L52 110",
+    "M274 20L254 34L262 56L240 70L248 100",
+    "M6 380L30 366L24 344L48 330L42 306",
+    "M274 380L250 364L258 340L236 326L244 300",
+    "M60 6L72 22L98 14L112 28L140 12L168 28L186 14L212 22L222 6",
+    "M60 394L74 378L96 386L116 372L140 388L168 374L188 386L208 378L222 394",
+    "M6 150L20 170L10 200L24 230L12 260",
+    "M274 150L260 176L270 204L256 236L268 262",
+  ];
+  return `<rect x="3" y="3" width="274" height="394" rx="6" fill="none" stroke="#292524" stroke-width="6"/>
+  <rect x="3" y="3" width="274" height="394" rx="6" fill="none" stroke="#57534e" stroke-width="2"/>
+  ${cracks.map(crack).join("")}
+  <g class="pcx-flame"><path d="M140 2C132 10 136 16 140 20C144 16 148 10 140 2Z" fill="#fde047"/></g>`;
+};
+
+const neonSign = () =>
+  `<defs>${glow("nsg", 3.5)}</defs>
+  <g filter="url(#nsg)">
+    <rect class="pcx-blink" x="6" y="6" width="268" height="388" rx="26" fill="none" stroke="#f472b6" stroke-width="3.5"/>
+    <rect class="pcx-pulse" x="14" y="14" width="252" height="372" rx="18" fill="none" stroke="#22d3ee" stroke-width="2.5"/>
+    <path class="pcx-bolt" d="M84 6H196M84 394H196" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="24" cy="24" r="4" fill="#fff"/><circle cx="256" cy="24" r="4" fill="#fff"/><circle cx="24" cy="376" r="4" fill="#fff"/><circle cx="256" cy="376" r="4" fill="#fff"/>
+  </g>`;
+
 export const cardArt = {
   filigree: { svg: filigree(), pad: 16, glow: "rgba(250,204,21,.6)" },
   arcane: { svg: arcane(), pad: 18, glow: "rgba(168,85,247,.7)" },
@@ -393,6 +545,17 @@ export const cardArt = {
   steam: { svg: steam(), pad: 16, glow: "rgba(217,119,6,.6)" },
   circuit: { svg: circuit(), pad: 16, glow: "rgba(52,211,153,.65)" },
   baroque: { svg: baroque(), pad: 16, glow: "rgba(217,70,239,.65)" },
+  celtic: { svg: celtic(), pad: 16, glow: "rgba(74,222,128,.55)" },
+  sakura: { svg: sakura(), pad: 16, glow: "rgba(244,114,182,.6)" },
+  crypt: { svg: crypt(), pad: 16, glow: "rgba(168,85,247,.55)" },
+  crystal: { svg: crystal(), pad: 16, glow: "rgba(34,211,238,.65)" },
+  ocean: { svg: ocean(), pad: 14, glow: "rgba(14,165,233,.6)" },
+  cosmic: { svg: cosmic(), pad: 16, glow: "rgba(129,140,248,.7)" },
+  egypt: { svg: egypt(), pad: 16, glow: "rgba(212,160,23,.6)" },
+  thorns: { svg: thorns(), pad: 14, glow: "rgba(225,29,72,.55)" },
+  holy: { svg: holy(), pad: 16, glow: "rgba(253,224,71,.7)" },
+  lava: { svg: lava(), pad: 16, glow: "rgba(249,115,22,.7)" },
+  neonsign: { svg: neonSign(), pad: 16, glow: "rgba(244,114,182,.7)" },
 };
 
 export const artFrames = Object.keys(cardArt).map((id) => ({

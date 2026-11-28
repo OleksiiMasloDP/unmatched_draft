@@ -1,7 +1,7 @@
 <template>
   <div
     class="pc"
-    :class="['cf-' + frame, 'ce-' + effect]"
+    :class="['cf-' + frameId, 'ce-' + effect]"
     :style="tiltStyle"
     @pointermove="onMove"
     @pointerleave="onLeave"
@@ -50,14 +50,6 @@
         </div>
       </div>
     </div>
-    <span
-      v-for="(item, index) in ornaments"
-      :key="index"
-      class="pc-orn"
-      :class="'o-' + item.pos"
-    >
-      <RogueIcon :name="item.name" :metal="item.metal" :size="item.size" />
-    </span>
     <span class="pc-brk"></span>
     <svg
       v-if="artDef"
@@ -79,7 +71,7 @@ const props = defineProps({
   title: { type: String, default: "" },
   art: { type: String, default: "" },
   avatar: { type: String, default: "" },
-  frame: { type: String, default: "holo" },
+  frame: { type: String, default: "art-filigree" },
   effect: { type: String, default: "shine" },
   avatarFrame: { type: String, default: "gold" },
   level: { type: Object, required: true },
@@ -88,59 +80,11 @@ const props = defineProps({
   badges: { type: Array, default: () => [] },
 });
 
-const frameOrnaments = {
-  hazard: [
-    { pos: "bl", name: "skullCrossedBones", metal: "gold", size: "34px" },
-    { pos: "tr", name: "boltSpellCast", metal: "gold", size: "30px" },
-  ],
-  punk: [
-    { pos: "tr", name: "boltSpellCast", metal: "silver", size: "32px" },
-    { pos: "bl", name: "boltSpellCast", metal: "silver", size: "32px" },
-  ],
-  chrome: [
-    { pos: "bottom", name: "crossedSwords", metal: "silver", size: "36px" },
-  ],
-  gold: [
-    { pos: "top", name: "laurels", metal: "gold", size: "48px" },
-    { pos: "bl", name: "coinsPile", metal: "gold", size: "26px" },
-    { pos: "br", name: "coinsPile", metal: "gold", size: "26px" },
-  ],
-  holo: [{ pos: "top", name: "pentacle", metal: "silver", size: "34px" }],
-  toxic: [
-    { pos: "top", name: "waterDrop", metal: "silver", size: "36px" },
-    { pos: "tr", name: "skullCrossedBones", metal: "silver", size: "28px" },
-  ],
-  frost: [
-    { pos: "tr", name: "waterDrop", metal: "silver", size: "30px" },
-    { pos: "bl", name: "waterDrop", metal: "silver", size: "30px" },
-  ],
-  inferno: [
-    { pos: "tl", name: "candleFlame", metal: "ruby", size: "36px" },
-    { pos: "tr", name: "candleFlame", metal: "ruby", size: "36px" },
-    { pos: "bl", name: "candleFlame", metal: "gold", size: "28px" },
-    { pos: "br", name: "candleFlame", metal: "gold", size: "28px" },
-  ],
-  void: [
-    { pos: "top", name: "skullCrossedBones", metal: "silver", size: "42px" },
-    { pos: "bl", name: "ghost", metal: "silver", size: "28px" },
-    { pos: "br", name: "ghost", metal: "silver", size: "28px" },
-  ],
-  neon: [
-    { pos: "br", name: "boltSpellCast", metal: "silver", size: "32px" },
-    { pos: "tr", name: "boltSpellCast", metal: "silver", size: "26px" },
-  ],
-  royal: [
-    { pos: "top", name: "castle", metal: "gold", size: "56px" },
-    { pos: "bl", name: "laurels", metal: "gold", size: "34px" },
-    { pos: "br", name: "laurels", metal: "gold", size: "34px" },
-  ],
-};
-
-const artDef = computed(() =>
-  props.frame.startsWith("art-") ? cardArt[props.frame.slice(4)] : null,
+const frameId = computed(() =>
+  cardArt[props.frame.replace("art-", "")] ? props.frame : "art-filigree",
 );
 
-const ornaments = computed(() => frameOrnaments[props.frame] || []);
+const artDef = computed(() => cardArt[frameId.value.slice(4)]);
 
 const particleKinds = [
   "sparkles",
@@ -151,6 +95,17 @@ const particleKinds = [
   "matrix",
   "fireflies",
   "confetti",
+  "bubbles",
+  "stars",
+  "petals",
+  "leaves",
+  "hearts",
+  "bats",
+  "ash",
+  "meteors",
+  "coins",
+  "runes",
+  "flames",
 ];
 const hasParticles = computed(() => particleKinds.includes(props.effect));
 
@@ -446,337 +401,6 @@ const onLeave = () => {
 
 .pc-info {
   padding-bottom: var(--ib);
-}
-
-.cf-hazard {
-  --glow: rgba(250, 204, 21, 0.6);
-  --ro: 0;
-  --ri: 0;
-  --pad: 12px;
-  --clip: polygon(
-    0 0,
-    calc(100% - 32px) 0,
-    100% 32px,
-    100% 100%,
-    32px 100%,
-    0 calc(100% - 32px)
-  );
-  --fbg: repeating-linear-gradient(-45deg, #facc15 0 12px, #111 12px 24px);
-  --back: #111;
-  --bo: 1;
-  --bx: 11px;
-  --by: 11px;
-  --brk: 1;
-  --brkc: #facc15;
-  --ib: 24px;
-}
-
-.cf-punk {
-  --glow: rgba(255, 45, 149, 0.65);
-  --ro: 0;
-  --ri: 0;
-  --pad: 6px;
-  --ao: 34px;
-  --clip: polygon(
-    38px 0,
-    100% 0,
-    100% calc(100% - 38px),
-    calc(100% - 38px) 100%,
-    0 100%,
-    0 38px
-  );
-  --fbg: linear-gradient(135deg, #ff2d95, #7c3aed 60%, #ff2d95);
-  --back: #22d3ee;
-  --bo: 1;
-  --bx: -10px;
-  --by: 10px;
-  --brk: 1;
-  --brkc: #22d3ee;
-  --ib: 26px;
-}
-
-.cf-chrome {
-  --glow: rgba(203, 213, 225, 0.5);
-  --ro: 0;
-  --ri: 0;
-  --pad: 10px;
-  --ao: 22px;
-  --clip: polygon(
-    20px 0,
-    calc(100% - 20px) 0,
-    100% 20px,
-    100% calc(100% - 20px),
-    calc(100% - 20px) 100%,
-    20px 100%,
-    0 calc(100% - 20px),
-    0 20px
-  );
-  --fbg:
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.5) 0 2px,
-      transparent 2px 7px
-    ),
-    linear-gradient(135deg, #f8fafc, #94a3b8 40%, #e2e8f0 60%, #64748b);
-  --back: #1e293b;
-  --bo: 1;
-  --bx: 8px;
-  --by: 8px;
-  --ib: 24px;
-}
-
-.cf-gold {
-  --glow: rgba(250, 204, 21, 0.6);
-  --ro: 12px;
-  --ri: 6px;
-  --pad: 11px;
-  --fbg:
-    repeating-linear-gradient(
-      135deg,
-      rgba(120, 53, 15, 0.4) 0 6px,
-      transparent 6px 12px
-    ),
-    linear-gradient(135deg, #fff1a8, #b45309 45%, #facc15 70%, #92400e);
-  --back: #78350f;
-  --bo: 1;
-  --bx: 8px;
-  --by: 8px;
-  --brk: 1;
-  --brkc: #fde68a;
-}
-
-.cf-holo .pc-frame {
-  background: conic-gradient(
-    from 0deg,
-    #f0abfc,
-    #6366f1,
-    #22d3ee,
-    #facc15,
-    #f0abfc
-  );
-  animation: pc-hue 8s linear infinite;
-}
-
-.cf-toxic {
-  --glow: rgba(132, 204, 22, 0.65);
-  --ro: 0;
-  --ri: 6px;
-  --pad: 9px;
-  --ib: 26px;
-  --clip: polygon(
-    0 0,
-    100% 0,
-    100% 97%,
-    94% 97%,
-    92% 100%,
-    89% 97%,
-    71% 97%,
-    68.5% 99.5%,
-    65% 97%,
-    42% 97%,
-    39% 100%,
-    35% 97%,
-    17% 97%,
-    14% 99%,
-    11% 97%,
-    0 97%
-  );
-  --fbg:
-    repeating-linear-gradient(
-      -45deg,
-      rgba(0, 0, 0, 0.4) 0 4px,
-      transparent 4px 10px
-    ),
-    linear-gradient(160deg, #bef264, #65a30d 50%, #14532d);
-  --back: #1a2e05;
-  --bo: 1;
-  --bx: 9px;
-  --by: 9px;
-  --brk: 1;
-  --brkc: #a3e635;
-}
-
-.cf-frost {
-  --glow: rgba(125, 211, 252, 0.7);
-  --ro: 0;
-  --ri: 6px;
-  --pad: 10px;
-  --ao: 24px;
-  --clip: polygon(
-    0 5%,
-    4% 0,
-    10% 3.5%,
-    18% 0,
-    26% 3%,
-    34% 0,
-    42% 3.5%,
-    50% 0,
-    58% 3.5%,
-    66% 0,
-    74% 3%,
-    82% 0,
-    90% 3.5%,
-    96% 0,
-    100% 5%,
-    100% 95%,
-    96% 100%,
-    90% 96.5%,
-    82% 100%,
-    74% 97%,
-    66% 100%,
-    58% 96.5%,
-    50% 100%,
-    42% 96.5%,
-    34% 100%,
-    26% 97%,
-    18% 100%,
-    10% 96.5%,
-    4% 100%,
-    0 95%
-  );
-  --fbg: linear-gradient(135deg, #f0f9ff, #38bdf8 50%, #1d4ed8);
-  --back: #0c4a6e;
-  --bo: 1;
-  --bx: 9px;
-  --by: 9px;
-  --ib: 22px;
-}
-
-.cf-inferno {
-  --glow: rgba(249, 115, 22, 0.8);
-  --ro: 0;
-  --ri: 0;
-  --pad: 9px;
-  --ao: 32px;
-  --clip: polygon(
-    0 8%,
-    10% 3%,
-    18% 7%,
-    30% 0,
-    40% 6%,
-    50% 1%,
-    60% 6%,
-    72% 0,
-    82% 7%,
-    90% 3%,
-    100% 8%,
-    100% 100%,
-    0 100%
-  );
-  --fbg: linear-gradient(0deg, #7f1d1d, #ea580c 45%, #fde047);
-  --back: #450a0a;
-  --bo: 1;
-  --bx: 9px;
-  --by: 9px;
-  animation: pc-flame 1.6s ease-in-out infinite;
-}
-
-.cf-void {
-  --glow: rgba(126, 34, 206, 0.85);
-  --ro: 0;
-  --ri: 2px;
-  --pad: 10px;
-  --ao: 16px;
-  --clip: polygon(
-    0 2%,
-    5% 0,
-    12% 2%,
-    22% 0,
-    35% 1.5%,
-    48% 0,
-    60% 2%,
-    75% 0,
-    88% 1.5%,
-    100% 0,
-    99% 14%,
-    100% 30%,
-    98.5% 50%,
-    100% 72%,
-    99% 88%,
-    100% 100%,
-    86% 98.5%,
-    70% 100%,
-    55% 98%,
-    38% 100%,
-    22% 98.5%,
-    8% 100%,
-    0 99%,
-    1% 80%,
-    0 60%,
-    1.5% 40%,
-    0 20%
-  );
-  --fbg: linear-gradient(160deg, #1a1030, #5b21b6 50%, #0a0612);
-  --back: #3b0764;
-  --bo: 1;
-  --bx: 9px;
-  --by: 9px;
-}
-
-.cf-neon {
-  --glow: rgba(34, 211, 238, 0.9);
-  --ro: 0;
-  --ri: 0;
-  --pad: 5px;
-  --ao: 36px;
-  --clip: polygon(44px 0, 100% 0, 100% 100%, 0 100%, 0 44px);
-  --fbg: linear-gradient(135deg, #22d3ee, #e879f9);
-  --brk: 1;
-  --brkc: #e879f9;
-  --ib: 20px;
-  animation: pc-neon 2.4s ease-in-out infinite;
-}
-
-.cf-royal {
-  --glow: rgba(168, 85, 247, 0.8);
-  --ro: 34px;
-  --ri: 26px;
-  --pad: 11px;
-  --ao: 20px;
-  --fbg: linear-gradient(120deg, #fde68a, #a855f7, #22d3ee, #fde68a, #a855f7);
-  --back: #3b0764;
-  --bo: 1;
-  --bx: 8px;
-  --by: 8px;
-  --brk: 1;
-  --brkc: #fde68a;
-}
-
-.cf-royal .pc-frame {
-  background-size: 300% 300%;
-  animation: pc-shift 5s linear infinite;
-}
-
-@keyframes pc-hue {
-  to {
-    filter: hue-rotate(360deg);
-  }
-}
-
-@keyframes pc-flame {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.7));
-  }
-  50% {
-    filter: drop-shadow(0 0 38px rgba(253, 224, 71, 1));
-  }
-}
-
-@keyframes pc-neon {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 12px #22d3ee) drop-shadow(0 0 26px #e879f9);
-  }
-  50% {
-    filter: drop-shadow(0 0 4px #22d3ee) drop-shadow(0 0 10px #e879f9);
-  }
-}
-
-@keyframes pc-shift {
-  to {
-    background-position: 300% 0;
-  }
 }
 
 .ce-shine .pc-fx::after {

@@ -50,41 +50,46 @@ export const titles = [
   { id: "legend", lvl: 18 },
 ];
 
-const baseCardFrames = [
-  { id: "hazard", lvl: 1 },
-  { id: "punk", lvl: 2 },
-  { id: "chrome", lvl: 3 },
-  { id: "gold", lvl: 4 },
-  { id: "holo", lvl: 5 },
-  { id: "toxic", lvl: 6 },
-  { id: "frost", lvl: 7 },
-  { id: "inferno", lvl: 8 },
-  { id: "void", lvl: 9 },
-  { id: "neon", lvl: 10 },
-  { id: "royal", lvl: 12 },
-];
-
-export const cardFrames = [...baseCardFrames, ...artFrames];
+export const cardFrames = artFrames;
 
 export const cardEffects = [
   { id: "none", lvl: 1 },
   { id: "shine", lvl: 1 },
-  { id: "pulse", lvl: 2 },
-  { id: "sparkles", lvl: 2 },
-  { id: "snow", lvl: 3 },
-  { id: "embers", lvl: 3 },
-  { id: "rain", lvl: 4 },
-  { id: "fireflies", lvl: 4 },
-  { id: "confetti", lvl: 5 },
-  { id: "lightning", lvl: 5 },
-  { id: "aurora", lvl: 6 },
-  { id: "fog", lvl: 6 },
-  { id: "shock", lvl: 7 },
-  { id: "scan", lvl: 7 },
-  { id: "glitch", lvl: 8 },
-  { id: "matrix", lvl: 9 },
-  { id: "holo", lvl: 9 },
-  { id: "tilt", lvl: 10 },
+  { id: "pulse", lvl: 1 },
+  { id: "sparkles", lvl: 1 },
+  { id: "snow", lvl: 1 },
+  { id: "embers", lvl: 1 },
+  { id: "rain", lvl: 1 },
+  { id: "fireflies", lvl: 1 },
+  { id: "confetti", lvl: 1 },
+  { id: "lightning", lvl: 1 },
+  { id: "aurora", lvl: 1 },
+  { id: "fog", lvl: 1 },
+  { id: "shock", lvl: 1 },
+  { id: "scan", lvl: 1 },
+  { id: "glitch", lvl: 1 },
+  { id: "matrix", lvl: 1 },
+  { id: "holo", lvl: 1 },
+  { id: "tilt", lvl: 1 },
+  { id: "bubbles", lvl: 1 },
+  { id: "stars", lvl: 1 },
+  { id: "petals", lvl: 1 },
+  { id: "leaves", lvl: 1 },
+  { id: "hearts", lvl: 1 },
+  { id: "bats", lvl: 1 },
+  { id: "ash", lvl: 1 },
+  { id: "meteors", lvl: 1 },
+  { id: "coins", lvl: 1 },
+  { id: "runes", lvl: 1 },
+  { id: "flames", lvl: 1 },
+  { id: "ripple", lvl: 1 },
+  { id: "rainbow", lvl: 1 },
+  { id: "spotlight", lvl: 1 },
+  { id: "sunrays", lvl: 1 },
+  { id: "plasma", lvl: 1 },
+  { id: "vignette", lvl: 1 },
+  { id: "prism", lvl: 1 },
+  { id: "static", lvl: 1 },
 ];
 
 export const readImage = (file, { width, height }) =>
@@ -122,7 +127,7 @@ const defaults = (account) => ({
   showcase: ["firstBlood", "explorer", "firstRun"],
   avatarImg: "",
   bannerImg: "",
-  cardFrame: "hazard",
+  cardFrame: "art-filigree",
   cardEffect: "shine",
   cardArt: "hero",
   showStats: true,
@@ -174,6 +179,8 @@ const load = (account) => {
     delete saved.owner;
   }
   Object.assign(profile, base, saved || {});
+  if (!cardFrames.some((item) => item.id === profile.cardFrame))
+    profile.cardFrame = base.cardFrame;
   loadedStr = JSON.stringify(profile);
   if (account && !localStorage.getItem(MAIN_KEY)) persist();
 };

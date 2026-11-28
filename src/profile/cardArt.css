@@ -220,3 +220,440 @@
     animation: none !important;
   }
 }
+
+.pc.pc .pc-fx i {
+  --rise: -440px;
+}
+
+.pc.pc.ce-bubbles .pc-fx i {
+  top: auto !important;
+  bottom: -30px !important;
+  border-radius: 50%;
+  border: 1.5px solid rgba(186, 230, 253, 0.9);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.7),
+    rgba(125, 211, 252, 0.12) 60%
+  );
+  width: calc(var(--z) * 1.6);
+  height: calc(var(--z) * 1.6);
+  animation: fx-rise var(--t) ease-in var(--d) infinite;
+}
+
+.pc.pc.ce-stars .pc-fx i {
+  background: #fff;
+  border-radius: 50%;
+  width: calc(var(--z) / 3 + 1px);
+  height: calc(var(--z) / 3 + 1px);
+  box-shadow: 0 0 6px 2px rgba(191, 219, 254, 0.9);
+  animation: pcx-twinkle var(--t) ease-in-out var(--d) infinite;
+}
+
+.pc.pc.ce-petals .pc-fx i {
+  top: -20px !important;
+  width: calc(var(--z) * 1.3);
+  height: calc(var(--z) * 0.9);
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #fbcfe8, #f472b6);
+  animation: fx-fall var(--t) linear var(--d) infinite;
+}
+
+.pc.pc.ce-leaves .pc-fx i {
+  top: -20px !important;
+  width: calc(var(--z) * 1.4);
+  height: calc(var(--z) * 0.8);
+  border-radius: 0 90% 0 90%;
+  background: linear-gradient(135deg, #bef264, #16a34a);
+  animation: fx-fall var(--t) linear var(--d) infinite;
+}
+
+.pc.pc.ce-leaves .pc-fx i:nth-child(3n) {
+  background: linear-gradient(135deg, #fde047, #d97706);
+}
+
+.pc.pc.ce-hearts .pc-fx i {
+  top: auto !important;
+  bottom: -30px !important;
+  width: auto;
+  height: auto;
+  background: none;
+  color: #fb7185;
+  font-size: calc(var(--z) * 1.8);
+  line-height: 1;
+  text-shadow: 0 0 8px #f43f5e;
+  animation: fx-rise var(--t) ease-in var(--d) infinite;
+}
+
+.pc.pc.ce-hearts .pc-fx i::before {
+  content: "♥";
+}
+
+.pc.pc.ce-bats .pc-fx i {
+  width: calc(var(--z) * 2.4);
+  height: calc(var(--z) * 1.1);
+  background: #0b0612;
+  clip-path: polygon(
+    0 20%,
+    20% 0,
+    38% 40%,
+    50% 20%,
+    62% 40%,
+    80% 0,
+    100% 20%,
+    82% 70%,
+    62% 55%,
+    50% 100%,
+    38% 55%,
+    18% 70%
+  );
+  filter: drop-shadow(0 0 4px #c084fc);
+  animation: fx-bat var(--t) ease-in-out var(--d) infinite;
+}
+
+.pc.pc.ce-ash .pc-fx i {
+  top: -10px !important;
+  width: calc(var(--z) / 2.4 + 1px);
+  height: calc(var(--z) / 2.4 + 1px);
+  border-radius: 50%;
+  background: #94a3b8;
+  opacity: 0.8;
+  animation: fx-fall var(--t) linear var(--d) infinite;
+}
+
+.pc.pc.ce-meteors .pc-fx i {
+  top: -40px !important;
+  width: 2px;
+  height: calc(var(--z) * 5);
+  background: linear-gradient(transparent, #fff 80%, #fde68a);
+  filter: drop-shadow(0 0 4px #fde68a);
+  transform-origin: top;
+  animation: fx-meteor 1.8s linear var(--d) infinite;
+}
+
+.pc.pc.ce-coins .pc-fx i {
+  top: -20px !important;
+  width: calc(var(--z) * 1.2);
+  height: calc(var(--z) * 1.2);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fef9c3, #facc15 55%, #a16207);
+  border: 1px solid #854d0e;
+  animation: fx-coin var(--t) linear var(--d) infinite;
+}
+
+.pc.pc.ce-runes .pc-fx i {
+  width: auto;
+  height: auto;
+  background: none;
+  font: 700 calc(var(--z) * 2.2) serif;
+  color: #c4b5fd;
+  text-shadow: 0 0 8px #8b5cf6;
+  animation: pcx-rune var(--t) ease-in-out var(--d) infinite;
+}
+
+.pc.pc.ce-runes .pc-fx i::before {
+  content: "ᚠ";
+}
+.pc.pc.ce-runes .pc-fx i:nth-child(4n + 1)::before {
+  content: "ᚱ";
+}
+.pc.pc.ce-runes .pc-fx i:nth-child(4n + 2)::before {
+  content: "ᛉ";
+}
+.pc.pc.ce-runes .pc-fx i:nth-child(4n + 3)::before {
+  content: "ᛟ";
+}
+
+.pc.pc.ce-flames .pc-fx i {
+  top: auto !important;
+  bottom: -20px !important;
+  width: calc(var(--z) * 1.4);
+  height: calc(var(--z) * 2.6);
+  border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+  background: linear-gradient(#fde047, #f97316 60%, #dc2626);
+  filter: blur(1.5px);
+  animation: fx-flick var(--t) ease-out var(--d) infinite;
+}
+
+.pc.pc.ce-ripple .pc-fx::before,
+.pc.pc.ce-ripple .pc-fx::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 40px;
+  height: 40px;
+  margin: -20px;
+  border-radius: 50%;
+  border: 2px solid rgba(165, 243, 252, 0.9);
+  animation: fx-ripple 3s ease-out infinite;
+}
+
+.pc.pc.ce-ripple .pc-fx::after {
+  animation-delay: 1.5s;
+}
+
+.pc.pc.ce-rainbow .pc-fx {
+  background: conic-gradient(
+    from 0deg,
+    #f43f5e,
+    #f59e0b,
+    #84cc16,
+    #22d3ee,
+    #8b5cf6,
+    #f43f5e
+  );
+  mix-blend-mode: color;
+  opacity: 0.45;
+  animation: fx-hue 6s linear infinite;
+}
+
+.pc.pc.ce-spotlight .pc-fx {
+  background: radial-gradient(
+    circle 120px at 20% 20%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  animation: fx-spot 6s ease-in-out infinite alternate;
+}
+
+.pc.pc.ce-sunrays .pc-fx {
+  background: repeating-conic-gradient(
+    from 0deg at 50% 38%,
+    rgba(254, 240, 138, 0.16) 0 8deg,
+    transparent 8deg 22deg
+  );
+  mix-blend-mode: screen;
+  animation: fx-spin 24s linear infinite;
+  transform-origin: 50% 38%;
+  inset: -40%;
+}
+
+.pc.pc.ce-plasma .pc-fx {
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(
+      circle 110px at 30% 30%,
+      rgba(236, 72, 153, 0.6),
+      transparent
+    ),
+    radial-gradient(
+      circle 120px at 70% 60%,
+      rgba(34, 211, 238, 0.55),
+      transparent
+    ),
+    radial-gradient(
+      circle 100px at 40% 85%,
+      rgba(139, 92, 246, 0.55),
+      transparent
+    );
+  background-size: 160% 160%;
+  animation: fx-plasma 7s ease-in-out infinite alternate;
+}
+
+.pc.pc.ce-vignette .pc-fx {
+  box-shadow: inset 0 0 70px 18px rgba(0, 0, 0, 0.85);
+  animation: pcx-pulse 3s ease-in-out infinite;
+}
+
+.pc.pc.ce-prism .pc-fx {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(244, 63, 94, 0.4) 40%,
+    rgba(250, 204, 21, 0.4) 46%,
+    rgba(34, 197, 94, 0.4) 52%,
+    rgba(56, 189, 248, 0.4) 58%,
+    rgba(168, 85, 247, 0.4) 64%,
+    transparent 74%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: screen;
+  animation: fx-prism 4s ease-in-out infinite;
+}
+
+.pc.pc.ce-static .pc-fx {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.07) 0 1px,
+    transparent 1px 3px
+  );
+  animation: fx-static 0.4s steps(3) infinite;
+}
+
+.pc.pc.ce-static .pc-fx::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+  animation: pcx-scan 3s linear infinite;
+}
+
+@keyframes fx-rise {
+  from {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  to {
+    transform: translate(18px, -440px);
+    opacity: 0;
+  }
+}
+
+@keyframes fx-fall {
+  from {
+    transform: translate(0, 0) rotate(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-22px, 220px) rotate(200deg);
+  }
+  to {
+    transform: translate(18px, 440px) rotate(420deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes fx-bat {
+  0%,
+  100% {
+    transform: translate(0, 0) scaleY(1);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(40px, -26px) scaleY(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(90px, 10px) scaleY(1);
+  }
+  75% {
+    transform: translate(40px, 40px) scaleY(0.5);
+    opacity: 1;
+  }
+}
+
+@keyframes fx-meteor {
+  from {
+    transform: translate(0, 0) rotate(-35deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(-260px, 420px) rotate(-35deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fx-coin {
+  from {
+    transform: translate(0, 0) scaleX(1);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(6px, 110px) scaleX(0.2);
+  }
+  50% {
+    transform: translate(-6px, 220px) scaleX(1);
+  }
+  75% {
+    transform: translate(6px, 330px) scaleX(0.2);
+  }
+  to {
+    transform: translate(0, 440px) scaleX(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fx-flick {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(6px, -120px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes fx-ripple {
+  from {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  to {
+    transform: scale(9);
+    opacity: 0;
+  }
+}
+
+@keyframes fx-hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes fx-spot {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(60%, 70%);
+  }
+}
+
+@keyframes fx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fx-plasma {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes fx-prism {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes fx-static {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc.pc .pc-fx,
+  .pc.pc .pc-fx i,
+  .pc.pc .pc-fx::before,
+  .pc.pc .pc-fx::after {
+    animation: none;
+  }
+}

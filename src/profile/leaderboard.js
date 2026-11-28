@@ -123,7 +123,7 @@ const demoCard = (index, stats, heroes, level) => ({
   frame: "gold",
   banner: "dusk",
   favHero: heroKeys[index % heroKeys.length],
-  cardFrame: "hazard",
+  cardFrame: "art-filigree",
   cardEffect: "shine",
   cardArt: "hero",
   showcase: [],

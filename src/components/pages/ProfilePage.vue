@@ -309,14 +309,9 @@
                       type="button"
                       class="pf-chip"
                       :class="{ on: profile.cardFrame === item.id }"
-                      :disabled="lvl.level < item.lvl"
                       @click="profile.cardFrame = item.id"
                     >
-                      {{
-                        lvl.level < item.lvl
-                          ? L.lvl + " " + item.lvl
-                          : L.cardFrames[item.id]
-                      }}
+                      {{ L.cardFrames[item.id] }}
                     </button>
                   </div>
                   <label class="pf-label">{{ L.cardEffect }}</label>
@@ -327,14 +322,9 @@
                       type="button"
                       class="pf-chip"
                       :class="{ on: profile.cardEffect === item.id }"
-                      :disabled="lvl.level < item.lvl"
                       @click="profile.cardEffect = item.id"
                     >
-                      {{
-                        lvl.level < item.lvl
-                          ? L.lvl + " " + item.lvl
-                          : L.cardEffects[item.id]
-                      }}
+                      {{ L.cardEffects[item.id] }}
                     </button>
                   </div>
                   <label class="pf-label">{{ L.cardArt }}</label>
