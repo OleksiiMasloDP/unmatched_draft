@@ -92,12 +92,6 @@
         <button type="button" class="rt-ghost" @click="copyAll">
           {{ L.copy }}
         </button>
-        <button type="button" class="rt-ghost" @click="download">
-          {{ L.download }}
-        </button>
-        <button type="button" class="rt-ghost danger" @click="wipe">
-          {{ L.clear }}
-        </button>
         <span v-if="note" class="rt-note">{{ note }}</span>
       </div>
     </div>
@@ -109,7 +103,6 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
 import {
   castVote,
-  clearVotes,
   exportRows,
   hasVote,
   presets,
@@ -134,10 +127,7 @@ const dict = {
     done: "No more pairs to rate.",
     loading: "Loading…",
     copy: "Copy JSON",
-    download: "Download JSON",
-    clear: "Clear all",
     copied: "Copied",
-    sure: "Delete all saved ratings?",
   },
   ua: {
     title: "Оцінка матчапів",
@@ -153,10 +143,7 @@ const dict = {
     done: "Пар для оцінки більше немає.",
     loading: "Завантаження…",
     copy: "Копіювати JSON",
-    download: "Завантажити JSON",
-    clear: "Очистити все",
     copied: "Скопійовано",
-    sure: "Видалити всі збережені оцінки?",
   },
 };
 const L = computed(() => dict[lang.value === "ua" ? "ua" : "en"]);
@@ -269,24 +256,6 @@ const copyAll = async () => {
   } catch {
     window.prompt("", json());
   }
-};
-
-const download = () => {
-  const url = URL.createObjectURL(
-    new Blob([json()], { type: "application/json" }),
-  );
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "matchup-ratings.json";
-  link.click();
-  URL.revokeObjectURL(url);
-};
-
-const wipe = () => {
-  if (!window.confirm(L.value.sure)) return;
-  clearVotes();
-  last.value = null;
-  next();
 };
 
 const onKey = (event) => {
@@ -415,9 +384,7 @@ onUnmounted(() => window.removeEventListener("keydown", onKey));
   font-weight: 700;
   cursor: pointer;
 }
-.rt-ghost.danger {
-  color: #f87171;
-}
+
 .rt-pair {
   display: flex;
   align-items: center;
