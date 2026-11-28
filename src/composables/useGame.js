@@ -1602,6 +1602,12 @@ const api = {
   friends: (player) => fightersOf(player),
   fogSpaces: () => [...game.fog],
   allSpaces: () => active.map.spaces.map((space) => space.id),
+  freeSpaces: () => {
+    const busy = occupied();
+    return active.map.spaces
+      .map((space) => space.id)
+      .filter((id) => !busy.includes(id));
+  },
   heroOnFog: onFog,
   startedOnFog: (player) =>
     game.fog.includes(game.turnStarts?.[player]?.hero ?? null),

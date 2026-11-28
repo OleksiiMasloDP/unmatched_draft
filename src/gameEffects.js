@@ -63,6 +63,20 @@ function* pickFoeFighter(c, targets, title = "promptAttackTarget") {
   );
 }
 
+function* summonOrRevive(c, zoneOnly) {
+  const options = c.g.summonSpaces(c.me, zoneOnly);
+  if (options.length) {
+    const space = yield c.g.askSpace(c.me, "promptSummon", options);
+    if (space) c.g.summon(c.me, space);
+    return;
+  }
+  if (!c.g.hasDefeatedKid(c.me)) return;
+  const spaces = zoneOnly ? c.g.reviveSpaces(c.me) : c.g.freeSpaces();
+  if (!spaces.length) return;
+  const space = yield c.g.askSpace(c.me, "promptReviveKid", spaces);
+  c.g.reviveKid(c.me, space || spaces[0]);
+}
+
 export const cardEffects = {
   "analyze-and-adjust": {
     *after(c) {
@@ -116,10 +130,10 @@ export const cardEffects = {
   "nanotriage-processor": {
     *after(c) {
       const who = yield* c.g.actor(c);
-      const shuri = c.g.fighterOf(c.me);
+      const shuri = who === "hero" ? c.g.fighterOf(c.me) : who;
       c.g.heal(c.me, 1, shuri);
       if (shuri !== "hero" && c.g.sameZone(c.me, "hero", shuri)) {
-        c.g.heal(c.me, 1, who);
+        c.g.heal(c.me, 1, "hero");
       }
     },
   },
@@ -942,10 +956,7 @@ export const cardEffects = {
 
   "show-a-leg": {
     *after(c) {
-      const options = c.g.summonSpaces(c.me, true);
-      if (!options.length) return;
-      const space = yield c.g.askSpace(c.me, "promptSummon", options);
-      if (space) c.g.summon(c.me, space);
+      yield* summonOrRevive(c, true);
     },
   },
 
@@ -975,11 +986,7 @@ export const cardEffects = {
       const who = yield* c.g.actor(c);
       if (!(yield* c.g.ransom(c.me, 1, null))) c.g.heal(c.me, 2, who);
       if (!(yield* c.g.ransom(c.me, 1, null))) {
-        const options = c.g.summonSpaces(c.me, false);
-        if (options.length) {
-          const space = yield c.g.askSpace(c.me, "promptSummon", options);
-          if (space) c.g.summon(c.me, space);
-        }
+        yield* summonOrRevive(c, false);
       }
       if (!(yield* c.g.ransom(c.me, 1, null))) c.g.gainAction(1);
     },
