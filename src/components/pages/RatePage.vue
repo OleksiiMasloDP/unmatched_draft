@@ -10,36 +10,73 @@
         <span
           >{{ L.left }}: <b>{{ pool.length }}</b></span
         >
-        <span v-if="!user" class="rt-warn">{{ L.guest }}</span>
+        <span v-if="locked" class="rt-lockinfo"> 🔒 {{ locked.name }} </span>
       </div>
 
       <div v-if="pair" class="rt-stage">
         <div class="rt-pair" :class="fly">
-          <div class="rt-hero">
+          <div class="rt-hero" :class="{ on: isLocked(pair[0]) }">
+            <button
+              type="button"
+              class="rt-lock"
+              :class="{ on: isLocked(pair[0]) }"
+              :title="L.lock"
+              @click="toggleLock(pair[0])"
+            >
+              {{ isLocked(pair[0]) ? "🔒" : "🔓" }}
+            </button>
             <img :src="pair[0].image" :alt="pair[0].name" />
             <b>{{ pair[0].name }}</b>
           </div>
           <span class="rt-vs">VS</span>
-          <div class="rt-hero">
+          <div class="rt-hero" :class="{ on: isLocked(pair[1]) }">
+            <button
+              type="button"
+              class="rt-lock"
+              :class="{ on: isLocked(pair[1]) }"
+              :title="L.lock"
+              @click="toggleLock(pair[1])"
+            >
+              {{ isLocked(pair[1]) ? "🔒" : "🔓" }}
+            </button>
             <img :src="pair[1].image" :alt="pair[1].name" />
             <b>{{ pair[1].name }}</b>
           </div>
         </div>
+
         <p class="rt-q">{{ L.q.replace("{a}", pair[0].name) }}</p>
+        <div class="rt-pct">
+          <button type="button" class="rt-step" @click="bump(-1)">−</button>
+          <div class="rt-big">
+            <b>{{ pct }}%</b>
+            <small>{{ 100 - pct }}% {{ pair[1].name }}</small>
+          </div>
+          <button type="button" class="rt-step" @click="bump(1)">+</button>
+        </div>
+        <input
+          v-model.number="pct"
+          class="rt-range"
+          type="range"
+          min="1"
+          max="99"
+        />
         <div class="rt-btns">
           <button
-            v-for="item in scales"
-            :key="item.score"
+            v-for="item in presets"
+            :key="item.label"
             type="button"
             class="rt-btn"
-            :class="tone(item.score)"
-            @click="vote(item.score)"
+            :class="[tone(item.pct), { on: pct === item.pct }]"
+            @click="pct = item.pct"
           >
             <b>{{ item.label }}</b>
             <small>{{ item.pct }}%</small>
           </button>
         </div>
         <div class="rt-row">
+          <button type="button" class="rt-ok" @click="submit">
+            {{ L.ok }}
+          </button>
           <button type="button" class="rt-ghost" @click="skip">
             {{ L.skip }}
           </button>
@@ -52,11 +89,14 @@
       <p v-else class="rt-done">{{ ready ? L.done : L.loading }}</p>
 
       <div class="rt-export">
-        <button type="button" class="rt-ghost" @click="exportMine">
-          {{ L.exportMine }}
+        <button type="button" class="rt-ghost" @click="copyAll">
+          {{ L.copy }}
         </button>
-        <button type="button" class="rt-ghost" @click="exportAll">
-          {{ L.exportAll }}
+        <button type="button" class="rt-ghost" @click="download">
+          {{ L.download }}
+        </button>
+        <button type="button" class="rt-ghost danger" @click="wipe">
+          {{ L.clear }}
         </button>
         <span v-if="note" class="rt-note">{{ note }}</span>
       </div>
@@ -65,16 +105,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useDraftState } from "../../composables/useDraftState";
-import { user } from "../../cloud/useAuth";
 import {
   castVote,
-  cloudExport,
+  clearVotes,
+  exportRows,
   hasVote,
-  localExport,
-  scales,
-  syncVotes,
+  presets,
   undoVote,
   votes,
 } from "../../profile/matchupVotes";
@@ -84,37 +122,41 @@ const { lang, characters, getWinrate, loadChars } = useDraftState();
 const dict = {
   en: {
     title: "Rate matchups",
-    sub: "These pairs have no data yet. Say who has the edge.",
+    sub: "These pairs have no data yet. Set the first hero's win chance.",
     rated: "Rated",
     left: "Left",
-    guest: "Sign in to send votes to the site",
-    q: "How good is {a} in this matchup?",
+    lock: "Lock this hero to rate him against everyone",
+    q: "{a}'s win chance in this matchup",
+    ok: "Save and next",
     skip: "Skip",
     undo: "Undo",
-    keys: "Keys: 1–7 to vote, S to skip",
-    done: "No more pairs to rate. Thank you!",
+    keys: "Keys: 1–7 presets, ←/→ ±1%, ↑/↓ ±5%, Enter save, S skip, L lock",
+    done: "No more pairs to rate.",
     loading: "Loading…",
-    exportMine: "Copy my votes",
-    exportAll: "Copy all results",
-    copied: "Copied to clipboard",
-    empty: "Nothing to copy yet",
+    copy: "Copy JSON",
+    download: "Download JSON",
+    clear: "Clear all",
+    copied: "Copied",
+    sure: "Delete all saved ratings?",
   },
   ua: {
     title: "Оцінка матчапів",
-    sub: "Для цих пар ще немає даних. Скажи, хто має перевагу.",
+    sub: "Для цих пар ще немає даних. Постав шанс перемоги першого героя.",
     rated: "Оцінено",
     left: "Залишилось",
-    guest: "Увійди, щоб голоси потрапили на сайт",
-    q: "Наскільки сильний {a} в цьому матчапі?",
+    lock: "Зафіксувати героя, щоб оцінити його проти всіх",
+    q: "Шанс перемоги {a} в цьому матчапі",
+    ok: "Зберегти й далі",
     skip: "Пропустити",
     undo: "Скасувати",
-    keys: "Клавіші: 1–7 — оцінка, S — пропустити",
-    done: "Пар для оцінки більше немає. Дякуємо!",
+    keys: "Клавіші: 1–7 пресети, ←/→ ±1%, ↑/↓ ±5%, Enter — зберегти, S — пропуск, L — замок",
+    done: "Пар для оцінки більше немає.",
     loading: "Завантаження…",
-    exportMine: "Копіювати мої голоси",
-    exportAll: "Копіювати всі результати",
+    copy: "Копіювати JSON",
+    download: "Завантажити JSON",
+    clear: "Очистити все",
     copied: "Скопійовано",
-    empty: "Поки нічого копіювати",
+    sure: "Видалити всі збережені оцінки?",
   },
 };
 const L = computed(() => dict[lang.value === "ua" ? "ua" : "en"]);
@@ -125,6 +167,10 @@ const pair = ref(null);
 const last = ref(null);
 const fly = ref("");
 const note = ref("");
+const pct = ref(50);
+const locked = ref(null);
+
+const isLocked = (hero) => locked.value && locked.value.id === hero.id;
 
 const pool = computed(() => {
   const list = characters.value;
@@ -133,6 +179,8 @@ const pool = computed(() => {
     for (let j = i + 1; j < list.length; j++) {
       const a = list[i];
       const b = list[j];
+      if (locked.value && a.id !== locked.value.id && b.id !== locked.value.id)
+        continue;
       if (getWinrate(a.name, b.name) !== null) continue;
       if (hasVote(a.name, b.name)) continue;
       out.push([a, b]);
@@ -142,19 +190,22 @@ const pool = computed(() => {
 
 const ratedCount = computed(() => Object.keys(votes).length);
 
-const tone = (score) => (score > 0 ? "up" : score < 0 ? "down" : "mid");
+const tone = (value) => (value > 50 ? "up" : value < 50 ? "down" : "mid");
 
 const next = () => {
   const list = pool.value.filter(
     ([a, b]) => !skipped.value.has(`${a.name}|${b.name}`),
   );
   const source = list.length ? list : pool.value;
+  pct.value = 50;
   if (!source.length) {
     pair.value = null;
     return;
   }
   const pick = source[Math.floor(Math.random() * source.length)];
-  pair.value = Math.random() < 0.5 ? pick : [pick[1], pick[0]];
+  const lockedFirst = locked.value && pick[1].id === locked.value.id;
+  const flip = locked.value ? lockedFirst : Math.random() < 0.5;
+  pair.value = flip ? [pick[1], pick[0]] : pick;
 };
 
 const animate = (cls) => {
@@ -165,12 +216,16 @@ const animate = (cls) => {
   }, 180);
 };
 
-const vote = (score) => {
+const bump = (step) => {
+  pct.value = Math.min(99, Math.max(1, pct.value + step));
+};
+
+const submit = () => {
   if (!pair.value) return;
   const [a, b] = pair.value;
-  castVote(a.name, b.name, score);
+  castVote(a.name, b.name, pct.value);
   last.value = [a, b];
-  animate(score > 0 ? "go-up" : score < 0 ? "go-down" : "go-mid");
+  animate(pct.value > 50 ? "go-up" : pct.value < 50 ? "go-down" : "go-mid");
 };
 
 const skip = () => {
@@ -186,43 +241,79 @@ const undo = () => {
   undoVote(last.value[0].name, last.value[1].name);
   pair.value = last.value;
   last.value = null;
+  pct.value = 50;
 };
 
-const copy = async (rows) => {
-  if (!rows || !rows.length) {
-    note.value = L.value.empty;
+const toggleLock = (hero) => {
+  if (!pair.value) return;
+  if (isLocked(hero)) {
+    locked.value = null;
     return;
   }
-  const text = JSON.stringify(rows, null, 1);
-  try {
-    await navigator.clipboard.writeText(text);
-    note.value = L.value.copied;
-  } catch {
-    window.prompt("", text);
-  }
+  locked.value = hero;
+  const other = pair.value[0].id === hero.id ? pair.value[1] : pair.value[0];
+  pair.value = [hero, other];
+};
+
+const json = () => JSON.stringify(exportRows(), null, 1);
+
+const flash = (text) => {
+  note.value = text;
   setTimeout(() => (note.value = ""), 2500);
 };
 
-const exportMine = () => copy(localExport());
-const exportAll = async () => copy(await cloudExport());
+const copyAll = async () => {
+  try {
+    await navigator.clipboard.writeText(json());
+    flash(L.value.copied);
+  } catch {
+    window.prompt("", json());
+  }
+};
+
+const download = () => {
+  const url = URL.createObjectURL(
+    new Blob([json()], { type: "application/json" }),
+  );
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "matchup-ratings.json";
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+const wipe = () => {
+  if (!window.confirm(L.value.sure)) return;
+  clearVotes();
+  last.value = null;
+  next();
+};
 
 const onKey = (event) => {
-  if (event.target && /input|textarea/i.test(event.target.tagName)) return;
-  if (/^[1-7]$/.test(event.key)) vote(scales[Number(event.key) - 1].score);
-  if (event.key === "s" || event.key === "S") skip();
+  if (event.target && /textarea|input/i.test(event.target.tagName)) {
+    if (event.target.type !== "range") return;
+  }
+  if (/^[1-7]$/.test(event.key)) pct.value = presets[Number(event.key) - 1].pct;
+  else if (event.key === "ArrowLeft") bump(-1);
+  else if (event.key === "ArrowRight") bump(1);
+  else if (event.key === "ArrowUp") bump(5);
+  else if (event.key === "ArrowDown") bump(-5);
+  else if (event.key === "Enter") submit();
+  else if (event.key === "s" || event.key === "S") skip();
+  else if ((event.key === "l" || event.key === "L") && pair.value)
+    toggleLock(pair.value[0]);
+  else return;
+  event.preventDefault();
 };
 
 onMounted(async () => {
   if (!characters.value.length) await loadChars();
   ready.value = true;
   next();
-  syncVotes();
   window.addEventListener("keydown", onKey);
 });
 
 onUnmounted(() => window.removeEventListener("keydown", onKey));
-
-watch(user, () => syncVotes());
 </script>
 
 <style scoped>
@@ -255,8 +346,77 @@ watch(user, () => syncVotes());
 .rt-stat b {
   color: #fff;
 }
-.rt-warn {
+.rt-lockinfo {
   color: #fbbf24;
+}
+.rt-hero {
+  position: relative;
+}
+.rt-hero.on {
+  border-color: #fbbf24;
+}
+.rt-lock {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #475569;
+  background: rgba(10, 14, 26, 0.8);
+  font-size: 18px;
+  cursor: pointer;
+}
+.rt-lock.on {
+  background: #78350f;
+  border-color: #fbbf24;
+}
+.rt-pct {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.rt-big {
+  min-width: 150px;
+}
+.rt-big b {
+  display: block;
+  font-size: 40px;
+  line-height: 1;
+}
+.rt-big small {
+  color: #94a3b8;
+}
+.rt-step {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #334155;
+  background: #11182b;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+.rt-range {
+  width: 100%;
+  margin: 14px 0;
+}
+.rt-btn.on {
+  border-color: #818cf8;
+  background: #1e2547;
+}
+.rt-ok {
+  background: #4f46e5;
+  border: 0;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.rt-ghost.danger {
+  color: #f87171;
 }
 .rt-pair {
   display: flex;
