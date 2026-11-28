@@ -434,29 +434,32 @@
             <div class="pf-card">
               <h2 class="pf-h">{{ L.style }}</h2>
               <label class="pf-label">{{ L.frame }}</label>
-              <div class="pf-opts">
-                <button
-                  v-for="item in frames"
-                  :key="item.id"
-                  type="button"
-                  class="pf-opt"
-                  :class="{
-                    on: profile.frame === item.id,
-                    lock: lvl.level < item.lvl,
-                  }"
-                  :disabled="lvl.level < item.lvl"
-                  @click="profile.frame = item.id"
-                >
-                  <span
-                    class="pf-swatch pf-ava-mini"
-                    :class="'fr-' + item.id"
-                  ></span>
-                  <small>{{
-                    lvl.level < item.lvl
-                      ? L.lvl + " " + item.lvl
-                      : L.frames[item.id]
-                  }}</small>
-                </button>
+              <div v-for="group in frameGroups" :key="group.id">
+                <p class="pf-sub">{{ L.frameGroups[group.id] }}</p>
+                <div class="pf-opts">
+                  <button
+                    v-for="item in group.items"
+                    :key="item.id"
+                    type="button"
+                    class="pf-opt"
+                    :class="{
+                      on: profile.frame === item.id,
+                      lock: lvl.level < item.lvl,
+                    }"
+                    :disabled="lvl.level < item.lvl"
+                    @click="profile.frame = item.id"
+                  >
+                    <span
+                      class="pf-swatch pf-ava-mini"
+                      :class="'fr-' + item.id"
+                    ></span>
+                    <small>{{
+                      lvl.level < item.lvl
+                        ? L.lvl + " " + item.lvl
+                        : L.frames[item.id]
+                    }}</small>
+                  </button>
+                </div>
               </div>
               <label class="pf-label">{{ L.banner }}</label>
               <div class="pf-opts">
@@ -606,6 +609,12 @@ const histFilter = ref("all");
 const historyFilters = ["all", "bot", "roguelike", "online", "packDraft"];
 
 const history = computed(() => matchStats.history);
+const frameGroups = computed(() =>
+  ["base", "uv", "mg", "ac", "gm"].map((id) => ({
+    id,
+    items: frames.filter((item) => (item.group || "base") === id),
+  })),
+);
 const statsData = computed(() => buildStatsData(matchStats, tabletop.current));
 const setPref = (key, value) => {
   profile[key] = value;
@@ -797,6 +806,27 @@ const HistoryRow = {
 .pf-ava.small .pf-lvl {
   font-size: 11px;
   min-width: 22px;
+}
+
+.pf-ava-mini {
+  position: relative;
+}
+
+.pf-ava-mini::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: inherit;
+  background: #0b1220;
+}
+
+.pf-sub {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
 }
 
 .pf-pub {
